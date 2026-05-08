@@ -1,0 +1,14 @@
+{
+  "include": [
+    "meetService"
+  ],
+  "exclude": [
+    "venv",
+    "**/__pycache__",
+    "meetService/media",
+    "meetService/staticfiles"
+  ],
+  "venvPath": "/home/catsclaw/projs/web-course-2-sem",
+  "venv": "venv",
+  "pythonVersion": "3.13"
+}
