@@ -20,6 +20,10 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 
+admin.site.site_header = "MeetService - администрирование"
+admin.site.site_title = "MeetService Admin"
+admin.site.index_title = "Админка сервиса по поиску IT-команды"
+
 urlpatterns = [
     path("admin/", admin.site.urls),
 ]
