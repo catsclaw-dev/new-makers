@@ -1,4 +1,5 @@
-from django.db import models
+from enum import member
+from django.db import models, transaction
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -94,8 +95,14 @@ class Application(models.Model):
         """Проверяет бизнес-правила отклика."""
         errors = {}
 
-        if self.vacancy_id and self.project_id and self.vacancy.project_id != self.project_id:
-            errors["vacancy"] = _("Выбранная открытая роль не относится к указанному проекту.")
+        if (
+            self.vacancy_id
+            and self.project_id
+            and self.vacancy.project_id != self.project_id
+        ):
+            errors["vacancy"] = _(
+                "Выбранная открытая роль не относится к указанному проекту."
+            )
 
         if self.project_id and self.specialist_id:
             if self.project.owner_id == self.specialist.user_id:
@@ -106,17 +113,25 @@ class Application(models.Model):
                 errors["project"] = _("Нельзя откликаться на неопубликованный проект.")
 
             if self.vacancy_id and not self.vacancy.is_open():
-                errors["vacancy"] = _("Нельзя откликаться на закрытую или заполненную роль.")
+                errors["vacancy"] = _(
+                    "Нельзя откликаться на закрытую или заполненную роль."
+                )
 
-            duplicate_exists = Application.objects.filter(
-                project=self.project,
-                vacancy=self.vacancy,
-                specialist=self.specialist,
-                status__in=self.ACTIVE_STATUSES,
-            ).exclude(pk=self.pk).exists()
+            duplicate_exists = (
+                Application.objects.filter(
+                    project=self.project,
+                    vacancy=self.vacancy,
+                    specialist=self.specialist,
+                    status__in=self.ACTIVE_STATUSES,
+                )
+                .exclude(pk=self.pk)
+                .exists()
+            )
 
             if duplicate_exists:
-                errors["specialist"] = _("У специалиста уже есть активный отклик на эту роль.")
+                errors["specialist"] = _(
+                    "У специалиста уже есть активный отклик на эту роль."
+                )
 
         if errors:
             raise ValidationError(errors)
@@ -129,37 +144,30 @@ class Application(models.Model):
 
     def accept(self, reviewed_by=None) -> ProjectMembership:
         """Принимает отклик и добавляет специалиста в команду проекта."""
-        if self.status != self.Status.PENDING:
-            raise ValidationError(_("Можно принять только отклик со статусом «На рассмотрении»."))
+        with transaction.atomic():
+            application = (
+                Application.objects.select_for_update()
+                .select_related("project", "vacancy", "specialist")
+                .get(pk=self.pk)
+            )
 
-        if not self.vacancy.is_open():
-            raise ValidationError(_("Открытая роль уже закрыта или заполнена."))
+        if application.status != application.Status.PENDING:
+            raise ValidationError("Можно принять только отклик на рассмотрении.")
 
-        already_member = ProjectMembership.objects.filter(
-            project=self.project,
-            specialist=self.specialist,
-            status=ProjectMembership.Status.ACTIVE,
-        ).exists()
+        if reviewed_by and not application.project.can_be_edited_by(reviewed_by):
+            raise ValidationError(
+                "Принимать откилики может только владелец проекта или администратор."
+            )
 
-        if already_member:
-            raise ValidationError(_("Специалист уже состоит в команде проекта."))
-
-        membership = ProjectMembership.objects.create(
-            project=self.project,
-            specialist=self.specialist,
-            role=self.vacancy.role,
+        membership = application.vacancy.add_specialist(
+            specialist=application.specialist,
             added_by=reviewed_by,
         )
 
-        self.status = self.Status.ACCEPTED
-        self.reviewed_at = timezone.now()
-        self.reviewed_by = reviewed_by
-        self.save(update_fields=["status", "reviewed_at", "reviewed_by"])
-
-        self.vacancy.current_count += 1
-        self.vacancy.close_if_filled()
-        if self.vacancy.status != ProjectVacancy.Status.CLOSED:
-            self.vacancy.save(update_fields=["current_count", "updated_at"])
+        application.status = application.Status.ACCEPTED
+        application.reviewed_at = timezone.now()
+        application.reviewed_by = reviewed_by
+        application.save(update_fields=["status", "reviewd_at", "reviewed_by"])
 
         return membership
 
@@ -247,12 +255,20 @@ class Invitation(models.Model):
         """Проверяет бизнес-правила приглашения."""
         errors = {}
 
-        if self.vacancy_id and self.project_id and self.vacancy.project_id != self.project_id:
-            errors["vacancy"] = _("Выбранная открытая роль не относится к указанному проекту.")
+        if (
+            self.vacancy_id
+            and self.project_id
+            and self.vacancy.project_id != self.project_id
+        ):
+            errors["vacancy"] = _(
+                "Выбранная открытая роль не относится к указанному проекту."
+            )
 
         if self.specialist_id and self.project_id:
             if self.specialist.user_id == self.project.owner_id:
-                errors["specialist"] = _("Нельзя приглашать владельца проекта в его собственный проект.")
+                errors["specialist"] = _(
+                    "Нельзя приглашать владельца проекта в его собственный проект."
+                )
 
             already_member = ProjectMembership.objects.filter(
                 project=self.project,
@@ -264,25 +280,38 @@ class Invitation(models.Model):
                 errors["specialist"] = _("Специалист уже состоит в команде проекта.")
 
         if self.invited_by_id and self.project_id:
-            if self.project.owner_id != self.invited_by_id and not self.invited_by.is_staff:
-                errors["invited_by"] = _("Приглашать специалистов может только владелец проекта или администратор.")
+            if (
+                self.project.owner_id != self.invited_by_id
+                and not self.invited_by.is_staff
+            ):
+                errors["invited_by"] = _(
+                    "Приглашать специалистов может только владелец проекта или администратор."
+                )
 
         if self.status == self.Status.PENDING:
             if self.project_id and self.project.status != Project.Status.PUBLISHED:
                 errors["project"] = _("Нельзя приглашать в неопубликованный проект.")
 
             if self.vacancy_id and not self.vacancy.is_open():
-                errors["vacancy"] = _("Нельзя приглашать на закрытую или заполненную роль.")
+                errors["vacancy"] = _(
+                    "Нельзя приглашать на закрытую или заполненную роль."
+                )
 
-            duplicate_exists = Invitation.objects.filter(
-                project=self.project,
-                vacancy=self.vacancy,
-                specialist=self.specialist,
-                status=self.Status.PENDING,
-            ).exclude(pk=self.pk).exists()
+            duplicate_exists = (
+                Invitation.objects.filter(
+                    project=self.project,
+                    vacancy=self.vacancy,
+                    specialist=self.specialist,
+                    status=self.Status.PENDING,
+                )
+                .exclude(pk=self.pk)
+                .exists()
+            )
 
             if duplicate_exists:
-                errors["specialist"] = _("Для этого специалиста уже есть активное приглашение на эту роль.")
+                errors["specialist"] = _(
+                    "Для этого специалиста уже есть активное приглашение на эту роль."
+                )
 
         if errors:
             raise ValidationError(errors)
@@ -296,7 +325,9 @@ class Invitation(models.Model):
     def accept(self) -> ProjectMembership:
         """Принимает приглашение и добавляет специалиста в команду проекта."""
         if self.status != self.Status.PENDING:
-            raise ValidationError(_("Можно принять только приглашение со статусом «Ожидает ответа»."))
+            raise ValidationError(
+                _("Можно принять только приглашение со статусом «Ожидает ответа».")
+            )
 
         if not self.vacancy.is_open():
             raise ValidationError(_("Открытая роль уже закрыта или заполнена."))

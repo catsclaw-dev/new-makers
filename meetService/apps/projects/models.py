@@ -1,6 +1,8 @@
 from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator
-from django.db import models
+from django.core.exceptions import ValidationError
+from django.db import models, transaction
+from django.db.models import F, Q, constraints
 from django.utils import timezone
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
@@ -303,13 +305,21 @@ class ProjectVacancy(models.Model):
         verbose_name = _("открытая роль проекта")
         verbose_name_plural = _("открытые роли проектов")
         ordering = ["project", "role__name", "title"]
+        constraints = [
+            models.CheckConstraint(
+                condition=Q(current_count__lte=F("required_count")),
+                name="vacancy_current_count_lte_required_count",
+            ),
+        ]
 
     def __str__(self) -> str:
         return f"{self.project} — {self.title}"
 
     def is_open(self) -> bool:
         """Проверяет, открыта ли роль для откликов."""
-        return self.status == self.Status.OPEN and self.current_count < self.required_count
+        return (
+            self.status == self.Status.OPEN and self.current_count < self.required_count
+        )
 
     def remaining_slots(self) -> int:
         """Возвращает количество свободных мест по роли."""
@@ -319,7 +329,44 @@ class ProjectVacancy(models.Model):
         """Закрывает роль, если нужное количество участников уже набрано."""
         if self.current_count >= self.required_count:
             self.status = self.Status.CLOSED
-            self.save(update_fields=["status", "updated_at"])
+            self.save(update_fields=["current_count", "status", "updated_at"])
+
+    def add_specialist(self, *, specialist, added_by=None):
+        "Атомарное добавление специалиста на вакансию"
+        with transaction.atomic():
+            vacancy = (
+                ProjectVacancy.objects.select_for_update()
+                .select_related("project", "role")
+                .get(pk=self.pk)
+            )
+
+            if not vacancy.is_open():
+                raise ValidationError("Вакансия уже закрыта или заполнена.")
+
+            already_member = ProjectMembership.objects.filter(
+                project=vacancy.project,
+                specialist=specialist,
+                status=ProjectMembership.Status.ACTIVE,
+            ).exists()
+
+            if already_member:
+                raise ValidationError("Специалист уже состоит в команде проекта.")
+
+            membership = ProjectMembership.objects.create(
+                project=vacancy.project,
+                specialist=specialist,
+                role=vacancy.role,
+                added_by=added_by,
+            )
+
+            vacancy.current_count += 1
+
+            if vacancy.current_count >= vacancy.required_count:
+                vacancy.status = ProjectVacancy.Status.CLOSED
+
+            vacancy.save(update_fields=["current_count", "status", "updated_at"])
+
+            return membership
 
     def save(self, *args, **kwargs):
         self.title = self.title.strip()
