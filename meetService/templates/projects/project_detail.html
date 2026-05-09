@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}{{ project.title }} — MeetService{% endblock %}
+{% block content %}
+    <section class="container detail-layout">
+        <article class="detail-main">
+            {% if project.cover_image %}
+                <img class="detail-cover"
+                     src="{{ project.cover_image.url }}"
+                     alt="{{ project.title }}">
+            {% endif %}
+            <p class="eyebrow">{{ project.get_stage_display }}</p>
+            <h1>{{ project.title }}</h1>
+            <p class="lead">{{ project.short_description }}</p>
+            <div class="tag-row">
+                {% for technology in project.technologies.all %}
+                    <span class="tag">{{ technology.name }}</span>
+                {% empty %}
+                    <span class="tag">Стек не указан</span>
+                {% endfor %}
+            </div>
+            <h2>Описание</h2>
+            <div>{{ project.description|linebreaks }}</div>
+            <h2>Цель проекта</h2>
+            <div>{{ project.goal|linebreaks }}</div>
+            <h2>Открытые роли</h2>
+            <div class="mini-list">
+                {% for vacancy in open_vacancies %}
+                    <article class="mini-card">
+                        <h3>{{ vacancy.title }}</h3>
+                        <p>{{ vacancy.description }}</p>
+                        <span>
+                            {{ vacancy.role.name }} · {{ vacancy.get_required_level_display }} ·
+                            мест: {{ vacancy.current_count }}/{{ vacancy.required_count }}
+                        </span>
+                    </article>
+                {% empty %}
+                    <p class="empty">Открытых ролей сейчас нет.</p>
+                {% endfor %}
+            </div>
+            <h2>Команда</h2>
+            <div class="mini-list">
+                {% for membership in memberships %}
+                    <article class="mini-card">
+                        <h3>{{ membership.specialist.get_display_name }}</h3>
+                        <p>{{ membership.role.name }}</p>
+                        <span>{{ membership.get_status_display }}</span>
+                    </article>
+                {% empty %}
+                    <p class="empty">Команда пока не сформирована.</p>
+                {% endfor %}
+            </div>
+            <h2>Файлы</h2>
+            <div class="mini-list">
+                {% for file in files %}
+                    <article class="mini-card">
+                        <h3>{{ file.title }}</h3>
+                        <a href="{{ file.file.url }}">Скачать файл</a>
+                    </article>
+                {% empty %}
+                    <p class="empty">Файлы пока не прикреплены.</p>
+                {% endfor %}
+            </div>
+        </article>
+        <aside class="detail-sidebar">
+            <div class="action-card">
+                <h2>Участие</h2>
+                <p>
+                    <strong>Формат:</strong> {{ project.get_participation_format_display }}
+                </p>
+                <p>
+                    <strong>Статус:</strong> {{ project.get_status_display }}
+                </p>
+                <p>
+                    <strong>Владелец:</strong> {{ project.owner }}
+                </p>
+                {% if project.repository_url %}
+                    <a class="btn btn-secondary full-width"
+                       href="{{ project.repository_url }}"
+                       target="_blank">Репозиторий</a>
+                {% endif %}
+                {% if project.demo_url %}
+                    <a class="btn btn-secondary full-width"
+                       href="{{ project.demo_url }}"
+                       target="_blank">Демо</a>
+                {% endif %}
+                <a class="btn btn-primary full-width" href="#">Хочу в команду</a>
+                <a class="btn btn-secondary full-width" href="#">В избранное</a>
+            </div>
+            <div class="action-card">
+                <h2>Похожие проекты</h2>
+                {% for similar in similar_projects %}
+                    <a class="similar-link" href="{{ similar.get_absolute_url }}">{{ similar.title }}</a>
+                {% empty %}
+                    <p class="empty">Похожих проектов пока нет.</p>
+                {% endfor %}
+            </div>
+        </aside>
+    </section>
+{% endblock %}

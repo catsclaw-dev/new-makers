@@ -16,7 +16,7 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -26,6 +26,7 @@ admin.site.index_title = "Админка сервиса по поиску IT-к�
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("", include("apps.projects.urls")),
 ]
 
 if settings.DEBUG:
