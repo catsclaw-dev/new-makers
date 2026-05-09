@@ -1,5 +1,6 @@
 """HTML-представления для проектов и главной страницы."""
 
+from django.contrib.auth.decorators import login_required
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db import models
 from django.db.models import Count, Q
@@ -7,7 +8,7 @@ from django.shortcuts import get_object_or_404, render
 
 from apps.directories.models import Role, Technology
 from apps.interactions.models import FavoriteProject
-from apps.projects.models import Project
+from apps.projects.models import Project, ProjectMembership
 from apps.specialists.models import SpecialistProfile
 
 
@@ -218,3 +219,44 @@ def project_detail(request, slug):
         "is_favorite": is_favorite,
     }
     return render(request, "projects/project_detail.html", context)
+
+
+@login_required
+def my_projects(request):
+    """Проекты, которыми владеет текущий пользователь."""
+    projects = (
+        Project.objects.select_related("owner")
+        .prefetch_related("technologies", "vacancies__role")
+        .filter(owner=request.user)
+        .order_by("-created_at")
+    )
+
+    context = {
+        "projects": projects,
+    }
+    return render(request, "projects/my_projects.html", context)
+
+
+@login_required
+def my_teams(request):
+    """Проекты, в командах которых состоит текущий специалист."""
+    specialist_profile = getattr(request.user, "specialist_profile", None)
+
+    memberships = ProjectMembership.objects.none()
+
+    if specialist_profile is not None:
+        memberships = (
+            ProjectMembership.objects.select_related("project", "role")
+            .prefetch_related("project__technologies")
+            .filter(
+                specialist=specialist_profile,
+                status=ProjectMembership.Status.ACTIVE,
+            )
+            .order_by("-joined_at")
+        )
+
+    context = {
+        "specialist_profile": specialist_profile,
+        "memberships": memberships,
+    }
+    return render(request, "projects/my_teams.html", context)

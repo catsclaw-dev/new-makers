@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Мои команды — MeetService{% endblock %}
+{% block content %}
+<section class="container page-head">
+  <p class="eyebrow">специалист</p>
+  <h1>Мои команды</h1>
+  <p>Здесь отображаются проекты, где ты являешься участником команды.</p>
+</section>
+<section class="container section">
+  <div class="cards-grid">
+    {% if not specialist_profile %}
+    <article class="action-card">
+      <h2>Профиль специалиста не найден</h2>
+      <p class="empty">Команды доступны пользователям с профилем специалиста.</p>
+    </article>
+    {% endif %}
+    {% for membership in memberships %}
+    <article class="project-card">
+      {% if membership.project.cover_image %}
+      <img class="project-cover" src="{{ membership.project.cover_image.url }}" alt="{{ membership.project.title }}">
+      {% else %}
+      <div class="project-cover project-cover-placeholder">
+        <span>TEAM</span>
+      </div>
+      {% endif %}
+      <div class="project-card-body">
+        <div>
+          <div class="card-meta">
+            <span>{{ membership.role.name }}</span>
+            <span>{{ membership.get_status_display }}</span>
+          </div>
+          <h3>
+            <a href="{{ membership.project.get_absolute_url }}">{{ membership.project.title }}</a>
+          </h3>
+          <p class="project-description">{{ membership.project.short_description }}</p>
+        </div>
+        <div class="project-card-bottom">
+          <div class="tag-row">
+            {% for technology in membership.project.technologies.all|slice:":4" %}
+            <span class="tag">{{ technology.name }}</span>
+            {% empty %}
+            <span class="tag">Стек не указан</span>
+            {% endfor %}
+          </div>
+          <a class="card-link" href="{{ membership.project.get_absolute_url }}">Открыть проект</a>
+        </div>
+      </div>
+    </article>
+    {% empty %}
+    {% if specialist_profile %}
+    <article class="action-card">
+      <h2>Ты пока не состоишь в командах</h2>
+      <p class="empty">Найди проект, отправь отклик или прими приглашение владельца.</p>
+      <a class="btn btn-primary" href="{% url 'projects:project_list' %}">Найти проект</a>
+    </article>
+    {% endif %}
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}
