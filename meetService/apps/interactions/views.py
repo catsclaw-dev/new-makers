@@ -1,10 +1,12 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
+from django.db import IntegrityError
 from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.http import require_POST
 
-from apps.interactions.forms import ApplicationForm
-from apps.interactions.models import Application, FavoriteProject
+from apps.interactions.forms import ApplicationForm, InvitationForm
+from apps.interactions.models import Application, FavoriteProject, Invitation
 from apps.projects.models import Project
 from apps.specialists.models import SpecialistProfile
 
@@ -64,16 +66,19 @@ def application_list(request):
     sent_applications = Application.objects.none()
 
     if specialist is not None:
-        sent_applications = (
-            Application.objects.select_related(
+        received_invitations = (
+            Invitation.objects.select_related(
                 "project",
                 "vacancy",
                 "vacancy__role",
+                "invited_by",
             )
-            .filter(specialist=specialist)
-            .order_by("-applied_at")
+            .filter(
+                specialist=specialist,
+                status=Invitation.Status.PENDING,
+            )
+            .order_by("-invited_at")
         )
-
     incoming_applications = (
         Application.objects.select_related(
             "project",
@@ -133,3 +138,144 @@ def favorite_project_list(request):
         "favorites": favorites,
     }
     return render(request, "interactions/favorite_project_list.html", context)
+
+
+@login_required
+def invite_specialist(request, pk):
+    """Приглашение специалиста в один из проектов текущего пользователя."""
+    specialist = get_object_or_404(
+        SpecialistProfile.objects.select_related("user", "main_role").prefetch_related(
+            "technologies"
+        ),
+        pk=pk,
+    )
+
+    if request.method == "POST":
+        form = InvitationForm(
+            request.POST,
+            specialist=specialist,
+            invited_by=request.user,
+        )
+
+        if form.is_valid():
+            try:
+                form.save()
+            except ValidationError as error:
+                form.add_error(None, error)
+            except IntegrityError:
+                form.add_error(
+                    None,
+                    "Такое активное приглашение уже существует.",
+                )
+            else:
+                messages.success(request, "Приглашение отправлено специалисту.")
+                return redirect("interactions:invitation_list")
+    else:
+        form = InvitationForm(
+            specialist=specialist,
+            invited_by=request.user,
+        )
+
+    context = {
+        "specialist": specialist,
+        "form": form,
+    }
+    return render(request, "interactions/invite_specialist.html", context)
+
+
+@login_required
+def invitation_list(request):
+    """Список приглашений: активные полученные и все отправленные."""
+    try:
+        specialist = request.user.specialist_profile
+    except SpecialistProfile.DoesNotExist:
+        specialist = None
+
+    received_invitations = Invitation.objects.none()
+
+    if specialist is not None:
+        received_invitations = (
+            Invitation.objects.select_related(
+                "project",
+                "vacancy",
+                "vacancy__role",
+                "invited_by",
+            )
+            .filter(
+                specialist=specialist,
+                status=Invitation.Status.PENDING,
+            )
+            .order_by("-invited_at")
+        )
+
+    sent_invitations = (
+        Invitation.objects.select_related(
+            "project",
+            "vacancy",
+            "vacancy__role",
+            "specialist",
+            "specialist__user",
+        )
+        .filter(invited_by=request.user)
+        .order_by("-invited_at")
+    )
+
+    context = {
+        "specialist": specialist,
+        "received_invitations": received_invitations,
+        "sent_invitations": sent_invitations,
+        "received_count": received_invitations.count(),
+        "sent_count": sent_invitations.count(),
+    }
+    return render(request, "interactions/invitation_list.html", context)
+
+
+@login_required
+@require_POST
+def invitation_accept(request, pk):
+    """Принятие приглашения специалистом."""
+    invitation = get_object_or_404(
+        Invitation.objects.select_related(
+            "project",
+            "vacancy",
+            "vacancy__role",
+            "specialist",
+            "specialist__user",
+            "invited_by",
+        ),
+        pk=pk,
+        specialist__user=request.user,
+        status=Invitation.Status.PENDING,
+    )
+
+    try:
+        invitation.accept()
+    except ValidationError as error:
+        messages.error(request, "".join(error.message))
+    except IntegrityError:
+        messages.error(request, "Ты уже состоишь в команде этого проекта.")
+    else:
+        messages.success(request, "Приглашение принято. Ты добавлен в команду проекта.")
+
+    return redirect("interactions:invitation_list")
+
+
+@login_required
+@require_POST
+def invitation_decline(request, pk):
+    """Отклонение приглашения специалистом."""
+    invitation = get_object_or_404(
+        Invitation,
+        pk=pk,
+        specialist__user=request.user,
+        status=Invitation.Status.PENDING,
+    )
+
+    try:
+        invitation.decline()
+    except ValidationError as error:
+        messages.error(request, " ".join(error.messages))
+    else:
+        messages.info(request, "Приглашение отклонено.")
+
+    return redirect("interactions:invitation_list")

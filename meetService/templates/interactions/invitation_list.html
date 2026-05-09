@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block title %}Приглашения — MeetService{% endblock %}
+{% block content %}
+    <section class="container page-head">
+        <p class="eyebrow">личный кабинет</p>
+        <h1>Приглашения</h1>
+        <p>
+            Здесь собраны приглашения, которые ты получил как специалист,
+            и приглашения, которые ты отправил как владелец проекта.
+        </p>
+    </section>
+    <section class="container section">
+        <div class="stats-grid">
+            <div>
+                <dt>{{ received_count }}</dt>
+                <dd>
+                    получено
+                </dd>
+            </div>
+            <div>
+                <dt>{{ sent_count }}</dt>
+                <dd>
+                    отправлено
+                </dd>
+            </div>
+        </div>
+    </section>
+    <section class="container section two-columns">
+        <div>
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">мне отправили</p>
+                    <h2>Полученные приглашения</h2>
+                </div>
+            </div>
+            <div class="mini-list">
+                {% if not specialist %}
+                    <article class="action-card">
+                        <h3>Профиль специалиста не найден</h3>
+                        <p class="empty">Получать приглашения можно только с профилем специалиста.</p>
+                    </article>
+                {% endif %}
+                {% for invitation in received_invitations %}
+                    <article class="mini-card">
+                        <h3>
+                            <a href="{{ invitation.project.get_absolute_url }}">{{ invitation.project.title }}</a>
+                        </h3>
+                        <p>
+                            Роль: {{ invitation.vacancy.title }}
+                            {% if invitation.vacancy.role %}· {{ invitation.vacancy.role.name }}{% endif %}
+                        </p>
+                        {% if invitation.message %}<p>{{ invitation.message }}</p>{% endif %}
+                        <span>{{ invitation.get_status_display }} · {{ invitation.invited_at|date:"d.m.Y H:i" }}</span>
+                        {% if invitation.status == "pending" %}
+                            <div class="hero-actions">
+                                <form method="post"
+                                      action="{% url 'interactions:invitation_accept' invitation.pk %}">
+                                    {% csrf_token %}
+                                    <button class="btn btn-primary" type="submit">Принять</button>
+                                </form>
+                                <form method="post"
+                                      action="{% url 'interactions:invitation_decline' invitation.pk %}">
+                                    {% csrf_token %}
+                                    <button class="btn btn-secondary" type="submit">Отклонить</button>
+                                </form>
+                            </div>
+                        {% endif %}
+                    </article>
+                {% empty %}
+                    {% if specialist %}
+                        <article class="action-card">
+                            <h3>Приглашений пока нет</h3>
+                            <p class="empty">
+                                Когда владелец проекта пригласит тебя в команду,
+                                приглашение появится здесь.
+                            </p>
+                        </article>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        <div>
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">я отправил</p>
+                    <h2>Отправленные приглашения</h2>
+                </div>
+            </div>
+            <div class="mini-list">
+                {% for invitation in sent_invitations %}
+                    <article class="mini-card">
+                        <h3>
+                            <a href="{{ invitation.project.get_absolute_url }}">{{ invitation.project.title }}</a>
+                        </h3>
+                        <p>
+                            Специалист:
+                            <a href="{% url 'specialists:specialist_detail' invitation.specialist.pk %}">
+                                {{ invitation.specialist.get_display_name }}
+                            </a>
+                        </p>
+                        <p>
+                            Роль: {{ invitation.vacancy.title }}
+                            {% if invitation.vacancy.role %}· {{ invitation.vacancy.role.name }}{% endif %}
+                        </p>
+                        {% if invitation.message %}<p>{{ invitation.message }}</p>{% endif %}
+                        <span>{{ invitation.get_status_display }} · {{ invitation.invited_at|date:"d.m.Y H:i" }}</span>
+                    </article>
+                {% empty %}
+                    <article class="action-card">
+                        <h3>Ты ещё никого не приглашал</h3>
+                        <p class="empty">Открой каталог специалистов и пригласи подходящего участника.</p>
+                        <a class="btn btn-primary"
+                           href="{% url 'specialists:specialist_list' %}">Найти специалиста</a>
+                    </article>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+{% endblock %}

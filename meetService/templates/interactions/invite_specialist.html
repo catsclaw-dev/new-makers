@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Приглашение специалиста — MeetService{% endblock %}
+{% block content %}
+    <section class="container auth-page">
+        <div class="auth-card">
+            <p class="eyebrow">приглашение</p>
+            <h1>{{ specialist.get_display_name }}</h1>
+            <p class="lead">Выбери открытую роль в своём опубликованном проекте и отправь приглашение.</p>
+            <form method="post" class="form-grid">
+                {% csrf_token %}
+                {% if form.non_field_errors %}<div class="form-errors">{{ form.non_field_errors }}</div>{% endif %}
+                {% for field in form %}
+                    <label>
+                        {{ field.label }}
+                        {{ field }}
+                        {% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}
+                        {% for error in field.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
+                    </label>
+                {% endfor %}
+                <button class="btn btn-primary full-width" type="submit">Отправить приглашение</button>
+            </form>
+            <p class="auth-switch">
+                <a href="{% url 'specialists:specialist_detail' specialist.pk %}">← Вернуться к профилю</a>
+            </p>
+        </div>
+    </section>
+{% endblock %}

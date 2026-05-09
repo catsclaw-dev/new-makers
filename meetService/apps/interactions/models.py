@@ -142,34 +142,60 @@ class Application(models.Model):
         self.full_clean()
         super().save(*args, **kwargs)
 
-    def accept(self, reviewed_by=None) -> ProjectMembership:
-        """Принимает отклик и добавляет специалиста в команду проекта."""
+    def accept(self) -> ProjectMembership:
+        """Принимает приглашение и добавляет специалиста в команду проекта."""
         with transaction.atomic():
-            application = (
-                Application.objects.select_for_update()
-                .select_related("project", "vacancy", "specialist")
+            invitation = (
+                Invitation.objects.select_for_update()
+                .select_related(
+                    "project", "vacancy", "vacancy__role", "specialist", "invited_by"
+                )
                 .get(pk=self.pk)
             )
 
-        if application.status != application.Status.PENDING:
-            raise ValidationError("Можно принять только отклик на рассмотрении.")
+            if invitation.status != invitation.Status.PENDING:
+                raise ValidationError(
+                    _("Можно принять только приглашение со статусом «Ожидает ответа».")
+                )
 
-        if reviewed_by and not application.project.can_be_edited_by(reviewed_by):
-            raise ValidationError(
-                "Принимать откилики может только владелец проекта или администратор."
+            already_member = ProjectMembership.objects.filter(
+                project=invitation.project,
+                specialist=invitation.specialist,
+                status=ProjectMembership.Status.ACTIVE,
+            ).first()
+
+            if already_member:
+                invitation.status = invitation.Status.ACCEPTED
+                invitation.responded_at = timezone.now()
+                Invitation.objects.filter(pk=invitation.pk).update(
+                    status=Invitation.Status.ACCEPTED,
+                    responded_at=invitation.responded_at,
+                )
+
+                self.status = invitation.status
+                self.responded_at = invitation.responded_at
+
+                return already_member
+
+            if not invitation.vacancy.is_open():
+                raise ValidationError(_("Открытая роль уже закрыта или заполнена."))
+
+            membership = invitation.vacancy.add_specialist(
+                specialist=invitation.specialist,
+                added_by=invitation.invited_by,
             )
 
-        membership = application.vacancy.add_specialist(
-            specialist=application.specialist,
-            added_by=reviewed_by,
-        )
+            invitation.status = invitation.Status.ACCEPTED
+            invitation.responded_at = timezone.now()
+            Invitation.objects.filter(pk=invitation.pk).update(
+                status=Invitation.Status.ACCEPTED,
+                responded_at=invitation.responded_at,
+            )
 
-        application.status = application.Status.ACCEPTED
-        application.reviewed_at = timezone.now()
-        application.reviewed_by = reviewed_by
-        application.save(update_fields=["status", "reviewd_at", "reviewed_by"])
+            self.status = invitation.status
+            self.responded_at = invitation.responded_at
 
-        return membership
+            return membership
 
     def reject(self, reviewed_by=None) -> None:
         """Отклоняет отклик."""
@@ -324,37 +350,79 @@ class Invitation(models.Model):
 
     def accept(self) -> ProjectMembership:
         """Принимает приглашение и добавляет специалиста в команду проекта."""
-        if self.status != self.Status.PENDING:
-            raise ValidationError(
-                _("Можно принять только приглашение со статусом «Ожидает ответа».")
+        with transaction.atomic():
+            invitation = (
+                Invitation.objects.select_for_update()
+                .select_related(
+                    "project",
+                    "vacancy",
+                    "vacancy__role",
+                    "specialist",
+                    "invited_by",
+                )
+                .get(pk=self.pk)
             )
 
-        if not self.vacancy.is_open():
-            raise ValidationError(_("Открытая роль уже закрыта или заполнена."))
+            if invitation.status != invitation.Status.PENDING:
+                raise ValidationError(
+                    _("Можно принять только приглашение со статусом «Ожидает ответа».")
+                )
 
-        membership = ProjectMembership.objects.create(
-            project=self.project,
-            specialist=self.specialist,
-            role=self.vacancy.role,
-            added_by=self.invited_by,
-        )
+            already_member = ProjectMembership.objects.filter(
+                project=invitation.project,
+                specialist=invitation.specialist,
+                status=ProjectMembership.Status.ACTIVE,
+            ).first()
 
-        self.status = self.Status.ACCEPTED
-        self.responded_at = timezone.now()
-        self.save(update_fields=["status", "responded_at"])
+            if already_member:
+                responded_at = timezone.now()
 
-        self.vacancy.current_count += 1
-        self.vacancy.close_if_filled()
-        if self.vacancy.status != ProjectVacancy.Status.CLOSED:
-            self.vacancy.save(update_fields=["current_count", "updated_at"])
+                Invitation.objects.filter(pk=invitation.pk).update(
+                    status=Invitation.Status.ACCEPTED,
+                    responded_at=responded_at,
+                )
 
-        return membership
+                self.status = Invitation.Status.ACCEPTED
+                self.responded_at = responded_at
+
+                return already_member
+
+            if not invitation.vacancy.is_open():
+                raise ValidationError(_("Открытая роль уже закрыта или заполнена."))
+
+            membership = invitation.vacancy.add_specialist(
+                specialist=invitation.specialist,
+                added_by=invitation.invited_by,
+            )
+
+            responded_at = timezone.now()
+
+            Invitation.objects.filter(pk=invitation.pk).update(
+                status=Invitation.Status.ACCEPTED,
+                responded_at=responded_at,
+            )
+
+            self.status = Invitation.Status.ACCEPTED
+            self.responded_at = responded_at
+
+            return membership
 
     def decline(self) -> None:
         """Отклоняет приглашение."""
-        self.status = self.Status.DECLINED
-        self.responded_at = timezone.now()
-        self.save(update_fields=["status", "responded_at"])
+        if self.status != self.Status.PENDING:
+            raise ValidationError(
+                _("Можно отклонить только приглашение со статусом «Ожидает ответа».")
+            )
+
+        responded_at = timezone.now()
+
+        Invitation.objects.filter(pk=self.pk).update(
+            status=Invitation.Status.DECLINED,
+            responded_at=responded_at,
+        )
+
+        self.status = Invitation.Status.DECLINED
+        self.responded_at = responded_at
 
 
 class FavoriteProject(models.Model):

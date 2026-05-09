@@ -55,7 +55,8 @@
                        href="{{ specialist.portfolio_url }}"
                        target="_blank">Портфолио</a>
                 {% endif %}
-                <a class="btn btn-primary full-width" href="#">Пригласить в проект</a>
+                <a class="btn btn-primary full-width"
+                   href="{% url 'interactions:invite_specialist' specialist.pk %}">Пригласить в проект</a>
             </div>
         </aside>
     </section>
