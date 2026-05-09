@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load project_extras %}
 {% block title %}Главная — MeetService{% endblock %}
 {% block content %}
     <section class="hero">
@@ -82,7 +83,7 @@
                             <h3>
                                 <a href="{{ project.get_absolute_url }}">{{ project.title }}</a>
                             </h3>
-                            <p class="project-description">{{ project.short_description }}</p>
+                            <p class="project-description">{{ project.short_description|short_text:150 }}</p>
                         </div>
                         <div class="project-card-bottom">
                             <div class="tag-row">
@@ -145,7 +146,7 @@
                             <h3>
                                 <a href="{{ project.get_absolute_url }}">{{ project.title }}</a>
                             </h3>
-                            <p class="project-description">{{ project.short_description }}</p>
+                            <p class="project-description">{{ project.short_description|short_text:150 }}</p>
                         </div>
                         <div class="project-card-bottom">
                             <div class="tag-row">
@@ -206,16 +207,7 @@
                     <h2>Популярные технологии</h2>
                 </div>
             </div>
-            <div class="tag-cloud">
-                {% for technology in popular_technologies %}
-                    <span class="tag">
-                        {{ technology.name }}
-                        <small>{{ technology.project_count }}</small>
-                    </span>
-                {% empty %}
-                    <p class="empty">Технологии пока не добавлены.</p>
-                {% endfor %}
-            </div>
+            {% show_popular_technologies 10 %}
         </div>
     </section>
 {% endblock %}

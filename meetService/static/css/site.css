@@ -533,3 +533,12 @@ option {
 .inline-form {
   margin: 0;
 }
+
+.specialist-avatar,
+.specialist-detail-avatar {
+  object-position: center;
+}
+
+.specialist-card .project-cover {
+  aspect-ratio: 16 / 10;
+}

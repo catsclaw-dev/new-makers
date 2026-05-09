@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load project_extras %}
 {% block title %}Каталог проектов — MeetService{% endblock %}
 {% block content %}
     <section class="container page-head">
@@ -77,15 +78,11 @@
             {% if page_obj.paginator.num_pages > 1 %}
                 <nav class="pagination">
                     {% if page_obj.has_previous %}
-                        <a href="?page={{ page_obj.previous_page_number }}&q={{ query }}&technology={{ technology_slug }}&role={{ role_slug }}&ordering={{ ordering }}">
-                            ← Назад
-                        </a>
+                        <a href="?{% current_query_string page=page_obj.previous_page_number %}">← Назад</a>
                     {% endif %}
                     <span>Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
                     {% if page_obj.has_next %}
-                        <a href="?page={{ page_obj.next_page_number }}&q={{ query }}&technology={{ technology_slug }}&role={{ role_slug }}&ordering={{ ordering }}">
-                            Вперёд →
-                        </a>
+                        <a href="?{% current_query_string page=page_obj.next_page_number %}">Вперёд →</a>
                     {% endif %}
                 </nav>
             {% endif %}

@@ -1,4 +1,5 @@
 {% load static %}
+{% load project_extras %}
 <!DOCTYPE html>
 <html lang="ru">
     <head>
@@ -12,11 +13,11 @@
     <body>
         <header class="site-header">
             <div class="container header-inner">
-                <a class="logo" href="{% url 'projects:home' %}">MeetService</a>
+                <a class="logo" href="{% url 'projects:home' %}">{% service_name %}</a>
                 <nav class="nav">
                     <a href="{% url 'projects:home' %}">Главная</a>
                     <a href="{% url 'projects:project_list' %}">Проекты</a>
-                    <a href="#">Специалисты</a>
+                    <a href="{% url 'specialists:specialist_list' %}">Специалисты</a>
                     <a href="#">О сервисе</a>
                 </nav>
                 <div class="header-actions">

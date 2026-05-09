@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}{{ specialist.get_display_name }} — MeetService{% endblock %}
+{% block content %}
+    <section class="container detail-layout">
+        <article class="detail-main">
+            {% if specialist.avatar %}
+                <img class="detail-cover specialist-detail-avatar"
+                     src="{{ specialist.avatar.url }}"
+                     alt="{{ specialist.get_display_name }}">
+            {% endif %}
+            <p class="eyebrow">{{ specialist.get_status_display }}</p>
+            <h1>{{ specialist.get_display_name }}</h1>
+            <p class="lead">{{ specialist.bio|default:"Специалист пока не добавил описание." }}</p>
+            <div class="tag-row">
+                {% if specialist.main_role %}<span class="tag">{{ specialist.main_role.name }}</span>{% endif %}
+                <span class="tag">{{ specialist.get_level_display }}</span>
+                {% for technology in specialist.technologies.all %}
+                    <span class="tag">{{ technology.name }}</span>
+                {% empty %}
+                    <span class="tag">Стек не указан</span>
+                {% endfor %}
+            </div>
+            <h2>Опыт</h2>
+            <p>{{ specialist.experience_years }} лет опыта</p>
+            <h2>Участие в проектах</h2>
+            <div class="mini-list">
+                {% for membership in memberships %}
+                    <article class="mini-card">
+                        <h3>
+                            <a href="{{ membership.project.get_absolute_url }}">{{ membership.project.title }}</a>
+                        </h3>
+                        <p>{{ membership.role.name }}</p>
+                        <span>{{ membership.get_status_display }}</span>
+                    </article>
+                {% empty %}
+                    <p class="empty">Пока нет участия в проектах.</p>
+                {% endfor %}
+            </div>
+        </article>
+        <aside class="detail-sidebar">
+            <div class="action-card">
+                <h2>Контакты и ссылки</h2>
+                {% if specialist.github_url %}
+                    <a class="btn btn-secondary full-width"
+                       href="{{ specialist.github_url }}"
+                       target="_blank">GitHub</a>
+                {% endif %}
+                {% if specialist.gitlab_url %}
+                    <a class="btn btn-secondary full-width"
+                       href="{{ specialist.gitlab_url }}"
+                       target="_blank">GitLab</a>
+                {% endif %}
+                {% if specialist.portfolio_url %}
+                    <a class="btn btn-secondary full-width"
+                       href="{{ specialist.portfolio_url }}"
+                       target="_blank">Портфолио</a>
+                {% endif %}
+                <a class="btn btn-primary full-width" href="#">Пригласить в проект</a>
+            </div>
+        </aside>
+    </section>
+{% endblock %}
