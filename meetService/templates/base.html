@@ -1,52 +1,51 @@
 {% load static %}
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ru">
-
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>{% block title %}MeetService{% endblock %}</title>
-  <link rel="stylesheet" href="{% static 'css/site.css' %}" />
-</head>
-
-<body>
-  <header class="site-header">
-    <div class="container header-inner">
-      <a class="logo" href="{% url 'projects:home' %}">MeetService</a>
-
-      <nav class="nav">
-        <a href="{% url 'projects:home' %}">Главная</a>
-        <a href="{% url 'projects:project_list' %}">Проекты</a>
-        <a href="#">Специалисты</a>
-        <a href="#">О сервисе</a>
-      </nav>
-
-      <div class="header-actions">
-        {% if user.is_authenticated %}
-        <span class="user-pill">{{ user.username }}</span>
-        {% else %}
-        <a class="btn btn-secondary" href="#">Вход</a>
-        <a class="btn btn-primary" href="#">Регистрация</a>
-        {% endif %}
-      </div>
-    </div>
-  </header>
-
-  <main>
-    {% if messages %}
-    <section class="container messages">
-      {% for message in messages %}
-      <div class="message">{{ message }}</div>
-      {% endfor %}
-    </section>
-    {% endif %} {% block content %}{% endblock %}
-  </main>
-
-  <footer class="site-footer">
-    <div class="container">
-      <p>MeetService — интернет-сервис по поиску IT-команды.</p>
-    </div>
-  </footer>
-</body>
-
-</html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>
+            {% block title %}MeetService{% endblock %}
+        </title>
+        <link rel="stylesheet" href="{% static 'css/site.css' %}" />
+    </head>
+    <body>
+        <header class="site-header">
+            <div class="container header-inner">
+                <a class="logo" href="{% url 'projects:home' %}">MeetService</a>
+                <nav class="nav">
+                    <a href="{% url 'projects:home' %}">Главная</a>
+                    <a href="{% url 'projects:project_list' %}">Проекты</a>
+                    <a href="#">Специалисты</a>
+                    <a href="#">О сервисе</a>
+                </nav>
+                <div class="header-actions">
+                    {% if user.is_authenticated %}
+                        <a class="user-pill" href="{% url 'accounts:profile' %}">{{ user.username }}</a>
+                        <form class="inline-form"
+                              method="post"
+                              action="{% url 'accounts:logout' %}">
+                            {% csrf_token %}
+                            <button class="btn btn-secondary" type="submit">Выход</button>
+                        </form>
+                    {% else %}
+                        <a class="btn btn-secondary" href="{% url 'accounts:login' %}">Вход</a>
+                        <a class="btn btn-primary" href="{% url 'accounts:register' %}">Регистрация</a>
+                    {% endif %}
+                </div>
+            </header>
+            <main>
+                {% if messages %}
+                    <section class="container messages">
+                        {% for message in messages %}<div class="message">{{ message }}</div>{% endfor %}
+                    </section>
+                {% endif %}
+                {% block content %}{% endblock %}
+            </main>
+            <footer class="site-footer">
+                <div class="container">
+                    <p>MeetService — интернет-сервис по поиску IT-команды.</p>
+                </div>
+            </footer>
+        </body>
+    </html>

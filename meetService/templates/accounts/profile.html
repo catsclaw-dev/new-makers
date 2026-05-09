@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Личный кабинет — MeetService{% endblock %}
+{% block content %}
+    <section class="container page-head">
+        <p class="eyebrow">личный кабинет</p>
+        <h1>{{ user.get_full_name|default:user.username }}</h1>
+        <p>Здесь будет центр управления профилем, проектами, откликами и приглашениями.</p>
+    </section>
+    <section class="container two-columns">
+        <article class="action-card">
+            <h2>Аккаунт</h2>
+            <p>
+                <strong>Логин:</strong> {{ user.username }}
+            </p>
+            <p>
+                <strong>Email:</strong> {{ user.email }}
+            </p>
+            <p>
+                <strong>Роль:</strong> {{ user.get_role_display }}
+            </p>
+        </article>
+        <article class="action-card">
+            <h2>Профиль специалиста</h2>
+            {% if specialist_profile %}
+                <p>
+                    <strong>Статус:</strong> {{ specialist_profile.get_status_display }}
+                </p>
+                <p>
+                    <strong>Уровень:</strong> {{ specialist_profile.get_level_display }}
+                </p>
+                <p>
+                    <strong>Основная роль:</strong> {{ specialist_profile.main_role|default:"не указана" }}
+                </p>
+            {% else %}
+                <p class="empty">Профиль специалиста ещё не создан для этого аккаунта.</p>
+            {% endif %}
+        </article>
+    </section>
+{% endblock %}

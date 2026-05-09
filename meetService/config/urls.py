@@ -27,6 +27,7 @@ admin.site.index_title = "Админка сервиса по поиску IT-к�
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("apps.projects.urls")),
+    path("", include("apps.accounts.urls")),
 ]
 
 if settings.DEBUG:
