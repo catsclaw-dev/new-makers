@@ -85,7 +85,8 @@
                        href="{{ project.demo_url }}"
                        target="_blank">Демо</a>
                 {% endif %}
-                <a class="btn btn-primary full-width" href="#">Хочу в команду</a>
+                <a class="btn btn-primary full-width"
+                   href="{% url 'interactions:project_apply' project.slug %}">Хочу в команду</a>
                 <a class="btn btn-secondary full-width" href="#">В избранное</a>
             </div>
             <div class="action-card">

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Отклик на проект — MeetService{% endblock %}
+{% block content %}
+<section class="container auth-page">
+  <div class="auth-card">
+    <p class="eyebrow">отклик</p>
+    <h1>{{ project.title }}</h1>
+    <p class="lead">Выбери открытую роль и отправь короткое сообщение владельцу проекта.</p>
+    <form method="post" class="form-grid">
+      {% csrf_token %}
+      {% if form.non_field_errors %}<div class="form-errors">{{ form.non_field_errors }}</div>{% endif %}
+      {% for field in form %}
+      <label>
+        {{ field.label }}
+        {{ field }}
+        {% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}
+        {% for error in field.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
+      </label>
+      {% endfor %}
+      <button class="btn btn-primary full-width" type="submit">Отправить отклик</button>
+    </form>
+    <p class="auth-switch">
+      <a href="{{ project.get_absolute_url }}">← Вернуться к проекту</a>
+    </p>
+  </div>
+</section>
+{% endblock %}

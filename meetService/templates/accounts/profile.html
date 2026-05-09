@@ -36,4 +36,14 @@
             {% endif %}
         </article>
     </section>
+    <section class="container section">
+        <div class="action-card">
+            <h2>Быстрые действия</h2>
+            <div class="hero-actions">
+                <a class="btn btn-primary"
+                   href="{% url 'interactions:application_list' %}">Мои отклики</a>
+                <a class="btn btn-secondary" href="{% url 'projects:project_list' %}">Найти проект</a>
+            </div>
+        </div>
+    </section>
 {% endblock %}

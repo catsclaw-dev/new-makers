@@ -29,6 +29,7 @@ urlpatterns = [
     path("", include("apps.projects.urls")),
     path("accounts/", include("apps.accounts.urls")),
     path("specialists/", include("apps.specialists.urls")),
+    path("", include("apps.interactions.urls")),
 ]
 
 if settings.DEBUG:
