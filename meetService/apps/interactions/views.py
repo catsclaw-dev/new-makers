@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404, redirect, render
 
 from apps.interactions.forms import ApplicationForm
-from apps.interactions.models import Application
+from apps.interactions.models import Application, FavoriteProject
 from apps.projects.models import Project
 from apps.specialists.models import SpecialistProfile
 
@@ -94,3 +94,42 @@ def application_list(request):
         "incoming_count": incoming_applications.count(),
     }
     return render(request, "interactions/application_list.html", context)
+
+
+@login_required
+def favorite_project_toggle(request, slug):
+    """Добавляет проект в избранное или удаляет его при повторном действии."""
+    project = get_object_or_404(Project.objects.published(), slug=slug)
+
+    favorite = FavoriteProject.objects.filter(
+        user=request.user,
+        project=project,
+    ).first()
+
+    if favorite:
+        favorite.delete()
+        messages.info(request, "Проект удалён из избранного.")
+    else:
+        FavoriteProject.objects.create(
+            user=request.user,
+            project=project,
+        )
+        messages.success(request, "Проект добавлен в избранное.")
+
+    return redirect(project.get_absolute_url())
+
+
+@login_required
+def favorite_project_list(request):
+    """Список избранных проектов текущего пользователя."""
+    favorites = (
+        FavoriteProject.objects.select_related("project", "project__owner")
+        .prefetch_related("project__technologies", "project__vacancies__role")
+        .filter(user=request.user)
+        .order_by("-pk")
+    )
+
+    context = {
+        "favorites": favorites,
+    }
+    return render(request, "interactions/favorite_project_list.html", context)

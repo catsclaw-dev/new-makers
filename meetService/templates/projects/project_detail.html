@@ -87,7 +87,17 @@
                 {% endif %}
                 <a class="btn btn-primary full-width"
                    href="{% url 'interactions:project_apply' project.slug %}">Хочу в команду</a>
-                <a class="btn btn-secondary full-width" href="#">В избранное</a>
+                <form method="post"
+                      action="{% url 'interactions:favorite_project_toggle' project.slug %}">
+                    {% csrf_token %}
+                    <button class="btn btn-secondary full-width" type="submit">
+                        {% if is_favorite %}
+                            Удалить из избранного
+                        {% else %}
+                            В избранное
+                        {% endif %}
+                    </button>
+                </form>
             </div>
             <div class="action-card">
                 <h2>Похожие проекты</h2>

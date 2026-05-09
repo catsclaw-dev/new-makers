@@ -24,6 +24,8 @@
                     {% if user.is_authenticated %}
                         <a class="user-pill" href="{% url 'accounts:profile' %}">{{ user.username }}</a>
                         <a class="user-pill" href="{% url 'interactions:application_list' %}">Отклики</a>
+                        <a class="user-pill"
+                           href="{% url 'interactions:favorite_project_list' %}">Избранное</a>
                         <form class="inline-form"
                               method="post"
                               action="{% url 'accounts:logout' %}">

@@ -6,6 +6,7 @@ from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404, render
 
 from apps.directories.models import Role, Technology
+from apps.interactions.models import FavoriteProject
 from apps.projects.models import Project
 from apps.specialists.models import SpecialistProfile
 
@@ -47,6 +48,7 @@ def home(request):
         ).distinct()
 
     new_projects_paginator = Paginator(projects, 3)
+
     urgent_projects_paginator = Paginator(
         Project.objects.urgent()
         .select_related("owner")
@@ -199,11 +201,20 @@ def project_detail(request, slug):
     memberships = project.memberships.select_related("specialist__user", "role")
     files = project.files.all()
 
+    is_favorite = False
+
+    if request.user.is_authenticated:
+        is_favorite = FavoriteProject.objects.filter(
+            user=request.user,
+            project=project,
+        ).exists()
+
     context = {
         "project": project,
         "open_vacancies": open_vacancies,
         "memberships": memberships,
         "files": files,
         "similar_projects": similar_projects,
+        "is_favorite": is_favorite,
     }
     return render(request, "projects/project_detail.html", context)
