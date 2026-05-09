@@ -2,7 +2,8 @@ from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.core.exceptions import ValidationError
 from django.db import models, transaction
-from django.db.models import F, Q, constraints
+from django.urls import reverse
+from django.db.models import F, Q, constraints, Count
 from django.utils import timezone
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
@@ -10,6 +11,45 @@ from simple_history.models import HistoricalRecords
 
 from apps.directories.models import Role, Technology
 from apps.specialists.models import SpecialistProfile
+
+
+class ProjectQuerySet(models.QuerySet):
+    """Набор запросов для проектов."""
+
+    def published(self):
+        """Возвращает только опубликованные проекты."""
+        return self.filter(status="published")
+
+    def with_open_vacancy_count(self):
+        """Добавляет количество открытых ролей к каждому проекту."""
+        return self.annotate(
+            open_vacancy_count=Count(
+                "vacancies",
+                filter=Q(vacancies__status="open"),
+            )
+        )
+
+    def urgent(self):
+        """Возвращает опубликованные проекты, где есть открытые роли."""
+        return (
+            self.published().with_open_vacancy_count().filter(open_vacancy_count__gt=0)
+        )
+
+
+class ProjectManager(models.Manager):
+    """Собственный менеджер модели Project."""
+
+    def get_queryset(self):
+        return ProjectQuerySet(self.model, using=self._db)
+
+    def published(self):
+        return self.get_queryset().published()
+
+    def with_open_vacancy_count(self):
+        return self.get_queryset().with_open_vacancy_count()
+
+    def urgent(self):
+        return self.get_queryset().urgent()
 
 
 class Project(models.Model):
@@ -38,6 +78,8 @@ class Project(models.Model):
         PUBLISHED = "published", _("Опубликован")
         CLOSED = "closed", _("Закрыт")
         ARCHIVED = "archived", _("Архив")
+
+    objects = ProjectManager()
 
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -149,7 +191,7 @@ class Project(models.Model):
         return self.title
 
     def get_absolute_url(self) -> str:
-        return f"/projects/{self.slug}/"
+        return reverse("projects:project_detail", kwargs={"slug": self.slug})
 
     def is_published(self) -> bool:
         """Проверяет, опубликован ли проект."""
