@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-from django.db import models
+from django.db import models, transaction
 from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404, render, redirect
 from django.core.exceptions import PermissionDenied
@@ -12,6 +12,7 @@ from apps.interactions.models import FavoriteProject
 from apps.projects.models import Project, ProjectMembership, ProjectVacancy
 from apps.specialists.models import SpecialistProfile
 from apps.projects.forms import ProjectForm, ProjectVacancyForm
+
 
 def home(request):
     """Главная страница сервиса с поиском, виджетами и агрегатами."""
@@ -176,8 +177,7 @@ def project_detail(request, slug):
     Черновики, архивные и закрытые проекты видит только владелец или администратор.
     """
     project = get_object_or_404(
-        Project.objects.select_related("owner")
-        .prefetch_related(
+        Project.objects.select_related("owner").prefetch_related(
             "technologies",
             "vacancies__role",
             "memberships__specialist__user",
@@ -212,6 +212,7 @@ def project_detail(request, slug):
 
     is_favorite = False
     is_team_member = False
+    can_manage_project = project.can_be_edited_by(request.user)
 
     if request.user.is_authenticated:
         is_favorite = FavoriteProject.objects.filter(
@@ -236,8 +237,10 @@ def project_detail(request, slug):
         "similar_projects": similar_projects,
         "is_favorite": is_favorite,
         "is_team_member": is_team_member,
+        "can_manage_project": can_manage_project,
     }
     return render(request, "projects/project_detail.html", context)
+
 
 @login_required
 def my_projects(request):
@@ -280,32 +283,42 @@ def my_teams(request):
     }
     return render(request, "projects/my_teams.html", context)
 
+
 @login_required
 def project_create(request):
-    """Создание нового проекта владельцем."""
+    """Создание нового проекта вместе с первой открытой ролью."""
     if request.method == "POST":
         form = ProjectForm(request.POST, request.FILES)
+        vacancy_form = ProjectVacancyForm(request.POST)
 
-        if form.is_valid():
-            project = form.save(commit=False)
-            project.owner = request.user
-            project.status = Project.Status.DRAFT
-            project.created_by = request.user
-            project.updated_by = request.user
-            project.save()
+        if form.is_valid() and vacancy_form.is_valid():
+            with transaction.atomic():
+                project = form.save(commit=False)
+                project.owner = request.user
+                project.status = Project.Status.DRAFT
+                project.created_by = request.user
+                project.updated_by = request.user
+                project.save()
 
-            form.save_technologies(project)
+                form.save_technologies(project)
+
+                vacancy = vacancy_form.save(commit=False)
+                vacancy.project = project
+                vacancy.status = ProjectVacancy.Status.OPEN
+                vacancy.save()
 
             messages.success(
                 request,
-                "Проект создан. Теперь добавь открытую роль, чтобы его можно было опубликовать.",
+                "Проект создан как черновик. Первая открытая роль добавлена.",
             )
-            return redirect("projects:project_vacancy_create", slug=project.slug)
+            return redirect(project.get_absolute_url())
     else:
         form = ProjectForm()
+        vacancy_form = ProjectVacancyForm()
 
     context = {
         "form": form,
+        "vacancy_form": vacancy_form,
         "page_title": "Создать проект",
         "submit_text": "Создать проект",
     }
@@ -318,7 +331,9 @@ def project_update(request, slug):
     project = get_object_or_404(Project, slug=slug)
 
     if not project.can_be_edited_by(request.user):
-        raise PermissionDenied("Редактировать проект может только владелец или администратор.")
+        raise PermissionDenied(
+            "Редактировать проект может только владелец или администратор."
+        )
 
     if request.method == "POST":
         form = ProjectForm(request.POST, request.FILES, instance=project)
@@ -350,7 +365,9 @@ def project_delete(request, slug):
     project = get_object_or_404(Project, slug=slug)
 
     if not project.can_be_edited_by(request.user):
-        raise PermissionDenied("Удалить проект может только владелец или администратор.")
+        raise PermissionDenied(
+            "Удалить проект может только владелец или администратор."
+        )
 
     if request.method == "POST":
         project_title = project.title
@@ -371,7 +388,9 @@ def project_vacancy_create(request, slug):
     project = get_object_or_404(Project, slug=slug)
 
     if not project.can_be_edited_by(request.user):
-        raise PermissionDenied("Добавлять роли может только владелец проекта или администратор.")
+        raise PermissionDenied(
+            "Добавлять роли может только владелец проекта или администратор."
+        )
 
     if request.method == "POST":
         form = ProjectVacancyForm(request.POST)
@@ -394,3 +413,40 @@ def project_vacancy_create(request, slug):
     }
     return render(request, "projects/vacancy_form.html", context)
 
+
+@login_required
+def project_submit_for_moderation(request, slug):
+    """Отправляет черновик проекта на модерацию."""
+    project = get_object_or_404(Project, slug=slug)
+
+    if not project.can_be_edited_by(request.user):
+        raise PermissionDenied(
+            "Отправить проект на модерацию может только владелец или администратор."
+        )
+
+    if request.method != "POST":
+        return redirect(project.get_absolute_url())
+
+    if project.status != Project.Status.DRAFT:
+        messages.error(request, "На модерацию можно отправить только черновик.")
+        return redirect(project.get_absolute_url())
+
+    has_open_vacancies = ProjectVacancy.objects.filter(
+        project=project,
+        status=ProjectVacancy.Status.OPEN,
+        current_count__lt=models.F("required_count"),
+    ).exists()
+
+    if not has_open_vacancies:
+        messages.error(
+            request,
+            "Перед отправкой на модерацию добавь хотя бы одну открытую роль.",
+        )
+        return redirect(project.get_absolute_url())
+
+    project.status = Project.Status.MODERATION
+    project.updated_by = request.user
+    project.save(update_fields=["status", "updated_by", "updated_at"])
+
+    messages.success(request, "Проект отправлен на рассмотрение модератору.")
+    return redirect(project.get_absolute_url())

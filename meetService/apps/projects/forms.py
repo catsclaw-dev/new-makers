@@ -135,7 +135,6 @@ class ProjectForm(forms.ModelForm):
         """Очищает название проекта."""
         return self.cleaned_data["title"].strip()
 
-
     def save_technologies(self, project):
         """Сохраняет выбранные технологии через промежуточную модель."""
         selected_technologies = self.cleaned_data.get("technologies", [])
@@ -165,7 +164,6 @@ class ProjectVacancyForm(forms.ModelForm):
             "description",
             "required_level",
             "required_count",
-            "status",
         )
         labels = {
             "role": "Роль",
@@ -173,7 +171,6 @@ class ProjectVacancyForm(forms.ModelForm):
             "description": "Описание роли",
             "required_level": "Требуемый уровень",
             "required_count": "Сколько человек нужно",
-            "status": "Статус",
         }
         help_texts = {
             "role": "Выбери роль из справочника.",
@@ -212,7 +209,6 @@ class ProjectVacancyForm(forms.ModelForm):
                     "max": 20,
                 }
             ),
-            "status": forms.Select(attrs={"class": "form-control"}),
         }
 
     class Media:

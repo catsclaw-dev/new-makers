@@ -85,23 +85,42 @@
                        href="{{ project.demo_url }}"
                        target="_blank">Демо</a>
                 {% endif %}
-                {% if is_team_member %}
-                    <button class="btn btn-secondary full-width" type="button" disabled>Ты уже в команде</button>
-                {% else %}
-                    <a class="btn btn-primary full-width"
-                       href="{% url 'interactions:project_apply' project.slug %}">Хочу в команду</a>
-                {% endif %}
-                <form method="post"
-                      action="{% url 'interactions:favorite_project_toggle' project.slug %}">
-                    {% csrf_token %}
-                    <button class="btn btn-secondary full-width" type="submit">
-                        {% if is_favorite %}
-                            Удалить из избранного
-                        {% else %}
-                            В избранное
+                {% if can_manage_project %}
+                    <div class="owner-actions">
+                        <h3>Управление проектом</h3>
+                        <a class="btn btn-secondary full-width"
+                           href="{% url 'projects:project_update' project.slug %}">Редактировать проект</a>
+                        <a class="btn btn-secondary full-width"
+                           href="{% url 'projects:project_vacancy_create' project.slug %}">Добавить открытую роль</a>
+                        {% if project.status == "draft" %}
+                            <form method="post"
+                                  action="{% url 'projects:project_submit_for_moderation' project.slug %}">
+                                {% csrf_token %}
+                                <button class="btn btn-primary full-width" type="submit">Отправить на рассмотрение</button>
+                            </form>
+                        {% elif project.status == "moderation" %}
+                            <p class="empty">Проект уже отправлен на модерацию.</p>
                         {% endif %}
-                    </button>
-                </form>
+                    </div>
+                {% else %}
+                    {% if is_team_member %}
+                        <button class="btn btn-secondary full-width" type="button" disabled>Ты уже в команде</button>
+                    {% else %}
+                        <a class="btn btn-primary full-width"
+                           href="{% url 'interactions:project_apply' project.slug %}">Хочу в команду</a>
+                    {% endif %}
+                    <form method="post"
+                          action="{% url 'interactions:favorite_project_toggle' project.slug %}">
+                        {% csrf_token %}
+                        <button class="btn btn-secondary full-width" type="submit">
+                            {% if is_favorite %}
+                                Удалить из избранного
+                            {% else %}
+                                В избранное
+                            {% endif %}
+                        </button>
+                    </form>
+                {% endif %}
             </div>
             <div class="action-card">
                 <h2>Похожие проекты</h2>

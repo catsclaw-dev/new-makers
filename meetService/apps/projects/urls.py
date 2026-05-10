@@ -9,6 +9,11 @@ urlpatterns = [
     path("projects/", views.project_list, name="project_list"),
     path("projects/my/", views.my_projects, name="my_projects"),
     path("projects/create/", views.project_create, name="project_create"),
+    path(
+        "projects/<str:slug>/submit-for-moderation",
+        views.project_submit_for_moderation,
+        name="project_submit_for_moderation",
+    ),
     path("projects/<str:slug>/edit/", views.project_update, name="project_update"),
     path("projects/<str:slug>/delete/", views.project_delete, name="project_delete"),
     path(
