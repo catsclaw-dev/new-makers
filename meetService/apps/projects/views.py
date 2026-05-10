@@ -310,25 +310,72 @@ def my_projects(request):
 
 @login_required
 def my_teams(request):
-    """Проекты, в командах которых состоит текущий специалист."""
+    """Проекты, в командах которых состоит или состоял текущий специалист."""
     specialist_profile = getattr(request.user, "specialist_profile", None)
 
     memberships = ProjectMembership.objects.none()
+    archived_memberships = ProjectMembership.objects.none()
 
     if specialist_profile is not None:
         memberships = (
-            ProjectMembership.objects.select_related("project", "role")
+            ProjectMembership.objects.select_related(
+                "project",
+                "project__owner",
+                "role",
+            )
             .prefetch_related("project__technologies")
             .filter(
                 specialist=specialist_profile,
                 status=ProjectMembership.Status.ACTIVE,
             )
+            .exclude(project__status=Project.Status.ARCHIVED)
             .order_by("-joined_at")
+        )
+
+        archived_memberships = (
+            ProjectMembership.objects.select_related(
+                "project",
+                "project__owner",
+                "role",
+            )
+            .prefetch_related("project__technologies")
+            .filter(
+                specialist=specialist_profile,
+                project__status=Project.Status.ARCHIVED,
+            )
+            .order_by("-joined_at")
+        )
+
+    memberships_paginator = Paginator(memberships, 9)
+    archived_memberships_paginator = Paginator(archived_memberships, 9)
+
+    memberships_page_number = request.GET.get("page", 1)
+    archive_page_number = request.GET.get("archive_page", 1)
+
+    try:
+        memberships_page = memberships_paginator.page(memberships_page_number)
+    except PageNotAnInteger:
+        memberships_page = memberships_paginator.page(1)
+    except EmptyPage:
+        memberships_page = memberships_paginator.page(memberships_paginator.num_pages)
+
+    try:
+        archived_memberships_page = archived_memberships_paginator.page(
+            archive_page_number
+        )
+    except PageNotAnInteger:
+        archived_memberships_page = archived_memberships_paginator.page(1)
+    except EmptyPage:
+        archived_memberships_page = archived_memberships_paginator.page(
+            archived_memberships_paginator.num_pages
         )
 
     context = {
         "specialist_profile": specialist_profile,
-        "memberships": memberships,
+        "memberships": memberships_page,
+        "archived_memberships": archived_memberships_page,
+        "memberships_count": memberships.count(),
+        "archived_memberships_count": archived_memberships.count(),
     }
     return render(request, "projects/my_teams.html", context)
 

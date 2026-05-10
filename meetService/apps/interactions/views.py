@@ -297,20 +297,31 @@ def invitation_decline(request, pk):
     return redirect("interactions:invitation_list")
 
 
+def get_applications_available_for_review(user):
+    """Возвращает отклики, которые пользователь может принять или отклонить."""
+    applications = Application.objects.select_related(
+        "project",
+        "vacancy",
+        "vacancy__role",
+        "specialist",
+        "specialist__user",
+    ).filter(
+        status=Application.Status.PENDING,
+    )
+
+    if user.is_staff or user.is_superuser:
+        return applications
+
+    return applications.filter(project__owner=user)
+
+
 @login_required
 @require_POST
 def application_accept(request, pk):
-    """Принятие отклика владельцем проекта."""
+    """Принятие отклика владельцем проекта или администратором."""
     application = get_object_or_404(
-        Application.objects.select_related(
-            "project",
-            "vacancy",
-            "vacancy__role",
-            "specialist",
-            "specialist__user",
-        ),
+        get_applications_available_for_review(request.user),
         pk=pk,
-        status=Application.Status.PENDING,
     )
 
     try:
@@ -331,11 +342,10 @@ def application_accept(request, pk):
 @login_required
 @require_POST
 def application_reject(request, pk):
-    """Отклонение отклика владельцем проекта."""
+    """Отклонение отклика владельцем проекта или администратором."""
     application = get_object_or_404(
-        Application.objects.select_related("project"),
+        get_applications_available_for_review(request.user),
         pk=pk,
-        status=Application.Status.PENDING,
     )
 
     try:

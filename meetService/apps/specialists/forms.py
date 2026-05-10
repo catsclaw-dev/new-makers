@@ -1,0 +1,137 @@
+from django import forms
+
+from apps.specialists.models import SpecialistProfile
+
+
+class SpecialistProfileForm(forms.ModelForm):
+    """Форма создания и редактирования профиля специалиста."""
+
+    class Meta:
+        model = SpecialistProfile
+        fields = [
+            "avatar",
+            "main_role",
+            "level",
+            "status",
+            "bio",
+            "experience_years",
+            "github_url",
+            "gitlab_url",
+            "portfolio_url",
+        ]
+
+        widgets = {
+            "avatar": forms.ClearableFileInput(
+                attrs={
+                    "class": "form-control",
+                }
+            ),
+            "main_role": forms.Select(
+                attrs={
+                    "class": "form-control",
+                }
+            ),
+            "level": forms.Select(
+                attrs={
+                    "class": "form-control",
+                }
+            ),
+            "status": forms.Select(
+                attrs={
+                    "class": "form-control",
+                }
+            ),
+            "bio": forms.Textarea(
+                attrs={
+                    "class": "form-control",
+                    "rows": 6,
+                    "placeholder": "Расскажи о своём опыте, интересах и проектах.",
+                }
+            ),
+            "experience_years": forms.NumberInput(
+                attrs={
+                    "class": "form-control",
+                    "min": 0,
+                    "max": 60,
+                }
+            ),
+            "github_url": forms.URLInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "https://github.com/username",
+                }
+            ),
+            "gitlab_url": forms.URLInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "https://gitlab.com/username",
+                }
+            ),
+            "portfolio_url": forms.URLInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "https://example.com",
+                }
+            ),
+        }
+
+        labels = {
+            "avatar": "Аватар",
+            "main_role": "Основная роль",
+            "level": "Уровень",
+            "status": "Статус поиска",
+            "bio": "О себе",
+            "experience_years": "Опыт, лет",
+            "github_url": "GitHub",
+            "gitlab_url": "GitLab",
+            "portfolio_url": "Портфолио",
+        }
+
+        help_texts = {
+            "main_role": "Выбери роль, по которой тебя будут чаще всего искать.",
+            "status": "Например: ищу проект, открыт к предложениям или занят.",
+            "bio": "Коротко опиши стек, опыт и тип проектов, которые тебе интересны.",
+        }
+
+        error_messages = {
+            "bio": {
+                "required": "Расскажи немного о себе.",
+            },
+            "experience_years": {
+                "min_value": "Опыт не может быть отрицательным.",
+                "max_value": "Проверь значение опыта.",
+            },
+        }
+
+    def clean_experience_years(self):
+        """Проверяет корректность опыта."""
+        experience_years = self.cleaned_data.get("experience_years")
+
+        if experience_years is not None and experience_years > 60:
+            raise forms.ValidationError("Опыт не может быть больше 60 лет.")
+
+        return experience_years
+
+    def clean_bio(self):
+        """Очищает описание специалиста."""
+        bio = self.cleaned_data.get("bio", "").strip()
+
+        if bio and len(bio) < 20:
+            raise forms.ValidationError(
+                "Если заполняешь описание, оно должно быть не короче 20 символов."
+            )
+
+        return bio
+
+    def save(self, commit=True):
+        """Сохраняет профиль специалиста через commit=False."""
+        profile = super().save(commit=False)
+
+        if profile.bio:
+            profile.bio = profile.bio.strip()
+
+        if commit:
+            profile.save()
+            self.save_m2m()
+
+        return profile

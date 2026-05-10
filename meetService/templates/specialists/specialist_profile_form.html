@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}{{ page_title }} — MeetService{% endblock %}
+{% block content %}
+<section class="container page-head">
+  <p class="eyebrow">профиль специалиста</p>
+  <h1>{{ page_title }}</h1>
+  <p>
+    Заполни анкету, чтобы откликаться на проекты, получать приглашения
+    и отображаться в каталоге специалистов.
+  </p>
+</section>
+<section class="container section">
+  <form class="form-card" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% if form.non_field_errors %}<div class="form-errors">{{ form.non_field_errors }}</div>{% endif %}
+    {% for field in form %}
+    <div class="form-field">
+      <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+      {{ field }}
+      {% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}
+      {% if field.errors %}<div class="field-errors">{{ field.errors }}</div>{% endif %}
+    </div>
+    {% endfor %}
+    <div class="form-actions">
+      <button class="btn btn-primary" type="submit">{{ submit_text }}</button>
+      <a class="btn btn-secondary" href="{% url 'projects:my_teams' %}">Отмена</a>
+    </div>
+  </form>
+</section>
+{% endblock %}

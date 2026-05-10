@@ -1,60 +1,172 @@
 {% extends "base.html" %}
 {% block title %}Мои команды — MeetService{% endblock %}
 {% block content %}
-<section class="container page-head">
-  <p class="eyebrow">специалист</p>
-  <h1>Мои команды</h1>
-  <p>Здесь отображаются проекты, где ты являешься участником команды.</p>
-</section>
-<section class="container section">
-  <div class="cards-grid">
+    <section class="container page-head">
+        <p class="eyebrow">участие в проектах</p>
+        <h1>Мои команды</h1>
+        <p>
+            Здесь отображаются проекты, где ты состоишь или состоял в команде как специалист.
+            Активных участий: {{ memberships_count }}.
+            Архивных участий: {{ archived_memberships_count }}.
+        </p>
+    </section>
     {% if not specialist_profile %}
-    <article class="action-card">
-      <h2>Профиль специалиста не найден</h2>
-      <p class="empty">Команды доступны пользователям с профилем специалиста.</p>
-    </article>
+        <section class="container section">
+            <article class="action-card">
+                <h2>Профиль специалиста не найден</h2>
+                <p class="empty">
+                    Чтобы состоять в командах, откликаться на проекты и принимать приглашения,
+                    сначала нужно заполнить профиль специалиста.
+                </p>
+                <a class="btn btn-primary"
+                   href="{% url 'specialists:specialist_profile_edit' %}">Заполнить профиль специалиста</a>
+            </article>
+        </section>
+    {% else %}
+        <section class="container section">
+            <div class="section-head">
+                <div>
+                    <p class="eyebrow">текущая работа</p>
+                    <h2>Мои команды</h2>
+                </div>
+                <p class="empty">Здесь проекты, где ты сейчас состоишь в активной команде.</p>
+            </div>
+            <div class="cards-grid">
+                {% for membership in memberships %}
+                    <article class="project-card">
+                        {% if membership.project.cover_image %}
+                            <img class="project-cover"
+                                 src="{{ membership.project.cover_image.url }}"
+                                 alt="{{ membership.project.title }}">
+                        {% else %}
+                            <div class="project-cover project-cover-placeholder">
+                                <span>TEAM</span>
+                            </div>
+                        {% endif %}
+                        <div class="project-card-body">
+                            <div>
+                                <div class="card-meta">
+                                    <span>{{ membership.role.name }}</span>
+                                    <span>{{ membership.get_status_display }}</span>
+                                </div>
+                                <h3>
+                                    <a href="{{ membership.project.get_absolute_url }}">{{ membership.project.title }}</a>
+                                </h3>
+                                <p class="project-description">{{ membership.project.short_description }}</p>
+                            </div>
+                            <div class="project-card-bottom">
+                                <div class="tag-row">
+                                    {% for technology in membership.project.technologies.all|slice:":4" %}
+                                        <span class="tag">{{ technology.name }}</span>
+                                    {% empty %}
+                                        <span class="tag">Стек не указан</span>
+                                    {% endfor %}
+                                </div>
+                                <div class="project-actions">
+                                    <a class="btn btn-secondary"
+                                       href="{{ membership.project.get_absolute_url }}">Открыть проект</a>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                {% empty %}
+                    <article class="action-card">
+                        <h2>Ты пока не состоишь в активных командах</h2>
+                        <p class="empty">Найди проект, отправь отклик или прими приглашение владельца.</p>
+                        <a class="btn btn-primary" href="{% url 'projects:project_list' %}">Найти проект</a>
+                    </article>
+                {% endfor %}
+            </div>
+            {% if memberships.has_other_pages %}
+                <nav class="pagination" aria-label="Пагинация моих команд">
+                    {% if memberships.has_previous %}
+                        <a class="btn btn-secondary"
+                           href="?page={{ memberships.previous_page_number }}&archive_page={{ archived_memberships.number }}">
+                            Назад
+                        </a>
+                    {% endif %}
+                    <span class="pagination-current">Страница {{ memberships.number }} из {{ memberships.paginator.num_pages }}</span>
+                    {% if memberships.has_next %}
+                        <a class="btn btn-secondary"
+                           href="?page={{ memberships.next_page_number }}&archive_page={{ archived_memberships.number }}">
+                            Вперёд
+                        </a>
+                    {% endif %}
+                </nav>
+            {% endif %}
+        </section>
+        <section class="container section">
+            <div class="section-head">
+                <div>
+                    <p class="eyebrow">история участия</p>
+                    <h2>Архивные команды</h2>
+                </div>
+                <p class="empty">Здесь проекты, которые были окончательно архивированы, но где ты был участником команды.</p>
+            </div>
+            <div class="cards-grid">
+                {% for membership in archived_memberships %}
+                    <article class="project-card project-card-archived">
+                        {% if membership.project.cover_image %}
+                            <img class="project-cover"
+                                 src="{{ membership.project.cover_image.url }}"
+                                 alt="{{ membership.project.title }}">
+                        {% else %}
+                            <div class="project-cover project-cover-placeholder">
+                                <span>HISTORY</span>
+                            </div>
+                        {% endif %}
+                        <div class="project-card-body">
+                            <div>
+                                <div class="card-meta">
+                                    <span>{{ membership.role.name }}</span>
+                                    <span>{{ membership.get_status_display }}</span>
+                                </div>
+                                <h3>
+                                    <a href="{{ membership.project.get_absolute_url }}">{{ membership.project.title }}</a>
+                                </h3>
+                                <p class="project-description">{{ membership.project.short_description }}</p>
+                            </div>
+                            <div class="project-card-bottom">
+                                <div class="tag-row">
+                                    {% for technology in membership.project.technologies.all|slice:":4" %}
+                                        <span class="tag">{{ technology.name }}</span>
+                                    {% empty %}
+                                        <span class="tag">Стек не указан</span>
+                                    {% endfor %}
+                                </div>
+                                <div class="project-actions">
+                                    <a class="btn btn-secondary"
+                                       href="{{ membership.project.get_absolute_url }}">Открыть историю</a>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                {% empty %}
+                    <article class="action-card">
+                        <h2>История участия пока пуста</h2>
+                        <p class="empty">Здесь появятся архивные проекты, где ты был участником команды.</p>
+                    </article>
+                {% endfor %}
+            </div>
+            {% if archived_memberships.has_other_pages %}
+                <nav class="pagination" aria-label="Пагинация архивных команд">
+                    {% if archived_memberships.has_previous %}
+                        <a class="btn btn-secondary"
+                           href="?page={{ memberships.number }}&archive_page={{ archived_memberships.previous_page_number }}">
+                            Назад
+                        </a>
+                    {% endif %}
+                    <span class="pagination-current">
+                        Страница {{ archived_memberships.number }} из {{ archived_memberships.paginator.num_pages }}
+                    </span>
+                    {% if archived_memberships.has_next %}
+                        <a class="btn btn-secondary"
+                           href="?page={{ memberships.number }}&archive_page={{ archived_memberships.next_page_number }}">
+                            Вперёд
+                        </a>
+                    {% endif %}
+                </nav>
+            {% endif %}
+        </section>
     {% endif %}
-    {% for membership in memberships %}
-    <article class="project-card">
-      {% if membership.project.cover_image %}
-      <img class="project-cover" src="{{ membership.project.cover_image.url }}" alt="{{ membership.project.title }}">
-      {% else %}
-      <div class="project-cover project-cover-placeholder">
-        <span>TEAM</span>
-      </div>
-      {% endif %}
-      <div class="project-card-body">
-        <div>
-          <div class="card-meta">
-            <span>{{ membership.role.name }}</span>
-            <span>{{ membership.get_status_display }}</span>
-          </div>
-          <h3>
-            <a href="{{ membership.project.get_absolute_url }}">{{ membership.project.title }}</a>
-          </h3>
-          <p class="project-description">{{ membership.project.short_description }}</p>
-        </div>
-        <div class="project-card-bottom">
-          <div class="tag-row">
-            {% for technology in membership.project.technologies.all|slice:":4" %}
-            <span class="tag">{{ technology.name }}</span>
-            {% empty %}
-            <span class="tag">Стек не указан</span>
-            {% endfor %}
-          </div>
-          <a class="card-link" href="{{ membership.project.get_absolute_url }}">Открыть проект</a>
-        </div>
-      </div>
-    </article>
-    {% empty %}
-    {% if specialist_profile %}
-    <article class="action-card">
-      <h2>Ты пока не состоишь в командах</h2>
-      <p class="empty">Найди проект, отправь отклик или прими приглашение владельца.</p>
-      <a class="btn btn-primary" href="{% url 'projects:project_list' %}">Найти проект</a>
-    </article>
-    {% endif %}
-    {% endfor %}
-  </div>
-</section>
 {% endblock %}

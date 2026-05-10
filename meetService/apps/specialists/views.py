@@ -1,10 +1,13 @@
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect, render, get_object_or_404
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import Q
-from django.shortcuts import get_object_or_404, render
 
 from apps.directories.models import Role, Technology
 from apps.projects.models import ProjectMembership
 from apps.specialists.models import SpecialistProfile
+from apps.specialists.forms import SpecialistProfileForm
 
 
 def specialist_list(request):
@@ -88,3 +91,49 @@ def specialist_detail(request, pk):
         "memberships": memberships,
     }
     return render(request, "specialists/specialist_detail.html", context)
+
+
+@login_required
+def specialist_profile_edit(request):
+    """Создание или редактирование профиля специалиста текущего пользователя."""
+    profile = SpecialistProfile.objects.filter(user=request.user).first()
+
+    if request.method == "POST":
+        form = SpecialistProfileForm(
+            request.POST,
+            request.FILES,
+            instance=profile,
+        )
+
+        if form.is_valid():
+            specialist_profile = form.save(commit=False)
+            specialist_profile.user = request.user
+
+            if profile is None:
+                specialist_profile.created_by = request.user
+
+            specialist_profile.updated_by = request.user
+            specialist_profile.save()
+            form.save_m2m()
+
+            messages.success(request, "Профиль специалиста сохранён.")
+            return redirect("projects:my_teams")
+
+        messages.error(
+            request,
+            "Профиль специалиста не сохранён. Проверь ошибки в форме.",
+        )
+    else:
+        form = SpecialistProfileForm(instance=profile)
+
+    context = {
+        "form": form,
+        "profile": profile,
+        "page_title": (
+            "Редактировать профиль специалиста"
+            if profile
+            else "Заполнить профиль специалиста"
+        ),
+        "submit_text": "Сохранить профиль",
+    }
+    return render(request, "specialists/specialist_profile_form.html", context)
