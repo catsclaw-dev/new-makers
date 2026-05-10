@@ -1,58 +1,68 @@
 {% extends "base.html" %}
 {% block title %}Мои проекты — MeetService{% endblock %}
 {% block content %}
-<section class="container page-head">
-  <p class="eyebrow">владелец проекта</p>
-  <h1>Мои проекты</h1>
-  <p>
-    Здесь собраны проекты, где в поле «владелец проекта» указан твой аккаунт.
-    Найдено: {{ projects_count }}.
-  </p>
-</section>
-<section class="container section">
-  <div class="cards-grid">
-    {% for project in projects %}
-    <article class="project-card">
-      {% if project.cover_image %}
-      <img class="project-cover" src="{{ project.cover_image.url }}" alt="{{ project.title }}">
-      {% else %}
-      <div class="project-cover project-cover-placeholder">
-        <span>IT</span>
-      </div>
-      {% endif %}
-      <div class="project-card-body">
-        <div>
-          <div class="card-meta">
-            <span>{{ project.get_status_display }}</span>
-            <span>{{ project.get_stage_display }}</span>
-          </div>
-          <h3>
-            <a href="{{ project.get_absolute_url }}">{{ project.title }}</a>
-          </h3>
-          <p class="project-description">{{ project.short_description }}</p>
+    <section class="container page-head">
+        <p class="eyebrow">владелец проекта</p>
+        <h1>Мои проекты</h1>
+        <p>
+            Здесь собраны проекты, где в поле «владелец проекта» указан твой аккаунт.
+            Найдено: {{ projects_count }}.
+        </p>
+        <div class="hero-actions">
+            <a class="btn btn-primary" href="{% url 'projects:project_create' %}">Создать проект</a>
         </div>
-        <div class="project-card-bottom">
-          <div class="tag-row">
-            {% for technology in project.technologies.all|slice:":4" %}
-            <span class="tag">{{ technology.name }}</span>
+    </section>
+    <section class="container section">
+        <div class="cards-grid">
+            {% for project in projects %}
+                <article class="project-card">
+                    {% if project.cover_image %}
+                        <img class="project-cover"
+                             src="{{ project.cover_image.url }}"
+                             alt="{{ project.title }}">
+                    {% else %}
+                        <div class="project-cover project-cover-placeholder">
+                            <span>IT</span>
+                        </div>
+                    {% endif %}
+                    <div class="project-card-body">
+                        <div>
+                            <div class="card-meta">
+                                <span>{{ project.get_status_display }}</span>
+                                <span>{{ project.get_stage_display }}</span>
+                            </div>
+                            <h3>
+                                <a href="{{ project.get_absolute_url }}">{{ project.title }}</a>
+                            </h3>
+                            <p class="project-description">{{ project.short_description }}</p>
+                        </div>
+                        <div class="project-card-bottom">
+                            <div class="tag-row">
+                                {% for technology in project.technologies.all|slice:":4" %}
+                                    <span class="tag">{{ technology.name }}</span>
+                                {% empty %}
+                                    <span class="tag">Стек не указан</span>
+                                {% endfor %}
+                            </div>
+                            <div class="project-actions">
+                                <a class="btn btn-secondary" href="{{ project.get_absolute_url }}">Открыть</a>
+                                <a class="btn btn-secondary"
+                                   href="{% url 'projects:project_vacancy_create' project.slug %}">Добавить роль</a>
+                                <a class="btn btn-primary"
+                                   href="{% url 'projects:project_update' project.slug %}">Редактировать</a>
+                                <a class="btn btn-secondary"
+                                   href="{% url 'projects:project_delete' project.slug %}">Удалить</a>
+                            </div>
+                        </div>
+                    </div>
+                </article>
             {% empty %}
-            <span class="tag">Стек не указан</span>
+                <article class="action-card">
+                    <h2>У тебя пока нет проектов</h2>
+                    <p class="empty">Создай первый проект. Он сохранится как черновик, после чего ты сможешь добавить открытую роль.</p>
+                    <a class="btn btn-primary" href="{% url 'projects:project_create' %}">Создать проект</a>
+                </article>
             {% endfor %}
-          </div>
-          <a class="card-link" href="{{ project.get_absolute_url }}">Открыть проект</a>
         </div>
-      </div>
-    </article>
-    {% empty %}
-    <article class="action-card">
-      <h2>У тебя пока нет проектов</h2>
-      <p class="empty">
-        Проекты появляются здесь только если в поле «владелец проекта»
-        указан твой аккаунт.
-      </p>
-      <a class="btn btn-primary" href="{% url 'projects:project_list' %}">Смотреть каталог</a>
-    </article>
-    {% endfor %}
-  </div>
-</section>
+    </section>
 {% endblock %}

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}{{ page_title }} — MeetService{% endblock %}
+{% block content %}
+<section class="container auth-page">
+  <div class="auth-card">
+    <p class="eyebrow">открытая роль</p>
+    <h1>{{ page_title }}</h1>
+    <p class="lead">
+      Проект: <strong>{{ project.title }}</strong>.
+      Добавь роль, на которую смогут откликаться специалисты.
+    </p>
+    <form method="post" class="form-grid">
+      {% csrf_token %}
+      {% if form.non_field_errors %}<div class="form-errors">{{ form.non_field_errors }}</div>{% endif %}
+      {% for field in form %}
+      <label>
+        {{ field.label }}
+        {{ field }}
+        {% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}
+        {% for error in field.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
+      </label>
+      {% endfor %}
+      <button class="btn btn-primary full-width" type="submit">{{ submit_text }}</button>
+    </form>
+    <p class="auth-switch">
+      <a href="{% url 'projects:my_projects' %}">← Вернуться к моим проектам</a>
+    </p>
+  </div>
+</section>
+{% endblock %}

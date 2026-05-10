@@ -1,16 +1,17 @@
-"""HTML-представления для проектов и главной страницы."""
-
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db import models
 from django.db.models import Count, Q
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
+from django.core.exceptions import PermissionDenied
+from django.contrib import messages
+from django.http import Http404
 
 from apps.directories.models import Role, Technology
 from apps.interactions.models import FavoriteProject
-from apps.projects.models import Project, ProjectMembership
+from apps.projects.models import Project, ProjectMembership, ProjectVacancy
 from apps.specialists.models import SpecialistProfile
-
+from apps.projects.forms import ProjectForm, ProjectVacancyForm
 
 def home(request):
     """Главная страница сервиса с поиском, виджетами и агрегатами."""
@@ -169,7 +170,11 @@ def project_list(request):
 
 
 def project_detail(request, slug):
-    """Детальная страница проекта."""
+    """Детальная страница проекта.
+
+    Опубликованные проекты видят все.
+    Черновики, архивные и закрытые проекты видит только владелец или администратор.
+    """
     project = get_object_or_404(
         Project.objects.select_related("owner")
         .prefetch_related(
@@ -178,10 +183,13 @@ def project_detail(request, slug):
             "memberships__specialist__user",
             "memberships__role",
             "files",
-        )
-        .filter(status=Project.Status.PUBLISHED),
+        ),
         slug=slug,
     )
+
+    if project.status != Project.Status.PUBLISHED:
+        if not project.can_be_edited_by(request.user):
+            raise Http404("Проект не найден.")
 
     technology_ids = project.technologies.values_list("id", flat=True)
 
@@ -195,7 +203,7 @@ def project_detail(request, slug):
     )
 
     open_vacancies = project.vacancies.filter(
-        status="open",
+        status=ProjectVacancy.Status.OPEN,
         current_count__lt=models.F("required_count"),
     ).select_related("role")
 
@@ -230,7 +238,6 @@ def project_detail(request, slug):
         "is_team_member": is_team_member,
     }
     return render(request, "projects/project_detail.html", context)
-
 
 @login_required
 def my_projects(request):
@@ -272,3 +279,118 @@ def my_teams(request):
         "memberships": memberships,
     }
     return render(request, "projects/my_teams.html", context)
+
+@login_required
+def project_create(request):
+    """Создание нового проекта владельцем."""
+    if request.method == "POST":
+        form = ProjectForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            project = form.save(commit=False)
+            project.owner = request.user
+            project.status = Project.Status.DRAFT
+            project.created_by = request.user
+            project.updated_by = request.user
+            project.save()
+
+            form.save_technologies(project)
+
+            messages.success(
+                request,
+                "Проект создан. Теперь добавь открытую роль, чтобы его можно было опубликовать.",
+            )
+            return redirect("projects:project_vacancy_create", slug=project.slug)
+    else:
+        form = ProjectForm()
+
+    context = {
+        "form": form,
+        "page_title": "Создать проект",
+        "submit_text": "Создать проект",
+    }
+    return render(request, "projects/project_form.html", context)
+
+
+@login_required
+def project_update(request, slug):
+    """Редактирование проекта владельцем или администратором."""
+    project = get_object_or_404(Project, slug=slug)
+
+    if not project.can_be_edited_by(request.user):
+        raise PermissionDenied("Редактировать проект может только владелец или администратор.")
+
+    if request.method == "POST":
+        form = ProjectForm(request.POST, request.FILES, instance=project)
+
+        if form.is_valid():
+            project = form.save(commit=False)
+            project.updated_by = request.user
+            project.save()
+
+            form.save_technologies(project)
+
+            messages.success(request, "Проект обновлён.")
+            return redirect(project.get_absolute_url())
+    else:
+        form = ProjectForm(instance=project)
+
+    context = {
+        "form": form,
+        "project": project,
+        "page_title": "Редактировать проект",
+        "submit_text": "Сохранить изменения",
+    }
+    return render(request, "projects/project_form.html", context)
+
+
+@login_required
+def project_delete(request, slug):
+    """Удаление проекта владельцем или администратором."""
+    project = get_object_or_404(Project, slug=slug)
+
+    if not project.can_be_edited_by(request.user):
+        raise PermissionDenied("Удалить проект может только владелец или администратор.")
+
+    if request.method == "POST":
+        project_title = project.title
+        project.delete()
+
+        messages.info(request, f"Проект «{project_title}» удалён.")
+        return redirect("projects:my_projects")
+
+    context = {
+        "project": project,
+    }
+    return render(request, "projects/project_confirm_delete.html", context)
+
+
+@login_required
+def project_vacancy_create(request, slug):
+    """Добавление открытой роли к проекту."""
+    project = get_object_or_404(Project, slug=slug)
+
+    if not project.can_be_edited_by(request.user):
+        raise PermissionDenied("Добавлять роли может только владелец проекта или администратор.")
+
+    if request.method == "POST":
+        form = ProjectVacancyForm(request.POST)
+
+        if form.is_valid():
+            vacancy = form.save(commit=False)
+            vacancy.project = project
+            vacancy.save()
+
+            messages.success(request, "Открытая роль добавлена к проекту.")
+            return redirect("projects:my_projects")
+    else:
+        form = ProjectVacancyForm()
+
+    context = {
+        "form": form,
+        "project": project,
+        "page_title": "Добавить открытую роль",
+        "submit_text": "Добавить роль",
+    }
+    return render(request, "projects/vacancy_form.html", context)
+
