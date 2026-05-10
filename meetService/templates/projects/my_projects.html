@@ -6,13 +6,21 @@
         <h1>Мои проекты</h1>
         <p>
             Здесь собраны проекты, где в поле «владелец проекта» указан твой аккаунт.
-            Найдено: {{ projects_count }}.
+            Активных проектов: {{ projects_count }}.
+            Архивных проектов: {{ archived_projects_count }}.
         </p>
         <div class="hero-actions">
             <a class="btn btn-primary" href="{% url 'projects:project_create' %}">Создать проект</a>
         </div>
     </section>
     <section class="container section">
+        <div class="section-head">
+            <div>
+                <p class="eyebrow">активная работа</p>
+                <h2>Мои проекты</h2>
+            </div>
+            <p class="empty">Показываются черновики, проекты на модерации, опубликованные и закрытые проекты.</p>
+        </div>
         <div class="cards-grid">
             {% for project in projects %}
                 <article class="project-card">
@@ -46,10 +54,16 @@
                             </div>
                             <div class="project-actions">
                                 <a class="btn btn-secondary" href="{{ project.get_absolute_url }}">Открыть</a>
-                                <a class="btn btn-secondary"
-                                   href="{% url 'projects:project_vacancy_create' project.slug %}">Добавить роль</a>
-                                <a class="btn btn-primary"
-                                   href="{% url 'projects:project_update' project.slug %}">Редактировать</a>
+                                {% if project.status != "closed" and project.status != "archived" %}
+                                    <a class="btn btn-secondary"
+                                       href="{% url 'projects:project_vacancy_create' project.slug %}">
+                                        Добавить роль
+                                    </a>
+                                {% endif %}
+                                {% if project.status != "archived" %}
+                                    <a class="btn btn-primary"
+                                       href="{% url 'projects:project_update' project.slug %}">Редактировать</a>
+                                {% endif %}
                                 <a class="btn btn-secondary"
                                    href="{% url 'projects:project_delete' project.slug %}">Удалить</a>
                             </div>
@@ -58,11 +72,100 @@
                 </article>
             {% empty %}
                 <article class="action-card">
-                    <h2>У тебя пока нет проектов</h2>
+                    <h2>У тебя пока нет активных проектов</h2>
                     <p class="empty">Создай первый проект. Он сохранится как черновик, после чего ты сможешь добавить открытую роль.</p>
                     <a class="btn btn-primary" href="{% url 'projects:project_create' %}">Создать проект</a>
                 </article>
             {% endfor %}
         </div>
+        {% if projects.has_other_pages %}
+            <nav class="pagination" aria-label="Пагинация моих проектов">
+                {% if projects.has_previous %}
+                    <a class="btn btn-secondary"
+                       href="?page={{ projects.previous_page_number }}{% if archived_projects.number %}&archive_page={{ archived_projects.number }}{% endif %}">
+                        Назад
+                    </a>
+                {% endif %}
+                <span class="pagination-current">Страница {{ projects.number }} из {{ projects.paginator.num_pages }}</span>
+                {% if projects.has_next %}
+                    <a class="btn btn-secondary"
+                       href="?page={{ projects.next_page_number }}{% if archived_projects.number %}&archive_page={{ archived_projects.number }}{% endif %}">
+                        Вперёд
+                    </a>
+                {% endif %}
+            </nav>
+        {% endif %}
+    </section>
+    <section class="container section">
+        <div class="section-head">
+            <div>
+                <p class="eyebrow">история владельца</p>
+                <h2>Архивные проекты</h2>
+            </div>
+            <p class="empty">Эти проекты окончательно закрыты. Их нельзя редактировать, открыть заново или пополнить ролями.</p>
+        </div>
+        <div class="cards-grid">
+            {% for project in archived_projects %}
+                <article class="project-card project-card-archived">
+                    {% if project.cover_image %}
+                        <img class="project-cover"
+                             src="{{ project.cover_image.url }}"
+                             alt="{{ project.title }}">
+                    {% else %}
+                        <div class="project-cover project-cover-placeholder">
+                            <span>IT</span>
+                        </div>
+                    {% endif %}
+                    <div class="project-card-body">
+                        <div>
+                            <div class="card-meta">
+                                <span>{{ project.get_status_display }}</span>
+                                <span>{{ project.get_stage_display }}</span>
+                            </div>
+                            <h3>
+                                <a href="{{ project.get_absolute_url }}">{{ project.title }}</a>
+                            </h3>
+                            <p class="project-description">{{ project.short_description }}</p>
+                        </div>
+                        <div class="project-card-bottom">
+                            <div class="tag-row">
+                                {% for technology in project.technologies.all|slice:":4" %}
+                                    <span class="tag">{{ technology.name }}</span>
+                                {% empty %}
+                                    <span class="tag">Стек не указан</span>
+                                {% endfor %}
+                            </div>
+                            <div class="project-actions">
+                                <a class="btn btn-secondary" href="{{ project.get_absolute_url }}">Открыть историю</a>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            {% empty %}
+                <article class="action-card">
+                    <h2>Архив пока пуст</h2>
+                    <p class="empty">Здесь появятся проекты, которые ты окончательно закроешь.</p>
+                </article>
+            {% endfor %}
+        </div>
+        {% if archived_projects.has_other_pages %}
+            <nav class="pagination" aria-label="Пагинация архивных проектов">
+                {% if archived_projects.has_previous %}
+                    <a class="btn btn-secondary"
+                       href="?page={{ projects.number }}&archive_page={{ archived_projects.previous_page_number }}">
+                        Назад
+                    </a>
+                {% endif %}
+                <span class="pagination-current">
+                    Страница {{ archived_projects.number }} из {{ archived_projects.paginator.num_pages }}
+                </span>
+                {% if archived_projects.has_next %}
+                    <a class="btn btn-secondary"
+                       href="?page={{ projects.number }}&archive_page={{ archived_projects.next_page_number }}">
+                        Вперёд
+                    </a>
+                {% endif %}
+            </nav>
+        {% endif %}
     </section>
 {% endblock %}

@@ -260,17 +260,50 @@ def project_detail(request, slug):
 
 @login_required
 def my_projects(request):
-    """Проекты, которыми владеет текущий пользователь."""
-    projects = (
+    """Проекты, которыми владеет текущий пользователь, и архив владельца."""
+    active_projects = (
         Project.objects.select_related("owner")
         .prefetch_related("technologies", "vacancies__role")
         .filter(owner=request.user)
+        .exclude(status=Project.Status.ARCHIVED)
         .order_by("-created_at")
     )
 
+    archived_projects = (
+        Project.objects.select_related("owner")
+        .prefetch_related("technologies", "vacancies__role")
+        .filter(
+            owner=request.user,
+            status=Project.Status.ARCHIVED,
+        )
+        .order_by("-updated_at", "-created_at")
+    )
+
+    active_paginator = Paginator(active_projects, 9)
+    archive_paginator = Paginator(archived_projects, 9)
+
+    active_page_number = request.GET.get("page", 1)
+    archive_page_number = request.GET.get("archive_page", 1)
+
+    try:
+        active_projects_page = active_paginator.page(active_page_number)
+    except PageNotAnInteger:
+        active_projects_page = active_paginator.page(1)
+    except EmptyPage:
+        active_projects_page = active_paginator.page(active_paginator.num_pages)
+
+    try:
+        archived_projects_page = archive_paginator.page(archive_page_number)
+    except PageNotAnInteger:
+        archived_projects_page = archive_paginator.page(1)
+    except EmptyPage:
+        archived_projects_page = archive_paginator.page(archive_paginator.num_pages)
+
     context = {
-        "projects": projects,
-        "projects_count": projects.count(),
+        "projects": active_projects_page,
+        "archived_projects": archived_projects_page,
+        "projects_count": active_projects.count(),
+        "archived_projects_count": archived_projects.count(),
     }
     return render(request, "projects/my_projects.html", context)
 
@@ -358,7 +391,7 @@ def project_update(request, slug):
             "Редактировать проект может только владелец или администратор."
         )
 
-    if not project.status == Project.Status.ARCHIVED:
+    if project.status == Project.Status.ARCHIVED:
         raise Http404("Архивный проект нельзя редактировать.")
 
     if request.method == "POST":
