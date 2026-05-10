@@ -85,8 +85,12 @@
                        href="{{ project.demo_url }}"
                        target="_blank">Демо</a>
                 {% endif %}
-                <a class="btn btn-primary full-width"
-                   href="{% url 'interactions:project_apply' project.slug %}">Хочу в команду</a>
+                {% if is_team_member %}
+                    <button class="btn btn-secondary full-width" type="button" disabled>Ты уже в команде</button>
+                {% else %}
+                    <a class="btn btn-primary full-width"
+                       href="{% url 'interactions:project_apply' project.slug %}">Хочу в команду</a>
+                {% endif %}
                 <form method="post"
                       action="{% url 'interactions:favorite_project_toggle' project.slug %}">
                     {% csrf_token %}

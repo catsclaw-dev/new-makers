@@ -6,6 +6,16 @@ app_name = "interactions"
 
 urlpatterns = [
     path("applications/", views.application_list, name="application_list"),
+    path(
+        "applications/<int:pk>/accept/",
+        views.application_accept,
+        name="application_accept",
+    ),
+    path(
+        "applications/<int:pk>/reject",
+        views.application_reject,
+        name="application_reject",
+    ),
     path("favorites/", views.favorite_project_list, name="favorite_project_list"),
     path("invitations/", views.invitation_list, name="invitation_list"),
     path(

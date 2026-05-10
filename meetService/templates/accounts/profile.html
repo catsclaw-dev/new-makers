@@ -83,6 +83,8 @@
             <div class="hero-actions">
                 {% if is_project_owner %}
                     <a class="btn btn-primary" href="{% url 'projects:my_projects' %}">Мои проекты</a>
+                    <a class="btn btn-secondary"
+                       href="{% url 'interactions:application_list' %}">Входящие отклики</a>
                 {% endif %}
                 {% if is_specialist %}
                     <a class="btn btn-secondary" href="{% url 'projects:my_teams' %}">Мои команды</a>

@@ -1,152 +1,58 @@
 {% extends "base.html" %}
-{% block title %}Личный кабинет — MeetService{% endblock %}
+{% block title %}Мои проекты — MeetService{% endblock %}
 {% block content %}
 <section class="container page-head">
-  <p class="eyebrow">личный кабинет</p>
-  <h1>{{ user.get_full_name|default:user.username }}</h1>
+  <p class="eyebrow">владелец проекта</p>
+  <h1>Мои проекты</h1>
   <p>
-    Роль на сервисе: {{ user.get_role_display }}.
-    Управляй проектами, откликами, приглашениями и командами из одного места.
+    Здесь собраны проекты, где в поле «владелец проекта» указан твой аккаунт.
+    Найдено: {{ projects_count }}.
   </p>
 </section>
 <section class="container section">
-  <div class="stats-grid">
-    <div>
-      <dt>{{ owned_projects_count }}</dt>
-      <dd>
-        моих проектов
-      </dd>
-    </div>
-    <div>
-      <dt>{{ incoming_applications_count }}</dt>
-      <dd>
-        входящих откликов
-      </dd>
-    </div>
-    <div>
-      <dt>{{ sent_applications_count }}</dt>
-      <dd>
-        моих откликов
-      </dd>
-    </div>
-    <div>
-      <dt>{{ favorites_count }}</dt>
-      <dd>
-        избранных
-      </dd>
-    </div>
-  </div>
-</section>
-<section class="container section two-columns">
-  <article class="action-card">
-    <h2>Аккаунт</h2>
-    <p>
-      <strong>Логин:</strong> {{ user.username }}
-    </p>
-    <p>
-      <strong>Email:</strong> {{ user.email }}
-    </p>
-    <p>
-      <strong>Роль:</strong> {{ user.get_role_display }}
-    </p>
-  </article>
-  {% if is_specialist %}
-  <article class="action-card">
-    <h2>Профиль специалиста</h2>
-    {% if specialist_profile %}
-    <p>
-      <strong>Статус:</strong> {{ specialist_profile.get_status_display }}
-    </p>
-    <p>
-      <strong>Уровень:</strong> {{ specialist_profile.get_level_display }}
-    </p>
-    <p>
-      <strong>Основная роль:</strong> {{ specialist_profile.main_role|default:"не указана" }}
-    </p>
-    {% else %}
-    <p class="empty">Профиль специалиста ещё не создан.</p>
-    {% endif %}
-  </article>
-  {% else %}
-  <article class="action-card">
-    <h2>Кабинет владельца проекта</h2>
-    <p>
-      Здесь отображаются проекты, входящие отклики и отправленные приглашения.
-      Профиль специалиста для владельца проекта не показывается.
-    </p>
-  </article>
-  {% endif %}
-</section>
-<section class="container section">
-  <div class="action-card">
-    <h2>Быстрые действия</h2>
-    <div class="hero-actions">
-      {% if is_project_owner %}
-      <a class="btn btn-primary" href="{% url 'projects:my_projects' %}">Мои проекты</a>
+  <div class="cards-grid">
+    {% for project in projects %}
+    <article class="project-card">
+      {% if project.cover_image %}
+      <img class="project-cover" src="{{ project.cover_image.url }}" alt="{{ project.title }}">
+      {% else %}
+      <div class="project-cover project-cover-placeholder">
+        <span>IT</span>
+      </div>
       {% endif %}
-      {% if is_specialist %}
-      <a class="btn btn-secondary" href="{% url 'projects:my_teams' %}">Мои команды</a>
-      <a class="btn btn-secondary" href="{% url 'interactions:application_list' %}">Мои отклики</a>
-      {% endif %}
-      <a class="btn btn-secondary" href="{% url 'interactions:favorite_project_list' %}">Избранное</a>
-      <a class="btn btn-secondary" href="{% url 'interactions:invitation_list' %}">Приглашения</a>
-      <a class="btn btn-secondary" href="{% url 'projects:project_list' %}">Найти проект</a>
-      <a class="btn btn-secondary" href="{% url 'specialists:specialist_list' %}">Найти специалиста</a>
-    </div>
-  </div>
-</section>
-{% if is_project_owner %}
-<section class="container section">
-  <div class="section-heading">
-    <div>
-      <p class="eyebrow">владелец</p>
-      <h2>Последние мои проекты</h2>
-    </div>
-    <a href="{% url 'projects:my_projects' %}">Все мои проекты</a>
-  </div>
-  <div class="mini-list">
-    {% for project in owned_projects %}
-    <article class="mini-card">
-      <h3>
-        <a href="{{ project.get_absolute_url }}">{{ project.title }}</a>
-      </h3>
-      <p>{{ project.short_description }}</p>
-      <span>{{ project.get_status_display }} · {{ project.created_at|date:"d.m.Y" }}</span>
+      <div class="project-card-body">
+        <div>
+          <div class="card-meta">
+            <span>{{ project.get_status_display }}</span>
+            <span>{{ project.get_stage_display }}</span>
+          </div>
+          <h3>
+            <a href="{{ project.get_absolute_url }}">{{ project.title }}</a>
+          </h3>
+          <p class="project-description">{{ project.short_description }}</p>
+        </div>
+        <div class="project-card-bottom">
+          <div class="tag-row">
+            {% for technology in project.technologies.all|slice:":4" %}
+            <span class="tag">{{ technology.name }}</span>
+            {% empty %}
+            <span class="tag">Стек не указан</span>
+            {% endfor %}
+          </div>
+          <a class="card-link" href="{{ project.get_absolute_url }}">Открыть проект</a>
+        </div>
+      </div>
     </article>
     {% empty %}
     <article class="action-card">
-      <h3>Проектов пока нет</h3>
-      <p class="empty">Позже здесь будет кнопка создания проекта.</p>
+      <h2>У тебя пока нет проектов</h2>
+      <p class="empty">
+        Проекты появляются здесь только если в поле «владелец проекта»
+        указан твой аккаунт.
+      </p>
+      <a class="btn btn-primary" href="{% url 'projects:project_list' %}">Смотреть каталог</a>
     </article>
     {% endfor %}
   </div>
 </section>
-{% endif %}
-{% if is_specialist %}
-<section class="container section">
-  <div class="section-heading">
-    <div>
-      <p class="eyebrow">команды</p>
-      <h2>Мои команды</h2>
-    </div>
-    <a href="{% url 'projects:my_teams' %}">Все команды</a>
-  </div>
-  <div class="mini-list">
-    {% for membership in team_memberships %}
-    <article class="mini-card">
-      <h3>
-        <a href="{{ membership.project.get_absolute_url }}">{{ membership.project.title }}</a>
-      </h3>
-      <p>{{ membership.role.name }}</p>
-      <span>{{ membership.get_status_display }} · {{ membership.joined_at|date:"d.m.Y" }}</span>
-    </article>
-    {% empty %}
-    <article class="action-card">
-      <h3>Ты пока не состоишь в командах</h3>
-      <p class="empty">Откликнись на проект или прими приглашение владельца проекта.</p>
-    </article>
-    {% endfor %}
-  </div>
-</section>
-{% endif %}
 {% endblock %}

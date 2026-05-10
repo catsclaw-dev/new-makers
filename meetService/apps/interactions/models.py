@@ -142,67 +142,89 @@ class Application(models.Model):
         self.full_clean()
         super().save(*args, **kwargs)
 
-    def accept(self) -> ProjectMembership:
-        """Принимает приглашение и добавляет специалиста в команду проекта."""
+    def accept(self, reviewed_by=None) -> ProjectMembership:
+        """Принимает отклик и добавляет специалиста в команду проекта."""
         with transaction.atomic():
-            invitation = (
-                Invitation.objects.select_for_update()
-                .select_related(
-                    "project", "vacancy", "vacancy__role", "specialist", "invited_by"
-                )
+            application = (
+                Application.objects.select_for_update()
+                .select_related("project", "vacancy", "vacancy__role", "specialist")
                 .get(pk=self.pk)
             )
 
-            if invitation.status != invitation.Status.PENDING:
+            if application.status != application.Status.PENDING:
+                raise ValidationError("Можно принять только отклик на рассмотрении.")
+
+            if reviewed_by and not application.project.can_be_edited_by(reviewed_by):
                 raise ValidationError(
-                    _("Можно принять только приглашение со статусом «Ожидает ответа».")
+                    "Принимать отклики может только владелец проекта или администратор."
                 )
 
             already_member = ProjectMembership.objects.filter(
-                project=invitation.project,
-                specialist=invitation.specialist,
+                project=application.project,
+                specialist=application.specialist,
                 status=ProjectMembership.Status.ACTIVE,
             ).first()
 
+            reviewed_at = timezone.now()
+
             if already_member:
-                invitation.status = invitation.Status.ACCEPTED
-                invitation.responded_at = timezone.now()
-                Invitation.objects.filter(pk=invitation.pk).update(
-                    status=Invitation.Status.ACCEPTED,
-                    responded_at=invitation.responded_at,
+                Application.objects.filter(pk=application.pk).update(
+                    status=Application.Status.ACCEPTED,
+                    reviewed_at=reviewed_at,
+                    reviewed_by_id=reviewed_by.pk if reviewed_by else None,
                 )
 
-                self.status = invitation.status
-                self.responded_at = invitation.responded_at
+                self.status = Application.Status.ACCEPTED
+                self.reviewed_at = reviewed_at
+                self.reviewed_by = reviewed_by
 
                 return already_member
 
-            if not invitation.vacancy.is_open():
-                raise ValidationError(_("Открытая роль уже закрыта или заполнена."))
-
-            membership = invitation.vacancy.add_specialist(
-                specialist=invitation.specialist,
-                added_by=invitation.invited_by,
+            membership = application.vacancy.add_specialist(
+                specialist=application.specialist,
+                added_by=reviewed_by,
             )
 
-            invitation.status = invitation.Status.ACCEPTED
-            invitation.responded_at = timezone.now()
-            Invitation.objects.filter(pk=invitation.pk).update(
-                status=Invitation.Status.ACCEPTED,
-                responded_at=invitation.responded_at,
+            Application.objects.filter(pk=application.pk).update(
+                status=Application.Status.ACCEPTED,
+                reviewed_at=reviewed_at,
+                reviewed_by_id=reviewed_by.pk if reviewed_by else None,
             )
 
-            self.status = invitation.status
-            self.responded_at = invitation.responded_at
+            self.status = Application.Status.ACCEPTED
+            self.reviewed_at = reviewed_at
+            self.reviewed_by = reviewed_by
 
             return membership
 
     def reject(self, reviewed_by=None) -> None:
         """Отклоняет отклик."""
-        self.status = self.Status.REJECTED
-        self.reviewed_at = timezone.now()
-        self.reviewed_by = reviewed_by
-        self.save(update_fields=["status", "reviewed_at", "reviewed_by"])
+        with transaction.atomic():
+            application = (
+                Application.objects.select_for_update()
+                .select_related("project")
+                .get(pk=self.pk)
+            )
+
+            if application.status != application.Status.PENDING:
+                raise ValidationError("Можно отклонить только отклик на рассмотрении.")
+
+            if reviewed_by and not application.project.can_be_edited_by(reviewed_by):
+                raise ValidationError(
+                    "Отклонять отклики может только владелец проекта или администратор."
+                )
+
+            reviewed_at = timezone.now()
+
+            Application.objects.filter(pk=application.pk).update(
+                status=Application.Status.REJECTED,
+                reviewed_at=reviewed_at,
+                reviewed_by_id=reviewed_by.pk if reviewed_by else None,
+            )
+
+            self.status = Application.Status.REJECTED
+            self.reviewed_at = reviewed_at
+            self.reviewed_by = reviewed_by
 
 
 class Invitation(models.Model):
@@ -278,7 +300,7 @@ class Invitation(models.Model):
         return f"{self.project} → {self.specialist}"
 
     def clean(self):
-        """Проверяет бизнес-правила приглашения."""
+        """Проверяет бизнес-правила отклика."""
         errors = {}
 
         if (
@@ -290,11 +312,9 @@ class Invitation(models.Model):
                 "Выбранная открытая роль не относится к указанному проекту."
             )
 
-        if self.specialist_id and self.project_id:
-            if self.specialist.user_id == self.project.owner_id:
-                errors["specialist"] = _(
-                    "Нельзя приглашать владельца проекта в его собственный проект."
-                )
+        if self.project_id and self.specialist_id:
+            if self.project.owner_id == self.specialist.user_id:
+                errors["project"] = _("Нельзя откликаться на собственный проект.")
 
             already_member = ProjectMembership.objects.filter(
                 project=self.project,
@@ -303,32 +323,25 @@ class Invitation(models.Model):
             ).exists()
 
             if already_member:
-                errors["specialist"] = _("Специалист уже состоит в команде проекта.")
-
-        if self.invited_by_id and self.project_id:
-            if (
-                self.project.owner_id != self.invited_by_id
-                and not self.invited_by.is_staff
-            ):
-                errors["invited_by"] = _(
-                    "Приглашать специалистов может только владелец проекта или администратор."
+                errors["specialist"] = _(
+                    "Специалист уже состоит в команде этого проекта."
                 )
 
         if self.status == self.Status.PENDING:
             if self.project_id and self.project.status != Project.Status.PUBLISHED:
-                errors["project"] = _("Нельзя приглашать в неопубликованный проект.")
+                errors["project"] = _("Нельзя откликаться на неопубликованный проект.")
 
             if self.vacancy_id and not self.vacancy.is_open():
                 errors["vacancy"] = _(
-                    "Нельзя приглашать на закрытую или заполненную роль."
+                    "Нельзя откликаться на закрытую или заполненную роль."
                 )
 
             duplicate_exists = (
-                Invitation.objects.filter(
+                Application.objects.filter(
                     project=self.project,
                     vacancy=self.vacancy,
                     specialist=self.specialist,
-                    status=self.Status.PENDING,
+                    status__in=self.ACTIVE_STATUSES,
                 )
                 .exclude(pk=self.pk)
                 .exists()
@@ -336,7 +349,7 @@ class Invitation(models.Model):
 
             if duplicate_exists:
                 errors["specialist"] = _(
-                    "Для этого специалиста уже есть активное приглашение на эту роль."
+                    "У специалиста уже есть активный отклик на эту роль."
                 )
 
         if errors:

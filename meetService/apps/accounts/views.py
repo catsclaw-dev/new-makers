@@ -48,7 +48,14 @@ class AccountLogoutView(LogoutView):
 def profile(request):
     """Личный кабинет пользователя с разделением по ролям."""
     user = request.user
-    is_project_owner = user.role == User.UserRole.PROJECT_OWNER or user.is_staff
+
+    owned_projects_queryset = Project.objects.filter(owner=user)
+
+    is_project_owner = (
+        user.role == User.UserRole.PROJECT_OWNER
+        or user.is_staff
+        or owned_projects_queryset.exists()
+    )
     is_specialist = user.role == User.UserRole.SPECIALIST
 
     specialist_profile = None
@@ -56,7 +63,7 @@ def profile(request):
     if is_specialist:
         specialist_profile = getattr(user, "specialist_profile", None)
 
-    owned_projects = Project.objects.filter(owner=user).order_by("-created_at")[:5]
+    owned_projects = owned_projects_queryset.order_by("-created_at")[:5]
 
     team_memberships = ProjectMembership.objects.none()
     sent_applications_count = 0
@@ -86,7 +93,7 @@ def profile(request):
         "is_specialist": is_specialist,
         "specialist_profile": specialist_profile,
         "owned_projects": owned_projects,
-        "owned_projects_count": Project.objects.filter(owner=user).count(),
+        "owned_projects_count": owned_projects_queryset.count(),
         "team_memberships": team_memberships,
         "team_memberships_count": team_memberships.count(),
         "sent_applications_count": sent_applications_count,

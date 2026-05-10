@@ -7,7 +7,7 @@ from django.views.decorators.http import require_POST
 
 from apps.interactions.forms import ApplicationForm, InvitationForm
 from apps.interactions.models import Application, FavoriteProject, Invitation
-from apps.projects.models import Project
+from apps.projects.models import Project, ProjectMembership
 from apps.specialists.models import SpecialistProfile
 
 
@@ -28,6 +28,16 @@ def project_apply(request, slug):
             request,
             "Чтобы откликнуться на проект, сначала нужен профиль специалиста.",
         )
+        return redirect(project.get_absolute_url())
+
+    already_member = ProjectMembership.objects.filter(
+        project=project,
+        specialist=specialist,
+        status=ProjectMembership.Status.ACTIVE,
+    ).exists()
+
+    if already_member:
+        messages.info(request, "Ты уже состоишь в команде этого проекта.")
         return redirect(project.get_absolute_url())
 
     if request.method == "POST":
@@ -57,7 +67,7 @@ def project_apply(request, slug):
 
 @login_required
 def application_list(request):
-    """Страница откликов: отправленные отклики и отклики на проекты пользователя."""
+    """Страница откликов: отправленные отклики и входящие отклики владельца."""
     try:
         specialist = request.user.specialist_profile
     except SpecialistProfile.DoesNotExist:
@@ -66,19 +76,16 @@ def application_list(request):
     sent_applications = Application.objects.none()
 
     if specialist is not None:
-        received_invitations = (
-            Invitation.objects.select_related(
+        sent_applications = (
+            Application.objects.select_related(
                 "project",
                 "vacancy",
                 "vacancy__role",
-                "invited_by",
             )
-            .filter(
-                specialist=specialist,
-                status=Invitation.Status.PENDING,
-            )
-            .order_by("-invited_at")
+            .filter(specialist=specialist)
+            .order_by("-applied_at")
         )
+
     incoming_applications = (
         Application.objects.select_related(
             "project",
@@ -87,7 +94,10 @@ def application_list(request):
             "specialist",
             "specialist__user",
         )
-        .filter(project__owner=request.user)
+        .filter(
+            project__owner=request.user,
+            status=Application.Status.PENDING,
+        )
         .order_by("-applied_at")
     )
 
@@ -279,3 +289,54 @@ def invitation_decline(request, pk):
         messages.info(request, "Приглашение отклонено.")
 
     return redirect("interactions:invitation_list")
+
+
+@login_required
+@require_POST
+def application_accept(request, pk):
+    """Принятие отклика владельцем проекта."""
+    application = get_object_or_404(
+        Application.objects.select_related(
+            "project",
+            "vacancy",
+            "vacancy__role",
+            "specialist",
+            "specialist__user",
+        ),
+        pk=pk,
+        status=Application.Status.PENDING,
+    )
+
+    try:
+        application.accept(reviewed_by=request.user)
+    except ValidationError as error:
+        messages.error(request, " ".join(error.messages))
+    except IntegrityError:
+        messages.error(request, "Специалист уже состоит в команде проекта.")
+    else:
+        messages.success(
+            request,
+            "Отклик принят. Специалист добавлен в команду проекта.",
+        )
+
+    return redirect("interactions:application_list")
+
+
+@login_required
+@require_POST
+def application_reject(request, pk):
+    """Отклонение отклика владельцем проекта."""
+    application = get_object_or_404(
+        Application.objects.select_related("project"),
+        pk=pk,
+        status=Application.Status.PENDING,
+    )
+
+    try:
+        application.reject(reviewed_by=request.user)
+    except ValidationError as error:
+        messages.error(request, " ".join(error.messages))
+    else:
+        messages.info(request, "Отклик отклонён.")
+
+    return redirect("interactions:application_list")

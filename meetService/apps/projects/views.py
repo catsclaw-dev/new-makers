@@ -203,12 +203,22 @@ def project_detail(request, slug):
     files = project.files.all()
 
     is_favorite = False
+    is_team_member = False
 
     if request.user.is_authenticated:
         is_favorite = FavoriteProject.objects.filter(
             user=request.user,
             project=project,
         ).exists()
+
+        specialist_profile = getattr(request.user, "specialist_profile", None)
+
+        if specialist_profile is not None:
+            is_team_member = ProjectMembership.objects.filter(
+                project=project,
+                specialist=specialist_profile,
+                status=ProjectMembership.Status.ACTIVE,
+            ).exists()
 
     context = {
         "project": project,
@@ -217,6 +227,7 @@ def project_detail(request, slug):
         "files": files,
         "similar_projects": similar_projects,
         "is_favorite": is_favorite,
+        "is_team_member": is_team_member,
     }
     return render(request, "projects/project_detail.html", context)
 
@@ -233,6 +244,7 @@ def my_projects(request):
 
     context = {
         "projects": projects,
+        "projects_count": projects.count(),
     }
     return render(request, "projects/my_projects.html", context)
 
