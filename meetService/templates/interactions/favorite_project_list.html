@@ -1,52 +1,66 @@
 {% extends "base.html" %}
 {% block title %}Избранное — MeetService{% endblock %}
 {% block content %}
-<section class="container page-head">
-  <p class="eyebrow">личный кабинет</p>
-  <h1>Избранные проекты</h1>
-  <p>Здесь хранятся проекты, к которым ты хочешь вернуться позже.</p>
-</section>
-<section class="container section">
-  <div class="cards-grid">
-    {% for favorite in favorites %}
-    <article class="project-card">
-      {% if favorite.project.cover_image %}
-      <img class="project-cover" src="{{ favorite.project.cover_image.url }}" alt="{{ favorite.project.title }}">
-      {% else %}
-      <div class="project-cover project-cover-placeholder">
-        <span>IT</span>
-      </div>
-      {% endif %}
-      <div class="project-card-body">
-        <div>
-          <div class="card-meta">
-            <span>{{ favorite.project.get_stage_display }}</span>
-            <span>{{ favorite.project.get_participation_format_display }}</span>
-          </div>
-          <h3>
-            <a href="{{ favorite.project.get_absolute_url }}">{{ favorite.project.title }}</a>
-          </h3>
-          <p class="project-description">{{ favorite.project.short_description }}</p>
-        </div>
-        <div class="project-card-bottom">
-          <div class="tag-row">
-            {% for technology in favorite.project.technologies.all|slice:":4" %}
-            <span class="tag">{{ technology.name }}</span>
+    <section class="container page-head">
+        <p class="eyebrow">личный кабинет</p>
+        <h1>Избранные проекты</h1>
+        <p class="lead">Здесь хранятся проекты, к которым ты хочешь вернуться позже.</p>
+    </section>
+    <section class="container section">
+        <div class="cards-grid">
+            {% for favorite in favorites %}
+                <article class="project-card">
+                    {% if favorite.project.cover_image %}
+                        <img class="project-cover"
+                             src="{{ favorite.project.cover_image.url }}"
+                             alt="{{ favorite.project.title }}">
+                    {% else %}
+                        <div class="project-cover project-cover-placeholder">
+                            <span>IT</span>
+                        </div>
+                    {% endif %}
+                    <div class="project-card-body">
+                        <div>
+                            <div class="card-meta">
+                                <span>{{ favorite.project.get_status_display }}</span>
+                                <span>{{ favorite.project.get_stage_display }}</span>
+                                <span>{{ favorite.project.get_participation_format_display }}</span>
+                            </div>
+                            <h3>
+                                <a href="{{ favorite.project.get_absolute_url }}">{{ favorite.project.title }}</a>
+                            </h3>
+                            <p class="project-description">
+                                {{ favorite.project.short_description|default:"Описание проекта пока не заполнено." }}
+                            </p>
+                        </div>
+                        <div class="project-card-bottom">
+                            <div class="tag-row">
+                                {% for technology in favorite.project.technologies.all|slice:":4" %}
+                                    <span class="tag">{{ technology.name }}</span>
+                                {% empty %}
+                                    <span class="tag">Стек не указан</span>
+                                {% endfor %}
+                            </div>
+                            <div class="project-actions">
+                                <a class="btn btn-secondary"
+                                   href="{{ favorite.project.get_absolute_url }}">Открыть проект</a>
+                                <form class="inline-form"
+                                      method="post"
+                                      action="{% url 'interactions:favorite_project_toggle' favorite.project.slug %}">
+                                    {% csrf_token %}
+                                    <button class="btn btn-danger full-width" type="submit">Удалить</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </article>
             {% empty %}
-            <span class="tag">Стек не указан</span>
+                <article class="action-card">
+                    <h2>Избранных проектов пока нет</h2>
+                    <p class="empty">Открой каталог проектов и сохрани интересные варианты.</p>
+                    <a class="btn btn-primary" href="{% url 'projects:project_list' %}">Перейти в каталог</a>
+                </article>
             {% endfor %}
-          </div>
-          <a class="card-link" href="{{ favorite.project.get_absolute_url }}">Открыть проект</a>
         </div>
-      </div>
-    </article>
-    {% empty %}
-    <article class="action-card">
-      <h2>Избранных проектов пока нет</h2>
-      <p class="empty">Открой каталог проектов и сохрани интересные варианты.</p>
-      <a class="btn btn-primary" href="{% url 'projects:project_list' %}">Перейти в каталог</a>
-    </article>
-    {% endfor %}
-  </div>
-</section>
+    </section>
 {% endblock %}

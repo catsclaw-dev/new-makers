@@ -4,13 +4,13 @@
     <section class="container page-head">
         <p class="eyebrow">личный кабинет</p>
         <h1>Отклики</h1>
-        <p>
+        <p class="lead">
             Здесь собраны твои отправленные отклики и входящие заявки на проекты,
             которыми ты владеешь.
         </p>
     </section>
     <section class="container section">
-        <div class="stats-grid">
+        <dl class="stats-grid">
             <div>
                 <dt>{{ sent_count }}</dt>
                 <dd>
@@ -23,7 +23,7 @@
                     новых откликов на мои проекты
                 </dd>
             </div>
-        </div>
+        </dl>
     </section>
     <section class="container section two-columns">
         <div>
@@ -38,6 +38,8 @@
                     <article class="action-card">
                         <h3>Профиль специалиста не найден</h3>
                         <p class="empty">Чтобы отправлять отклики, нужен профиль специалиста.</p>
+                        <a class="btn btn-primary"
+                           href="{% url 'specialists:specialist_profile_edit' %}">Заполнить профиль специалиста</a>
                     </article>
                 {% endif %}
                 {% for application in sent_applications %}
@@ -56,7 +58,10 @@
                     {% if specialist %}
                         <article class="action-card">
                             <h3>Откликов пока нет</h3>
-                            <p class="empty">Открой каталог проектов и отправь первый отклик на подходящую роль.</p>
+                            <p class="empty">
+                                Открой каталог проектов и отправь первый отклик
+                                на подходящую роль.
+                            </p>
                             <a class="btn btn-primary" href="{% url 'projects:project_list' %}">Найти проект</a>
                         </article>
                     {% endif %}
@@ -89,12 +94,14 @@
                         {% if application.message %}<p>{{ application.message }}</p>{% endif %}
                         <span>{{ application.get_status_display }} · {{ application.applied_at|date:"d.m.Y H:i" }}</span>
                         <div class="hero-actions">
-                            <form method="post"
+                            <form class="inline-form"
+                                  method="post"
                                   action="{% url 'interactions:application_accept' application.pk %}">
                                 {% csrf_token %}
                                 <button class="btn btn-primary" type="submit">Принять</button>
                             </form>
-                            <form method="post"
+                            <form class="inline-form"
+                                  method="post"
                                   action="{% url 'interactions:application_reject' application.pk %}">
                                 {% csrf_token %}
                                 <button class="btn btn-secondary" type="submit">Отклонить</button>

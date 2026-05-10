@@ -1,10 +1,12 @@
-<div class="tag-cloud">
-  {% for technology in technologies %}
-  <span class="tag">
-    {{ technology.name }}
-    <small>{{ technology.project_count }}</small>
-  </span>
-  {% empty %}
-  <p class="empty">Технологии пока не добавлены.</p>
-  {% endfor %}
-</div>
+{% if technologies %}
+    <div class="tag-cloud">
+        {% for technology in technologies %}
+            <span class="tag">
+                {{ technology.name }}
+                <small>{{ technology.project_count }}</small>
+            </span>
+        {% endfor %}
+    </div>
+{% else %}
+    <p class="empty">Технологии пока не добавлены.</p>
+{% endif %}

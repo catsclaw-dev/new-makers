@@ -4,13 +4,13 @@
     <section class="container page-head">
         <p class="eyebrow">личный кабинет</p>
         <h1>Приглашения</h1>
-        <p>
+        <p class="lead">
             Здесь собраны приглашения, которые ты получил как специалист,
             и приглашения, которые ты отправил как владелец проекта.
         </p>
     </section>
     <section class="container section">
-        <div class="stats-grid">
+        <dl class="stats-grid">
             <div>
                 <dt>{{ received_count }}</dt>
                 <dd>
@@ -23,7 +23,7 @@
                     отправлено
                 </dd>
             </div>
-        </div>
+        </dl>
     </section>
     <section class="container section two-columns">
         <div>
@@ -38,6 +38,8 @@
                     <article class="action-card">
                         <h3>Профиль специалиста не найден</h3>
                         <p class="empty">Получать приглашения можно только с профилем специалиста.</p>
+                        <a class="btn btn-primary"
+                           href="{% url 'specialists:specialist_profile_edit' %}">Заполнить профиль специалиста</a>
                     </article>
                 {% endif %}
                 {% for invitation in received_invitations %}
@@ -53,12 +55,14 @@
                         <span>{{ invitation.get_status_display }} · {{ invitation.invited_at|date:"d.m.Y H:i" }}</span>
                         {% if invitation.status == "pending" %}
                             <div class="hero-actions">
-                                <form method="post"
+                                <form class="inline-form"
+                                      method="post"
                                       action="{% url 'interactions:invitation_accept' invitation.pk %}">
                                     {% csrf_token %}
                                     <button class="btn btn-primary" type="submit">Принять</button>
                                 </form>
-                                <form method="post"
+                                <form class="inline-form"
+                                      method="post"
                                       action="{% url 'interactions:invitation_decline' invitation.pk %}">
                                     {% csrf_token %}
                                     <button class="btn btn-secondary" type="submit">Отклонить</button>

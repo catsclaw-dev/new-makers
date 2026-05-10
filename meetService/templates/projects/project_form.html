@@ -4,7 +4,7 @@
     <section class="container page-head">
         <p class="eyebrow">проект</p>
         <h1>{{ page_title }}</h1>
-        <p>
+        <p class="lead">
             Заполни основную информацию о проекте. При создании проекта сразу добавляется
             первая открытая роль, чтобы проект можно было отправить на рассмотрение.
         </p>
@@ -28,27 +28,31 @@
                             {% for error in field.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
                         </div>
                     {% elif field.name == "description" or field.name == "goal" %}
-                        <label class="form-field form-field-wide">
-                            <span class="form-label">{{ field.label }}</span>
+                        <div class="form-field form-field-wide">
+                            <div class="form-label-row">
+                                <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                {% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}
+                            </div>
                             {{ field }}
-                            {% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}
                             {% for error in field.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
-                        </label>
+                        </div>
                     {% else %}
-                        <label class="form-field">
-                            <span class="form-label">{{ field.label }}</span>
+                        <div class="form-field">
+                            <div class="form-label-row">
+                                <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                {% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}
+                            </div>
                             {{ field }}
-                            {% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}
                             {% for error in field.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
-                        </label>
+                        </div>
                     {% endif %}
                 {% endfor %}
                 {% if vacancy_form %}
                     <div class="form-section-title form-field-wide">
                         <h2>Первая открытая роль</h2>
                         <p>
-                            Эта роль появится на странице проекта, и специалисты смогут на неё откликаться
-                            после публикации проекта.
+                            Эта роль появится на странице проекта, и специалисты смогут
+                            на неё откликаться после публикации проекта.
                         </p>
                     </div>
                     {% if vacancy_form.non_field_errors %}
@@ -56,19 +60,23 @@
                     {% endif %}
                     {% for field in vacancy_form %}
                         {% if field.name == "description" %}
-                            <label class="form-field form-field-wide">
-                                <span class="form-label">{{ field.label }}</span>
+                            <div class="form-field form-field-wide">
+                                <div class="form-label-row">
+                                    <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                    {% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}
+                                </div>
                                 {{ field }}
-                                {% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}
                                 {% for error in field.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
-                            </label>
+                            </div>
                         {% else %}
-                            <label class="form-field">
-                                <span class="form-label">{{ field.label }}</span>
+                            <div class="form-field">
+                                <div class="form-label-row">
+                                    <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                    {% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}
+                                </div>
                                 {{ field }}
-                                {% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}
                                 {% for error in field.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
-                            </label>
+                            </div>
                         {% endif %}
                     {% endfor %}
                 {% endif %}

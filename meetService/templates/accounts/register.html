@@ -2,20 +2,25 @@
 {% block title %}Регистрация — MeetService{% endblock %}
 {% block content %}
     <section class="container auth-page">
-        <div class="auth-card">
+        <article class="auth-card">
             <p class="eyebrow">новый аккаунт</p>
             <h1>Регистрация</h1>
-            <p class="lead">Создай аккаунт, чтобы откликаться на проекты и собирать команду.</p>
+            <p class="lead">
+                Создай аккаунт, чтобы откликаться на проекты, собирать команду
+                и управлять своим профилем специалиста.
+            </p>
             <form method="post" class="form-grid">
                 {% csrf_token %}
                 {% if form.non_field_errors %}<div class="form-errors">{{ form.non_field_errors }}</div>{% endif %}
                 {% for field in form %}
-                    <label>
-                        {{ field.label }}
+                    <div class="form-field">
+                        <div class="form-label-row">
+                            <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}
+                        </div>
                         {{ field }}
-                        {% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}
                         {% for error in field.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
-                    </label>
+                    </div>
                 {% endfor %}
                 <button class="btn btn-primary full-width" type="submit">Зарегистрироваться</button>
             </form>
@@ -23,6 +28,6 @@
                 Уже есть аккаунт?
                 <a href="{% url 'accounts:login' %}">Войти</a>
             </p>
-        </div>
+        </article>
     </section>
 {% endblock %}

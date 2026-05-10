@@ -8,10 +8,14 @@
                 <img class="detail-cover"
                      src="{{ project.cover_image.url }}"
                      alt="{{ project.title }}">
+            {% else %}
+                <div class="detail-cover project-cover-placeholder">
+                    <span>IT</span>
+                </div>
             {% endif %}
             <p class="eyebrow">{{ project.get_stage_display }}</p>
             <h1>{{ project.title }}</h1>
-            <p class="lead">{{ project.short_description }}</p>
+            <p class="lead">{{ project.short_description|default:"Краткое описание проекта пока не заполнено." }}</p>
             <div class="tag-row">
                 {% for technology in project.technologies.all %}
                     <span class="tag">{{ technology.name }}</span>
@@ -20,16 +24,24 @@
                 {% endfor %}
             </div>
             <h2>Описание</h2>
-            <div>{{ project.description|linebreaks }}</div>
+            {% if project.description %}
+                <div>{{ project.description|linebreaks }}</div>
+            {% else %}
+                <p class="empty">Описание проекта пока не заполнено.</p>
+            {% endif %}
             <h2>Цель проекта</h2>
-            <div>{{ project.goal|linebreaks }}</div>
-            <p class="lead">Сейчас открыто {{ open_vacancies|length }} {{ open_vacancies|length|vacancy_word }}.</p>
+            {% if project.goal %}
+                <div>{{ project.goal|linebreaks }}</div>
+            {% else %}
+                <p class="empty">Цель проекта пока не указана.</p>
+            {% endif %}
             <h2>Открытые роли</h2>
+            <p class="lead">Сейчас открыто {{ open_vacancies|length }} {{ open_vacancies|length|vacancy_word }}.</p>
             <div class="mini-list">
                 {% for vacancy in open_vacancies %}
                     <article class="mini-card">
                         <h3>{{ vacancy.title }}</h3>
-                        <p>{{ vacancy.description }}</p>
+                        <p>{{ vacancy.description|default:"Описание роли пока не заполнено." }}</p>
                         <span>
                             {{ vacancy.role.name }} · {{ vacancy.get_required_level_display }} ·
                             мест: {{ vacancy.current_count }}/{{ vacancy.required_count }}
@@ -56,7 +68,7 @@
                 {% for file in files %}
                     <article class="mini-card">
                         <h3>{{ file.title }}</h3>
-                        <a href="{{ file.file.url }}">Скачать файл</a>
+                        <a href="{{ file.file.url }}" target="_blank" rel="noopener noreferrer">Скачать файл</a>
                     </article>
                 {% empty %}
                     <p class="empty">Файлы пока не прикреплены.</p>
@@ -65,133 +77,168 @@
         </article>
         <aside class="detail-sidebar">
             <div class="action-card">
-                <h2>Участие</h2>
+                <h2>О проекте</h2>
                 <p>
-                    <strong>Формат:</strong> {{ project.get_participation_format_display }}
+                    <strong>Формат:</strong>
+                    {{ project.get_participation_format_display }}
                 </p>
                 <p>
-                    <strong>Статус:</strong> {{ project.get_status_display }}
+                    <strong>Статус:</strong>
+                    {{ project.get_status_display }}
                 </p>
                 <p>
-                    <strong>Владелец:</strong> {{ project.owner }}
+                    <strong>Владелец:</strong>
+                    {{ project.owner }}
                 </p>
-                {% if project.repository_url %}
-                    <a class="btn btn-secondary full-width"
-                       href="{{ project.repository_url }}"
-                       target="_blank">Репозиторий</a>
-                {% endif %}
-                {% if project.demo_url %}
-                    <a class="btn btn-secondary full-width"
-                       href="{{ project.demo_url }}"
-                       target="_blank">Демо</a>
-                {% endif %}
-                {% if can_manage_project %}
-                    <div class="owner-actions">
-                        <h3>Управление проектом</h3>
-                        {% if project.status != "archived" %}
-                            <a class="btn btn-secondary full-width"
-                               href="{% url 'projects:project_update' project.slug %}">Редактировать проект</a>
-                        {% else %}
-                            <button class="btn btn-secondary full-width" type="button" disabled>Редактирование архива недоступно</button>
-                        {% endif %}
-                        {% if project.status != "closed" and project.status != "archived" %}
-                            <a class="btn btn-secondary full-width"
-                               href="{% url 'projects:project_vacancy_create' project.slug %}">
-                                Добавить открытую роль
-                            </a>
-                        {% else %}
-                            <button class="btn btn-secondary full-width" type="button" disabled>Добавление ролей недоступно</button>
-                        {% endif %}
-                        <div class="owner-vacancies">
-                            <h3>Роли проекта</h3>
-                            {% for vacancy in all_vacancies %}
-                                <div class="mini-card">
-                                    <h4>{{ vacancy.title }}</h4>
-                                    <p>{{ vacancy.role.name }}</p>
-                                    <span>
-                                        {{ vacancy.get_status_display }} ·
-                                        {{ vacancy.get_required_level_display }} ·
-                                        мест: {{ vacancy.current_count }}/{{ vacancy.required_count }}
-                                    </span>
-                                </div>
-                            {% empty %}
-                                <p class="empty">Роли ещё не добавлены.</p>
-                            {% endfor %}
-                        </div>
-                        {% if project.status == "draft" %}
-                            <form method="post"
-                                  action="{% url 'projects:project_submit_for_moderation' project.slug %}">
-                                {% csrf_token %}
-                                <button class="btn btn-primary full-width" type="submit">Отправить на рассмотрение</button>
-                            </form>
-                        {% elif project.status == "moderation" %}
-                            <p class="empty">Проект уже отправлен на модерацию.</p>
-                        {% endif %}
-                        {% if project.status == "published" %}
-                            <form method="post"
-                                  action="{% url 'projects:project_close' project.slug %}"
-                                  onsubmit="return confirm('Закрыть проект для новых участников? Проект останется видимым в каталоге, но новые отклики и вакансии будут недоступны.');">
-                                {% csrf_token %}
-                                <button class="btn btn-secondary full-width" type="submit">Закрыть проект</button>
-                            </form>
-                        {% elif project.status == "closed" %}
-                            <form method="post"
-                                  action="{% url 'projects:project_reopen' project.slug %}"
-                                  onsubmit="return confirm('Снова открыть проект для набора участников?');">
-                                {% csrf_token %}
-                                <button class="btn btn-primary full-width" type="submit">Открыть проект</button>
-                            </form>
-                        {% endif %}
-                        {% if project.status == "published" or project.status == "closed" %}
-                            <a class="btn btn-secondary full-width"
-                               href="{% url 'projects:project_archive' project.slug %}">Закрыть окончательно</a>
-                        {% endif %}
-                    </div>
-                {% else %}
-                    {% if project.status == "closed" %}
-                        <p class="empty">Проект закрыт для новых участников. Карточка доступна только для просмотра.</p>
-                        <button class="btn btn-secondary full-width" type="button" disabled>Набор закрыт</button>
-                        <form method="post"
-                              action="{% url 'interactions:favorite_project_toggle' project.slug %}">
-                            {% csrf_token %}
-                            <button class="btn btn-secondary full-width" type="submit">
-                                {% if is_favorite %}
-                                    Удалить из избранного
-                                {% else %}
-                                    В избранное
-                                {% endif %}
-                            </button>
-                        </form>
-                    {% elif project.status == "published" %}
-                        {% if is_team_member %}
-                            <button class="btn btn-secondary full-width" type="button" disabled>Ты уже в команде</button>
-                        {% else %}
-                            <a class="btn btn-primary full-width"
-                               href="{% url 'interactions:project_apply' project.slug %}">Хочу в команду</a>
-                        {% endif %}
-                        <form method="post"
-                              action="{% url 'interactions:favorite_project_toggle' project.slug %}">
-                            {% csrf_token %}
-                            <button class="btn btn-secondary full-width" type="submit">
-                                {% if is_favorite %}
-                                    Удалить из избранного
-                                {% else %}
-                                    В избранное
-                                {% endif %}
-                            </button>
-                        </form>
-                    {% else %}
-                        <p class="empty">Проект сейчас недоступен для действий.</p>
+                {% if project.repository_url or project.demo_url %}
+                    {% if project.repository_url %}
+                        <a class="btn btn-secondary full-width"
+                           href="{{ project.repository_url }}"
+                           target="_blank"
+                           rel="noopener noreferrer">Репозиторий</a>
+                    {% endif %}
+                    {% if project.demo_url %}
+                        <a class="btn btn-secondary full-width"
+                           href="{{ project.demo_url }}"
+                           target="_blank"
+                           rel="noopener noreferrer">Демо</a>
                     {% endif %}
                 {% endif %}
             </div>
+            {% if can_manage_project %}
+                <div class="action-card">
+                    <h2>Управление проектом</h2>
+                    {% if project.status != "archived" %}
+                        <a class="btn btn-secondary full-width"
+                           href="{% url 'projects:project_update' project.slug %}">Редактировать проект</a>
+                    {% else %}
+                        <button class="btn btn-secondary full-width" type="button" disabled>Редактирование архива недоступно</button>
+                    {% endif %}
+                    {% if project.status != "closed" and project.status != "archived" %}
+                        <a class="btn btn-secondary full-width"
+                           href="{% url 'projects:project_vacancy_create' project.slug %}">Добавить открытую роль</a>
+                    {% else %}
+                        <button class="btn btn-secondary full-width" type="button" disabled>Добавление ролей недоступно</button>
+                    {% endif %}
+                    {% if project.status == "draft" %}
+                        <form method="post"
+                              action="{% url 'projects:project_submit_for_moderation' project.slug %}">
+                            {% csrf_token %}
+                            <button class="btn btn-primary full-width" type="submit">Отправить на рассмотрение</button>
+                        </form>
+                        <a class="btn btn-danger full-width"
+                           href="{% url 'projects:project_delete' project.slug %}">Удалить черновик</a>
+                    {% elif project.status == "moderation" %}
+                        <p class="empty">
+                            Проект уже отправлен на модерацию. После проверки администратор
+                            сможет опубликовать его через Django admin.
+                        </p>
+                    {% elif project.status == "published" %}
+                        <form method="post"
+                              action="{% url 'projects:project_close' project.slug %}"
+                              onsubmit="return confirm('Закрыть проект для новых участников? Проект останется видимым в каталоге, но новые отклики и вакансии будут недоступны.');">
+                            {% csrf_token %}
+                            <button class="btn btn-secondary full-width" type="submit">Закрыть набор</button>
+                        </form>
+                        <a class="btn btn-secondary full-width"
+                           href="{% url 'projects:project_archive' project.slug %}">Перенести в архив</a>
+                    {% elif project.status == "closed" %}
+                        <form method="post"
+                              action="{% url 'projects:project_reopen' project.slug %}"
+                              onsubmit="return confirm('Снова открыть проект для набора участников?');">
+                            {% csrf_token %}
+                            <button class="btn btn-primary full-width" type="submit">Открыть набор</button>
+                        </form>
+                        <a class="btn btn-secondary full-width"
+                           href="{% url 'projects:project_archive' project.slug %}">Перенести в архив</a>
+                    {% elif project.status == "archived" %}
+                        <p class="empty">
+                            Проект находится в архиве. Его нельзя редактировать,
+                            открыть заново или пополнить ролями.
+                        </p>
+                    {% endif %}
+                </div>
+                <div class="action-card">
+                    <h2>Роли проекта</h2>
+                    <div class="mini-list">
+                        {% for vacancy in all_vacancies %}
+                            <article class="mini-card">
+                                <h3>{{ vacancy.title }}</h3>
+                                <p>{{ vacancy.role.name }}</p>
+                                <span>
+                                    {{ vacancy.get_status_display }} ·
+                                    {{ vacancy.get_required_level_display }} ·
+                                    мест: {{ vacancy.current_count }}/{{ vacancy.required_count }}
+                                </span>
+                            </article>
+                        {% empty %}
+                            <p class="empty">Роли ещё не добавлены.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% else %}
+                <div class="action-card">
+                    <h2>Участие</h2>
+                    {% if project.status == "published" %}
+                        {% if user.is_authenticated %}
+                            {% if is_team_member %}
+                                <button class="btn btn-secondary full-width" type="button" disabled>Ты уже в команде</button>
+                            {% else %}
+                                <a class="btn btn-primary full-width"
+                                   href="{% url 'interactions:project_apply' project.slug %}">Хочу в команду</a>
+                            {% endif %}
+                            <form method="post"
+                                  action="{% url 'interactions:favorite_project_toggle' project.slug %}">
+                                {% csrf_token %}
+                                <button class="btn btn-secondary full-width" type="submit">
+                                    {% if is_favorite %}
+                                        Удалить из избранного
+                                    {% else %}
+                                        В избранное
+                                    {% endif %}
+                                </button>
+                            </form>
+                        {% else %}
+                            <p class="empty">Войди в аккаунт, чтобы откликнуться на проект или добавить его в избранное.</p>
+                            <a class="btn btn-primary full-width" href="{% url 'accounts:login' %}">Войти</a>
+                        {% endif %}
+                    {% elif project.status == "closed" %}
+                        <p class="empty">Проект закрыт для новых участников. Карточка доступна только для просмотра.</p>
+                        <button class="btn btn-secondary full-width" type="button" disabled>Набор закрыт</button>
+                        {% if user.is_authenticated %}
+                            <form method="post"
+                                  action="{% url 'interactions:favorite_project_toggle' project.slug %}">
+                                {% csrf_token %}
+                                <button class="btn btn-secondary full-width" type="submit">
+                                    {% if is_favorite %}
+                                        Удалить из избранного
+                                    {% else %}
+                                        В избранное
+                                    {% endif %}
+                                </button>
+                            </form>
+                        {% endif %}
+                    {% elif project.status == "archived" %}
+                        <p class="empty">Проект находится в архиве и доступен только как история.</p>
+                    {% else %}
+                        <p class="empty">Проект сейчас недоступен для публичных действий.</p>
+                    {% endif %}
+                </div>
+            {% endif %}
             <div class="action-card">
                 <h2>Похожие проекты</h2>
-                {% for similar in similar_projects %}
-                    <a class="similar-link" href="{{ similar.get_absolute_url }}">{{ similar.title }}</a>
-                {% empty %}
-                    <p class="empty">Похожих проектов пока нет.</p>
-                {% endfor %}
+                <div class="mini-list">
+                    {% for similar in similar_projects %}
+                        <article class="mini-card">
+                            <h3>
+                                <a href="{{ similar.get_absolute_url }}">{{ similar.title }}</a>
+                            </h3>
+                            <p>{{ similar.short_description|default:"Описание проекта пока не заполнено."|short_text:100 }}</p>
+                        </article>
+                    {% empty %}
+                        <p class="empty">Похожих проектов пока нет.</p>
+                    {% endfor %}
+                </div>
             </div>
         </aside>
     </section>

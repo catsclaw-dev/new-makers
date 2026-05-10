@@ -20,8 +20,12 @@
                             <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
                             {% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}
                         </div>
-                        {{ field }}
-                        {% if field.errors %}<div class="field-errors">{{ field.errors }}</div>{% endif %}
+                        {% if field.name == "technologies" %}
+                            <div class="checkbox-panel">{{ field }}</div>
+                        {% else %}
+                            {{ field }}
+                        {% endif %}
+                        {% for error in field.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
                     </div>
                 {% endfor %}
                 <div class="form-actions form-field-wide">

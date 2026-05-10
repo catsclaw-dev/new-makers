@@ -4,7 +4,7 @@
     <section class="container page-head">
         <p class="eyebrow">владелец проекта</p>
         <h1>Мои проекты</h1>
-        <p>
+        <p class="lead">
             Здесь собраны проекты, где в поле «владелец проекта» указан твой аккаунт.
             Активных проектов: {{ projects_count }}.
             Архивных проектов: {{ archived_projects_count }}.
@@ -42,7 +42,7 @@
                             <h3>
                                 <a href="{{ project.get_absolute_url }}">{{ project.title }}</a>
                             </h3>
-                            <p class="project-description">{{ project.short_description }}</p>
+                            <p class="project-description">{{ project.short_description|default:"Описание проекта пока не заполнено." }}</p>
                         </div>
                         <div class="project-card-bottom">
                             <div class="tag-row">
@@ -54,18 +54,41 @@
                             </div>
                             <div class="project-actions">
                                 <a class="btn btn-secondary" href="{{ project.get_absolute_url }}">Открыть</a>
+                                {% if project.status != "archived" %}
+                                    <a class="btn btn-primary"
+                                       href="{% url 'projects:project_update' project.slug %}">Редактировать</a>
+                                {% endif %}
                                 {% if project.status != "closed" and project.status != "archived" %}
                                     <a class="btn btn-secondary"
                                        href="{% url 'projects:project_vacancy_create' project.slug %}">
                                         Добавить роль
                                     </a>
                                 {% endif %}
-                                {% if project.status != "archived" %}
-                                    <a class="btn btn-primary"
-                                       href="{% url 'projects:project_update' project.slug %}">Редактировать</a>
+                                {% if project.status == "published" %}
+                                    <form class="inline-form"
+                                          method="post"
+                                          action="{% url 'projects:project_close' project.slug %}"
+                                          onsubmit="return confirm('Закрыть проект для новых участников?');">
+                                        {% csrf_token %}
+                                        <button class="btn btn-secondary full-width" type="submit">Закрыть набор</button>
+                                    </form>
+                                {% elif project.status == "closed" %}
+                                    <form class="inline-form"
+                                          method="post"
+                                          action="{% url 'projects:project_reopen' project.slug %}"
+                                          onsubmit="return confirm('Снова открыть проект для набора участников?');">
+                                        {% csrf_token %}
+                                        <button class="btn btn-primary full-width" type="submit">Открыть набор</button>
+                                    </form>
                                 {% endif %}
-                                <a class="btn btn-secondary"
-                                   href="{% url 'projects:project_delete' project.slug %}">Удалить</a>
+                                {% if project.status == "published" or project.status == "closed" %}
+                                    <a class="btn btn-secondary"
+                                       href="{% url 'projects:project_archive' project.slug %}">В архив</a>
+                                {% endif %}
+                                {% if project.status == "draft" %}
+                                    <a class="btn btn-danger"
+                                       href="{% url 'projects:project_delete' project.slug %}">Удалить черновик</a>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -73,7 +96,10 @@
             {% empty %}
                 <article class="action-card">
                     <h2>У тебя пока нет активных проектов</h2>
-                    <p class="empty">Создай первый проект. Он сохранится как черновик, после чего ты сможешь добавить открытую роль.</p>
+                    <p class="empty">
+                        Создай первый проект. Он сохранится как черновик,
+                        после чего ты сможешь добавить открытую роль.
+                    </p>
                     <a class="btn btn-primary" href="{% url 'projects:project_create' %}">Создать проект</a>
                 </article>
             {% endfor %}
@@ -102,7 +128,10 @@
                 <p class="eyebrow">история владельца</p>
                 <h2>Архивные проекты</h2>
             </div>
-            <p class="empty">Эти проекты окончательно закрыты. Их нельзя редактировать, открыть заново или пополнить ролями.</p>
+            <p class="empty">
+                Эти проекты окончательно закрыты. Их нельзя редактировать,
+                открыть заново или пополнить ролями.
+            </p>
         </div>
         <div class="cards-grid">
             {% for project in archived_projects %}
@@ -125,7 +154,7 @@
                             <h3>
                                 <a href="{{ project.get_absolute_url }}">{{ project.title }}</a>
                             </h3>
-                            <p class="project-description">{{ project.short_description }}</p>
+                            <p class="project-description">{{ project.short_description|default:"Описание проекта пока не заполнено." }}</p>
                         </div>
                         <div class="project-card-bottom">
                             <div class="tag-row">

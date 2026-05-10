@@ -4,13 +4,13 @@
     <section class="container page-head">
         <p class="eyebrow">личный кабинет</p>
         <h1>{{ user.get_full_name|default:user.username }}</h1>
-        <p>
+        <p class="lead">
             Роль на сервисе: {{ dynamic_role_display }}.
             Управляй проектами, откликами, приглашениями и командами из одного места.
         </p>
     </section>
     <section class="container section">
-        <div class="stats-grid">
+        <dl class="stats-grid">
             <div>
                 <dt>{{ owned_projects_count }}</dt>
                 <dd>
@@ -35,7 +35,7 @@
                     избранных
                 </dd>
             </div>
-        </div>
+        </dl>
     </section>
     <section class="container section two-columns">
         <article class="action-card">
@@ -44,7 +44,7 @@
                 <strong>Логин:</strong> {{ user.username }}
             </p>
             <p>
-                <strong>Email:</strong> {{ user.email }}
+                <strong>Email:</strong> {{ user.email|default:"не указан" }}
             </p>
             <p>
                 <strong>Текущая роль:</strong> {{ dynamic_role_display }}
@@ -60,7 +60,8 @@
                     <strong>Уровень:</strong> {{ specialist_profile.get_level_display }}
                 </p>
                 <p>
-                    <strong>Основная роль:</strong> {{ specialist_profile.main_role|default:"не указана" }}
+                    <strong>Основная роль:</strong>
+                    {{ specialist_profile.main_role|default:"не указана" }}
                 </p>
                 <a class="btn btn-secondary"
                    href="{% url 'specialists:specialist_profile_edit' %}">Редактировать профиль специалиста</a>
@@ -73,7 +74,10 @@
         {% if is_project_owner %}
             <article class="action-card">
                 <h2>Кабинет владельца проекта</h2>
-                <p>У тебя есть активные собственные проекты. Поэтому сейчас ты отображаешься как владелец проекта.</p>
+                <p>
+                    У тебя есть активные собственные проекты. Поэтому сейчас
+                    ты отображаешься как владелец проекта.
+                </p>
                 <p>
                     <strong>Активных проектов:</strong> {{ owned_projects_count }}
                 </p>
@@ -85,13 +89,16 @@
         {% else %}
             <article class="action-card">
                 <h2>Режим специалиста</h2>
-                <p>Сейчас у тебя нет активных собственных проектов. Поэтому основная роль на сервисе — специалист.</p>
+                <p>
+                    Сейчас у тебя нет активных собственных проектов. Поэтому
+                    основная роль на сервисе — специалист.
+                </p>
                 <a class="btn btn-secondary" href="{% url 'projects:project_create' %}">Создать проект</a>
             </article>
         {% endif %}
     </section>
     <section class="container section">
-        <div class="action-card">
+        <article class="action-card">
             <h2>Быстрые действия</h2>
             <div class="hero-actions">
                 <a class="btn btn-primary" href="{% url 'projects:my_projects' %}">Мои проекты</a>
@@ -109,7 +116,7 @@
                 <a class="btn btn-secondary"
                    href="{% url 'specialists:specialist_list' %}">Найти специалиста</a>
             </div>
-        </div>
+        </article>
     </section>
     {% if is_project_owner %}
         <section class="container section">
@@ -126,7 +133,7 @@
                         <h3>
                             <a href="{{ project.get_absolute_url }}">{{ project.title }}</a>
                         </h3>
-                        <p>{{ project.short_description }}</p>
+                        <p>{{ project.short_description|default:"Описание проекта пока не заполнено." }}</p>
                         <span>{{ project.get_status_display }} · {{ project.created_at|date:"d.m.Y" }}</span>
                     </article>
                 {% empty %}
@@ -167,7 +174,10 @@
             {% else %}
                 <article class="action-card">
                     <h3>Профиль специалиста не создан</h3>
-                    <p class="empty">Чтобы откликаться на проекты и состоять в командах, заполни профиль специалиста.</p>
+                    <p class="empty">
+                        Чтобы откликаться на проекты и состоять в командах,
+                        заполни профиль специалиста.
+                    </p>
                     <a class="btn btn-primary"
                        href="{% url 'specialists:specialist_profile_edit' %}">Заполнить профиль специалиста</a>
                 </article>

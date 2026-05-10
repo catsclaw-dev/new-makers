@@ -55,6 +55,32 @@
             </div>
         </div>
     </section>
+    <section id="about" class="container section two-columns">
+        <div>
+            <p class="eyebrow">о сервисе</p>
+            <h2>MeetService — не обычная доска вакансий</h2>
+            <p class="lead">
+                Сервис связывает IT-специалистов с проектами, где нужны участники
+                команды: разработчики, дизайнеры, аналитики, тестировщики и другие роли.
+            </p>
+        </div>
+        <div class="mini-list">
+            <article class="mini-card">
+                <h3>Для специалистов</h3>
+                <p>
+                    Заполни профиль, укажи стек, уровень, опыт и откликайся
+                    на проекты с открытыми ролями.
+                </p>
+            </article>
+            <article class="mini-card">
+                <h3>Для владельцев проектов</h3>
+                <p>
+                    Создай проект, добавь открытые роли и приглашай подходящих
+                    специалистов в команду.
+                </p>
+            </article>
+        </div>
+    </section>
     <section class="container section">
         <div class="section-heading">
             <div>
@@ -65,51 +91,22 @@
         </div>
         <div class="cards-grid cards-grid-home">
             {% for project in new_projects_page %}
-                <article class="project-card">
-                    {% if project.cover_image %}
-                        <img class="project-cover"
-                             src="{{ project.cover_image.url }}"
-                             alt="{{ project.title }}">
-                    {% else %}
-                        <div class="project-cover project-cover-placeholder">
-                            <span>IT</span>
-                        </div>
-                    {% endif %}
-                    <div class="project-card-body">
-                        <div>
-                            <div class="card-meta">
-                                <span>{{ project.get_stage_display }}</span>
-                                <span>{{ project.get_participation_format_display }}</span>
-                            </div>
-                            <h3>
-                                <a href="{{ project.get_absolute_url }}">{{ project.title }}</a>
-                            </h3>
-                            <p class="project-description">{{ project.short_description|short_text:150 }}</p>
-                        </div>
-                        <div class="project-card-bottom">
-                            <div class="tag-row">
-                                {% for technology in project.technologies.all|slice:":4" %}
-                                    <span class="tag">{{ technology.name }}</span>
-                                {% empty %}
-                                    <span class="tag">Стек не указан</span>
-                                {% endfor %}
-                            </div>
-                            <a class="card-link" href="{{ project.get_absolute_url }}">Открыть проект</a>
-                        </div>
-                    </div>
-                </article>
+                {% include "projects/includes/project_card.html" with project=project placeholder_text="IT" cta_text="Открыть проект" %}
             {% empty %}
-                <p class="empty">Пока нет опубликованных проектов.</p>
+                <article class="action-card">
+                    <h2>Пока нет опубликованных проектов</h2>
+                    <p class="empty">После публикации первые проекты появятся здесь.</p>
+                </article>
             {% endfor %}
         </div>
         {% if new_projects_page.paginator.num_pages > 1 %}
-            <nav class="pagination">
+            <nav class="pagination" aria-label="Пагинация новых проектов">
                 {% if new_projects_page.has_previous %}
                     <a href="?q={{ query }}&new_page={{ new_projects_page.previous_page_number }}&urgent_page={{ urgent_projects_page.number }}">
                         ← Новее
                     </a>
                 {% endif %}
-                <span>{{ new_projects_page.number }} / {{ new_projects_page.paginator.num_pages }}</span>
+                <span class="pagination-current">{{ new_projects_page.number }} / {{ new_projects_page.paginator.num_pages }}</span>
                 {% if new_projects_page.has_next %}
                     <a href="?q={{ query }}&new_page={{ new_projects_page.next_page_number }}&urgent_page={{ urgent_projects_page.number }}">
                         Ещё →
@@ -128,51 +125,24 @@
         </div>
         <div class="cards-grid cards-grid-home">
             {% for project in urgent_projects_page %}
-                <article class="project-card project-card-accent">
-                    {% if project.cover_image %}
-                        <img class="project-cover"
-                             src="{{ project.cover_image.url }}"
-                             alt="{{ project.title }}">
-                    {% else %}
-                        <div class="project-cover project-cover-placeholder">
-                            <span>TEAM</span>
-                        </div>
-                    {% endif %}
-                    <div class="project-card-body">
-                        <div>
-                            <div class="card-meta">
-                                <span>{{ project.get_stage_display }}</span>
-                                <span>{{ project.get_participation_format_display }}</span>
-                            </div>
-                            <h3>
-                                <a href="{{ project.get_absolute_url }}">{{ project.title }}</a>
-                            </h3>
-                            <p class="project-description">{{ project.short_description|short_text:150 }}</p>
-                        </div>
-                        <div class="project-card-bottom">
-                            <div class="tag-row">
-                                {% for technology in project.technologies.all|slice:":4" %}
-                                    <span class="tag">{{ technology.name }}</span>
-                                {% empty %}
-                                    <span class="tag">Стек не указан</span>
-                                {% endfor %}
-                            </div>
-                            <a class="card-link" href="{{ project.get_absolute_url }}">Хочу в команду</a>
-                        </div>
-                    </div>
-                </article>
+                {% include "projects/includes/project_card.html" with project=project card_modifier="project-card-accent" placeholder_text="TEAM" cta_text="Хочу в команду" %}
             {% empty %}
-                <p class="empty">Пока нет проектов с открытыми ролями.</p>
+                <article class="action-card">
+                    <h2>Нет срочных проектов</h2>
+                    <p class="empty">Сейчас нет опубликованных проектов с открытыми ролями.</p>
+                </article>
             {% endfor %}
         </div>
         {% if urgent_projects_page.paginator.num_pages > 1 %}
-            <nav class="pagination">
+            <nav class="pagination" aria-label="Пагинация срочных проектов">
                 {% if urgent_projects_page.has_previous %}
                     <a href="?q={{ query }}&new_page={{ new_projects_page.number }}&urgent_page={{ urgent_projects_page.previous_page_number }}">
                         ← Назад
                     </a>
                 {% endif %}
-                <span>{{ urgent_projects_page.number }} / {{ urgent_projects_page.paginator.num_pages }}</span>
+                <span class="pagination-current">
+                    {{ urgent_projects_page.number }} / {{ urgent_projects_page.paginator.num_pages }}
+                </span>
                 {% if urgent_projects_page.has_next %}
                     <a href="?q={{ query }}&new_page={{ new_projects_page.number }}&urgent_page={{ urgent_projects_page.next_page_number }}">
                         Ещё →
@@ -188,11 +158,14 @@
                     <p class="eyebrow">профили</p>
                     <h2>Активные специалисты</h2>
                 </div>
+                <a href="{% url 'specialists:specialist_list' %}">Все специалисты</a>
             </div>
             <div class="mini-list">
                 {% for specialist in active_specialists %}
                     <article class="mini-card">
-                        <h3>{{ specialist.get_display_name }}</h3>
+                        <h3>
+                            <a href="{% url 'specialists:specialist_detail' specialist.pk %}">{{ specialist.get_display_name }}</a>
+                        </h3>
                         <p>{{ specialist.main_role|default:"Роль не указана" }}</p>
                         <span>{{ specialist.get_level_display }}</span>
                     </article>

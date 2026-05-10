@@ -4,7 +4,7 @@
     <section class="container page-head">
         <p class="eyebrow">участие в проектах</p>
         <h1>Мои команды</h1>
-        <p>
+        <p class="lead">
             Здесь отображаются проекты, где ты состоишь или состоял в команде как специалист.
             Активных участий: {{ memberships_count }}.
             Архивных участий: {{ archived_memberships_count }}.
@@ -18,8 +18,11 @@
                     Чтобы состоять в командах, откликаться на проекты и принимать приглашения,
                     сначала нужно заполнить профиль специалиста.
                 </p>
-                <a class="btn btn-primary"
-                   href="{% url 'specialists:specialist_profile_edit' %}">Заполнить профиль специалиста</a>
+                <div class="hero-actions">
+                    <a class="btn btn-primary"
+                       href="{% url 'specialists:specialist_profile_edit' %}">Заполнить профиль специалиста</a>
+                    <a class="btn btn-secondary" href="{% url 'projects:project_list' %}">Смотреть проекты</a>
+                </div>
             </article>
         </section>
     {% else %}
@@ -52,7 +55,9 @@
                                 <h3>
                                     <a href="{{ membership.project.get_absolute_url }}">{{ membership.project.title }}</a>
                                 </h3>
-                                <p class="project-description">{{ membership.project.short_description }}</p>
+                                <p class="project-description">
+                                    {{ membership.project.short_description|default:"Описание проекта пока не заполнено." }}
+                                </p>
                             </div>
                             <div class="project-card-bottom">
                                 <div class="tag-row">
@@ -101,7 +106,10 @@
                     <p class="eyebrow">история участия</p>
                     <h2>Архивные команды</h2>
                 </div>
-                <p class="empty">Здесь проекты, которые были окончательно архивированы, но где ты был участником команды.</p>
+                <p class="empty">
+                    Здесь проекты, которые были окончательно архивированы,
+                    но где ты был участником команды.
+                </p>
             </div>
             <div class="cards-grid">
                 {% for membership in archived_memberships %}
@@ -124,7 +132,9 @@
                                 <h3>
                                     <a href="{{ membership.project.get_absolute_url }}">{{ membership.project.title }}</a>
                                 </h3>
-                                <p class="project-description">{{ membership.project.short_description }}</p>
+                                <p class="project-description">
+                                    {{ membership.project.short_description|default:"Описание проекта пока не заполнено." }}
+                                </p>
                             </div>
                             <div class="project-card-bottom">
                                 <div class="tag-row">

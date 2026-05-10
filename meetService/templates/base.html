@@ -12,6 +12,7 @@
         {% block extra_head %}{% endblock %}
     </head>
     <body class="{% block body_class %}{% endblock %}">
+        <a class="skip-link" href="#main-content">Перейти к содержимому</a>
         <header class="site-header">
             <div class="container header-main">
                 <a class="logo"
@@ -56,7 +57,7 @@
                 {% for message in messages %}<div class="message message-{{ message.tags }}">{{ message }}</div>{% endfor %}
             </div>
         {% endif %}
-        <main>
+        <main id="main-content">
             {% block content %}{% endblock %}
         </main>
         <footer class="site-footer">

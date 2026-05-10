@@ -1,19 +1,24 @@
 {% extends "base.html" %}
-{% block title %}Удалить проект — MeetService{% endblock %}
+{% block title %}Удалить черновик проекта — MeetService{% endblock %}
 {% block content %}
-<section class="container auth-page">
-  <div class="auth-card">
-    <p class="eyebrow">опасное действие</p>
-    <h1>Удалить проект?</h1>
-    <p class="lead">
-      Ты собираешься удалить проект <strong>{{ project.title }}</strong>.
-      Это действие нельзя отменить.
-    </p>
-    <form method="post" class="form-grid">
-      {% csrf_token %}
-      <button class="btn btn-primary full-width" type="submit">Да, удалить проект</button>
-      <a class="btn btn-secondary full-width" href="{% url 'projects:my_projects' %}">Отмена</a>
-    </form>
-  </div>
-</section>
+    <section class="container narrow-page section">
+        <article class="action-card">
+            <p class="eyebrow">опасное действие</p>
+            <h1>Удалить черновик проекта?</h1>
+            <p class="lead">
+                Ты собираешься удалить проект <strong>«{{ project.title }}»</strong>.
+                Это действие нельзя отменить.
+            </p>
+            <p class="empty">
+                Удаление доступно только для черновиков. Опубликованные и закрытые
+                проекты нужно переносить в архив.
+            </p>
+            <form method="post" class="form-grid">
+                {% csrf_token %}
+                <button class="btn btn-danger full-width" type="submit">Да, удалить черновик</button>
+                <a class="btn btn-secondary full-width"
+                   href="{{ project.get_absolute_url }}">Отмена</a>
+            </form>
+        </article>
+    </section>
 {% endblock %}

@@ -5,7 +5,7 @@
     <section class="container page-head">
         <p class="eyebrow">каталог</p>
         <h1>Проекты</h1>
-        <p>Ищи проект по названию, описанию, стеку технологий или открытой роли.</p>
+        <p class="lead">Ищи проект по названию, описанию, стеку технологий или открытой роли.</p>
     </section>
     <section class="container catalog-layout">
         <aside class="filters-panel">
@@ -21,66 +21,61 @@
                     Технология
                     <select name="technology">
                         <option value="">Любая</option>
-                        {% for technology in technologies %}<option value="{{ technology.slug }}">{{ technology.name }}</option>{% endfor %}
+                        {% for technology in technologies %}
+                            <option value="{{ technology.slug }}"
+                                    {% if technology.slug == technology_slug %}selected{% endif %}>
+                                {{ technology.name }}
+                            </option>
+                        {% endfor %}
                     </select>
                 </label>
                 <label>
                     Роль
                     <select name="role">
                         <option value="">Любая</option>
-                        {% for role in roles %}<option value="{{ role.slug }}">{{ role.name }}</option>{% endfor %}
+                        {% for role in roles %}
+                            <option value="{{ role.slug }}"
+                                    {% if role.slug == role_slug %}selected{% endif %}>{{ role.name }}</option>
+                        {% endfor %}
                     </select>
                 </label>
                 <label>
                     Сортировка
                     <select name="ordering">
-                        <option value="-created_at">Сначала новые</option>
-                        <option value="created_at">Сначала старые</option>
-                        <option value="title">Название А–Я</option>
-                        <option value="-title">Название Я–А</option>
+                        <option value="-created_at"
+                                {% if ordering == "-created_at" %}selected{% endif %}>Сначала новые</option>
+                        <option value="created_at"
+                                {% if ordering == "created_at" %}selected{% endif %}>Сначала старые</option>
+                        <option value="title" {% if ordering == "title" %}selected{% endif %}>Название А–Я</option>
+                        <option value="-title" {% if ordering == "-title" %}selected{% endif %}>Название Я–А</option>
                     </select>
                 </label>
                 <button class="btn btn-primary full-width" type="submit">Применить</button>
+                <a class="btn btn-secondary full-width"
+                   href="{% url 'projects:project_list' %}">Сбросить</a>
             </form>
         </aside>
         <div>
             <div class="cards-grid">
                 {% for project in page_obj %}
-                    <article class="project-card">
-                        {% if project.cover_image %}
-                            <img class="project-cover"
-                                 src="{{ project.cover_image.url }}"
-                                 alt="{{ project.title }}">
-                        {% endif %}
-                        <div class="project-card-body">
-                            <div class="card-meta">
-                                <span>{{ project.get_stage_display }}</span>
-                                <span>{{ project.get_participation_format_display }}</span>
-                            </div>
-                            <h3>
-                                <a href="{{ project.get_absolute_url }}">{{ project.title }}</a>
-                            </h3>
-                            <p>{{ project.short_description }}</p>
-                            <div class="tag-row">
-                                {% for technology in project.technologies.all|slice:":5" %}
-                                    <span class="tag">{{ technology.name }}</span>
-                                {% empty %}
-                                    <span class="tag">Стек не указан</span>
-                                {% endfor %}
-                            </div>
-                            <a class="card-link" href="{{ project.get_absolute_url }}">Открыть проект</a>
-                        </div>
-                    </article>
+                    {% include "projects/includes/project_card.html" with project=project placeholder_text="IT" cta_text="Открыть проект" %}
                 {% empty %}
-                    <p class="empty">По выбранным условиям проекты не найдены.</p>
+                    <article class="action-card">
+                        <h2>Проекты не найдены</h2>
+                        <p class="empty">
+                            По выбранным условиям пока нет опубликованных проектов.
+                            Попробуй изменить фильтры или сбросить поиск.
+                        </p>
+                        <a class="btn btn-primary" href="{% url 'projects:project_list' %}">Сбросить фильтры</a>
+                    </article>
                 {% endfor %}
             </div>
             {% if page_obj.paginator.num_pages > 1 %}
-                <nav class="pagination">
+                <nav class="pagination" aria-label="Пагинация каталога проектов">
                     {% if page_obj.has_previous %}
                         <a href="?{% current_query_string page=page_obj.previous_page_number %}">← Назад</a>
                     {% endif %}
-                    <span>Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
+                    <span class="pagination-current">Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
                     {% if page_obj.has_next %}
                         <a href="?{% current_query_string page=page_obj.next_page_number %}">Вперёд →</a>
                     {% endif %}

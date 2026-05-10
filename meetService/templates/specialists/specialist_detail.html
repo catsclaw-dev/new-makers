@@ -7,12 +7,20 @@
                 <img class="detail-cover specialist-detail-avatar"
                      src="{{ specialist.avatar.url }}"
                      alt="{{ specialist.get_display_name }}">
+            {% else %}
+                <div class="detail-cover project-cover-placeholder">
+                    <span>DEV</span>
+                </div>
             {% endif %}
             <p class="eyebrow">{{ specialist.get_status_display }}</p>
             <h1>{{ specialist.get_display_name }}</h1>
             <p class="lead">{{ specialist.bio|default:"Специалист пока не добавил описание." }}</p>
             <div class="tag-row">
-                {% if specialist.main_role %}<span class="tag">{{ specialist.main_role.name }}</span>{% endif %}
+                {% if specialist.main_role %}
+                    <span class="tag">{{ specialist.main_role.name }}</span>
+                {% else %}
+                    <span class="tag">Роль не указана</span>
+                {% endif %}
                 <span class="tag">{{ specialist.get_level_display }}</span>
                 {% for technology in specialist.technologies.all %}
                     <span class="tag">{{ technology.name }}</span>
@@ -40,23 +48,48 @@
         <aside class="detail-sidebar">
             <div class="action-card">
                 <h2>Контакты и ссылки</h2>
-                {% if specialist.github_url %}
-                    <a class="btn btn-secondary full-width"
-                       href="{{ specialist.github_url }}"
-                       target="_blank">GitHub</a>
+                {% if specialist.github_url or specialist.gitlab_url or specialist.portfolio_url %}
+                    {% if specialist.github_url %}
+                        <a class="btn btn-secondary full-width"
+                           href="{{ specialist.github_url }}"
+                           target="_blank"
+                           rel="noopener noreferrer">GitHub</a>
+                    {% endif %}
+                    {% if specialist.gitlab_url %}
+                        <a class="btn btn-secondary full-width"
+                           href="{{ specialist.gitlab_url }}"
+                           target="_blank"
+                           rel="noopener noreferrer">GitLab</a>
+                    {% endif %}
+                    {% if specialist.portfolio_url %}
+                        <a class="btn btn-secondary full-width"
+                           href="{{ specialist.portfolio_url }}"
+                           target="_blank"
+                           rel="noopener noreferrer">Портфолио</a>
+                    {% endif %}
+                {% else %}
+                    <p class="empty">Специалист пока не добавил внешние ссылки.</p>
                 {% endif %}
-                {% if specialist.gitlab_url %}
-                    <a class="btn btn-secondary full-width"
-                       href="{{ specialist.gitlab_url }}"
-                       target="_blank">GitLab</a>
+            </div>
+            <div class="action-card">
+                <h2>Действия</h2>
+                {% if user.is_authenticated %}
+                    {% if user == specialist.user %}
+                        <p class="empty">
+                            Это твой профиль специалиста. Ты можешь обновить анкету,
+                            стек, ссылки и статус поиска проекта.
+                        </p>
+                        <a class="btn btn-primary full-width"
+                           href="{% url 'specialists:specialist_profile_edit' %}">Редактировать профиль</a>
+                    {% else %}
+                        <p class="empty">Пригласи специалиста в опубликованный проект с открытой ролью.</p>
+                        <a class="btn btn-primary full-width"
+                           href="{% url 'interactions:invite_specialist' specialist.pk %}">Пригласить в проект</a>
+                    {% endif %}
+                {% else %}
+                    <p class="empty">Войди в аккаунт, чтобы приглашать специалистов в проекты.</p>
+                    <a class="btn btn-primary full-width" href="{% url 'accounts:login' %}">Войти</a>
                 {% endif %}
-                {% if specialist.portfolio_url %}
-                    <a class="btn btn-secondary full-width"
-                       href="{{ specialist.portfolio_url }}"
-                       target="_blank">Портфолио</a>
-                {% endif %}
-                <a class="btn btn-primary full-width"
-                   href="{% url 'interactions:invite_specialist' specialist.pk %}">Пригласить в проект</a>
             </div>
         </aside>
     </section>
