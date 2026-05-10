@@ -33,4 +33,9 @@ urlpatterns = [
     ),
     path("teams/my/", views.my_teams, name="my_teams"),
     path("projects/<str:slug>/", views.project_detail, name="project_detail"),
+    path(
+        "projects/<str:slug>/archive",
+        views.project_archive,
+        name="project_archive",
+    ),
 ]

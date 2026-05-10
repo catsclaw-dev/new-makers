@@ -358,6 +358,9 @@ def project_update(request, slug):
             "Редактировать проект может только владелец или администратор."
         )
 
+    if not project.status == Project.Status.ARCHIVED:
+        raise Http404("Архивный проект нельзя редактировать.")
+
     if request.method == "POST":
         form = ProjectForm(request.POST, request.FILES, instance=project)
 
@@ -526,3 +529,48 @@ def project_reopen(request, slug):
 
     messages.success(request, "Проект снова открыт для набора участников.")
     return redirect(project.get_absolute_url())
+
+
+@login_required
+def project_archive(request, slug):
+    """Окончательно архивирует проект без возможности восстановления."""
+    project = get_object_or_404(Project, slug=slug)
+
+    if not project.can_be_edited_by(request.user):
+        raise PermissionDenied(
+            "Архивировать проект может только владелец или администратор."
+        )
+
+    if project.status not in [Project.Status.PUBLISHED, Project.Status.CLOSED]:
+        messages.error(
+            request,
+            "Архивировать можно только опубликованный или закрытый проект.",
+        )
+        return redirect(project.get_absolute_url())
+
+    if request.method == "POST":
+        confirmation_title = request.POST.get("confirmation_title", "").strip()
+
+        if confirmation_title != project.title:
+            messages.error(
+                request,
+                "Название проекта введено неверно. Архивация отменена.",
+            )
+            return redirect("projects:project_archive", slug=project.slug)
+
+        FavoriteProject.objects.filter(project=project).delete()
+
+        project.status = Project.Status.ARCHIVED
+        project.updated_by = request.user
+        project.save(update_fields=["status", "updated_by", "updated_at"])
+
+        messages.success(
+            request,
+            "Проект окончательно перенесён в архив и удалён из избранного.",
+        )
+        return redirect("projects:my_projects")
+
+    context = {
+        "project": project,
+    }
+    return render(request, "projects/project_archive_confirm.html", context)

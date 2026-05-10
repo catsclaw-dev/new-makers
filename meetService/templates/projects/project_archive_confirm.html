@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Архивация проекта — MeetService{% endblock %}
+{% block content %}
+<section class="container narrow-page">
+  <div class="action-card">
+    <p class="eyebrow">Окончательная архивация</p>
+    <h1>Архивировать проект «{{ project.title }}»?</h1>
+    <p class="lead">
+      Это действие нельзя отменить. Проект исчезнет из публичного каталога,
+      станет недоступен для новых откликов и будет удалён из избранного у всех пользователей.
+    </p>
+    <p>Для подтверждения введи полное название проекта:</p>
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-field">
+        <label for="confirmation_title">Название проекта</label>
+        <input id="confirmation_title" name="confirmation_title" type="text" required autocomplete="off"
+          placeholder="{{ project.title }}">
+        <small>Нужно ввести точно: {{ project.title }}</small>
+      </div>
+      <button class="btn btn-danger full-width" type="submit"
+        onclick="return confirm('Последнее подтверждение: окончательно архивировать проект? Восстановить его будет нельзя.');">
+        Окончательно архивировать
+      </button>
+      <a class="btn btn-secondary full-width" href="{{ project.get_absolute_url }}">Отмена</a>
+    </form>
+  </div>
+</section>
+{% endblock %}

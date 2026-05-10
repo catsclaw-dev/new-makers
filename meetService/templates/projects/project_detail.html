@@ -88,8 +88,12 @@
                 {% if can_manage_project %}
                     <div class="owner-actions">
                         <h3>Управление проектом</h3>
-                        <a class="btn btn-secondary full-width"
-                           href="{% url 'projects:project_update' project.slug %}">Редактировать проект</a>
+                        {% if project.status != "archived" %}
+                            <a class="btn btn-secondary full-width"
+                               href="{% url 'projects:project_update' project.slug %}">Редактировать проект</a>
+                        {% else %}
+                            <button class="btn btn-secondary full-width" type="button" disabled>Редактирование архива недоступно</button>
+                        {% endif %}
                         {% if project.status != "closed" and project.status != "archived" %}
                             <a class="btn btn-secondary full-width"
                                href="{% url 'projects:project_vacancy_create' project.slug %}">
@@ -137,6 +141,10 @@
                                 {% csrf_token %}
                                 <button class="btn btn-primary full-width" type="submit">Открыть проект</button>
                             </form>
+                        {% endif %}
+                        {% if project.status == "published" or project.status == "closed" %}
+                            <a class="btn btn-secondary full-width"
+                               href="{% url 'projects:project_archive' project.slug %}">Закрыть окончательно</a>
                         {% endif %}
                     </div>
                 {% else %}
