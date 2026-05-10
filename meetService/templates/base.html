@@ -9,16 +9,19 @@
             {% block title %}MeetService{% endblock %}
         </title>
         <link rel="stylesheet" href="{% static 'css/site.css' %}">
+        {% block extra_head %}{% endblock %}
     </head>
-    <body>
+    <body class="{% block body_class %}{% endblock %}">
         <header class="site-header">
             <div class="container header-main">
-                <a class="logo" href="{% url 'projects:home' %}">{% service_name %}</a>
-                <nav class="main-nav">
+                <a class="logo"
+                   href="{% url 'projects:home' %}"
+                   aria-label="На главную страницу MeetService">{% service_name %}</a>
+                <nav class="main-nav" aria-label="Основная навигация">
                     <a href="{% url 'projects:home' %}">Главная</a>
                     <a href="{% url 'projects:project_list' %}">Проекты</a>
                     <a href="{% url 'specialists:specialist_list' %}">Специалисты</a>
-                    <a href="#">О сервисе</a>
+                    <a href="{% url 'projects:home' %}#about">О сервисе</a>
                 </nav>
                 <div class="header-auth">
                     {% if user.is_authenticated %}
@@ -37,18 +40,19 @@
                 </div>
             </div>
             {% if user.is_authenticated %}
-                <div class="container cabinet-nav">
+                <nav class="container cabinet-nav" aria-label="Навигация личного кабинета">
+                    <a href="{% url 'accounts:profile' %}">Кабинет</a>
+                    <a href="{% url 'specialists:specialist_profile_edit' %}">Профиль специалиста</a>
                     <a href="{% url 'projects:my_projects' %}">Мои проекты</a>
                     <a href="{% url 'projects:my_teams' %}">Мои команды</a>
-                    <a href="{% url 'specialists:specialist_profile_edit' %}">Профиль специалиста</a>
                     <a href="{% url 'interactions:application_list' %}">Отклики</a>
-                    <a href="{% url 'interactions:favorite_project_list' %}">Избранное</a>
                     <a href="{% url 'interactions:invitation_list' %}">Приглашения</a>
-                </div>
+                    <a href="{% url 'interactions:favorite_project_list' %}">Избранное</a>
+                </nav>
             {% endif %}
         </header>
         {% if messages %}
-            <div class="container messages">
+            <div class="container messages" role="status" aria-live="polite">
                 {% for message in messages %}<div class="message message-{{ message.tags }}">{{ message }}</div>{% endfor %}
             </div>
         {% endif %}
@@ -61,5 +65,6 @@
                 <p>Курсовой проект на Django</p>
             </div>
         </footer>
+        {% block extra_scripts %}{% endblock %}
     </body>
 </html>

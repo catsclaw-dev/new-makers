@@ -1,0 +1,24 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ошибка сервера — MeetService</title>
+  <link rel="stylesheet" href="{% static 'css/site.css' %}">
+</head>
+
+<body class="error-page">
+  <main class="error-card">
+    <p class="eyebrow">ошибка 500</p>
+    <h1>Что-то пошло не так</h1>
+    <p>
+      На сервере произошла ошибка. Попробуй вернуться на главную
+      или повторить действие позже.
+    </p>
+    <a class="btn btn-primary" href="/">Вернуться на главную</a>
+  </main>
+</body>
+
+</html>

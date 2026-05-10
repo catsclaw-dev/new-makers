@@ -1,5 +1,3 @@
-from django.db import models
-
 from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
@@ -9,6 +7,7 @@ from django.utils.translation import gettext_lazy as _
 from simple_history.models import HistoricalRecords
 
 from apps.directories.models import Role, Technology
+from apps.common_validators import validate_avatar_image
 
 
 class SpecialistProfile(models.Model):
@@ -66,6 +65,7 @@ class SpecialistProfile(models.Model):
         upload_to="specialists/avatars/",
         blank=True,
         null=True,
+        validators=[validate_avatar_image],
         verbose_name=_("аватар"),
         help_text=_("Фотография или изображение профиля специалиста."),
     )

@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, models
+from django.views.decorators.http import require_POST
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
@@ -109,6 +110,7 @@ def application_list(request):
     return render(request, "interactions/application_list.html", context)
 
 
+@require_POST
 @login_required
 def favorite_project_toggle(request, slug):
     """Добавляет проект в избранное или удаляет его при повторном действии."""

@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db import models, transaction
 from django.db.models import Count, Q
+from django.views.decorators.http import require_POST
 from django.shortcuts import get_object_or_404, render, redirect
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
@@ -467,13 +468,25 @@ def project_update(request, slug):
 
 @login_required
 def project_delete(request, slug):
-    """Удаление проекта владельцем или администратором."""
+    """Удаление проекта.
+
+    Владелец может удалить только черновик.
+    Администратор может удалить проект любого статуса.
+    """
     project = get_object_or_404(Project, slug=slug)
 
     if not project.can_be_edited_by(request.user):
         raise PermissionDenied(
             "Удалить проект может только владелец или администратор."
         )
+
+    if not request.user.is_staff and project.status != Project.Status.DRAFT:
+        messages.error(
+            request,
+            "Владелец может удалить только черновик. "
+            "Опубликованный или закрытый проект нужно архивировать.",
+        )
+        return redirect(project.get_absolute_url())
 
     if request.method == "POST":
         project_title = project.title
@@ -523,6 +536,7 @@ def project_vacancy_create(request, slug):
     return render(request, "projects/vacancy_form.html", context)
 
 
+@require_POST
 @login_required
 def project_submit_for_moderation(request, slug):
     """Отправляет черновик проекта на модерацию."""
@@ -561,6 +575,7 @@ def project_submit_for_moderation(request, slug):
     return redirect(project.get_absolute_url())
 
 
+@require_POST
 @login_required
 def project_close(request, slug):
     """Закрывает опубликованный проект для новых откликов и вакансий."""
@@ -586,6 +601,7 @@ def project_close(request, slug):
     return redirect(project.get_absolute_url())
 
 
+@require_POST
 @login_required
 def project_reopen(request, slug):
     """Повторно открывает закрытый проект."""

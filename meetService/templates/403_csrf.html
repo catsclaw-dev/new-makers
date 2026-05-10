@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Ошибка безопасности — MeetService{% endblock %}
+{% block content %}
+<section class="container section">
+  <article class="error-card">
+    <p class="eyebrow">ошибка CSRF</p>
+    <h1>Форма устарела или отправлена некорректно</h1>
+    <p>
+      Django отклонил запрос для защиты аккаунта. Обычно это происходит,
+      если страница была открыта слишком долго или форма отправлена без CSRF-токена.
+    </p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="{% url 'projects:home' %}">На главную</a>
+      <a class="btn btn-secondary" href="{% url 'accounts:profile' %}">В личный кабинет</a>
+    </div>
+  </article>
+</section>
+{% endblock %}

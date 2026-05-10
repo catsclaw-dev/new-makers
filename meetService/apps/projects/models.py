@@ -11,6 +11,7 @@ from simple_history.models import HistoricalRecords
 
 from apps.directories.models import Role, Technology
 from apps.specialists.models import SpecialistProfile
+from apps.common_validators import validate_project_cover_image, validate_project_file
 
 
 class ProjectQuerySet(models.QuerySet):
@@ -116,6 +117,7 @@ class Project(models.Model):
         upload_to="projects/covers/",
         blank=True,
         null=True,
+        validators=[validate_project_cover_image],
         verbose_name=_("обложка проекта"),
     )
     stage = models.CharField(
@@ -518,6 +520,7 @@ class ProjectFile(models.Model):
     )
     file = models.FileField(
         upload_to="projects/files/",
+        validators=[validate_project_file],
         verbose_name=_("файл"),
     )
     file_type = models.CharField(
