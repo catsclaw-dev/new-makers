@@ -96,6 +96,7 @@ class Project(models.Model):
         max_length=220,
         unique=True,
         blank=True,
+        allow_unicode=True,
         verbose_name=_("URL-идентификатор"),
         help_text=_("Используется для будущей детальной страницы проекта."),
     )

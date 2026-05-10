@@ -14,6 +14,16 @@ urlpatterns = [
         views.project_submit_for_moderation,
         name="project_submit_for_moderation",
     ),
+    path(
+        "projects/<str:slug>/close/",
+        views.project_close,
+        name="project_close",
+    ),
+    path(
+        "projects/<str:slug>/reopen/",
+        views.project_reopen,
+        name="project_reopen",
+    ),
     path("projects/<str:slug>/edit/", views.project_update, name="project_update"),
     path("projects/<str:slug>/delete/", views.project_delete, name="project_delete"),
     path(

@@ -15,12 +15,10 @@ from apps.specialists.models import SpecialistProfile
 def project_apply(request, slug):
     """Создание отклика специалиста на проект."""
     project = get_object_or_404(
-        Project.objects.published()
-        .select_related("owner")
-        .prefetch_related("vacancies__role"),
+        Project.objects.select_related("owner").prefetch_related("vacancies__role"),
         slug=slug,
+        status=Project.Status.PUBLISHED,
     )
-
     try:
         specialist = request.user.specialist_profile
     except SpecialistProfile.DoesNotExist:
@@ -114,7 +112,15 @@ def application_list(request):
 @login_required
 def favorite_project_toggle(request, slug):
     """Добавляет проект в избранное или удаляет его при повторном действии."""
-    project = get_object_or_404(Project.objects.published(), slug=slug)
+    project = get_object_or_404(
+        Project.objects.filter(
+            status__in=[
+                Project.Status.PUBLISHED,
+                Project.Status.CLOSED,
+            ]
+        ),
+        slug=slug,
+    )
 
     favorite = FavoriteProject.objects.filter(
         user=request.user,

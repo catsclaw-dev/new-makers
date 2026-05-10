@@ -174,7 +174,7 @@ class SpecialistProfile(models.Model):
         return f"{self.user} — {self.get_level_display()}"
 
     def get_absolute_url(self) -> str:
-        return reverse("specialist_detail", kwargs={"pk": self.pk})
+        return reverse("specialists:specialist_detail", kwargs={"pk": self.pk})
 
     def is_available_for_project(self) -> bool:
         """Проверяет, доступен ли специалист для участия в проекте."""

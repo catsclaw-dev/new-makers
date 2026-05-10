@@ -337,11 +337,11 @@ class Invitation(models.Model):
                 )
 
             duplicate_exists = (
-                Application.objects.filter(
+                Invitation.objects.filter(
                     project=self.project,
                     vacancy=self.vacancy,
                     specialist=self.specialist,
-                    status__in=self.ACTIVE_STATUSES,
+                    status=self.Status.PENDING,
                 )
                 .exclude(pk=self.pk)
                 .exists()

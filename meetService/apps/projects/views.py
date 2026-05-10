@@ -121,11 +121,15 @@ def project_list(request):
     }
 
     projects = (
-        Project.objects.published()
+        Project.objects.filter(
+            status__in=[
+                Project.Status.PUBLISHED,
+                Project.Status.CLOSED,
+            ]
+        )
         .select_related("owner")
         .prefetch_related("technologies", "vacancies__role")
     )
-
     if query:
         projects = projects.filter(
             Q(title__icontains=query)
@@ -187,7 +191,12 @@ def project_detail(request, slug):
         slug=slug,
     )
 
-    if project.status != Project.Status.PUBLISHED:
+    public_statuses = {
+        Project.Status.PUBLISHED,
+        Project.Status.CLOSED,
+    }
+
+    if project.status not in public_statuses:
         if not project.can_be_edited_by(request.user):
             raise Http404("Проект не найден.")
 
@@ -206,6 +215,12 @@ def project_detail(request, slug):
         status=ProjectVacancy.Status.OPEN,
         current_count__lt=models.F("required_count"),
     ).select_related("role")
+
+    all_vacancies = project.vacancies.select_related("role").order_by(
+        "status",
+        "role__name",
+        "title",
+    )
 
     memberships = project.memberships.select_related("specialist__user", "role")
     files = project.files.all()
@@ -238,6 +253,7 @@ def project_detail(request, slug):
         "is_favorite": is_favorite,
         "is_team_member": is_team_member,
         "can_manage_project": can_manage_project,
+        "all_vacancies": all_vacancies,
     }
     return render(request, "projects/project_detail.html", context)
 
@@ -288,8 +304,15 @@ def my_teams(request):
 def project_create(request):
     """Создание нового проекта вместе с первой открытой ролью."""
     if request.method == "POST":
-        form = ProjectForm(request.POST, request.FILES)
-        vacancy_form = ProjectVacancyForm(request.POST)
+        form = ProjectForm(
+            request.POST,
+            request.FILES,
+            prefix="project",
+        )
+        vacancy_form = ProjectVacancyForm(
+            request.POST,
+            prefix="vacancy",
+        )
 
         if form.is_valid() and vacancy_form.is_valid():
             with transaction.atomic():
@@ -313,8 +336,8 @@ def project_create(request):
             )
             return redirect(project.get_absolute_url())
     else:
-        form = ProjectForm()
-        vacancy_form = ProjectVacancyForm()
+        form = ProjectForm(prefix="project")
+        vacancy_form = ProjectVacancyForm(prefix="vacancy")
 
     context = {
         "form": form,
@@ -392,6 +415,9 @@ def project_vacancy_create(request, slug):
             "Добавлять роли может только владелец проекта или администратор."
         )
 
+    if project.status in [Project.Status.CLOSED, Project.Status.ARCHIVED]:
+        raise Http404("Нельзя добавлять роли в закрытый или архивный проект.")
+
     if request.method == "POST":
         form = ProjectVacancyForm(request.POST)
 
@@ -449,4 +475,54 @@ def project_submit_for_moderation(request, slug):
     project.save(update_fields=["status", "updated_by", "updated_at"])
 
     messages.success(request, "Проект отправлен на рассмотрение модератору.")
+    return redirect(project.get_absolute_url())
+
+
+@login_required
+def project_close(request, slug):
+    """Закрывает опубликованный проект для новых откликов и вакансий."""
+    project = get_object_or_404(Project, slug=slug)
+
+    if not project.can_be_edited_by(request.user):
+        raise PermissionDenied(
+            "Закрыть проект может только владелец или администратор."
+        )
+
+    if request.method != "POST":
+        return redirect(project.get_absolute_url())
+
+    if project.status != Project.Status.PUBLISHED:
+        messages.error(request, "Закрыть можно только опубликованный проект.")
+        return redirect(project.get_absolute_url())
+
+    project.status = Project.Status.CLOSED
+    project.updated_by = request.user
+    project.save(update_fields=["status", "updated_by", "updated_at"])
+
+    messages.success(request, "Проект закрыт для новых участников.")
+    return redirect(project.get_absolute_url())
+
+
+@login_required
+def project_reopen(request, slug):
+    """Повторно открывает закрытый проект."""
+    project = get_object_or_404(Project, slug=slug)
+
+    if not project.can_be_edited_by(request.user):
+        raise PermissionDenied(
+            "Открыть проект заново может только владелец или администратор."
+        )
+
+    if request.method != "POST":
+        return redirect(project.get_absolute_url())
+
+    if project.status != Project.Status.CLOSED:
+        messages.error(request, "Повторно открыть можно только закрытый проект.")
+        return redirect(project.get_absolute_url())
+
+    project.status = Project.Status.PUBLISHED
+    project.updated_by = request.user
+    project.save(update_fields=["status", "updated_by", "updated_at"])
+
+    messages.success(request, "Проект снова открыт для набора участников.")
     return redirect(project.get_absolute_url())
