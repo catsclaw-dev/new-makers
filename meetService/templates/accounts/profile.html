@@ -5,7 +5,7 @@
         <p class="eyebrow">личный кабинет</p>
         <h1>{{ user.get_full_name|default:user.username }}</h1>
         <p>
-            Роль на сервисе: {{ user.get_role_display }}.
+            Роль на сервисе: {{ dynamic_role_display }}.
             Управляй проектами, откликами, приглашениями и командами из одного места.
         </p>
     </section>
@@ -47,33 +47,46 @@
                 <strong>Email:</strong> {{ user.email }}
             </p>
             <p>
-                <strong>Роль:</strong> {{ user.get_role_display }}
+                <strong>Текущая роль:</strong> {{ dynamic_role_display }}
             </p>
         </article>
-        {% if is_specialist %}
+        <article class="action-card">
+            <h2>Профиль специалиста</h2>
+            {% if specialist_profile %}
+                <p>
+                    <strong>Статус:</strong> {{ specialist_profile.get_status_display }}
+                </p>
+                <p>
+                    <strong>Уровень:</strong> {{ specialist_profile.get_level_display }}
+                </p>
+                <p>
+                    <strong>Основная роль:</strong> {{ specialist_profile.main_role|default:"не указана" }}
+                </p>
+                <a class="btn btn-secondary"
+                   href="{% url 'specialists:specialist_profile_edit' %}">Редактировать профиль специалиста</a>
+            {% else %}
+                <p class="empty">Профиль специалиста ещё не создан.</p>
+                <a class="btn btn-primary"
+                   href="{% url 'specialists:specialist_profile_edit' %}">Заполнить профиль специалиста</a>
+            {% endif %}
+        </article>
+        {% if is_project_owner %}
             <article class="action-card">
-                <h2>Профиль специалиста</h2>
-                {% if specialist_profile %}
-                    <p>
-                        <strong>Статус:</strong> {{ specialist_profile.get_status_display }}
-                    </p>
-                    <p>
-                        <strong>Уровень:</strong> {{ specialist_profile.get_level_display }}
-                    </p>
-                    <p>
-                        <strong>Основная роль:</strong> {{ specialist_profile.main_role|default:"не указана" }}
-                    </p>
-                {% else %}
-                    <p class="empty">Профиль специалиста ещё не создан.</p>
-                {% endif %}
+                <h2>Кабинет владельца проекта</h2>
+                <p>У тебя есть активные собственные проекты. Поэтому сейчас ты отображаешься как владелец проекта.</p>
+                <p>
+                    <strong>Активных проектов:</strong> {{ owned_projects_count }}
+                </p>
+                <p>
+                    <strong>Архивных проектов:</strong> {{ archived_owned_projects_count }}
+                </p>
+                <a class="btn btn-primary" href="{% url 'projects:my_projects' %}">Перейти к моим проектам</a>
             </article>
         {% else %}
             <article class="action-card">
-                <h2>Кабинет владельца проекта</h2>
-                <p>
-                    Здесь отображаются проекты, входящие отклики и отправленные приглашения.
-                    Профиль специалиста для владельца проекта не показывается.
-                </p>
+                <h2>Режим специалиста</h2>
+                <p>Сейчас у тебя нет активных собственных проектов. Поэтому основная роль на сервисе — специалист.</p>
+                <a class="btn btn-secondary" href="{% url 'projects:project_create' %}">Создать проект</a>
             </article>
         {% endif %}
     </section>
@@ -81,17 +94,13 @@
         <div class="action-card">
             <h2>Быстрые действия</h2>
             <div class="hero-actions">
-                {% if is_project_owner %}
-                    <a class="btn btn-primary" href="{% url 'projects:my_projects' %}">Мои проекты</a>
-                    <a class="btm btm-secondary" href="{% url 'projects:project_create' %}">Создать проект</a>
-                    <a class="btn btn-secondary"
-                       href="{% url 'interactions:application_list' %}">Входящие отклики</a>
-                {% endif %}
-                {% if is_specialist %}
-                    <a class="btn btn-secondary" href="{% url 'projects:my_teams' %}">Мои команды</a>
-                    <a class="btn btn-secondary"
-                       href="{% url 'interactions:application_list' %}">Мои отклики</a>
-                {% endif %}
+                <a class="btn btn-primary" href="{% url 'projects:my_projects' %}">Мои проекты</a>
+                <a class="btn btn-secondary" href="{% url 'projects:project_create' %}">Создать проект</a>
+                <a class="btn btn-secondary" href="{% url 'projects:my_teams' %}">Мои команды</a>
+                <a class="btn btn-secondary"
+                   href="{% url 'specialists:specialist_profile_edit' %}">Профиль специалиста</a>
+                <a class="btn btn-secondary"
+                   href="{% url 'interactions:application_list' %}">Отклики</a>
                 <a class="btn btn-secondary"
                    href="{% url 'interactions:favorite_project_list' %}">Избранное</a>
                 <a class="btn btn-secondary"
@@ -122,23 +131,24 @@
                     </article>
                 {% empty %}
                     <article class="action-card">
-                        <h3>Проектов пока нет</h3>
-                        <p class="empty">Позже здесь будет кнопка создания проекта.</p>
+                        <h3>Активных проектов пока нет</h3>
+                        <p class="empty">Создай проект, чтобы стать владельцем проекта на сервисе.</p>
+                        <a class="btn btn-primary" href="{% url 'projects:project_create' %}">Создать проект</a>
                     </article>
                 {% endfor %}
             </div>
         </section>
     {% endif %}
-    {% if is_specialist %}
-        <section class="container section">
-            <div class="section-heading">
-                <div>
-                    <p class="eyebrow">команды</p>
-                    <h2>Мои команды</h2>
-                </div>
-                <a href="{% url 'projects:my_teams' %}">Все команды</a>
+    <section class="container section">
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">команды</p>
+                <h2>Мои команды</h2>
             </div>
-            <div class="mini-list">
+            <a href="{% url 'projects:my_teams' %}">Все команды</a>
+        </div>
+        <div class="mini-list">
+            {% if specialist_profile %}
                 {% for membership in team_memberships %}
                     <article class="mini-card">
                         <h3>
@@ -151,9 +161,17 @@
                     <article class="action-card">
                         <h3>Ты пока не состоишь в командах</h3>
                         <p class="empty">Откликнись на проект или прими приглашение владельца проекта.</p>
+                        <a class="btn btn-primary" href="{% url 'projects:project_list' %}">Найти проект</a>
                     </article>
                 {% endfor %}
-            </div>
-        </section>
-    {% endif %}
+            {% else %}
+                <article class="action-card">
+                    <h3>Профиль специалиста не создан</h3>
+                    <p class="empty">Чтобы откликаться на проекты и состоять в командах, заполни профиль специалиста.</p>
+                    <a class="btn btn-primary"
+                       href="{% url 'specialists:specialist_profile_edit' %}">Заполнить профиль специалиста</a>
+                </article>
+            {% endif %}
+        </div>
+    </section>
 {% endblock %}

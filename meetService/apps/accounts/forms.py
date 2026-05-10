@@ -1,5 +1,3 @@
-"""Формы приложения accounts."""
-
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 
@@ -32,7 +30,6 @@ class RegisterForm(UserCreationForm):
             "email",
             "first_name",
             "last_name",
-            "role",
             "password1",
             "password2",
         )
@@ -40,11 +37,9 @@ class RegisterForm(UserCreationForm):
             "username": "Логин",
             "first_name": "Имя",
             "last_name": "Фамилия",
-            "role": "Роль на сервисе",
         }
         help_texts = {
             "username": "Будет отображаться в профиле и карточках.",
-            "role": "Выбери основной сценарий работы на сайте.",
         }
         widgets = {
             "username": forms.TextInput(
@@ -62,11 +57,6 @@ class RegisterForm(UserCreationForm):
             "last_name": forms.TextInput(
                 attrs={
                     "placeholder": "Петров",
-                    "class": "form-control",
-                }
-            ),
-            "role": forms.Select(
-                attrs={
                     "class": "form-control",
                 }
             ),
@@ -89,21 +79,20 @@ class RegisterForm(UserCreationForm):
         return email
 
     def save(self, commit=True):
-        """Сохраняет пользователя и при необходимости создаёт профиль специалиста."""
+        """Сохраняет пользователя как специалиста по умолчанию."""
         user = super().save(commit=False)
         user.email = self.cleaned_data["email"].strip().lower()
-        user.role = self.cleaned_data["role"]
+        user.role = User.UserRole.SPECIALIST
 
         if commit:
             user.save()
 
-            if user.role == User.UserRole.SPECIALIST:
-                SpecialistProfile.objects.get_or_create(
-                    user=user,
-                    defaults={
-                        "created_by": user,
-                        "updated_by": user,
-                    },
-                )
+            SpecialistProfile.objects.get_or_create(
+                user=user,
+                defaults={
+                    "created_by": user,
+                    "updated_by": user,
+                },
+            )
 
         return user

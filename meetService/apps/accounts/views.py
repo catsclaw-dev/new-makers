@@ -7,7 +7,6 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.shortcuts import redirect, render
 
 from apps.accounts.forms import RegisterForm
-from apps.accounts.models import User
 from apps.interactions.models import Application, FavoriteProject, Invitation
 from apps.projects.models import Project, ProjectMembership
 
@@ -46,24 +45,30 @@ class AccountLogoutView(LogoutView):
 
 @login_required
 def profile(request):
-    """Личный кабинет пользователя с разделением по ролям."""
+    """Личный кабинет пользователя с динамическим определением роли."""
     user = request.user
 
     owned_projects_queryset = Project.objects.filter(owner=user)
+    active_owned_projects_queryset = owned_projects_queryset.exclude(
+        status=Project.Status.ARCHIVED
+    )
 
     is_project_owner = (
-        user.role == User.UserRole.PROJECT_OWNER
-        or user.is_staff
-        or owned_projects_queryset.exists()
+        user.is_staff or user.is_superuser or active_owned_projects_queryset.exists()
     )
-    is_specialist = user.role == User.UserRole.SPECIALIST
 
-    specialist_profile = None
+    specialist_profile = getattr(user, "specialist_profile", None)
+    is_specialist = specialist_profile is not None or not is_project_owner
 
-    if is_specialist:
-        specialist_profile = getattr(user, "specialist_profile", None)
+    dynamic_role_display = (
+        "Администратор"
+        if user.is_staff or user.is_superuser
+        else "Владелец проекта"
+        if is_project_owner
+        else "Специалист"
+    )
 
-    owned_projects = owned_projects_queryset.order_by("-created_at")[:5]
+    owned_projects = active_owned_projects_queryset.order_by("-created_at")[:5]
 
     team_memberships = ProjectMembership.objects.none()
     sent_applications_count = 0
@@ -76,6 +81,7 @@ def profile(request):
                 specialist=specialist_profile,
                 status=ProjectMembership.Status.ACTIVE,
             )
+            .exclude(project__status=Project.Status.ARCHIVED)
             .order_by("-joined_at")[:5]
         )
 
@@ -89,11 +95,15 @@ def profile(request):
         ).count()
 
     context = {
+        "dynamic_role_display": dynamic_role_display,
         "is_project_owner": is_project_owner,
         "is_specialist": is_specialist,
         "specialist_profile": specialist_profile,
         "owned_projects": owned_projects,
-        "owned_projects_count": owned_projects_queryset.count(),
+        "owned_projects_count": active_owned_projects_queryset.count(),
+        "archived_owned_projects_count": owned_projects_queryset.filter(
+            status=Project.Status.ARCHIVED
+        ).count(),
         "team_memberships": team_memberships,
         "team_memberships_count": team_memberships.count(),
         "sent_applications_count": sent_applications_count,

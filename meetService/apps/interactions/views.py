@@ -1,13 +1,13 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
-from django.db import IntegrityError
+from django.db import IntegrityError, models
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
 from apps.interactions.forms import ApplicationForm, InvitationForm
 from apps.interactions.models import Application, FavoriteProject, Invitation
-from apps.projects.models import Project, ProjectMembership
+from apps.projects.models import Project, ProjectMembership, ProjectVacancy
 from apps.specialists.models import SpecialistProfile
 
 
@@ -156,15 +156,43 @@ def favorite_project_list(request):
     return render(request, "interactions/favorite_project_list.html", context)
 
 
+def user_has_project_for_invitation(user):
+    """Проверяет, есть ли у пользователя опубликованный проект с открытыми ролями."""
+    if user.is_staff or user.is_superuser:
+        return Project.objects.filter(
+            status=Project.Status.PUBLISHED,
+            vacancies__status=ProjectVacancy.Status.OPEN,
+            vacancies__current_count__lt=models.F("vacancies__required_count"),
+        ).exists()
+
+    return Project.objects.filter(
+        owner=user,
+        status=Project.Status.PUBLISHED,
+        vacancies__status=ProjectVacancy.Status.OPEN,
+        vacancies__current_count__lt=models.F("vacancies__required_count"),
+    ).exists()
+
+
 @login_required
 def invite_specialist(request, pk):
-    """Приглашение специалиста в один из проектов текущего пользователя."""
+    """Приглашение специалиста в опубликованный проект текущего пользователя."""
     specialist = get_object_or_404(
         SpecialistProfile.objects.select_related("user", "main_role").prefetch_related(
             "technologies"
         ),
         pk=pk,
     )
+
+    if specialist.user == request.user:
+        messages.error(request, "Нельзя пригласить самого себя в свой проект.")
+        return redirect(specialist.get_absolute_url())
+
+    if not user_has_project_for_invitation(request.user):
+        messages.error(
+            request,
+            "Для приглашения нужен опубликованный проект с открытой ролью.",
+        )
+        return redirect(specialist.get_absolute_url())
 
     if request.method == "POST":
         form = InvitationForm(
@@ -174,8 +202,73 @@ def invite_specialist(request, pk):
         )
 
         if form.is_valid():
+            invitation = form.save(commit=False)
+
+            if not request.user.is_staff and not request.user.is_superuser:
+                if invitation.project.owner != request.user:
+                    form.add_error(
+                        "project",
+                        "Можно приглашать только в свои проекты.",
+                    )
+                    return render(
+                        request,
+                        "interactions/invite_specialist.html",
+                        {
+                            "specialist": specialist,
+                            "form": form,
+                        },
+                    )
+
+            if invitation.project.status != Project.Status.PUBLISHED:
+                form.add_error(
+                    "project",
+                    "Приглашать можно только в опубликованный проект.",
+                )
+                return render(
+                    request,
+                    "interactions/invite_specialist.html",
+                    {
+                        "specialist": specialist,
+                        "form": form,
+                    },
+                )
+
+            if not invitation.vacancy.is_open():
+                form.add_error(
+                    "vacancy",
+                    "Приглашать можно только на открытую роль.",
+                )
+                return render(
+                    request,
+                    "interactions/invite_specialist.html",
+                    {
+                        "specialist": specialist,
+                        "form": form,
+                    },
+                )
+
+            already_member = ProjectMembership.objects.filter(
+                project=invitation.project,
+                specialist=specialist,
+                status=ProjectMembership.Status.ACTIVE,
+            ).exists()
+
+            if already_member:
+                form.add_error(
+                    None,
+                    "Специалист уже состоит в команде этого проекта.",
+                )
+                return render(
+                    request,
+                    "interactions/invite_specialist.html",
+                    {
+                        "specialist": specialist,
+                        "form": form,
+                    },
+                )
+
             try:
-                form.save()
+                invitation.save()
             except ValidationError as error:
                 form.add_error(None, error)
             except IntegrityError:
@@ -267,7 +360,7 @@ def invitation_accept(request, pk):
     try:
         invitation.accept()
     except ValidationError as error:
-        messages.error(request, "".join(error.message))
+        messages.error(request, " ".join(error.messages))
     except IntegrityError:
         messages.error(request, "Ты уже состоишь в команде этого проекта.")
     else:

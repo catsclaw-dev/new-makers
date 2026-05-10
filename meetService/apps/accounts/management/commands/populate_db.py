@@ -100,27 +100,35 @@ class Command(BaseCommand):
         if options["clear"]:
             self.clear_data()
 
+
+
         roles = self.create_roles()
         technologies = self.create_technologies()
-        owners = self.create_users(count=6, role=User.UserRole.PROJECT_OWNER, prefix="owner")
-        specialists_users = self.create_users(count=18, role=User.UserRole.SPECIALIST, prefix="spec")
-        specialists = self.create_specialist_profiles(specialists_users, roles, technologies)
+
+        users = self.create_users(count=24, prefix="user")
+        owners = users[:6]
+
+        specialists = self.create_specialist_profiles(users, roles, technologies)
+
         projects = self.create_projects(owners, technologies)
         vacancies = self.create_project_vacancies(projects, roles)
         memberships = self.create_memberships(projects, vacancies, specialists, owners)
         applications = self.create_applications(projects, vacancies, specialists, memberships)
         invitations = self.create_invitations(projects, vacancies, specialists, owners, memberships)
-        favorites = self.create_favorites(projects, specialists_users)
+        favorites = self.create_favorites(projects, users)
         files = self.create_project_files(projects, owners)
         reviews = self.create_reviews(memberships)
+
+
 
         self.sync_vacancy_counts(vacancies)
 
         self.stdout.write(self.style.SUCCESS("База данных успешно заполнена."))
         self.stdout.write(f"Ролей: {len(roles)}")
         self.stdout.write(f"Технологий: {len(technologies)}")
-        self.stdout.write(f"Владельцев проектов: {len(owners)}")
-        self.stdout.write(f"Специалистов: {len(specialists)}")
+        self.stdout.write(f"Пользователей: {len(users)}")
+        self.stdout.write(f"Динамических владельцев проектов: {len(owners)}")
+        self.stdout.write(f"Профилей специалистов: {len(specialists)}")
         self.stdout.write(f"Проектов: {len(projects)}")
         self.stdout.write(f"Открытых ролей: {len(vacancies)}")
         self.stdout.write(f"Участников команд: {len(memberships)}")
@@ -186,7 +194,13 @@ class Command(BaseCommand):
 
         return technologies
 
-    def create_users(self, count, role, prefix):
+    def create_users(self, count, prefix):
+        """Создаёт пользователей как специалистов по умолчанию.
+
+        Роль владельца проекта теперь не записывается вручную.
+        Пользователь становится владельцем динамически, если у него есть
+        хотя бы один собственный неархивный проект.
+        """
         users = []
 
         for index in range(1, count + 1):
@@ -199,7 +213,7 @@ class Command(BaseCommand):
                 password="Qwerty12345!",
                 first_name=fake.first_name(),
                 last_name=fake.last_name(),
-                role=role,
+                role=User.UserRole.SPECIALIST,
                 is_active=True,
             )
             users.append(user)
@@ -323,8 +337,10 @@ class Command(BaseCommand):
                         Project.Status.PUBLISHED,
                         Project.Status.PUBLISHED,
                         Project.Status.PUBLISHED,
+                        Project.Status.CLOSED,
                         Project.Status.MODERATION,
                         Project.Status.DRAFT,
+                        Project.Status.ARCHIVED,
                     ]
                 ),
                 repository_url=f"https://github.com/{owner.username}/{slug}",
@@ -552,13 +568,22 @@ class Command(BaseCommand):
 
         return invitations
 
-    def create_favorites(self, projects, specialist_users):
+    def create_favorites(self, projects, users):
         favorites = []
         used_pairs = set()
 
+        available_projects = [
+            project
+            for project in projects
+            if project.status in [Project.Status.PUBLISHED, Project.Status.CLOSED]
+        ]
+
+        if not available_projects:
+            return favorites
+
         for _ in range(45):
-            user = random.choice(specialist_users)
-            project = random.choice(projects)
+            user = random.choice(users)
+            project = random.choice(available_projects)
             key = (user.id, project.id)
 
             if key in used_pairs:

@@ -22,6 +22,42 @@ class User(AbstractUser):
 
     history = HistoricalRecords(verbose_name=_("история изменений"))
 
+    def has_active_owned_projects(self) -> bool:
+        """Проверяет, есть ли у пользователя собственные неархивные проекты."""
+        if not self.pk:
+            return False
+
+        from apps.projects.models import Project
+
+        return (
+            Project.objects.filter(owner=self)
+            .exclude(status=Project.Status.ARCHIVED)
+            .exists()
+        )
+
+    def get_dynamic_role(self) -> str:
+        """Возвращает динамическую роль пользователя на сервисе."""
+        if self.is_staff or self.is_superuser or self.role == self.UserRole.ADMIN:
+            return self.UserRole.ADMIN
+
+        if self.has_active_owned_projects():
+            return self.UserRole.PROJECT_OWNER
+
+        return self.UserRole.SPECIALIST
+
+    def get_dynamic_role_display(self) -> str:
+        """Возвращает человекочитаемое название динамической роли."""
+        dynamic_role = self.get_dynamic_role()
+        return self.UserRole(dynamic_role).label
+
+    def is_dynamic_project_owner(self) -> bool:
+        """Проверяет, является ли пользователь владельцем активных проектов."""
+        return self.get_dynamic_role() == self.UserRole.PROJECT_OWNER
+
+    def is_dynamic_specialist(self) -> bool:
+        """Проверяет, отображается ли пользователь как специалист."""
+        return self.get_dynamic_role() == self.UserRole.SPECIALIST
+
     class Meta:
         verbose_name = _("пользователь")
         verbose_name_plural = _("пользователи")
