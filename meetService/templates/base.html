@@ -3,56 +3,66 @@
 <!DOCTYPE html>
 <html lang="ru">
     <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>
             {% block title %}MeetService{% endblock %}
         </title>
-        <link rel="stylesheet" href="{% static 'css/site.css' %}" />
+        <link rel="stylesheet" href="{% static 'css/site.css' %}">
     </head>
     <body>
         <header class="site-header">
-            <div class="container header-inner">
+            <div class="container header-main">
                 <a class="logo" href="{% url 'projects:home' %}">{% service_name %}</a>
-                <nav class="nav">
+                <nav class="main-nav">
                     <a href="{% url 'projects:home' %}">Главная</a>
                     <a href="{% url 'projects:project_list' %}">Проекты</a>
                     <a href="{% url 'specialists:specialist_list' %}">Специалисты</a>
                     <a href="#">О сервисе</a>
                 </nav>
-                <div class="header-actions">
+                <div class="header-auth">
                     {% if user.is_authenticated %}
-                        <a class="user-pill" href="{% url 'accounts:profile' %}">{{ user.username }}</a>
-                        <a class="user-pill" href="{% url 'projects:my_projects' %}">Мои проекты</a>
-                        <a class="user-pill" href="{% url 'projects:my_teams' %}">Мои команды</a>
-                        <a class="user-pill" href="{% url 'interactions:application_list' %}">Отклики</a>
-                        <a class="user-pill"
-                           href="{% url 'interactions:favorite_project_list' %}">Избранное</a>
-                        <a class="user-pill" href="{% url 'interactions:invitation_list' %}">Приглашения</a>
+                        <a class="user-chip user-chip-name" href="{% url 'accounts:profile' %}">{{ user.username }}</a>
                         <form class="inline-form"
                               method="post"
                               action="{% url 'accounts:logout' %}">
                             {% csrf_token %}
-                            <button class="btn btn-secondary" type="submit">Выход</button>
+                            <button class="btn btn-secondary btn-small" type="submit">Выход</button>
                         </form>
                     {% else %}
-                        <a class="btn btn-secondary" href="{% url 'accounts:login' %}">Вход</a>
-                        <a class="btn btn-primary" href="{% url 'accounts:register' %}">Регистрация</a>
+                        <a class="btn btn-secondary btn-small" href="{% url 'accounts:login' %}">Вход</a>
+                        <a class="btn btn-primary btn-small"
+                           href="{% url 'accounts:register' %}">Регистрация</a>
                     {% endif %}
                 </div>
-            </header>
-            <main>
-                {% if messages %}
-                    <section class="container messages">
-                        {% for message in messages %}<div class="message">{{ message }}</div>{% endfor %}
-                    </section>
-                {% endif %}
-                {% block content %}{% endblock %}
-            </main>
-            <footer class="site-footer">
-                <div class="container">
-                    <p>MeetService — интернет-сервис по поиску IT-команды.</p>
+            </div>
+            {% if user.is_authenticated %}
+                <div class="container cabinet-nav">
+                    {% if user.role == "project_owner" or user.is_staff %}
+                        <a href="{% url 'projects:my_projects' %}">Мои проекты</a>
+                    {% endif %}
+                    {% if user.role == "specialist" %}
+                        <a href="{% url 'projects:my_teams' %}">Мои команды</a>
+                        <a href="{% url 'interactions:application_list' %}">Отклики</a>
+                    {% endif %}
+                    <a href="{% url 'interactions:favorite_project_list' %}">Избранное</a>
+                    <a href="{% url 'interactions:invitation_list' %}">Приглашения</a>
                 </div>
-            </footer>
-        </body>
-    </html>
+            {% endif %}
+        </header>
+        {% if messages %}
+            <div class="container messages">
+                {% for message in messages %}<div class="message message-{{ message.tags }}">{{ message }}</div>{% endfor %}
+            </div>
+        {% endif %}
+        <main>
+            {% block content %}{% endblock %}
+        </main>
+        <footer class="site-footer">
+            <div class="container footer-inner">
+                <p>© MeetService — сервис поиска IT-команды</p>
+                <p>Курсовой проект на Django</p>
+            </div>
+        </footer>
+    </body>
+</html>
