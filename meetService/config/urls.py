@@ -19,6 +19,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.views.i18n import set_language
 
 admin.site.site_header = "MeetService - администрирование"
 admin.site.site_title = "MeetService Admin"
@@ -30,6 +31,11 @@ urlpatterns = [
     path("accounts/", include("apps.accounts.urls")),
     path("specialists/", include("apps.specialists.urls")),
     path("", include("apps.interactions.urls")),
+    path(
+        "i18n/setlang/",
+        set_language,
+        name="set_language",
+    ),
 ]
 
 if settings.DEBUG:

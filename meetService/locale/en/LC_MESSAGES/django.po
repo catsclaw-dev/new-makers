@@ -1,0 +1,2291 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-05-11 11:25+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: meetService/apps/accounts/admin.py:45 meetService/apps/accounts/admin.py:54
+msgid "Роль в сервисе"
+msgstr ""
+
+#: meetService/apps/accounts/models.py:11
+msgid "Специалист"
+msgstr ""
+
+#: meetService/apps/accounts/models.py:12
+msgid "Владелец проекта"
+msgstr ""
+
+#: meetService/apps/accounts/models.py:13
+msgid "Администратор"
+msgstr ""
+
+#: meetService/apps/accounts/models.py:19
+msgid "роль пользователя"
+msgstr ""
+
+#: meetService/apps/accounts/models.py:20
+msgid "Определяет основной сценарий работы пользователя на сайте."
+msgstr ""
+
+#: meetService/apps/accounts/models.py:23
+#: meetService/apps/directories/models.py:42
+#: meetService/apps/directories/models.py:102
+#: meetService/apps/interactions/models.py:77
+#: meetService/apps/interactions/models.py:285
+#: meetService/apps/projects/models.py:186
+#: meetService/apps/projects/models.py:347
+#: meetService/apps/projects/models.py:476
+#: meetService/apps/reviews/models.py:73
+#: meetService/apps/specialists/models.py:166
+msgid "история изменений"
+msgstr ""
+
+#: meetService/apps/accounts/models.py:62
+#: meetService/apps/interactions/models.py:448
+#: meetService/apps/specialists/models.py:39
+msgid "пользователь"
+msgstr ""
+
+#: meetService/apps/accounts/models.py:63
+msgid "пользователи"
+msgstr ""
+
+#: meetService/apps/common_validators.py:27
+#, python-format
+msgid "Размер файла не должен превышать %(max_size_mb)s МБ."
+msgstr ""
+
+#: meetService/apps/common_validators.py:41
+#, python-format
+msgid "Недопустимый формат файла. Разрешены: %(allowed)s."
+msgstr ""
+
+#: meetService/apps/directories/admin.py:59
+#: meetService/apps/directories/admin.py:184
+msgid "Основная информация"
+msgstr ""
+
+#: meetService/apps/directories/admin.py:70
+#: meetService/apps/directories/admin.py:196
+msgid "Статистика использования"
+msgstr ""
+
+#: meetService/apps/directories/admin.py:80
+#: meetService/apps/directories/admin.py:206
+#: meetService/apps/interactions/admin.py:88
+#: meetService/apps/projects/admin.py:249
+#: meetService/apps/projects/admin.py:564 meetService/apps/reviews/admin.py:97
+#: meetService/apps/specialists/admin.py:280
+msgid "Служебная информация"
+msgstr ""
+
+#: meetService/apps/directories/models.py:14
+msgid "название роли"
+msgstr ""
+
+#: meetService/apps/directories/models.py:15
+msgid "Например: Frontend-разработчик, Backend-разработчик, QA-инженер."
+msgstr ""
+
+#: meetService/apps/directories/models.py:20
+#: meetService/apps/directories/models.py:77
+#: meetService/apps/projects/models.py:101
+msgid "URL-идентификатор"
+msgstr ""
+
+#: meetService/apps/directories/models.py:21
+msgid "Короткое уникальное имя для URL и фильтрации."
+msgstr ""
+
+#: meetService/apps/directories/models.py:25
+#: meetService/apps/directories/models.py:87
+msgid "описание"
+msgstr ""
+
+#: meetService/apps/directories/models.py:26
+msgid "Краткое описание обязанностей и смысла роли."
+msgstr ""
+
+#: meetService/apps/directories/models.py:30
+#: meetService/apps/directories/models.py:91
+msgid "активна"
+msgstr ""
+
+#: meetService/apps/directories/models.py:31
+msgid "Если выключено, роль не используется в новых записях."
+msgstr ""
+
+#: meetService/apps/directories/models.py:35
+#: meetService/apps/directories/models.py:95
+#: meetService/apps/projects/models.py:163
+#: meetService/apps/projects/models.py:340
+#: meetService/apps/reviews/models.py:66
+#: meetService/apps/specialists/models.py:143
+msgid "дата создания"
+msgstr ""
+
+#: meetService/apps/directories/models.py:39
+#: meetService/apps/directories/models.py:99
+#: meetService/apps/projects/models.py:167
+#: meetService/apps/projects/models.py:344
+#: meetService/apps/reviews/models.py:70
+#: meetService/apps/specialists/models.py:147
+msgid "дата изменения"
+msgstr ""
+
+#: meetService/apps/directories/models.py:45
+#: meetService/apps/projects/models.py:300
+msgid "роль"
+msgstr ""
+
+#: meetService/apps/directories/models.py:46
+msgid "роли"
+msgstr ""
+
+#: meetService/apps/directories/models.py:60
+msgid "Язык программирования"
+msgstr ""
+
+#: meetService/apps/directories/models.py:61
+msgid "Фреймворк"
+msgstr ""
+
+#: meetService/apps/directories/models.py:62
+msgid "База данных"
+msgstr ""
+
+#: meetService/apps/directories/models.py:63
+msgid "DevOps"
+msgstr ""
+
+#: meetService/apps/directories/models.py:64
+msgid "Дизайн"
+msgstr ""
+
+#: meetService/apps/directories/models.py:65
+msgid "Тестирование"
+msgstr ""
+
+#: meetService/apps/directories/models.py:66
+#: meetService/apps/projects/models.py:505
+msgid "Другое"
+msgstr ""
+
+#: meetService/apps/directories/models.py:71
+msgid "название технологии"
+msgstr ""
+
+#: meetService/apps/directories/models.py:72
+msgid "Например: Python, Django, React, PostgreSQL."
+msgstr ""
+
+#: meetService/apps/directories/models.py:83
+msgid "категория"
+msgstr ""
+
+#: meetService/apps/directories/models.py:105
+#: meetService/apps/projects/models.py:256
+#: meetService/apps/specialists/models.py:215
+msgid "технология"
+msgstr ""
+
+#: meetService/apps/directories/models.py:106
+#: meetService/apps/projects/models.py:145
+#: meetService/apps/specialists/models.py:62
+msgid "технологии"
+msgstr ""
+
+#: meetService/apps/interactions/admin.py:67
+msgid "Отклик"
+msgstr ""
+
+#: meetService/apps/interactions/admin.py:79
+msgid "Рассмотрение"
+msgstr ""
+
+#: meetService/apps/interactions/admin.py:205
+msgid "Приглашение"
+msgstr ""
+
+#: meetService/apps/interactions/admin.py:218
+msgid "Даты"
+msgstr ""
+
+#: meetService/apps/interactions/models.py:20
+msgid "На рассмотрении"
+msgstr ""
+
+#: meetService/apps/interactions/models.py:21
+msgid "Принят"
+msgstr ""
+
+#: meetService/apps/interactions/models.py:22
+#: meetService/apps/reviews/models.py:24
+msgid "Отклонён"
+msgstr ""
+
+#: meetService/apps/interactions/models.py:23
+msgid "Отменён"
+msgstr ""
+
+#: meetService/apps/interactions/models.py:34
+#: meetService/apps/interactions/models.py:244
+#: meetService/apps/interactions/models.py:454
+#: meetService/apps/projects/models.py:189
+#: meetService/apps/projects/models.py:250
+#: meetService/apps/projects/models.py:294
+#: meetService/apps/projects/models.py:438
+#: meetService/apps/projects/models.py:511
+#: meetService/apps/reviews/models.py:30
+msgid "проект"
+msgstr ""
+
+#: meetService/apps/interactions/models.py:40
+#: meetService/apps/interactions/models.py:250
+msgid "открытая роль"
+msgstr ""
+
+#: meetService/apps/interactions/models.py:46
+#: meetService/apps/interactions/models.py:256
+#: meetService/apps/projects/models.py:444
+#: meetService/apps/reviews/models.py:44
+#: meetService/apps/specialists/models.py:209
+msgid "специалист"
+msgstr ""
+
+#: meetService/apps/interactions/models.py:50
+#: meetService/apps/interactions/models.py:266
+msgid "сообщение"
+msgstr ""
+
+#: meetService/apps/interactions/models.py:51
+msgid "Сопроводительное сообщение специалиста владельцу проекта."
+msgstr ""
+
+#: meetService/apps/interactions/models.py:57
+msgid "статус отклика"
+msgstr ""
+
+#: meetService/apps/interactions/models.py:61
+msgid "дата отклика"
+msgstr ""
+
+#: meetService/apps/interactions/models.py:66
+msgid "дата рассмотрения"
+msgstr ""
+
+#: meetService/apps/interactions/models.py:74
+msgid "рассмотрел"
+msgstr ""
+
+#: meetService/apps/interactions/models.py:80
+msgid "отклик"
+msgstr ""
+
+#: meetService/apps/interactions/models.py:81
+msgid "отклики"
+msgstr ""
+
+#: meetService/apps/interactions/models.py:104
+#: meetService/apps/interactions/models.py:312
+msgid "Выбранная открытая роль не относится к указанному проекту."
+msgstr ""
+
+#: meetService/apps/interactions/models.py:109
+#: meetService/apps/interactions/models.py:317
+msgid "Нельзя откликаться на собственный проект."
+msgstr ""
+
+#: meetService/apps/interactions/models.py:113
+#: meetService/apps/interactions/models.py:332
+msgid "Нельзя откликаться на неопубликованный проект."
+msgstr ""
+
+#: meetService/apps/interactions/models.py:117
+#: meetService/apps/interactions/models.py:336
+msgid "Нельзя откликаться на закрытую или заполненную роль."
+msgstr ""
+
+#: meetService/apps/interactions/models.py:133
+#: meetService/apps/interactions/models.py:352
+msgid "У специалиста уже есть активный отклик на эту роль."
+msgstr ""
+
+#: meetService/apps/interactions/models.py:234
+msgid "Ожидает ответа"
+msgstr ""
+
+#: meetService/apps/interactions/models.py:235
+msgid "Принято"
+msgstr ""
+
+#: meetService/apps/interactions/models.py:236
+msgid "Отклонено"
+msgstr ""
+
+#: meetService/apps/interactions/models.py:237
+msgid "Отменено"
+msgstr ""
+
+#: meetService/apps/interactions/models.py:238
+msgid "Истекло"
+msgstr ""
+
+#: meetService/apps/interactions/models.py:262
+msgid "пригласил"
+msgstr ""
+
+#: meetService/apps/interactions/models.py:267
+msgid "Сообщение владельца проекта специалисту."
+msgstr ""
+
+#: meetService/apps/interactions/models.py:273
+msgid "статус приглашения"
+msgstr ""
+
+#: meetService/apps/interactions/models.py:277
+msgid "дата приглашения"
+msgstr ""
+
+#: meetService/apps/interactions/models.py:282
+msgid "дата ответа"
+msgstr ""
+
+#: meetService/apps/interactions/models.py:288
+msgid "приглашение"
+msgstr ""
+
+#: meetService/apps/interactions/models.py:289
+msgid "приглашения"
+msgstr ""
+
+#: meetService/apps/interactions/models.py:327
+msgid "Специалист уже состоит в команде этого проекта."
+msgstr ""
+
+#: meetService/apps/interactions/models.py:381
+msgid "Можно принять только приглашение со статусом «Ожидает ответа»."
+msgstr ""
+
+#: meetService/apps/interactions/models.py:404
+msgid "Открытая роль уже закрыта или заполнена."
+msgstr ""
+
+#: meetService/apps/interactions/models.py:427
+msgid "Можно отклонить только приглашение со статусом «Ожидает ответа»."
+msgstr ""
+
+#: meetService/apps/interactions/models.py:458
+#: meetService/apps/projects/models.py:264
+#: meetService/apps/specialists/models.py:238
+msgid "дата добавления"
+msgstr ""
+
+#: meetService/apps/interactions/models.py:462
+msgid "избранный проект"
+msgstr ""
+
+#: meetService/apps/interactions/models.py:463
+msgid "избранные проекты"
+msgstr ""
+
+#: meetService/apps/projects/admin.py:205
+msgid "Владелец и статус"
+msgstr ""
+
+#: meetService/apps/projects/admin.py:216
+msgid "Описание проекта"
+msgstr ""
+
+#: meetService/apps/projects/admin.py:228
+msgid "Медиа и ссылки"
+msgstr ""
+
+#: meetService/apps/projects/admin.py:239
+msgid "Статистика"
+msgstr ""
+
+#: meetService/apps/projects/admin.py:541
+msgid "Проект и роль"
+msgstr ""
+
+#: meetService/apps/projects/admin.py:552
+msgid "Требования и набор"
+msgstr ""
+
+#: meetService/apps/projects/models.py:60
+msgid "Идея"
+msgstr ""
+
+#: meetService/apps/projects/models.py:61
+msgid "Прототип"
+msgstr ""
+
+#: meetService/apps/projects/models.py:62
+msgid "MVP"
+msgstr ""
+
+#: meetService/apps/projects/models.py:63
+msgid "Разработка"
+msgstr ""
+
+#: meetService/apps/projects/models.py:64
+msgid "Запуск"
+msgstr ""
+
+#: meetService/apps/projects/models.py:65
+msgid "Развитие"
+msgstr ""
+
+#: meetService/apps/projects/models.py:66
+msgid "Пауза"
+msgstr ""
+
+#: meetService/apps/projects/models.py:67
+msgid "Завершён"
+msgstr ""
+
+#: meetService/apps/projects/models.py:70
+msgid "Энтузиазм"
+msgstr ""
+
+#: meetService/apps/projects/models.py:71
+msgid "Оплачиваемо"
+msgstr ""
+
+#: meetService/apps/projects/models.py:72
+msgid "Доля"
+msgstr ""
+
+#: meetService/apps/projects/models.py:73
+msgid "Смешанный формат"
+msgstr ""
+
+#: meetService/apps/projects/models.py:74
+msgid "Учебный проект"
+msgstr ""
+
+#: meetService/apps/projects/models.py:77 meetService/apps/reviews/models.py:21
+msgid "Черновик"
+msgstr ""
+
+#: meetService/apps/projects/models.py:78
+msgid "На модерации"
+msgstr ""
+
+#: meetService/apps/projects/models.py:79 meetService/apps/reviews/models.py:22
+msgid "Опубликован"
+msgstr ""
+
+#: meetService/apps/projects/models.py:80
+msgid "Закрыт"
+msgstr ""
+
+#: meetService/apps/projects/models.py:81
+#: meetService/apps/projects/models.py:504
+msgid "Архив"
+msgstr ""
+
+#: meetService/apps/projects/models.py:89
+msgid "владелец проекта"
+msgstr ""
+
+#: meetService/apps/projects/models.py:90
+msgid "Пользователь, который создал и ведёт проект."
+msgstr ""
+
+#: meetService/apps/projects/models.py:94
+msgid "название проекта"
+msgstr ""
+
+#: meetService/apps/projects/models.py:102
+msgid "Используется для будущей детальной страницы проекта."
+msgstr ""
+
+#: meetService/apps/projects/models.py:106
+msgid "краткое описание"
+msgstr ""
+
+#: meetService/apps/projects/models.py:107
+msgid "Короткое описание для карточки проекта."
+msgstr ""
+
+#: meetService/apps/projects/models.py:110
+msgid "подробное описание"
+msgstr ""
+
+#: meetService/apps/projects/models.py:113
+msgid "цель проекта"
+msgstr ""
+
+#: meetService/apps/projects/models.py:114
+msgid "Что проект должен решить или какой результат должен получить."
+msgstr ""
+
+#: meetService/apps/projects/models.py:121
+msgid "обложка проекта"
+msgstr ""
+
+#: meetService/apps/projects/models.py:127
+msgid "стадия"
+msgstr ""
+
+#: meetService/apps/projects/models.py:133
+#: meetService/apps/specialists/models.py:88
+msgid "формат участия"
+msgstr ""
+
+#: meetService/apps/projects/models.py:139
+#: meetService/apps/projects/models.py:336
+#: meetService/apps/reviews/models.py:62
+msgid "статус"
+msgstr ""
+
+#: meetService/apps/projects/models.py:151
+msgid "участники команды"
+msgstr ""
+
+#: meetService/apps/projects/models.py:155
+msgid "ссылка на репозиторий"
+msgstr ""
+
+#: meetService/apps/projects/models.py:159
+msgid "демо-ссылка"
+msgstr ""
+
+#: meetService/apps/projects/models.py:175
+#: meetService/apps/specialists/models.py:155
+msgid "создал"
+msgstr ""
+
+#: meetService/apps/projects/models.py:183
+#: meetService/apps/specialists/models.py:163
+msgid "изменил"
+msgstr ""
+
+#: meetService/apps/projects/models.py:190
+msgid "проекты"
+msgstr ""
+
+#: meetService/apps/projects/models.py:260
+msgid "обязательная технология"
+msgstr ""
+
+#: meetService/apps/projects/models.py:268
+msgid "технология проекта"
+msgstr ""
+
+#: meetService/apps/projects/models.py:269
+msgid "технологии проектов"
+msgstr ""
+
+#: meetService/apps/projects/models.py:286
+msgid "Открыта"
+msgstr ""
+
+#: meetService/apps/projects/models.py:287
+#: meetService/apps/projects/models.py:431
+msgid "На паузе"
+msgstr ""
+
+#: meetService/apps/projects/models.py:288
+msgid "Закрыта"
+msgstr ""
+
+#: meetService/apps/projects/models.py:304
+msgid "название открытой роли"
+msgstr ""
+
+#: meetService/apps/projects/models.py:305
+msgid "Например: Junior Frontend-разработчик."
+msgstr ""
+
+#: meetService/apps/projects/models.py:308
+msgid "описание роли"
+msgstr ""
+
+#: meetService/apps/projects/models.py:314
+msgid "требуемый уровень"
+msgstr ""
+
+#: meetService/apps/projects/models.py:322
+msgid "требуется человек"
+msgstr ""
+
+#: meetService/apps/projects/models.py:330
+msgid "уже набрано"
+msgstr ""
+
+#: meetService/apps/projects/models.py:350
+msgid "открытая роль проекта"
+msgstr ""
+
+#: meetService/apps/projects/models.py:351
+msgid "открытые роли проектов"
+msgstr ""
+
+#: meetService/apps/projects/models.py:430
+msgid "Активен"
+msgstr ""
+
+#: meetService/apps/projects/models.py:432
+msgid "Покинул проект"
+msgstr ""
+
+#: meetService/apps/projects/models.py:450
+msgid "роль в команде"
+msgstr ""
+
+#: meetService/apps/projects/models.py:456
+msgid "статус участия"
+msgstr ""
+
+#: meetService/apps/projects/models.py:460
+msgid "дата вступления"
+msgstr ""
+
+#: meetService/apps/projects/models.py:465
+msgid "дата выхода"
+msgstr ""
+
+#: meetService/apps/projects/models.py:473
+msgid "добавил"
+msgstr ""
+
+#: meetService/apps/projects/models.py:479
+msgid "участник команды"
+msgstr ""
+
+#: meetService/apps/projects/models.py:480
+msgid "участники команд"
+msgstr ""
+
+#: meetService/apps/projects/models.py:501
+msgid "Документ"
+msgstr ""
+
+#: meetService/apps/projects/models.py:502
+msgid "Изображение"
+msgstr ""
+
+#: meetService/apps/projects/models.py:503
+msgid "Презентация"
+msgstr ""
+
+#: meetService/apps/projects/models.py:519
+msgid "загрузил"
+msgstr ""
+
+#: meetService/apps/projects/models.py:524
+msgid "файл"
+msgstr ""
+
+#: meetService/apps/projects/models.py:530
+msgid "тип файла"
+msgstr ""
+
+#: meetService/apps/projects/models.py:534
+msgid "название файла"
+msgstr ""
+
+#: meetService/apps/projects/models.py:538
+msgid "дата загрузки"
+msgstr ""
+
+#: meetService/apps/projects/models.py:542
+msgid "файл проекта"
+msgstr ""
+
+#: meetService/apps/projects/models.py:543
+msgid "файлы проектов"
+msgstr ""
+
+#: meetService/apps/reviews/admin.py:68
+msgid "Связи"
+msgstr ""
+
+#: meetService/apps/reviews/admin.py:78
+msgid "Содержание отзыва"
+msgstr ""
+
+#: meetService/apps/reviews/admin.py:88
+msgid "Предпросмотр"
+msgstr ""
+
+#: meetService/apps/reviews/models.py:23
+#: meetService/apps/specialists/models.py:27
+msgid "Скрыт"
+msgstr ""
+
+#: meetService/apps/reviews/models.py:31
+msgid "Проект, в рамках которого оставлен отзыв."
+msgstr ""
+
+#: meetService/apps/reviews/models.py:37
+msgid "автор отзыва"
+msgstr ""
+
+#: meetService/apps/reviews/models.py:38
+msgid "Пользователь, который оставил отзыв."
+msgstr ""
+
+#: meetService/apps/reviews/models.py:45
+msgid "Специалист, о котором оставлен отзыв."
+msgstr ""
+
+#: meetService/apps/reviews/models.py:52
+msgid "оценка"
+msgstr ""
+
+#: meetService/apps/reviews/models.py:53
+msgid "Оценка от 1 до 5."
+msgstr ""
+
+#: meetService/apps/reviews/models.py:56
+msgid "текст отзыва"
+msgstr ""
+
+#: meetService/apps/reviews/models.py:76
+msgid "отзыв"
+msgstr ""
+
+#: meetService/apps/reviews/models.py:77
+msgid "отзывы"
+msgstr ""
+
+#: meetService/apps/reviews/models.py:99
+msgid "Нельзя оставить отзыв самому себе."
+msgstr ""
+
+#: meetService/apps/reviews/models.py:109
+msgid "Отзыв можно оставить только специалисту, который участвовал в проекте."
+msgstr ""
+
+#: meetService/apps/specialists/admin.py:229
+msgid "Пользователь и роль"
+msgstr ""
+
+#: meetService/apps/specialists/admin.py:242
+msgid "Профиль"
+msgstr ""
+
+#: meetService/apps/specialists/admin.py:256
+msgid "Ссылки и контакты"
+msgstr ""
+
+#: meetService/apps/specialists/admin.py:267
+msgid "Статистика специалиста"
+msgstr ""
+
+#: meetService/apps/specialists/models.py:17
+msgid "Стажёр"
+msgstr ""
+
+#: meetService/apps/specialists/models.py:18
+msgid "Junior"
+msgstr ""
+
+#: meetService/apps/specialists/models.py:19
+msgid "Middle"
+msgstr ""
+
+#: meetService/apps/specialists/models.py:20
+msgid "Senior"
+msgstr ""
+
+#: meetService/apps/specialists/models.py:21
+msgid "Lead"
+msgstr ""
+
+#: meetService/apps/specialists/models.py:24
+msgid "Ищу проект"
+msgstr ""
+
+#: meetService/apps/specialists/models.py:25
+msgid "Открыт к предложениям"
+msgstr ""
+
+#: meetService/apps/specialists/models.py:26
+msgid "Занят"
+msgstr ""
+
+#: meetService/apps/specialists/models.py:30
+msgid "Удалённо"
+msgstr ""
+
+#: meetService/apps/specialists/models.py:31
+msgid "Гибрид"
+msgstr ""
+
+#: meetService/apps/specialists/models.py:32
+msgid "Офис"
+msgstr ""
+
+#: meetService/apps/specialists/models.py:33
+msgid "Любой формат"
+msgstr ""
+
+#: meetService/apps/specialists/models.py:40
+msgid "Пользователь, которому принадлежит профиль специалиста."
+msgstr ""
+
+#: meetService/apps/specialists/models.py:48
+msgid "основная роль"
+msgstr ""
+
+#: meetService/apps/specialists/models.py:49
+msgid "Основная профессиональная роль специалиста."
+msgstr ""
+
+#: meetService/apps/specialists/models.py:55
+msgid "интересующие роли"
+msgstr ""
+
+#: meetService/apps/specialists/models.py:56
+msgid "Роли, в которых специалист хотел бы участвовать в проектах."
+msgstr ""
+
+#: meetService/apps/specialists/models.py:69
+msgid "аватар"
+msgstr ""
+
+#: meetService/apps/specialists/models.py:70
+msgid "Фотография или изображение профиля специалиста."
+msgstr ""
+
+#: meetService/apps/specialists/models.py:76
+msgid "уровень"
+msgstr ""
+
+#: meetService/apps/specialists/models.py:82
+msgid "статус доступности"
+msgstr ""
+
+#: meetService/apps/specialists/models.py:92
+msgid "о себе"
+msgstr ""
+
+#: meetService/apps/specialists/models.py:93
+msgid "Краткое описание опыта, интересов и целей специалиста."
+msgstr ""
+
+#: meetService/apps/specialists/models.py:101
+#: meetService/apps/specialists/models.py:229
+msgid "опыт в годах"
+msgstr ""
+
+#: meetService/apps/specialists/models.py:109
+msgid "часов в неделю"
+msgstr ""
+
+#: meetService/apps/specialists/models.py:110
+msgid "Сколько часов в неделю специалист готов уделять проектам."
+msgstr ""
+
+#: meetService/apps/specialists/models.py:115
+msgid "город"
+msgstr ""
+
+#: meetService/apps/specialists/models.py:120
+msgid "часовой пояс"
+msgstr ""
+
+#: meetService/apps/specialists/models.py:121
+msgid "Например: Europe/Moscow."
+msgstr ""
+
+#: meetService/apps/specialists/models.py:125
+msgid "GitHub"
+msgstr ""
+
+#: meetService/apps/specialists/models.py:129
+msgid "GitLab"
+msgstr ""
+
+#: meetService/apps/specialists/models.py:133
+msgid "портфолио"
+msgstr ""
+
+#: meetService/apps/specialists/models.py:138
+msgid "Telegram"
+msgstr ""
+
+#: meetService/apps/specialists/models.py:139
+msgid "Контакт для связи, например: @username."
+msgstr ""
+
+#: meetService/apps/specialists/models.py:169
+msgid "профиль специалиста"
+msgstr ""
+
+#: meetService/apps/specialists/models.py:170
+msgid "профили специалистов"
+msgstr ""
+
+#: meetService/apps/specialists/models.py:200
+msgid "Базовый"
+msgstr ""
+
+#: meetService/apps/specialists/models.py:201
+msgid "Уверенный"
+msgstr ""
+
+#: meetService/apps/specialists/models.py:202
+msgid "Продвинутый"
+msgstr ""
+
+#: meetService/apps/specialists/models.py:203
+msgid "Эксперт"
+msgstr ""
+
+#: meetService/apps/specialists/models.py:221
+msgid "уровень владения"
+msgstr ""
+
+#: meetService/apps/specialists/models.py:233
+msgid "ключевой навык"
+msgstr ""
+
+#: meetService/apps/specialists/models.py:234
+msgid "Отметить, если технология является одной из основных."
+msgstr ""
+
+#: meetService/apps/specialists/models.py:242
+msgid "технология специалиста"
+msgstr ""
+
+#: meetService/apps/specialists/models.py:243
+msgid "технологии специалистов"
+msgstr ""
+
+#: meetService/config/settings.py:139
+msgid "Русский"
+msgstr ""
+
+#: meetService/config/settings.py:140
+msgid "English"
+msgstr ""
+
+#: meetService/templates/base.html:22
+msgid "Главная"
+msgstr "Home"
+
+#: meetService/templates/base.html:23
+msgid "Проекты"
+msgstr "Projects"
+
+#: meetService/templates/base.html:24
+msgid "Специалисты"
+msgstr "Specialists"
+
+#: meetService/templates/base.html:25
+msgid "О сервисе"
+msgstr "About"
+
+#: meetService/templates/base.html:34
+msgid "Выход"
+msgstr "Logout"
+
+#: meetService/templates/base.html:37
+msgid "Вход"
+msgstr "Login"
+
+#: meetService/templates/base.html:39
+msgid "Регистрация"
+msgstr "Registration"
+
+#: meetService/templates/base.html:45
+msgid "Кабинет"
+msgstr "Dashboard"
+
+#: meetService/templates/base.html:46
+msgid "Профиль специалиста"
+msgstr "Specialist profile"
+
+#: meetService/templates/base.html:47
+msgid "Мои проекты"
+msgstr "My projects"
+
+#: meetService/templates/base.html:48
+msgid "Мои команды"
+msgstr "My teams"
+
+#: meetService/templates/base.html:49
+msgid "Мои отклики"
+msgstr "My applications"
+
+#: meetService/templates/base.html:50
+msgid "Мои приглашения"
+msgstr "My invites"
+
+#: meetService/templates/base.html:51
+msgid "Избранное"
+msgstr "Favorite"
+
+#: meetService/templates/base.html:65
+msgid "сервис поиска IT-команды"
+msgstr "web-service for searching IT-team"
+
+#: meetService/templates/base.html:66
+msgid "Курсовой проект на Django"
+msgstr "Coursework on Django"
+
+#: venv/lib/python3.13/site-packages/django/contrib/messages/apps.py:16
+msgid "Messages"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/contrib/sitemaps/apps.py:8
+msgid "Site Maps"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/contrib/staticfiles/apps.py:9
+msgid "Static Files"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/contrib/syndication/apps.py:7
+msgid "Syndication"
+msgstr ""
+
+#. Translators: String used to replace omitted page numbers in elided page
+#. range generated by paginators, e.g. [1, 2, '…', 5, 6, 7, '…', 9, 10].
+#: venv/lib/python3.13/site-packages/django/core/paginator.py:33
+msgid "…"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/core/paginator.py:35
+msgid "That page number is not an integer"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/core/paginator.py:36
+msgid "That page number is less than 1"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/core/paginator.py:37
+msgid "That page contains no results"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/core/validators.py:22
+msgid "Enter a valid value."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/core/validators.py:70
+msgid "Enter a valid domain name."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/core/validators.py:153
+#: venv/lib/python3.13/site-packages/django/forms/fields.py:773
+msgid "Enter a valid URL."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/core/validators.py:200
+msgid "Enter a valid integer."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/core/validators.py:211
+msgid "Enter a valid email address."
+msgstr ""
+
+#. Translators: "letters" means latin letters: a-z and A-Z.
+#: venv/lib/python3.13/site-packages/django/core/validators.py:289
+msgid ""
+"Enter a valid “slug” consisting of letters, numbers, underscores or hyphens."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/core/validators.py:297
+msgid ""
+"Enter a valid “slug” consisting of Unicode letters, numbers, underscores, or "
+"hyphens."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/core/validators.py:309
+#: venv/lib/python3.13/site-packages/django/core/validators.py:318
+#: venv/lib/python3.13/site-packages/django/core/validators.py:332
+#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2220
+#, python-format
+msgid "Enter a valid %(protocol)s address."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/core/validators.py:311
+msgid "IPv4"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/core/validators.py:320
+#: venv/lib/python3.13/site-packages/django/utils/ipv6.py:43
+msgid "IPv6"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/core/validators.py:334
+msgid "IPv4 or IPv6"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/core/validators.py:375
+msgid "Enter only digits separated by commas."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/core/validators.py:381
+#, python-format
+msgid "Ensure this value is %(limit_value)s (it is %(show_value)s)."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/core/validators.py:416
+#, python-format
+msgid "Ensure this value is less than or equal to %(limit_value)s."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/core/validators.py:425
+#, python-format
+msgid "Ensure this value is greater than or equal to %(limit_value)s."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/core/validators.py:434
+#, python-format
+msgid "Ensure this value is a multiple of step size %(limit_value)s."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/core/validators.py:441
+#, python-format
+msgid ""
+"Ensure this value is a multiple of step size %(limit_value)s, starting from "
+"%(offset)s, e.g. %(offset)s, %(valid_value1)s, %(valid_value2)s, and so on."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/core/validators.py:473
+#, python-format
+msgid ""
+"Ensure this value has at least %(limit_value)d character (it has "
+"%(show_value)d)."
+msgid_plural ""
+"Ensure this value has at least %(limit_value)d characters (it has "
+"%(show_value)d)."
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/lib/python3.13/site-packages/django/core/validators.py:491
+#, python-format
+msgid ""
+"Ensure this value has at most %(limit_value)d character (it has "
+"%(show_value)d)."
+msgid_plural ""
+"Ensure this value has at most %(limit_value)d characters (it has "
+"%(show_value)d)."
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/lib/python3.13/site-packages/django/core/validators.py:514
+#: venv/lib/python3.13/site-packages/django/forms/fields.py:364
+#: venv/lib/python3.13/site-packages/django/forms/fields.py:403
+msgid "Enter a number."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/core/validators.py:516
+#, python-format
+msgid "Ensure that there are no more than %(max)s digit in total."
+msgid_plural "Ensure that there are no more than %(max)s digits in total."
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/lib/python3.13/site-packages/django/core/validators.py:521
+#, python-format
+msgid "Ensure that there are no more than %(max)s decimal place."
+msgid_plural "Ensure that there are no more than %(max)s decimal places."
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/lib/python3.13/site-packages/django/core/validators.py:526
+#, python-format
+msgid ""
+"Ensure that there are no more than %(max)s digit before the decimal point."
+msgid_plural ""
+"Ensure that there are no more than %(max)s digits before the decimal point."
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/lib/python3.13/site-packages/django/core/validators.py:597
+#, python-format
+msgid ""
+"File extension “%(extension)s” is not allowed. Allowed extensions are: "
+"%(allowed_extensions)s."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/core/validators.py:659
+msgid "Null characters are not allowed."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/base.py:1633
+#: venv/lib/python3.13/site-packages/django/forms/models.py:932
+msgid "and"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/base.py:1635
+#, python-format
+msgid "%(model_name)s with this %(field_labels)s already exists."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/constraints.py:20
+#, python-format
+msgid "Constraint “%(name)s” is violated."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:134
+#, python-format
+msgid "Value %(value)r is not a valid choice."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:135
+msgid "This field cannot be null."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:136
+msgid "This field cannot be blank."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:137
+#, python-format
+msgid "%(model_name)s with this %(field_label)s already exists."
+msgstr ""
+
+#. Translators: The 'lookup_type' is one of 'date', 'year' or
+#. 'month'. Eg: "Title must be unique for pub_date year"
+#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:141
+#, python-format
+msgid ""
+"%(field_label)s must be unique for %(date_field_label)s %(lookup_type)s."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:180
+#, python-format
+msgid "Field of type: %(field_type)s"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1161
+#, python-format
+msgid "“%(value)s” value must be either True or False."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1162
+#, python-format
+msgid "“%(value)s” value must be either True, False, or None."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1164
+msgid "Boolean (Either True or False)"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1214
+#, python-format
+msgid "String (up to %(max_length)s)"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1216
+msgid "String (unlimited)"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1325
+msgid "Comma-separated integers"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1426
+#, python-format
+msgid ""
+"“%(value)s” value has an invalid date format. It must be in YYYY-MM-DD "
+"format."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1430
+#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1565
+#, python-format
+msgid ""
+"“%(value)s” value has the correct format (YYYY-MM-DD) but it is an invalid "
+"date."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1434
+msgid "Date (without time)"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1561
+#, python-format
+msgid ""
+"“%(value)s” value has an invalid format. It must be in YYYY-MM-DD "
+"HH:MM[:ss[.uuuuuu]][TZ] format."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1569
+#, python-format
+msgid ""
+"“%(value)s” value has the correct format (YYYY-MM-DD HH:MM[:ss[.uuuuuu]]"
+"[TZ]) but it is an invalid date/time."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1574
+msgid "Date (with time)"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1701
+#, python-format
+msgid "“%(value)s” value must be a decimal number."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1703
+msgid "Decimal number"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1864
+#, python-format
+msgid ""
+"“%(value)s” value has an invalid format. It must be in [DD] "
+"[[HH:]MM:]ss[.uuuuuu] format."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1868
+msgid "Duration"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1920
+msgid "Email address"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1945
+msgid "File path"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2023
+#, python-format
+msgid "“%(value)s” value must be a float."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2025
+msgid "Floating point number"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2065
+#, python-format
+msgid "“%(value)s” value must be an integer."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2067
+msgid "Integer"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2163
+msgid "Big (8 byte) integer"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2180
+msgid "Small integer"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2188
+msgid "IPv4 address"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2219
+msgid "IP address"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2310
+#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2311
+#, python-format
+msgid "“%(value)s” value must be either None, True or False."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2313
+msgid "Boolean (Either True, False or None)"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2364
+msgid "Positive big integer"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2379
+msgid "Positive integer"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2394
+msgid "Positive small integer"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2410
+#, python-format
+msgid "Slug (up to %(max_length)s)"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2446
+msgid "Text"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2526
+#, python-format
+msgid ""
+"“%(value)s” value has an invalid format. It must be in HH:MM[:ss[.uuuuuu]] "
+"format."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2530
+#, python-format
+msgid ""
+"“%(value)s” value has the correct format (HH:MM[:ss[.uuuuuu]]) but it is an "
+"invalid time."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2534
+msgid "Time"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2642
+msgid "URL"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2666
+msgid "Raw binary data"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2731
+#, python-format
+msgid "“%(value)s” is not a valid UUID."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2733
+msgid "Universally unique identifier"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/fields/files.py:244
+msgid "File"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/fields/files.py:420
+msgid "Image"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/fields/json.py:24
+msgid "A JSON object"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/fields/json.py:26
+msgid "Value must be valid JSON."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/fields/related.py:974
+#, python-format
+msgid "%(model)s instance with %(field)s %(value)r is not a valid choice."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/fields/related.py:977
+msgid "Foreign Key (type determined by related field)"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/fields/related.py:1271
+msgid "One-to-one relationship"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/fields/related.py:1328
+#, python-format
+msgid "%(from)s-%(to)s relationship"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/fields/related.py:1330
+#, python-format
+msgid "%(from)s-%(to)s relationships"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/db/models/fields/related.py:1378
+msgid "Many-to-many relationship"
+msgstr ""
+
+#. Translators: If found as last label character, these punctuation
+#. characters will prevent the default label_suffix to be appended to
+#. the label
+#: venv/lib/python3.13/site-packages/django/forms/boundfield.py:188
+msgid ":?.!"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/forms/fields.py:91
+msgid "This field is required."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/forms/fields.py:313
+msgid "Enter a whole number."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/forms/fields.py:484
+#: venv/lib/python3.13/site-packages/django/forms/fields.py:1241
+msgid "Enter a valid date."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/forms/fields.py:507
+#: venv/lib/python3.13/site-packages/django/forms/fields.py:1242
+msgid "Enter a valid time."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/forms/fields.py:534
+msgid "Enter a valid date/time."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/forms/fields.py:568
+msgid "Enter a valid duration."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/forms/fields.py:569
+#, python-brace-format
+msgid "The number of days must be between {min_days} and {max_days}."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/forms/fields.py:638
+msgid "No file was submitted. Check the encoding type on the form."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/forms/fields.py:639
+msgid "No file was submitted."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/forms/fields.py:640
+msgid "The submitted file is empty."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/forms/fields.py:642
+#, python-format
+msgid "Ensure this filename has at most %(max)d character (it has %(length)d)."
+msgid_plural ""
+"Ensure this filename has at most %(max)d characters (it has %(length)d)."
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/lib/python3.13/site-packages/django/forms/fields.py:647
+msgid "Please either submit a file or check the clear checkbox, not both."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/forms/fields.py:715
+msgid ""
+"Upload a valid image. The file you uploaded was either not an image or a "
+"corrupted image."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/forms/fields.py:862
+#: venv/lib/python3.13/site-packages/django/forms/fields.py:949
+#: venv/lib/python3.13/site-packages/django/forms/models.py:1621
+#, python-format
+msgid "Select a valid choice. %(value)s is not one of the available choices."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/forms/fields.py:951
+#: venv/lib/python3.13/site-packages/django/forms/fields.py:1070
+#: venv/lib/python3.13/site-packages/django/forms/models.py:1619
+msgid "Enter a list of values."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/forms/fields.py:1071
+msgid "Enter a complete value."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/forms/fields.py:1313
+msgid "Enter a valid UUID."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/forms/fields.py:1343
+msgid "Enter a valid JSON."
+msgstr ""
+
+#. Translators: This is the default suffix added to form field labels
+#: venv/lib/python3.13/site-packages/django/forms/forms.py:97
+msgid ":"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/forms/forms.py:239
+#, python-format
+msgid "(Hidden field %(name)s) %(error)s"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/forms/formsets.py:61
+#, python-format
+msgid ""
+"ManagementForm data is missing or has been tampered with. Missing fields: "
+"%(field_names)s. You may need to file a bug report if the issue persists."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/forms/formsets.py:65
+#, python-format
+msgid "Please submit at most %(num)d form."
+msgid_plural "Please submit at most %(num)d forms."
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/lib/python3.13/site-packages/django/forms/formsets.py:70
+#, python-format
+msgid "Please submit at least %(num)d form."
+msgid_plural "Please submit at least %(num)d forms."
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/lib/python3.13/site-packages/django/forms/formsets.py:484
+#: venv/lib/python3.13/site-packages/django/forms/formsets.py:491
+msgid "Order"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/forms/formsets.py:499
+msgid "Delete"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/forms/models.py:925
+#, python-format
+msgid "Please correct the duplicate data for %(field)s."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/forms/models.py:930
+#, python-format
+msgid "Please correct the duplicate data for %(field)s, which must be unique."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/forms/models.py:937
+#, python-format
+msgid ""
+"Please correct the duplicate data for %(field_name)s which must be unique "
+"for the %(lookup)s in %(date_field)s."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/forms/models.py:946
+msgid "Please correct the duplicate values below."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/forms/models.py:1383
+msgid "The inline value did not match the parent instance."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/forms/models.py:1474
+msgid "Select a valid choice. That choice is not one of the available choices."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/forms/models.py:1623
+#, python-format
+msgid "“%(pk)s” is not a valid value."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/forms/utils.py:229
+#, python-format
+msgid ""
+"%(datetime)s couldn’t be interpreted in time zone %(current_timezone)s; it "
+"may be ambiguous or it may not exist."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/forms/widgets.py:528
+msgid "Clear"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/forms/widgets.py:529
+msgid "Currently"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/forms/widgets.py:530
+msgid "Change"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/forms/widgets.py:869
+msgid "Unknown"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/forms/widgets.py:870
+msgid "Yes"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/forms/widgets.py:871
+msgid "No"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/tasks/base.py:34
+msgctxt "Task"
+msgid "Ready"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/tasks/base.py:36
+msgctxt "Task"
+msgid "Running"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/tasks/base.py:38
+msgctxt "Task"
+msgid "Failed"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/tasks/base.py:40
+msgctxt "Task"
+msgid "Successful"
+msgstr ""
+
+#. Translators: Please do not add spaces around commas.
+#: venv/lib/python3.13/site-packages/django/template/defaultfilters.py:878
+msgid "yes,no,maybe"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/template/defaultfilters.py:908
+#: venv/lib/python3.13/site-packages/django/template/defaultfilters.py:925
+#, python-format
+msgid "%(size)d byte"
+msgid_plural "%(size)d bytes"
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/lib/python3.13/site-packages/django/template/defaultfilters.py:927
+#, python-format
+msgid "%s KB"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/template/defaultfilters.py:929
+#, python-format
+msgid "%s MB"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/template/defaultfilters.py:931
+#, python-format
+msgid "%s GB"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/template/defaultfilters.py:933
+#, python-format
+msgid "%s TB"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/template/defaultfilters.py:935
+#, python-format
+msgid "%s PB"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dateformat.py:74
+msgid "p.m."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dateformat.py:75
+msgid "a.m."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dateformat.py:80
+msgid "PM"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dateformat.py:81
+msgid "AM"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dateformat.py:153
+msgid "midnight"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dateformat.py:155
+msgid "noon"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:7
+msgid "Monday"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:8
+msgid "Tuesday"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:9
+msgid "Wednesday"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:10
+msgid "Thursday"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:11
+msgid "Friday"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:12
+msgid "Saturday"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:13
+msgid "Sunday"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:16
+msgid "Mon"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:17
+msgid "Tue"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:18
+msgid "Wed"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:19
+msgid "Thu"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:20
+msgid "Fri"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:21
+msgid "Sat"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:22
+msgid "Sun"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:25
+msgid "January"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:26
+msgid "February"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:27
+msgid "March"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:28
+msgid "April"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:29
+msgid "May"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:30
+msgid "June"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:31
+msgid "July"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:32
+msgid "August"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:33
+msgid "September"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:34
+msgid "October"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:35
+msgid "November"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:36
+msgid "December"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:39
+msgid "jan"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:40
+msgid "feb"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:41
+msgid "mar"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:42
+msgid "apr"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:43
+msgid "may"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:44
+msgid "jun"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:45
+msgid "jul"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:46
+msgid "aug"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:47
+msgid "sep"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:48
+msgid "oct"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:49
+msgid "nov"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:50
+msgid "dec"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:53
+msgctxt "abbrev. month"
+msgid "Jan."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:54
+msgctxt "abbrev. month"
+msgid "Feb."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:55
+msgctxt "abbrev. month"
+msgid "March"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:56
+msgctxt "abbrev. month"
+msgid "April"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:57
+msgctxt "abbrev. month"
+msgid "May"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:58
+msgctxt "abbrev. month"
+msgid "June"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:59
+msgctxt "abbrev. month"
+msgid "July"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:60
+msgctxt "abbrev. month"
+msgid "Aug."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:61
+msgctxt "abbrev. month"
+msgid "Sept."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:62
+msgctxt "abbrev. month"
+msgid "Oct."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:63
+msgctxt "abbrev. month"
+msgid "Nov."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:64
+msgctxt "abbrev. month"
+msgid "Dec."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:67
+msgctxt "alt. month"
+msgid "January"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:68
+msgctxt "alt. month"
+msgid "February"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:69
+msgctxt "alt. month"
+msgid "March"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:70
+msgctxt "alt. month"
+msgid "April"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:71
+msgctxt "alt. month"
+msgid "May"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:72
+msgctxt "alt. month"
+msgid "June"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:73
+msgctxt "alt. month"
+msgid "July"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:74
+msgctxt "alt. month"
+msgid "August"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:75
+msgctxt "alt. month"
+msgid "September"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:76
+msgctxt "alt. month"
+msgid "October"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:77
+msgctxt "alt. month"
+msgid "November"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/dates.py:78
+msgctxt "alt. month"
+msgid "December"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/ipv6.py:20
+msgid "This is not a valid IPv6 address."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/text.py:76
+#, python-format
+msgctxt "String to return when truncating text"
+msgid "%(truncated_text)s…"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/text.py:282
+msgid "or"
+msgstr ""
+
+#. Translators: This string is used as a separator between list elements
+#: venv/lib/python3.13/site-packages/django/utils/text.py:301
+#: venv/lib/python3.13/site-packages/django/utils/timesince.py:135
+msgid ", "
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/utils/timesince.py:8
+#, python-format
+msgid "%(num)d year"
+msgid_plural "%(num)d years"
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/lib/python3.13/site-packages/django/utils/timesince.py:9
+#, python-format
+msgid "%(num)d month"
+msgid_plural "%(num)d months"
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/lib/python3.13/site-packages/django/utils/timesince.py:10
+#, python-format
+msgid "%(num)d week"
+msgid_plural "%(num)d weeks"
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/lib/python3.13/site-packages/django/utils/timesince.py:11
+#, python-format
+msgid "%(num)d day"
+msgid_plural "%(num)d days"
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/lib/python3.13/site-packages/django/utils/timesince.py:12
+#, python-format
+msgid "%(num)d hour"
+msgid_plural "%(num)d hours"
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/lib/python3.13/site-packages/django/utils/timesince.py:13
+#, python-format
+msgid "%(num)d minute"
+msgid_plural "%(num)d minutes"
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/lib/python3.13/site-packages/django/views/csrf.py:29
+msgid "Forbidden"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/views/csrf.py:30
+msgid "CSRF verification failed. Request aborted."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/views/csrf.py:34
+msgid ""
+"You are seeing this message because this HTTPS site requires a “Referer "
+"header” to be sent by your web browser, but none was sent. This header is "
+"required for security reasons, to ensure that your browser is not being "
+"hijacked by third parties."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/views/csrf.py:40
+msgid ""
+"If you have configured your browser to disable “Referer” headers, please re-"
+"enable them, at least for this site, or for HTTPS connections, or for “same-"
+"origin” requests."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/views/csrf.py:45
+msgid ""
+"If you are using the <meta name=\"referrer\" content=\"no-referrer\"> tag or "
+"including the “Referrer-Policy: no-referrer” header, please remove them. The "
+"CSRF protection requires the “Referer” header to do strict referer checking. "
+"If you’re concerned about privacy, use alternatives like <a "
+"rel=\"noreferrer\" …> for links to third-party sites."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/views/csrf.py:54
+msgid ""
+"You are seeing this message because this site requires a CSRF cookie when "
+"submitting forms. This cookie is required for security reasons, to ensure "
+"that your browser is not being hijacked by third parties."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/views/csrf.py:60
+msgid ""
+"If you have configured your browser to disable cookies, please re-enable "
+"them, at least for this site, or for “same-origin” requests."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/views/csrf.py:66
+msgid "More information is available with DEBUG=True."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/views/generic/dates.py:44
+msgid "No year specified"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/views/generic/dates.py:64
+#: venv/lib/python3.13/site-packages/django/views/generic/dates.py:115
+#: venv/lib/python3.13/site-packages/django/views/generic/dates.py:214
+msgid "Date out of range"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/views/generic/dates.py:94
+msgid "No month specified"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/views/generic/dates.py:147
+msgid "No day specified"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/views/generic/dates.py:194
+msgid "No week specified"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/views/generic/dates.py:353
+#: venv/lib/python3.13/site-packages/django/views/generic/dates.py:384
+#, python-format
+msgid "No %(verbose_name_plural)s available"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/views/generic/dates.py:680
+#, python-format
+msgid ""
+"Future %(verbose_name_plural)s not available because "
+"%(class_name)s.allow_future is False."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/views/generic/dates.py:720
+#, python-format
+msgid "Invalid date string “%(datestr)s” given format “%(format)s”"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/views/generic/detail.py:56
+#, python-format
+msgid "No %(verbose_name)s found matching the query"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/views/generic/list.py:70
+msgid "Page is not “last”, nor can it be converted to an int."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/views/generic/list.py:77
+#, python-format
+msgid "Invalid page (%(page_number)s): %(message)s"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/views/generic/list.py:173
+#, python-format
+msgid "Empty list and “%(class_name)s.allow_empty” is False."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/views/static.py:49
+msgid "Directory indexes are not allowed here."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/views/static.py:51
+#, python-format
+msgid "“%(path)s” does not exist"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/views/static.py:68
+#: venv/lib/python3.13/site-packages/django/views/templates/directory_index.html:8
+#: venv/lib/python3.13/site-packages/django/views/templates/directory_index.html:11
+#, python-format
+msgid "Index of %(directory)s"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/views/templates/default_urlconf.html:7
+#: venv/lib/python3.13/site-packages/django/views/templates/default_urlconf.html:204
+msgid "The install worked successfully! Congratulations!"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/views/templates/default_urlconf.html:206
+#, python-format
+msgid ""
+"View <a href=\"https://docs.djangoproject.com/en/%(version)s/releases/\" "
+"target=\"_blank\" rel=\"noopener\">release notes</a> for Django %(version)s"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/views/templates/default_urlconf.html:208
+#, python-format
+msgid ""
+"You are seeing this page because <a href=\"https://docs.djangoproject.com/en/"
+"%(version)s/ref/settings/#debug\" target=\"_blank\" "
+"rel=\"noopener\">DEBUG=True</a> is in your settings file and you have not "
+"configured any URLs."
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/views/templates/default_urlconf.html:217
+msgid "Django Documentation"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/views/templates/default_urlconf.html:218
+msgid "Topics, references, &amp; how-to’s"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/views/templates/default_urlconf.html:226
+msgid "Tutorial: A Polling App"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/views/templates/default_urlconf.html:227
+msgid "Get started with Django"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/views/templates/default_urlconf.html:235
+msgid "Django Community"
+msgstr ""
+
+#: venv/lib/python3.13/site-packages/django/views/templates/default_urlconf.html:236
+msgid "Connect, get help, or contribute"
+msgstr ""

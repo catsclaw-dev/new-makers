@@ -7,6 +7,9 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
 from django.http import Http404
+from django.conf import settings
+from django.core.cache import cache
+
 
 from apps.directories.models import Role, Technology
 from apps.interactions.models import FavoriteProject
@@ -99,18 +102,30 @@ def home(request):
 
     active_specialists = specialists[:6]
 
-    popular_technologies = (
-        Technology.objects.filter(is_active=True)
-        .annotate(project_count=Count("projects"))
-        .order_by("-project_count", "name")[:10]
-    )
+    cache_timeout = getattr(settings, "CACHE_TIMEOUT", 300)
 
-    statistics = {
-        "published_projects_count": Project.objects.published().count(),
-        "specialists_count": SpecialistProfile.objects.count(),
-        "roles_count": Role.objects.filter(is_active=True).count(),
-        "technologies_count": Technology.objects.filter(is_active=True).count(),
-    }
+    popular_technologies = cache.get("home_popular_technologies")
+    if popular_technologies is None:
+        popular_technologies = list(
+            Technology.objects.filter(is_active=True)
+            .annotate(project_count=Count("projects"))
+            .order_by("-project_count", "name")[:10]
+        )
+        cache.set(
+            "home_popular_technologies",
+            popular_technologies,
+            cache_timeout,
+        )
+
+    statistics = cache.get("home_statistics")
+    if statistics is None:
+        statistics = {
+            "published_projects_count": Project.objects.published().count(),
+            "specialists_count": SpecialistProfile.objects.count(),
+            "roles_count": Role.objects.filter(is_active=True).count(),
+            "technologies_count": Technology.objects.filter(is_active=True).count(),
+        }
+        cache.set("home_statistics", statistics, cache_timeout)
 
     context = {
         "query": query,
@@ -121,6 +136,7 @@ def home(request):
         "statistics": statistics,
         "recently_viewed_projects": recently_viewed_projects,
     }
+
     return render(request, "projects/home.html", context)
 
 

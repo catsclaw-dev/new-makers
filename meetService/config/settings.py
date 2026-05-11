@@ -1,11 +1,8 @@
-"""
-Django settings for MeetService project.
-"""
-
 from pathlib import Path
 
 import environ
 
+from django.utils.translation import gettext_lazy as _
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -72,6 +69,7 @@ if DEBUG:
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -94,6 +92,7 @@ TEMPLATES = [
         "OPTIONS": {
             "context_processors": [
                 "django.template.context_processors.request",
+                "django.template.context_processors.i18n",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
             ],
@@ -129,7 +128,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-LANGUAGE_CODE = "ru-ru"
+LANGUAGE_CODE = "ru"
 
 TIME_ZONE = "Europe/Moscow"
 
@@ -137,6 +136,14 @@ USE_I18N = True
 
 USE_TZ = True
 
+LANGUAGES = [
+    ("ru", _("Русский")),
+    ("en", _("English")),
+]
+
+LOCALE_PATHS = [
+    BASE_DIR / "locale",
+]
 
 AUTH_USER_MODEL = "accounts.User"
 
@@ -210,3 +217,12 @@ SECURE_HSTS_PRELOAD = env.bool(
     "DJANGO_SECURE_HSTS_PRELOAD",
     default=False,
 )
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "meetservice-cache",
+    }
+}
+
+CACHE_TIMEOUT = 60 * 5

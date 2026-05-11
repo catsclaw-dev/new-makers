@@ -1,5 +1,6 @@
 {% load static %}
 {% load project_extras %}
+{% load i18n %}
 <!DOCTYPE html>
 <html lang="ru">
     <head>
@@ -18,11 +19,19 @@
                    href="{% url 'projects:home' %}"
                    aria-label="На главную страницу MeetService">{% service_name %}</a>
                 <nav class="main-nav" aria-label="Основная навигация">
-                    <a href="{% url 'projects:home' %}">Главная</a>
-                    <a href="{% url 'projects:project_list' %}">Проекты</a>
-                    <a href="{% url 'specialists:specialist_list' %}">Специалисты</a>
-                    <a href="{% url 'projects:home' %}#about">О сервисе</a>
+                    <a href="{% url 'projects:home' %}">{% trans "Главная" %}</a>
+                    <a href="{% url 'projects:project_list' %}">{% trans "Проекты" %}</a>
+                    <a href="{% url 'specialists:specialist_list' %}">{% trans "Специалисты" %}</a>
+                    <a href="{% url 'projects:home' %}#about">{% trans "О сервисе" %}</a>
                 </nav>
+                <form action="{% url 'set_language' %}" method="post" class="language-form">
+                    {% csrf_token %}
+                    <input name="next" type="hidden" value="{{ request.get_full_path }}">
+                    <select name="language" onchange="this.form.submit()">
+                        <option value="ru" {% if LANGUAGE_CODE == "ru" %}selected{% endif %}>RU</option>
+                        <option value="en" {% if LANGUAGE_CODE == "en" %}selected{% endif %}>EN</option>
+                    </select>
+                </form>
                 <div class="header-auth">
                     {% if user.is_authenticated %}
                         <a class="user-chip user-chip-name" href="{% url 'accounts:profile' %}">{{ user.username }}</a>
@@ -30,24 +39,24 @@
                               method="post"
                               action="{% url 'accounts:logout' %}">
                             {% csrf_token %}
-                            <button class="btn btn-secondary btn-small" type="submit">Выход</button>
+                            <button class="btn btn-secondary btn-small" type="submit">{% trans "Выход" %}</button>
                         </form>
                     {% else %}
-                        <a class="btn btn-secondary btn-small" href="{% url 'accounts:login' %}">Вход</a>
+                        <a class="btn btn-secondary btn-small" href="{% url 'accounts:login' %}">{% trans "Вход" %}</a>
                         <a class="btn btn-primary btn-small"
-                           href="{% url 'accounts:register' %}">Регистрация</a>
+                           href="{% url 'accounts:register' %}">{% trans "Регистрация" %}</a>
                     {% endif %}
                 </div>
             </div>
             {% if user.is_authenticated %}
                 <nav class="container cabinet-nav" aria-label="Навигация личного кабинета">
-                    <a href="{% url 'accounts:profile' %}">Кабинет</a>
-                    <a href="{% url 'specialists:specialist_profile_edit' %}">Профиль специалиста</a>
-                    <a href="{% url 'projects:my_projects' %}">Мои проекты</a>
-                    <a href="{% url 'projects:my_teams' %}">Мои команды</a>
-                    <a href="{% url 'interactions:application_list' %}">Отклики</a>
-                    <a href="{% url 'interactions:invitation_list' %}">Приглашения</a>
-                    <a href="{% url 'interactions:favorite_project_list' %}">Избранное</a>
+                    <a href="{% url 'accounts:profile' %}">{% trans "Кабинет" %}</a>
+                    <a href="{% url 'specialists:specialist_profile_edit' %}">{% trans "Профиль специалиста" %}</a>
+                    <a href="{% url 'projects:my_projects' %}">{% trans "Мои проекты" %}</a>
+                    <a href="{% url 'projects:my_teams' %}">{% trans "Мои команды" %}</a>
+                    <a href="{% url 'interactions:application_list' %}">{% trans "Мои отклики" %}</a>
+                    <a href="{% url 'interactions:invitation_list' %}">{% trans "Мои приглашения" %}</a>
+                    <a href="{% url 'interactions:favorite_project_list' %}">{% trans "Избранное" %}</a>
                 </nav>
             {% endif %}
         </header>
@@ -61,8 +70,8 @@
         </main>
         <footer class="site-footer">
             <div class="container footer-inner">
-                <p>© MeetService — сервис поиска IT-команды</p>
-                <p>Курсовой проект на Django</p>
+                <p>© MeetService — {% trans "сервис поиска IT-команды" %}</p>
+                <p>{% trans "Курсовой проект на Django" %}</p>
             </div>
         </footer>
         {% block extra_scripts %}{% endblock %}

@@ -1,5 +1,14 @@
-from django.contrib import admin
+import io
+import textwrap
+from pathlib import Path
 
+from reportlab.lib.pagesizes import A4
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.pdfgen import canvas
+
+from django.http import HttpResponse
+from django.utils import timezone
 from django.contrib import admin
 from django.db.models import Count
 from django.utils.html import format_html
@@ -14,6 +23,45 @@ from .models import (
     ProjectTechnology,
     ProjectVacancy,
 )
+
+
+PDF_FONT_NAME = "Helvetica"
+
+
+def register_pdf_font() -> str:
+    """Регистрирует шрифт с поддержкой кириллицы для PDF."""
+    font_candidates = [
+        Path("C:/Windows/Fonts/arial.ttf"),
+        Path("C:/Windows/Fonts/DejaVuSans.ttf"),
+        Path("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"),
+        Path("/usr/share/fonts/dejavu/DejaVuSans.ttf"),
+        Path("/System/Library/Fonts/Supplemental/Arial Unicode.ttf"),
+        Path("/System/Library/Fonts/Supplemental/Arial.ttf"),
+    ]
+
+    for font_path in font_candidates:
+        if font_path.exists():
+            pdfmetrics.registerFont(TTFont("ProjectPDFUnicode", str(font_path)))
+            return "ProjectPDFUnicode"
+
+    return PDF_FONT_NAME
+
+
+def draw_wrapped_text(
+    pdf: canvas.Canvas,
+    text: str,
+    x: int,
+    y: int,
+    *,
+    width: int = 95,
+    line_height: int = 14,
+) -> int:
+    """Рисует длинный текст несколькими строками и возвращает новую координату Y."""
+    text = str(text or "-")
+    for line in textwrap.wrap(text, width=width):
+        pdf.drawString(x, y, line)
+        y -= line_height
+    return y
 
 
 class ProjectTechnologyInline(admin.TabularInline):
@@ -92,6 +140,8 @@ class ProjectFileInline(admin.TabularInline):
 @admin.register(Project)
 class ProjectAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
     """Админ-панель проектов."""
+
+    actions = ("export_projects_to_pdf",)
 
     list_display = (
         "title",
@@ -253,6 +303,163 @@ class ProjectAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
                 obj.cover_image.url,
             )
         return "Обложка не загружена"
+
+    @admin.action(description="Сформировать PDF по выбранным проектам")
+    def export_projects_to_pdf(self, request, queryset):
+        """Генерирует PDF-отчёт по выбранным проектам из админки."""
+        font_name = register_pdf_font()
+
+        queryset = (
+            queryset.select_related("owner")
+            .prefetch_related(
+                "technologies",
+                "vacancies__role",
+                "files",
+            )
+            .order_by("title")
+        )
+
+        buffer = io.BytesIO()
+        pdf = canvas.Canvas(buffer, pagesize=A4)
+        page_width, page_height = A4
+
+        x = 40
+        y = int(page_height) - 50
+        line_height = 16
+
+        def new_page() -> None:
+            nonlocal y
+            pdf.showPage()
+            pdf.setFont(font_name, 11)
+            y = int(page_height) - 50
+
+        def ensure_space(required_height: int = 80) -> None:
+            if y < required_height:
+                new_page()
+
+        pdf.setTitle("Отчёт по проектам")
+        pdf.setFont(font_name, 16)
+        pdf.drawString(x, y, "Отчёт по выбранным проектам")
+        y -= 24
+
+        pdf.setFont(font_name, 10)
+        pdf.drawString(
+            x,
+            y,
+            f"Дата формирования: {timezone.localtime().strftime('%d.%m.%Y %H:%M')}",
+        )
+        y -= 28
+
+        for number, project in enumerate(queryset, start=1):
+            ensure_space(120)
+
+            pdf.setFont(font_name, 13)
+            y = draw_wrapped_text(
+                pdf,
+                f"{number}. {project.title}",
+                x,
+                y,
+                width=85,
+                line_height=18,
+            )
+
+            pdf.setFont(font_name, 10)
+
+            fields = [
+                ("Владелец", project.owner),
+                ("Статус", project.get_status_display()),
+                ("Стадия", project.get_stage_display()),
+                ("Формат участия", project.get_participation_format_display()),
+                ("Краткое описание", project.short_description),
+                ("Цель", project.goal),
+                ("Репозиторий", project.repository_url or "-"),
+                ("Демо", project.demo_url or "-"),
+            ]
+
+            for label, value in fields:
+                ensure_space(70)
+                y = draw_wrapped_text(
+                    pdf,
+                    f"{label}: {value}",
+                    x + 12,
+                    y,
+                    width=100,
+                    line_height=line_height,
+                )
+
+            technologies = ", ".join(
+                technology.name for technology in project.technologies.all()
+            )
+            ensure_space(70)
+            y = draw_wrapped_text(
+                pdf,
+                f"Технологии: {technologies or '-'}",
+                x + 12,
+                y,
+                width=100,
+                line_height=line_height,
+            )
+
+            vacancies = project.vacancies.all()
+            ensure_space(70)
+            pdf.drawString(x + 12, y, "Открытые роли:")
+            y -= line_height
+
+            if vacancies:
+                for vacancy in vacancies:
+                    ensure_space(70)
+                    vacancy_text = (
+                        f"- {vacancy.title}; роль: {vacancy.role}; "
+                        f"уровень: {vacancy.get_required_level_display()}; "
+                        f"статус: {vacancy.get_status_display()}; "
+                        f"набрано: {vacancy.current_count}/{vacancy.required_count}"
+                    )
+                    y = draw_wrapped_text(
+                        pdf,
+                        vacancy_text,
+                        x + 24,
+                        y,
+                        width=95,
+                        line_height=line_height,
+                    )
+            else:
+                pdf.drawString(x + 24, y, "- Нет открытых ролей")
+                y -= line_height
+
+            files = project.files.all()
+            ensure_space(70)
+            pdf.drawString(x + 12, y, "Файлы проекта:")
+            y -= line_height
+
+            if files:
+                for project_file in files:
+                    ensure_space(70)
+                    file_text = (
+                        f"- {project_file.title}; "
+                        f"тип: {project_file.get_file_type_display()}; "
+                        f"путь: {project_file.file.name}"
+                    )
+                    y = draw_wrapped_text(
+                        pdf,
+                        file_text,
+                        x + 24,
+                        y,
+                        width=95,
+                        line_height=line_height,
+                    )
+            else:
+                pdf.drawString(x + 24, y, "- Нет прикреплённых файлов")
+                y -= line_height
+
+            y -= 12
+            ensure_space(70)
+
+        pdf.save()
+        buffer.seek(0)
+
+        response = HttpResponse(buffer, content_type="application/pdf")
+        response["Content-Disposition"] = 'attachment; filename="projects_report.pdf"'
+        return response
 
 
 @admin.register(ProjectTechnology)
