@@ -6,7 +6,7 @@ from django.views.decorators.http import require_POST
 from django.shortcuts import get_object_or_404, render, redirect
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
-from django.http import Http404
+from django.http import Http404, HttpResponseRedirect
 from django.conf import settings
 from django.core.cache import cache
 
@@ -111,13 +111,21 @@ def home(request):
             .annotate(project_count=Count("projects"))
             .order_by("-project_count", "name")[:10]
         )
+
         cache.set(
             "home_popular_technologies",
             popular_technologies,
             cache_timeout,
         )
 
+    technology_rows = (
+        Technology.objects.filter(is_active=True)
+        .values("id", "name", "slug")
+        .order_by("name")[:10]
+    )
+
     statistics = cache.get("home_statistics")
+
     if statistics is None:
         statistics = {
             "published_projects_count": Project.objects.published().count(),
@@ -135,6 +143,7 @@ def home(request):
         "popular_technologies": popular_technologies,
         "statistics": statistics,
         "recently_viewed_projects": recently_viewed_projects,
+        "technology_rows": technology_rows,
     }
 
     return render(request, "projects/home.html", context)
@@ -166,7 +175,8 @@ def project_list(request):
     )
     if query:
         projects = projects.filter(
-            Q(title__icontains=query)
+            Q(title__contains=query)
+            | Q(title__icontains=query)
             | Q(short_description__icontains=query)
             | Q(description__icontains=query)
             | Q(goal__icontains=query)
@@ -455,7 +465,7 @@ def project_create(request):
                 request,
                 "Проект создан как черновик. Первая открытая роль добавлена.",
             )
-            return redirect(project.get_absolute_url())
+            return HttpResponseRedirect(project.get_absolute_url())
     else:
         form = ProjectForm(prefix="project")
         vacancy_form = ProjectVacancyForm(prefix="vacancy")
@@ -695,6 +705,10 @@ def project_archive(request, slug):
             return redirect("projects:project_archive", slug=project.slug)
 
         FavoriteProject.objects.filter(project=project).delete()
+
+        ProjectVacancy.objects.filter(project=project).exclude(
+            status=ProjectVacancy.Status.CLOSED
+        ).update(status=ProjectVacancy.Status.CLOSED)
 
         project.status = Project.Status.ARCHIVED
         project.updated_by = request.user
