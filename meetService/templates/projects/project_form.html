@@ -20,30 +20,30 @@
                 {% for field in form %}
                     {% if field.name == "technologies" %}
                         <div class="form-field form-field-wide">
+                            {{ field.errors }}
                             <div class="form-label-row">
-                                <span class="form-label">{{ field.label }}</span>
+                                {{ field.label_tag }}
                                 {% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}
                             </div>
                             <div class="checkbox-panel">{{ field }}</div>
-                            {% for error in field.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
                         </div>
                     {% elif field.name == "description" or field.name == "goal" %}
                         <div class="form-field form-field-wide">
+                            {{ field.errors }}
                             <div class="form-label-row">
-                                <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                {{ field.label_tag }}
                                 {% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}
                             </div>
                             {{ field }}
-                            {% for error in field.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
                         </div>
                     {% else %}
                         <div class="form-field">
+                            {{ field.errors }}
                             <div class="form-label-row">
-                                <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                {{ field.label_tag }}
                                 {% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}
                             </div>
                             {{ field }}
-                            {% for error in field.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
                         </div>
                     {% endif %}
                 {% endfor %}
@@ -61,21 +61,21 @@
                     {% for field in vacancy_form %}
                         {% if field.name == "description" %}
                             <div class="form-field form-field-wide">
+                                {{ field.errors }}
                                 <div class="form-label-row">
-                                    <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                    {{ field.label_tag }}
                                     {% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}
                                 </div>
                                 {{ field }}
-                                {% for error in field.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
                             </div>
                         {% else %}
                             <div class="form-field">
+                                {{ field.errors }}
                                 <div class="form-label-row">
-                                    <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                    {{ field.label_tag }}
                                     {% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}
                                 </div>
                                 {{ field }}
-                                {% for error in field.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
                             </div>
                         {% endif %}
                     {% endfor %}
