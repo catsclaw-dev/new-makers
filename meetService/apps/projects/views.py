@@ -19,6 +19,22 @@ def home(request):
     """Главная страница сервиса с поиском, виджетами и агрегатами."""
     query = request.GET.get("q", "").strip()
 
+    viewed_project_ids = request.session.get("viewed_project_ids", [])
+    viewed_projects_queryset = (
+        Project.objects.published()
+        .filter(pk__in=viewed_project_ids)
+        .select_related("owner")
+        .prefetch_related("technologies", "vacancies__role")
+    )
+    viewed_projects_by_id = {
+        project.pk: project for project in viewed_projects_queryset
+    }
+    recently_viewed_projects = [
+        viewed_projects_by_id[project_id]
+        for project_id in viewed_project_ids
+        if project_id in viewed_projects_by_id
+    ]
+
     projects = (
         Project.objects.published()
         .select_related("owner")
@@ -103,6 +119,7 @@ def home(request):
         "active_specialists": active_specialists,
         "popular_technologies": popular_technologies,
         "statistics": statistics,
+        "recently_viewed_projects": recently_viewed_projects,
     }
     return render(request, "projects/home.html", context)
 
@@ -200,6 +217,13 @@ def project_detail(request, slug):
     if project.status not in public_statuses:
         if not project.can_be_edited_by(request.user):
             raise Http404("Проект не найден.")
+
+    viewed_project_ids = request.session.get("viewed_project_ids", [])
+    viewed_project_ids = [
+        project_id for project_id in viewed_project_ids if project_id != project.pk
+    ]
+    viewed_project_ids.insert(0, project.pk)
+    request.session["viewed_project_ids"] = viewed_project_ids[:5]
 
     technology_ids = project.technologies.values_list("id", flat=True)
 

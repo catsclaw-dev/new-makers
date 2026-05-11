@@ -81,6 +81,22 @@
             </article>
         </div>
     </section>
+    {% if recently_viewed_projects %}
+        <section class="container section">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">сеансы Django</p>
+                    <h2>Недавно просмотренные проекты</h2>
+                </div>
+                <a href="{% url 'projects:project_list' %}">Все проекты</a>
+            </div>
+            <div class="cards-grid cards-grid-home">
+                {% for project in recently_viewed_projects %}
+                    {% include "projects/includes/project_card.html" with project=project placeholder_text="IT" cta_text="Открыть снова" %}
+                {% endfor %}
+            </div>
+        </section>
+    {% endif %}
     <section class="container section">
         <div class="section-heading">
             <div>
