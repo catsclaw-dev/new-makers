@@ -9,16 +9,27 @@ from apps.projects.models import Project, ProjectVacancy
 class ApplicationForm(forms.ModelForm):
     """Форма отклика специалиста на открытую роль проекта."""
 
+    message = forms.CharField(
+        required=False,
+        label="Сопроводительное сообщение",
+        help_text="Кратко расскажи, почему ты подходишь команде.",
+        widget=forms.Textarea(
+            attrs={
+                "class": "form-control",
+                "rows": 5,
+                "placeholder": "Здравствуйте! Хочу присоединиться к проекту, потому что...",
+            }
+        ),
+    )
+
     class Meta:
         model = Application
         fields = ("vacancy", "message")
         labels = {
             "vacancy": "Открытая роль",
-            "message": "Сопроводительное сообщение",
         }
         help_texts = {
             "vacancy": "Выбери роль, на которую хочешь откликнуться.",
-            "message": "Кратко расскажи, почему ты подходишь команде.",
         }
         error_messages = {
             "vacancy": {
@@ -27,13 +38,6 @@ class ApplicationForm(forms.ModelForm):
         }
         widgets = {
             "vacancy": forms.Select(attrs={"class": "form-control"}),
-            "message": forms.Textarea(
-                attrs={
-                    "class": "form-control",
-                    "rows": 5,
-                    "placeholder": "Здравствуйте! Хочу присоединиться к проекту, потому что...",
-                }
-            ),
         }
 
     class Media:

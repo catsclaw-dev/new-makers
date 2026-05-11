@@ -6,19 +6,35 @@ from apps.specialists.models import SpecialistProfile
 class SpecialistProfileForm(forms.ModelForm):
     """Форма создания и редактирования профиля специалиста."""
 
+    field_order = [
+        "avatar",
+        "main_role",
+        "level",
+        "status",
+        "bio",
+        "experience_years",
+        "github_url",
+        "gitlab_url",
+        "portfolio_url",
+    ]
+
     class Meta:
         model = SpecialistProfile
-        fields = [
-            "avatar",
-            "main_role",
-            "level",
-            "status",
-            "bio",
-            "experience_years",
-            "github_url",
-            "gitlab_url",
-            "portfolio_url",
-        ]
+
+        exclude = (
+            "user",
+            "preferred_roles",
+            "technologies",
+            "participation_format",
+            "weekly_hours",
+            "city",
+            "timezone",
+            "telegram",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        )
 
         widgets = {
             "avatar": forms.ClearableFileInput(
@@ -101,6 +117,11 @@ class SpecialistProfileForm(forms.ModelForm):
                 "min_value": "Опыт не может быть отрицательным.",
                 "max_value": "Проверь значение опыта.",
             },
+        }
+
+    class Media:
+        css = {
+            "all": ("css/site.css",),
         }
 
     def clean_experience_years(self):
