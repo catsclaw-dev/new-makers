@@ -23,7 +23,7 @@ from .models import (
     ProjectTechnology,
     ProjectVacancy,
 )
-
+from .resources import ProjectResource
 
 PDF_FONT_NAME = "Helvetica"
 
@@ -142,6 +142,8 @@ class ProjectAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
     """Админ-панель проектов."""
 
     actions = ("export_projects_to_pdf",)
+
+    resource_classes = [ProjectResource]
 
     list_display = (
         "title",
