@@ -3,3 +3,10 @@ typeCheckingMode = "basic"
 reportAttributeAccessIssue = false
 reportOperatorIssue = false
 reportUnusedImport = false
+
+[tool.mypy]
+plugins = ["mypy_django_plugin.main"]
+python_executable = ".venv/bin/python"
+
+[tool.django-stubs]
+django_settings_module = "test_drf.settings"
