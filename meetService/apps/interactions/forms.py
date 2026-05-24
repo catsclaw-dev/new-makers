@@ -10,8 +10,8 @@ class ApplicationForm(forms.ModelForm):
     """Форма отклика специалиста на открытую роль проекта."""
 
     message = forms.CharField(
-        required=False,
         label="Сопроводительное сообщение",
+        required=True,
         help_text="Кратко расскажи, почему ты подходишь команде.",
         widget=forms.Textarea(
             attrs={
@@ -20,6 +20,9 @@ class ApplicationForm(forms.ModelForm):
                 "placeholder": "Здравствуйте! Хочу присоединиться к проекту, потому что...",
             }
         ),
+        error_messages={
+            "required": "Добавь сопроводительное сообщение.",
+        },
     )
 
     class Meta:
@@ -99,7 +102,14 @@ class InvitationForm(forms.ModelForm):
 
     class Meta:
         model = Invitation
-        fields = ("vacancy", "message")
+        exclude = {
+            "project",
+            "specialist",
+            "invited_by",
+            "status",
+            "invited_at",
+            "responded_at",
+        }
         labels = {
             "vacancy": "Проект и открытая роль",
             "message": "Сообщение специалисту",

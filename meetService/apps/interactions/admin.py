@@ -1,5 +1,3 @@
-from django.contrib import admin
-
 from django.contrib import admin, messages
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
