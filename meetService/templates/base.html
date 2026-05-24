@@ -10,6 +10,16 @@
             {% block title %}MeetService{% endblock %}
         </title>
         <link rel="stylesheet" href="{% static 'css/site.css' %}">
+        <script>
+          (function () {
+            try {
+              if (localStorage.getItem("meetservice_bw_mode") === "1") {
+                document.documentElement.classList.add("bw-mode");
+              }
+            } catch (error) {
+            }
+          })();
+        </script>
         {% block extra_head %}{% endblock %}
     </head>
     <body class="{% block body_class %}{% endblock %}">
@@ -27,6 +37,10 @@
                 <form action="{% url 'set_language' %}" method="post" class="language-form">
                     {% csrf_token %}
                     <input name="next" type="hidden" value="{{ request.get_full_path }}">
+                    <button class="btn btn-small accessibility-toggle"
+                            type="button"
+                            id="bw-mode-toggle"
+                            aria-pressed="false">Ч/Б</button>
                     <select name="language" onchange="this.form.submit()">
                         <option value="ru" {% if LANGUAGE_CODE == "ru" %}selected{% endif %}>RU</option>
                         <option value="en" {% if LANGUAGE_CODE == "en" %}selected{% endif %}>EN</option>
@@ -74,6 +88,42 @@
                 <p>{% trans "Курсовой проект на Django" %}</p>
             </div>
         </footer>
-        {% block extra_scripts %}{% endblock %}
+        <script>
+          (function () {
+            const root = document.documentElement;
+            const button = document.getElementById("bw-mode-toggle");
+
+            if (!button) {
+              return;
+            }
+
+            function updateButtonState() {
+              const enabled = root.classList.contains("bw-mode");
+              button.setAttribute("aria-pressed", enabled ? "true" : "false");
+              button.textContent = enabled ? "Цвет" : "Ч/Б";
+              button.title = enabled
+                ? "Вернуть цветную тему"
+                : "Включить чёрно-белый режим";
+            }
+
+            updateButtonState();
+
+            button.addEventListener("click", function () {
+              root.classList.toggle("bw-mode");
+
+              try {
+                localStorage.setItem(
+                  "meetservice_bw_mode",
+                  root.classList.contains("bw-mode") ? "1" : "0"
+                );
+              } catch (error) {
+              }
+
+              updateButtonState();
+            });
+          })();
+        </script>
+        {% block extra_scripts %}
+        {% endblock %}
     </body>
 </html>

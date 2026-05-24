@@ -78,12 +78,16 @@ body {
   margin: 0;
   min-width: 320px;
   background:
-    radial-gradient(circle at 12% 0%,
+    radial-gradient(
+      circle at 12% 0%,
       rgba(51, 204, 255, 0.22),
-      transparent 28rem),
-    radial-gradient(circle at 90% 18%,
+      transparent 28rem
+    ),
+    radial-gradient(
+      circle at 90% 18%,
       rgba(51, 0, 153, 0.45),
-      transparent 30rem),
+      transparent 30rem
+    ),
     linear-gradient(180deg, #003366 0%, #002a57 48%, #001f44 100%);
   color: var(--color-text);
   font-family: var(--font-body);
@@ -200,8 +204,8 @@ h4 {
   margin-bottom: 22px;
 }
 
-.section-heading>div,
-.section-head>div {
+.section-heading > div,
+.section-head > div {
   min-width: 0;
 }
 
@@ -466,6 +470,18 @@ h4 {
   white-space: nowrap;
 }
 
+.accessibility-toggle {
+  border-color: rgba(51, 204, 255, 0.48);
+  background: rgba(51, 204, 255, 0.12);
+  color: var(--color-cyan);
+}
+
+.accessibility-toggle:hover {
+  border-color: var(--color-cyan);
+  background: rgba(51, 204, 255, 0.2);
+  color: var(--color-text);
+}
+
 .btn:disabled,
 button[disabled] {
   opacity: 0.6;
@@ -486,9 +502,33 @@ button[disabled] {
 }
 
 .card-link {
-  display: inline-block;
-  margin-top: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 38px;
+  margin-top: 0;
+  border: 1px solid rgba(51, 204, 255, 0.42);
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
+  background: rgba(51, 204, 255, 0.1);
+  color: var(--color-text);
   font-weight: 800;
+  text-align: center;
+  text-decoration: none;
+  transition:
+    border-color var(--transition-base),
+    background var(--transition-base),
+    color var(--transition-base),
+    transform var(--transition-base);
+}
+
+.card-link:hover {
+  transform: translateY(-1px);
+  border-color: rgba(51, 204, 255, 0.72);
+  background: rgba(51, 204, 255, 0.18);
+  color: var(--color-text);
+  text-decoration: none;
 }
 
 .similar-link {
@@ -620,7 +660,7 @@ option {
   background: rgba(0, 31, 68, 0.35);
 }
 
-.checkbox-panel>div,
+.checkbox-panel > div,
 .checkbox-panel ul {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -725,19 +765,30 @@ option {
   gap: 8px;
 }
 
-.card-meta span,
+.card-meta span {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  border: 1px solid rgba(51, 204, 255, 0.28);
+  border-radius: var(--radius-pill);
+  padding: 4px 9px;
+  background: rgba(0, 31, 68, 0.42);
+  color: var(--color-cream);
+  font-size: 12px;
+  line-height: 1.25;
+}
+
 .tag {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
   max-width: 100%;
-  border: 1px solid rgba(51, 204, 255, 0.24);
-  border-radius: var(--radius-pill);
-  padding: 5px 10px;
-  background: rgba(0, 31, 68, 0.48);
-  color: var(--color-cream);
-  font-size: 13px;
-  line-height: 1.35;
+  border: 1px solid rgba(51, 204, 255, 0.45);
+  border-radius: 8px;
+  padding: 4px 10px;
+  background: rgba(51, 204, 255, 0.12);
+  color: var(--color-text);
+  font-size: 12px;
+  line-height: 1.25;
 }
 
 /* ============================================================
@@ -817,9 +868,11 @@ option {
   place-items: center;
   min-height: 132px;
   background:
-    radial-gradient(circle at 30% 20%,
+    radial-gradient(
+      circle at 30% 20%,
       rgba(51, 204, 255, 0.36),
-      transparent 12rem),
+      transparent 12rem
+    ),
     linear-gradient(135deg, rgba(51, 51, 204, 0.74), rgba(51, 0, 153, 0.94));
 }
 
@@ -832,16 +885,15 @@ option {
 }
 
 .project-card-body {
-  display: grid;
-  grid-template-rows: auto auto auto 1fr;
-  row-gap: 10px;
-  column-gap: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
   min-width: 0;
-  padding: 14px;
+  padding: 16px;
 }
 
 .project-card-body h3 {
-  margin-top: 2px;
+  margin-top: 6px;
   margin-bottom: 4px;
 }
 
@@ -866,8 +918,7 @@ option {
 .project-card-bottom {
   display: grid;
   gap: 10px;
-  align-self: end;
-  margin-top: 4px;
+  margin-top: auto;
   border-top: 1px solid rgba(51, 204, 255, 0.14);
   padding-top: 12px;
 }
@@ -959,7 +1010,7 @@ option {
   gap: 24px;
 }
 
-.detail-main>h2 {
+.detail-main > h2 {
   margin-top: 18px;
 }
 
@@ -1056,140 +1107,152 @@ option {
    16. Accessibility and print helpers
    ============================================================ */
 
-@media print {
-  @page {
-    size: A4 portrait;
-    margin: 12mm;
-  }
+/* ============================================================
+   16. Accessibility and print helpers
+   ============================================================ */
 
-  * {
-    box-shadow: none !important;
-    text-shadow: none !important;
-  }
+html.bw-mode {
+  --color-bg: #000000;
+  --color-bg-deep: #000000;
+  --color-cyan: #ffffff;
+  --color-blue: #333333;
+  --color-indigo: #111111;
+  --color-cream: #ffffff;
+  --color-text: #ffffff;
 
-  html,
-  body {
-    background: #ffffff !important;
-    color: #111111 !important;
-    font-size: 11pt;
-    line-height: 1.35;
-  }
+  --color-muted: #ffffff;
+  --color-muted-soft: #dddddd;
+  --color-card: #000000;
+  --color-card-hover: #111111;
+  --color-panel: #000000;
+  --color-field: #000000;
+  --color-border: #ffffff;
+  --color-border-strong: #ffffff;
 
-  .site-header,
-  .site-footer,
-  .main-nav,
-  .nav,
-  .cabinet-nav,
-  .header-auth,
-  .header-actions,
-  .filters-panel,
-  .search-form,
-  .pagination,
-  .messages,
-  .btn,
-  .project-actions,
-  .owner-actions {
-    display: none !important;
-  }
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: none;
+}
 
-  .container,
-  .narrow-page {
-    width: 100% !important;
-    max-width: none !important;
-    margin: 0 !important;
-  }
+html.bw-mode body {
+  background: #000000;
+  color: #ffffff;
+}
 
-  .section,
-  .page-head,
-  .hero,
-  .detail-layout {
-    padding: 0 !important;
-  }
+html.bw-mode .site-header,
+html.bw-mode .site-footer,
+html.bw-mode .stats-card,
+html.bw-mode .project-card,
+html.bw-mode .mini-card,
+html.bw-mode .filters-panel,
+html.bw-mode .action-card,
+html.bw-mode .auth-card,
+html.bw-mode .form-shell,
+html.bw-mode .message {
+  border-color: #ffffff;
+  background: #000000;
+  color: #ffffff;
+  box-shadow: none;
+}
 
-  .cards-grid {
-    display: grid !important;
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 8mm !important;
-  }
+html.bw-mode .project-card:hover {
+  border-color: #ffffff;
+  background: #111111;
+  box-shadow: none;
+}
 
-  .project-card,
-  .mini-card,
-  .stats-card,
-  .action-card,
-  .auth-card {
-    break-inside: avoid;
-    page-break-inside: avoid;
-    border: 1px solid #111111 !important;
-    border-radius: 6px !important;
-    background: #ffffff !important;
-    color: #111111 !important;
-  }
+html.bw-mode .project-cover,
+html.bw-mode .detail-cover,
+html.bw-mode .project-cover-placeholder {
+  border-color: #ffffff;
+  background: #111111;
+  filter: grayscale(1) contrast(1.15);
+}
 
-  .project-card {
-    min-height: 0 !important;
-    overflow: hidden !important;
-  }
+html.bw-mode .project-cover-placeholder span {
+  color: #ffffff;
+}
 
-  .project-cover,
-  .detail-cover,
-  .project-cover-placeholder {
-    height: 38mm !important;
-    min-height: 0 !important;
-    max-height: 38mm !important;
-    aspect-ratio: auto !important;
-    background: #eeeeee !important;
-    color: #111111 !important;
-  }
+html.bw-mode a,
+html.bw-mode .logo,
+html.bw-mode .project-card-body h3 a {
+  color: #ffffff;
+}
 
-  .project-cover-placeholder span {
-    color: #111111 !important;
-    font-size: 14pt !important;
-  }
+html.bw-mode a:hover,
+html.bw-mode .logo:hover,
+html.bw-mode .project-card-body h3 a:hover {
+  color: #dddddd;
+}
 
-  .project-card-body {
-    padding: 5mm !important;
-    gap: 3mm !important;
-  }
+html.bw-mode .btn,
+html.bw-mode .card-link,
+html.bw-mode .main-nav a,
+html.bw-mode .nav a,
+html.bw-mode .cabinet-nav a,
+html.bw-mode .user-chip,
+html.bw-mode .user-pill,
+html.bw-mode .pagination a,
+html.bw-mode .pagination span,
+html.bw-mode .pagination-current {
+  border-color: #ffffff;
+  background: #000000;
+  color: #ffffff;
+  box-shadow: none;
+}
 
-  .project-description {
-    min-height: 0 !important;
-    max-height: none !important;
-    overflow: visible !important;
-    display: block !important;
-    color: #333333 !important;
-  }
+html.bw-mode .btn:hover,
+html.bw-mode .card-link:hover,
+html.bw-mode .main-nav a:hover,
+html.bw-mode .nav a:hover,
+html.bw-mode .cabinet-nav a:hover {
+  background: #ffffff;
+  color: #000000;
+}
 
-  .card-meta,
-  .tag-row,
-  .tag-cloud {
-    gap: 2mm !important;
-  }
+html.bw-mode input,
+html.bw-mode select,
+html.bw-mode textarea {
+  border-color: #ffffff;
+  background: #000000;
+  color: #ffffff;
+}
 
-  .card-meta span,
-  .tag {
-    border: 1px solid #999999 !important;
-    background: #ffffff !important;
-    color: #111111 !important;
-    padding: 1mm 2mm !important;
-    font-size: 8pt !important;
-  }
+html.bw-mode input::placeholder,
+html.bw-mode textarea::placeholder {
+  color: #dddddd;
+}
 
-  a {
-    color: #111111 !important;
-    text-decoration: none !important;
-  }
+html.bw-mode option {
+  background: #000000;
+  color: #ffffff;
+}
 
-  h1 {
-    font-size: 22pt !important;
-  }
+html.bw-mode .card-meta span,
+html.bw-mode .tag {
+  border-color: #ffffff;
+  background: #000000;
+  color: #ffffff;
+}
 
-  h2 {
-    font-size: 16pt !important;
-  }
+html.bw-mode .stats-grid div,
+html.bw-mode .checkbox-panel,
+html.bw-mode .checkbox-panel label {
+  border-color: #ffffff;
+  background: #000000;
+  color: #ffffff;
+}
 
-  h3 {
-    font-size: 12pt !important;
-  }
+html.bw-mode .accessibility-toggle {
+  border-color: #ffffff;
+  background: #000000;
+  color: #ffffff;
+}
+
+html.bw-mode .accessibility-toggle:hover,
+html.bw-mode .accessibility-toggle[aria-pressed="true"] {
+  background: #ffffff;
+  color: #000000;
 }
 
 /* ============================================================
@@ -1207,7 +1270,6 @@ option {
 }
 
 @media (max-width: 980px) {
-
   .header-main,
   .header-inner {
     grid-template-columns: 1fr auto;
@@ -1261,7 +1323,7 @@ option {
     grid-template-columns: 1fr;
   }
 
-  .checkbox-panel>div,
+  .checkbox-panel > div,
   .checkbox-panel ul {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1343,7 +1405,6 @@ option {
 }
 
 @media (max-width: 560px) {
-
   .form-shell,
   .auth-card,
   .stats-card,
@@ -1352,7 +1413,7 @@ option {
     padding: 20px;
   }
 
-  .checkbox-panel>div,
+  .checkbox-panel > div,
   .checkbox-panel ul {
     grid-template-columns: 1fr;
   }
