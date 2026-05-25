@@ -74,10 +74,26 @@
                            href="{% url 'interactions:favorite_project_list' %}"
                            title="{% trans 'Избранное' %}"
                            aria-label="{% trans 'Избранное' %}">★</a>
-                        <a class="header-icon-link"
-                           href="{% url 'interactions:invitation_list' %}"
-                           title="{% trans 'Уведомления' %}"
-                           aria-label="{% trans 'Уведомления' %}">!</a>
+                        <details class="header-notifications">
+                            <summary class="header-icon-link"
+                                     title="{% trans 'Уведомления' %}"
+                                     aria-label="{% trans 'Уведомления' %}">
+                                <span aria-hidden="true">!</span>
+                                {% if header_notifications_count %}
+                                    <span class="header-notification-badge">{{ header_notifications_count }}</span>
+                                {% endif %}
+                            </summary>
+                            <div class="header-notifications-menu">
+                                <a href="{% url 'interactions:application_list' %}">
+                                    {% trans "Отклики" %}
+                                    {% if header_applications_count %}<span>{{ header_applications_count }}</span>{% endif %}
+                                </a>
+                                <a href="{% url 'interactions:invitation_list' %}">
+                                    {% trans "Приглашения" %}
+                                    {% if header_invitations_count %}<span>{{ header_invitations_count }}</span>{% endif %}
+                                </a>
+                            </div>
+                        </details>
                         <a class="header-icon-link header-profile-link"
                            href="{% url 'accounts:profile' %}"
                            title="{% trans 'Личный кабинет' %}"
