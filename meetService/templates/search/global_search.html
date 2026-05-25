@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}
+{% trans "Поиск" %} — MeetService
+{% endblock %}
+{% block content %}
+<section class="container page-head">
+  <p class="eyebrow">{% trans "глобальный поиск" %}</p>
+  <h1>{% trans "Поиск по сервису" %}</h1>
+  {% if query %}
+  <p class="lead">
+    {% trans "Результаты по запросу:" %} <strong>{{ query }}</strong>
+  </p>
+  {% else %}
+  <p class="lead">{% trans "Введите запрос в поисковую строку в шапке сайта." %}</p>
+  {% endif %}
+</section>
+{% if query %}
+<section class="container section">
+  <h2>{% trans "Проекты" %}</h2>
+  {% for project in projects %}
+  <p>
+    <a href="{{ project.get_absolute_url }}">{{ project.title }}</a>
+  </p>
+  {% empty %}
+  <p class="empty">{% trans "Проекты не найдены." %}</p>
+  {% endfor %}
+</section>
+<section class="container section">
+  <h2>{% trans "Специалисты" %}</h2>
+  {% for specialist in specialists %}
+  <p>
+    <a href="{{ specialist.get_absolute_url }}">{{ specialist.get_display_name }}</a>
+  </p>
+  {% empty %}
+  <p class="empty">{% trans "Специалисты не найдены." %}</p>
+  {% endfor %}
+</section>
+{% endif %}
+{% endblock %}
