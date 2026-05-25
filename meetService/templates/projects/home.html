@@ -2,87 +2,81 @@
 {% load project_extras %}
 {% block title %}Главная — MeetService{% endblock %}
 {% block content %}
-    <section class="hero">
-        <div class="container hero-grid">
-            <div>
+    <section class="home-hero">
+        <div class="container home-hero-grid">
+            <div class="home-hero-content">
                 <p class="eyebrow">поиск IT-команды</p>
-                <h1>Найди проект или собери команду под свою идею</h1>
+                <h1>Найди свой проект или собери команду мечты</h1>
                 <p class="hero-text">
-                    Платформа помогает специалистам находить реальные проекты,
-                    а владельцам проектов — закрывать открытые роли в команде.
+                    MeetService помогает специалистам находить проекты,
+                    а владельцам идей — собирать команду под MVP, стартап,
+                    учебную или коммерческую разработку.
                 </p>
-                <form class="search-form" method="get">
-                    <input type="search"
-                           name="q"
-                           value="{{ query }}"
-                           placeholder="Поиск по проектам, технологиям, ролям и специалистам">
-                    <button class="btn btn-primary" type="submit">Найти</button>
-                </form>
                 <div class="hero-actions">
                     <a class="btn btn-primary" href="{% url 'projects:project_list' %}">Найти проект</a>
-                    <a class="btn btn-secondary"
-                       href="{% url 'specialists:specialist_list' %}">Собрать команду</a>
+                    <a class="btn btn-secondary" href="{% url 'specialists:specialist_list' %}">Собрать команду</a>
+                    {% if user.is_authenticated %}
+                        <a class="btn btn-secondary" href="{% url 'projects:project_create' %}">Создать проект</a>
+                    {% else %}
+                        <a class="btn btn-secondary" href="{% url 'accounts:register' %}">Зарегистрироваться</a>
+                    {% endif %}
+                </div>
+                <form class="home-search" method="get">
+                    <input type="search" name="q" value="{{ query }}" placeholder="Кого ищем? Django, React, backend, UX, MVP">
+                    <button class="btn btn-primary" type="submit">Найти</button>
+                </form>
+                <div class="home-quick-tags">
+                    {% for technology in hero_technologies %}
+                        <a href="{% url 'projects:project_list' %}?technology={{ technology.slug }}">{{ technology.name }}</a>
+                    {% empty %}
+                        <a href="{% url 'projects:project_list' %}?q=Python">Python</a>
+                        <a href="{% url 'projects:project_list' %}?q=Django">Django</a>
+                        <a href="{% url 'projects:project_list' %}?q=React">React</a>
+                        <a href="{% url 'projects:project_list' %}?q=UI">UI</a>
+                    {% endfor %}
                 </div>
             </div>
-            <div class="stats-card">
-                <h2>Сервис в цифрах</h2>
-                <dl class="stats-grid">
-                    <div>
-                        <dt>{{ statistics.published_projects_count }}</dt>
-                        <dd>
-                            проектов
-                        </dd>
+            <div class="home-hero-visual" aria-hidden="true">
+                <div class="home-visual-window">
+                    <div class="home-visual-bar">
+                        <span></span>
+                        <span></span>
+                        <span></span>
                     </div>
-                    <div>
-                        <dt>{{ statistics.specialists_count }}</dt>
-                        <dd>
-                            специалистов
-                        </dd>
+                    <div class="home-visual-code">
+                        <span>project.status = "published"</span>
+                        <span>team.add("backend")</span>
+                        <span>vacancy.open(role="frontend")</span>
+                        <span>application.send()</span>
                     </div>
-                    <div>
-                        <dt>{{ statistics.roles_count }}</dt>
-                        <dd>
-                            ролей
-                        </dd>
+                    <div class="home-visual-card">
+                        <strong>Команда собирается</strong>
+                        <small>4 открытые роли · 12 откликов</small>
                     </div>
-                    <div>
-                        <dt>{{ statistics.technologies_count }}</dt>
-                        <dd>
-                            технологий
-                        </dd>
-                    </div>
-                </dl>
+                </div>
             </div>
         </div>
     </section>
-    <section id="about" class="container section two-columns">
-        <div>
-            <p class="eyebrow">о сервисе</p>
-            <h2>MeetService — не обычная доска вакансий</h2>
-            <p class="lead">
-                Сервис связывает IT-специалистов с проектами, где нужны участники
-                команды: разработчики, дизайнеры, аналитики, тестировщики и другие роли.
-            </p>
-        </div>
-        <div class="mini-list">
-            <article class="mini-card">
-                <h3>Для специалистов</h3>
-                <p>
-                    Заполни профиль, укажи стек, уровень, опыт и откликайся
-                    на проекты с открытыми ролями.
-                </p>
-            </article>
-            <article class="mini-card">
-                <h3>Для владельцев проектов</h3>
-                <p>
-                    Создай проект, добавь открытые роли и приглашай подходящих
-                    специалистов в команду.
-                </p>
-            </article>
-        </div>
+    <section class="container home-stats">
+        <article>
+            <strong>{{ statistics.published_projects_count }}</strong>
+            <span>проектов</span>
+        </article>
+        <article>
+            <strong>{{ statistics.open_vacancies_count }}</strong>
+            <span>открытых ролей</span>
+        </article>
+        <article>
+            <strong>{{ statistics.specialists_count }}</strong>
+            <span>специалистов</span>
+        </article>
+        <article>
+            <strong>{{ statistics.team_members_count }}</strong>
+            <span>участников команд</span>
+        </article>
     </section>
     {% if recently_viewed_projects %}
-        <section class="container section">
+        <section class="container section home-recent-section">
             <div class="section-heading">
                 <div>
                     <p class="eyebrow">сеансы Django</p>
@@ -90,9 +84,21 @@
                 </div>
                 <a href="{% url 'projects:project_list' %}">Все проекты</a>
             </div>
-            <div class="cards-grid cards-grid-home">
+            <div class="home-compact-grid">
                 {% for project in recently_viewed_projects %}
-                    {% include "projects/includes/project_card.html" with project=project placeholder_text="IT" cta_text="Открыть снова" %}
+                    <article class="home-project-card">
+                        <div class="card-meta">
+                            <span>{{ project.get_stage_display }}</span>
+                            <span>{{ project.get_participation_format_display }}</span>
+                        </div>
+                        <h3>
+                            <a href="{{ project.get_absolute_url }}">{{ project.title }}</a>
+                        </h3>
+                        <p>{{ project.short_description }}</p>
+                        <div class="tag-row">
+                            {% for technology in project.technologies.all|slice:":3" %}<span class="tag">{{ technology.name }}</span>{% endfor %}
+                        </div>
+                    </article>
                 {% endfor %}
             </div>
         </section>
@@ -100,104 +106,172 @@
     <section class="container section">
         <div class="section-heading">
             <div>
-                <p class="eyebrow">последние публикации</p>
-                <h2>Новые проекты</h2>
+                <p class="eyebrow">активные проекты</p>
+                <h2>Проекты, где сейчас ищут команду</h2>
             </div>
-            <a href="{% url 'projects:project_list' %}">Смотреть каталог</a>
+            <a href="{% url 'projects:project_list' %}">Показать все</a>
         </div>
-        <div class="cards-grid cards-grid-home">
-            {% for project in new_projects_page %}
-                {% include "projects/includes/project_card.html" with project=project placeholder_text="IT" cta_text="Открыть проект" %}
+        <div class="home-compact-grid">
+            {% for project in featured_projects %}
+                <article class="home-project-card">
+                    <div class="card-meta">
+                        <span>{{ project.get_stage_display }}</span>
+                        <span>{{ project.get_participation_format_display }}</span>
+                    </div>
+                    <h3>
+                        <a href="{{ project.get_absolute_url }}">{{ project.title }}</a>
+                    </h3>
+                    <p>{{ project.short_description }}</p>
+                    <div class="home-card-footer">
+                        <div class="tag-row">
+                            {% for technology in project.technologies.all|slice:":3" %}
+                                <span class="tag">{{ technology.name }}</span>
+                            {% empty %}
+                                <span class="tag">Стек не указан</span>
+                            {% endfor %}
+                        </div>
+                        <span class="home-count">открытых ролей: {{ project.open_vacancy_count }}</span>
+                    </div>
+                </article>
             {% empty %}
                 <article class="action-card">
-                    <h2>Пока нет опубликованных проектов</h2>
-                    <p class="empty">После публикации первые проекты появятся здесь.</p>
+                    <h2>Пока нет активных проектов</h2>
+                    <p class="empty">Когда появятся опубликованные проекты с открытыми ролями, они будут здесь.</p>
                 </article>
             {% endfor %}
         </div>
-        {% if new_projects_page.paginator.num_pages > 1 %}
-            <nav class="pagination" aria-label="Пагинация новых проектов">
-                {% if new_projects_page.has_previous %}
-                    <a href="?q={{ query }}&new_page={{ new_projects_page.previous_page_number }}&urgent_page={{ urgent_projects_page.number }}">
-                        ← Новее
-                    </a>
-                {% endif %}
-                <span class="pagination-current">{{ new_projects_page.number }} / {{ new_projects_page.paginator.num_pages }}</span>
-                {% if new_projects_page.has_next %}
-                    <a href="?q={{ query }}&new_page={{ new_projects_page.next_page_number }}&urgent_page={{ urgent_projects_page.number }}">
-                        Ещё →
-                    </a>
-                {% endif %}
-            </nav>
-        {% endif %}
     </section>
-    <section class="container section">
-        <div class="section-heading">
-            <div>
-                <p class="eyebrow">открытые роли</p>
-                <h2>Срочно ищут участников</h2>
-            </div>
-            <a href="{% url 'projects:project_list' %}">Все проекты</a>
-        </div>
-        <div class="cards-grid cards-grid-home">
-            {% for project in urgent_projects_page %}
-                {% include "projects/includes/project_card.html" with project=project card_modifier="project-card-accent" placeholder_text="TEAM" cta_text="Хочу в команду" %}
-            {% empty %}
-                <article class="action-card">
-                    <h2>Нет срочных проектов</h2>
-                    <p class="empty">Сейчас нет опубликованных проектов с открытыми ролями.</p>
-                </article>
-            {% endfor %}
-        </div>
-        {% if urgent_projects_page.paginator.num_pages > 1 %}
-            <nav class="pagination" aria-label="Пагинация срочных проектов">
-                {% if urgent_projects_page.has_previous %}
-                    <a href="?q={{ query }}&new_page={{ new_projects_page.number }}&urgent_page={{ urgent_projects_page.previous_page_number }}">
-                        ← Назад
-                    </a>
-                {% endif %}
-                <span class="pagination-current">
-                    {{ urgent_projects_page.number }} / {{ urgent_projects_page.paginator.num_pages }}
-                </span>
-                {% if urgent_projects_page.has_next %}
-                    <a href="?q={{ query }}&new_page={{ new_projects_page.number }}&urgent_page={{ urgent_projects_page.next_page_number }}">
-                        Ещё →
-                    </a>
-                {% endif %}
-            </nav>
-        {% endif %}
-    </section>
-    <section class="container section two-columns">
+    <section class="container section home-split-section">
         <div>
             <div class="section-heading">
                 <div>
-                    <p class="eyebrow">профили</p>
-                    <h2>Активные специалисты</h2>
+                    <p class="eyebrow">открытые роли</p>
+                    <h2>Кого ищут в команды</h2>
                 </div>
-                <a href="{% url 'specialists:specialist_list' %}">Все специалисты</a>
+                <a href="{% url 'projects:project_list' %}">Все роли</a>
             </div>
-            <div class="mini-list">
-                {% for specialist in active_specialists %}
-                    <article class="mini-card">
-                        <h3>
-                            <a href="{% url 'specialists:specialist_detail' specialist.pk %}">{{ specialist.get_display_name }}</a>
-                        </h3>
-                        <p>{{ specialist.main_role|default:"Роль не указана" }}</p>
-                        <span>{{ specialist.get_level_display }}</span>
+            <div class="home-list">
+                {% for vacancy in featured_vacancies %}
+                    <article class="home-list-item">
+                        <div>
+                            <h3>
+                                <a href="{{ vacancy.project.get_absolute_url }}">{{ vacancy.title }}</a>
+                            </h3>
+                            <p>{{ vacancy.project.title }} · {{ vacancy.get_required_level_display }}</p>
+                        </div>
+                        <span>мест: {{ vacancy.current_count }}/{{ vacancy.required_count }}</span>
                     </article>
                 {% empty %}
-                    <p class="empty">Пока нет активных специалистов.</p>
+                    <p class="empty">Сейчас нет открытых ролей.</p>
                 {% endfor %}
             </div>
         </div>
         <div>
             <div class="section-heading">
                 <div>
-                    <p class="eyebrow">стек</p>
-                    <h2>Популярные технологии</h2>
+                    <p class="eyebrow">специалисты</p>
+                    <h2>Открыты к проектам</h2>
                 </div>
+                <a href="{% url 'specialists:specialist_list' %}">Все специалисты</a>
             </div>
-            {% show_popular_technologies 10 %}
+            <div class="home-list">
+                {% for specialist in active_specialists %}
+                    <article class="home-list-item home-specialist-item">
+                        <div>
+                            <h3>
+                                <a href="{% url 'specialists:specialist_detail' specialist.pk %}">{{ specialist.get_display_name }}</a>
+                            </h3>
+                            <p>{{ specialist.main_role|default:"Роль не указана" }} · {{ specialist.get_level_display }}</p>
+                            <div class="tag-row">
+                                {% for technology in specialist.technologies.all|slice:":3" %}<span class="tag">{{ technology.name }}</span>{% endfor %}
+                            </div>
+                        </div>
+                    </article>
+                {% empty %}
+                    <p class="empty">Пока нет специалистов, открытых к проектам.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    <section class="container section">
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">стек</p>
+                <h2>Популярные технологии</h2>
+            </div>
+            <a href="{% url 'projects:project_list' %}">Каталог проектов</a>
+        </div>
+        <div class="home-tech-cloud">
+            {% for technology in popular_technologies %}
+                <a href="{% url 'projects:project_list' %}?technology={{ technology.slug }}">
+                    <strong>{{ technology.name }}</strong>
+                    <span>{{ technology.project_count }} проектов</span>
+                </a>
+            {% empty %}
+                <p class="empty">Технологии появятся после добавления проектов.</p>
+            {% endfor %}
+        </div>
+    </section>
+    <section class="container section">
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">как это работает</p>
+                <h2>От идеи до команды</h2>
+            </div>
+        </div>
+        <div class="home-steps">
+            <article>
+                <span>01</span>
+                <h3>Владелец создаёт проект</h3>
+                <p>Описывает цель, стадию, стек и открытые роли для команды.</p>
+            </article>
+            <article>
+                <span>02</span>
+                <h3>Специалист находит роль</h3>
+                <p>Ищет проект по технологиям, роли, уровню и формату участия.</p>
+            </article>
+            <article>
+                <span>03</span>
+                <h3>Команда собирается</h3>
+                <p>Отклик или приглашение превращаются в участника команды.</p>
+            </article>
+        </div>
+    </section>
+    <section class="container section">
+        <div class="home-cta">
+            <p class="eyebrow">есть идея?</p>
+            <h2>Соберите команду под свой проект</h2>
+            <p>
+                Создайте проект, добавьте первую открытую роль и покажите специалистам,
+                зачем к вам присоединяться.
+            </p>
+            <a class="btn btn-primary" href="{% url 'projects:project_create' %}">Создать проект</a>
+        </div>
+    </section>
+    <section class="container section">
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">FAQ</p>
+                <h2>Ответы на вопросы</h2>
+            </div>
+        </div>
+        <div class="home-faq">
+            <details>
+                <summary>Нужна ли регистрация для просмотра проектов?</summary>
+                <p>Нет. Гость может смотреть каталоги, карточки проектов и профили специалистов.</p>
+            </details>
+            <details>
+                <summary>Как откликнуться на роль?</summary>
+                <p>Нужно войти в аккаунт специалиста, заполнить профиль и отправить отклик на открытой роли проекта.</p>
+            </details>
+            <details>
+                <summary>Можно ли создать проект без команды?</summary>
+                <p>Да. Владелец создаёт проект, добавляет открытые роли и постепенно собирает участников.</p>
+            </details>
+            <details>
+                <summary>Это сайт вакансий?</summary>
+                <p>Нет. Главный смысл сервиса — собрать команду вокруг проекта, идеи, MVP или разработки.</p>
+            </details>
         </div>
     </section>
 {% endblock %}

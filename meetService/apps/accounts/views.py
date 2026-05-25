@@ -1,5 +1,3 @@
-"""HTML-представления для регистрации, входа, выхода и профиля."""
-
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
@@ -71,6 +69,10 @@ def profile(request):
     owned_projects = active_owned_projects_queryset.order_by("-created_at")[:5]
 
     team_memberships = ProjectMembership.objects.none()
+
+    sent_applications_queryset = Application.objects.none()
+    received_invitations_queryset = Invitation.objects.none()
+
     sent_applications_count = 0
     received_invitations_count = 0
 
@@ -85,14 +87,48 @@ def profile(request):
             .order_by("-joined_at")[:5]
         )
 
-        sent_applications_count = Application.objects.filter(
-            specialist=specialist_profile
-        ).count()
+        sent_applications_queryset = (
+            Application.objects.select_related(
+                "project",
+                "vacancy",
+                "vacancy__role",
+            )
+            .filter(specialist=specialist_profile)
+            .order_by("-applied_at")
+        )
 
-        received_invitations_count = Invitation.objects.filter(
-            specialist=specialist_profile,
-            status=Invitation.Status.PENDING,
-        ).count()
+        sent_applications_count = sent_applications_queryset.count()
+
+        received_invitations_queryset = (
+            Invitation.objects.select_related(
+                "project",
+                "vacancy",
+                "vacancy__role",
+                "invited_by",
+            )
+            .filter(
+                specialist=specialist_profile,
+                status=Invitation.Status.PENDING,
+            )
+            .order_by("-invited_at")
+        )
+
+        received_invitations_count = received_invitations_queryset.count()
+
+    incoming_applications_queryset = (
+        Application.objects.select_related(
+            "project",
+            "vacancy",
+            "vacancy__role",
+            "specialist",
+            "specialist__user",
+        )
+        .filter(
+            project__owner=user,
+            status=Application.Status.PENDING,
+        )
+        .order_by("-applied_at")
+    )
 
     context = {
         "dynamic_role_display": dynamic_role_display,
@@ -107,10 +143,10 @@ def profile(request):
         "team_memberships": team_memberships,
         "team_memberships_count": team_memberships.count(),
         "sent_applications_count": sent_applications_count,
-        "incoming_applications_count": Application.objects.filter(
-            project__owner=user,
-            status=Application.Status.PENDING,
-        ).count(),
+        "incoming_applications_count": incoming_applications_queryset.count(),
+        "recent_sent_applications": sent_applications_queryset[:3],
+        "recent_received_invitations": received_invitations_queryset[:3],
+        "recent_incoming_applications": incoming_applications_queryset[:3],
         "received_invitations_count": received_invitations_count,
         "sent_invitations_count": Invitation.objects.filter(invited_by=user).count(),
         "favorites_count": FavoriteProject.objects.filter(user=user).count(),

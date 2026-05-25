@@ -85,25 +85,91 @@
                 </dl>
             </section>
             <section class="cabinet-section two-columns">
-                <article class="action-card">
-                    <h2>Мои отклики</h2>
-                    <p>Отклики, которые ты отправил на открытые роли в проектах.</p>
-                    <p>
-                        <strong>{{ sent_applications_count }}</strong> откликов
-                    </p>
+                <article class="action-card cabinet-feed-card">
+                    <div class="section-heading">
+                        <div>
+                            <p class="eyebrow">отклики</p>
+                            <h2>Мои отклики</h2>
+                        </div>
+                        <a href="{% url 'interactions:application_list' %}">Все</a>
+                    </div>
+                    <div class="cabinet-feed">
+                        {% for application in recent_sent_applications %}
+                            <article class="cabinet-feed-item">
+                                <h3>
+                                    <a href="{{ application.project.get_absolute_url }}">{{ application.project.title }}</a>
+                                </h3>
+                                <p>
+                                    {{ application.vacancy.title }}
+                                    {% if application.vacancy.role %}· {{ application.vacancy.role.name }}{% endif %}
+                                </p>
+                                <span>{{ application.get_status_display }} · {{ application.applied_at|date:"d.m.Y" }}</span>
+                            </article>
+                        {% empty %}
+                            <p class="empty">Ты пока не отправлял отклики.</p>
+                        {% endfor %}
+                    </div>
                     <a class="btn btn-primary"
                        href="{% url 'interactions:application_list' %}">Открыть отклики</a>
                 </article>
-                <article class="action-card">
-                    <h2>Мои приглашения</h2>
-                    <p>Приглашения от владельцев проектов и входящие действия по командам.</p>
-                    <p>
-                        <strong>{{ incoming_applications_count }}</strong> приглашений
-                    </p>
+                <article class="action-card cabinet-feed-card">
+                    <div class="section-heading">
+                        <div>
+                            <p class="eyebrow">приглашения</p>
+                            <h2>Мои приглашения</h2>
+                        </div>
+                        <a href="{% url 'interactions:invitation_list' %}">Все</a>
+                    </div>
+                    <div class="cabinet-feed">
+                        {% for invitation in recent_received_invitations %}
+                            <article class="cabinet-feed-item">
+                                <h3>
+                                    <a href="{{ invitation.project.get_absolute_url }}">{{ invitation.project.title }}</a>
+                                </h3>
+                                <p>
+                                    {{ invitation.vacancy.title }}
+                                    {% if invitation.vacancy.role %}· {{ invitation.vacancy.role.name }}{% endif %}
+                                </p>
+                                <span>{{ invitation.get_status_display }} · {{ invitation.invited_at|date:"d.m.Y" }}</span>
+                            </article>
+                        {% empty %}
+                            <p class="empty">Новых приглашений пока нет.</p>
+                        {% endfor %}
+                    </div>
                     <a class="btn btn-primary"
                        href="{% url 'interactions:invitation_list' %}">Открыть приглашения</a>
                 </article>
             </section>
+            {% if is_project_owner %}
+                <section class="cabinet-section">
+                    <div class="section-heading">
+                        <div>
+                            <p class="eyebrow">входящие</p>
+                            <h2>Новые отклики на мои проекты</h2>
+                        </div>
+                        <a href="{% url 'interactions:application_list' %}">Все входящие</a>
+                    </div>
+                    <div class="mini-list">
+                        {% for application in recent_incoming_applications %}
+                            <article class="mini-card">
+                                <h3>
+                                    <a href="{{ application.project.get_absolute_url }}">{{ application.project.title }}</a>
+                                </h3>
+                                <p>{{ application.specialist.get_display_name }} · {{ application.vacancy.title }}</p>
+                                <span>{{ application.get_status_display }} · {{ application.applied_at|date:"d.m.Y" }}</span>
+                            </article>
+                        {% empty %}
+                            <article class="action-card">
+                                <h3>Новых входящих откликов нет</h3>
+                                <p class="empty">
+                                    Когда специалисты будут откликаться на твои проекты,
+                                    они появятся здесь.
+                                </p>
+                            </article>
+                        {% endfor %}
+                    </div>
+                </section>
+            {% endif %}
             {% if is_project_owner %}
                 <section class="cabinet-section">
                     <div class="section-heading">

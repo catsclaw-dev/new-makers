@@ -48,7 +48,23 @@ def home(request):
     specialists = (
         SpecialistProfile.objects.select_related("user", "main_role")
         .prefetch_related("technologies")
-        .filter(status=SpecialistProfile.AvailabilityStatus.LOOKING)
+        .filter(
+            status__in=[
+                SpecialistProfile.AvailabilityStatus.LOOKING,
+                SpecialistProfile.AvailabilityStatus.OPEN,
+            ]
+        )
+        .order_by("-created_at")
+    )
+
+    open_vacancies = (
+        ProjectVacancy.objects.select_related("project", "role")
+        .prefetch_related("project__technologies")
+        .filter(
+            project__status=Project.Status.PUBLISHED,
+            status=ProjectVacancy.Status.OPEN,
+            current_count__lt=models.F("required_count"),
+        )
         .order_by("-created_at")
     )
 
@@ -57,7 +73,9 @@ def home(request):
             Q(title__icontains=query)
             | Q(short_description__icontains=query)
             | Q(description__icontains=query)
+            | Q(goal__icontains=query)
             | Q(technologies__name__icontains=query)
+            | Q(vacancies__title__icontains=query)
             | Q(vacancies__role__name__icontains=query)
         ).distinct()
 
@@ -70,8 +88,25 @@ def home(request):
             | Q(bio__icontains=query)
         ).distinct()
 
-    new_projects_paginator = Paginator(projects, 3)
+        open_vacancies = open_vacancies.filter(
+            Q(title__icontains=query)
+            | Q(description__icontains=query)
+            | Q(role__name__icontains=query)
+            | Q(project__title__icontains=query)
+            | Q(project__short_description__icontains=query)
+            | Q(project__technologies__name__icontains=query)
+        ).distinct()
 
+    featured_projects = (
+        projects.with_open_vacancy_count()
+        .filter(open_vacancy_count__gt=0)
+        .order_by("-open_vacancy_count", "-created_at")[:3]
+    )
+
+    active_specialists = specialists[:3]
+    featured_vacancies = open_vacancies[:4]
+
+    new_projects_paginator = Paginator(projects, 3)
     urgent_projects_paginator = Paginator(
         Project.objects.urgent()
         .select_related("owner")
@@ -100,23 +135,30 @@ def home(request):
             urgent_projects_paginator.num_pages
         )
 
-    active_specialists = specialists[:6]
-
     cache_timeout = getattr(settings, "CACHE_TIMEOUT", 300)
 
-    popular_technologies = cache.get("home_popular_technologies")
+    popular_technologies = cache.get("home_popular_technologies_v2")
     if popular_technologies is None:
         popular_technologies = list(
             Technology.objects.filter(is_active=True)
-            .annotate(project_count=Count("projects"))
+            .annotate(
+                project_count=Count(
+                    "projects",
+                    filter=Q(projects__status=Project.Status.PUBLISHED),
+                    distinct=True,
+                )
+            )
+            .filter(project_count__gt=0)
             .order_by("-project_count", "name")[:10]
         )
 
         cache.set(
-            "home_popular_technologies",
+            "home_popular_technologies_v2",
             popular_technologies,
             cache_timeout,
         )
+
+    hero_technologies = popular_technologies[:4]
 
     technology_rows = (
         Technology.objects.filter(is_active=True)
@@ -124,23 +166,36 @@ def home(request):
         .order_by("name")[:10]
     )
 
-    statistics = cache.get("home_statistics")
+    statistics = cache.get("home_statistics_v2")
 
     if statistics is None:
         statistics = {
             "published_projects_count": Project.objects.published().count(),
-            "specialists_count": SpecialistProfile.objects.count(),
+            "open_vacancies_count": ProjectVacancy.objects.filter(
+                project__status=Project.Status.PUBLISHED,
+                status=ProjectVacancy.Status.OPEN,
+                current_count__lt=models.F("required_count"),
+            ).count(),
+            "specialists_count": SpecialistProfile.objects.exclude(
+                status=SpecialistProfile.AvailabilityStatus.HIDDEN,
+            ).count(),
+            "team_members_count": ProjectMembership.objects.filter(
+                status=ProjectMembership.Status.ACTIVE,
+            ).count(),
             "roles_count": Role.objects.filter(is_active=True).count(),
             "technologies_count": Technology.objects.filter(is_active=True).count(),
         }
-        cache.set("home_statistics", statistics, cache_timeout)
+        cache.set("home_statistics_v2", statistics, cache_timeout)
 
     context = {
         "query": query,
         "new_projects_page": new_projects_page,
         "urgent_projects_page": urgent_projects_page,
+        "featured_projects": featured_projects,
+        "featured_vacancies": featured_vacancies,
         "active_specialists": active_specialists,
         "popular_technologies": popular_technologies,
+        "hero_technologies": hero_technologies,
         "statistics": statistics,
         "recently_viewed_projects": recently_viewed_projects,
         "technology_rows": technology_rows,

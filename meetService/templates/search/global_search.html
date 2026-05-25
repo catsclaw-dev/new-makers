@@ -1,40 +1,181 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% block title %}
-{% trans "Поиск" %} — MeetService
+    {% trans "Поиск" %} — MeetService
 {% endblock %}
 {% block content %}
-<section class="container page-head">
-  <p class="eyebrow">{% trans "глобальный поиск" %}</p>
-  <h1>{% trans "Поиск по сервису" %}</h1>
-  {% if query %}
-  <p class="lead">
-    {% trans "Результаты по запросу:" %} <strong>{{ query }}</strong>
-  </p>
-  {% else %}
-  <p class="lead">{% trans "Введите запрос в поисковую строку в шапке сайта." %}</p>
-  {% endif %}
-</section>
-{% if query %}
-<section class="container section">
-  <h2>{% trans "Проекты" %}</h2>
-  {% for project in projects %}
-  <p>
-    <a href="{{ project.get_absolute_url }}">{{ project.title }}</a>
-  </p>
-  {% empty %}
-  <p class="empty">{% trans "Проекты не найдены." %}</p>
-  {% endfor %}
-</section>
-<section class="container section">
-  <h2>{% trans "Специалисты" %}</h2>
-  {% for specialist in specialists %}
-  <p>
-    <a href="{{ specialist.get_absolute_url }}">{{ specialist.get_display_name }}</a>
-  </p>
-  {% empty %}
-  <p class="empty">{% trans "Специалисты не найдены." %}</p>
-  {% endfor %}
-</section>
-{% endif %}
+    <section class="container page-head">
+        <p class="eyebrow">{% trans "глобальный поиск" %}</p>
+        <h1>{% trans "Поиск по сервису" %}</h1>
+        {% if query %}
+            <p class="lead">
+                {% trans "Результаты по запросу:" %} <strong>{{ query }}</strong>
+            </p>
+        {% else %}
+            <p class="lead">{% trans "Введите запрос в поисковую строку в шапке сайта. Поиск найдёт проекты, специалистов, роли и технологии." %}</p>
+        {% endif %}
+        {% if search_mode == "projects" %}
+            <p class="lead">Режим поиска: только проекты.</p>
+        {% elif search_mode == "specialists" %}
+            <p class="lead">Режим поиска: только специалисты.</p>
+        {% endif %}
+        {% if unknown_command %}
+            <article class="message message-warning">
+                Команда не распознана. Выполнен обычный поиск по запросу:
+                <strong>{{ query }}</strong>
+            </article>
+        {% endif %}
+    </section>
+    <section class="container search-command-section">
+        <details class="search-command-help" {% if not query %}open{% endif %}>
+            <summary>Команды поиска</summary>
+            <div class="search-command-grid">
+                <article>
+                    <code>/projects react</code>
+                    <span>искать только проекты</span>
+                </article>
+                <article>
+                    <code>/specialists django</code>
+                    <span>искать только специалистов</span>
+                </article>
+                <article>
+                    <code>/profile</code>
+                    <span>перейти в личный кабинет</span>
+                </article>
+                <article>
+                    <code>/applications</code>
+                    <span>открыть мои отклики</span>
+                </article>
+                <article>
+                    <code>/invites</code>
+                    <span>открыть приглашения</span>
+                </article>
+                <article>
+                    <code>/favorites</code>
+                    <span>открыть избранное</span>
+                </article>
+                <article>
+                    <code>/teams</code>
+                    <span>открыть мои команды</span>
+                </article>
+                <article>
+                    <code>/myprojects</code>
+                    <span>открыть мои проекты</span>
+                </article>
+            </div>
+        </details>
+    </section>
+    {% if not query %}
+        <section class="container section">
+            <div class="cards-grid">
+                <article class="action-card">
+                    <h2>{% trans "Ищи проекты" %}</h2>
+                    <p>{% trans "Например: Django, React, backend, MVP, мобильная разработка." %}</p>
+                    <a class="btn btn-primary" href="{% url 'projects:project_list' %}">{% trans "Открыть каталог проектов" %}</a>
+                </article>
+                <article class="action-card">
+                    <h2>{% trans "Ищи специалистов" %}</h2>
+                    <p>{% trans "Например: frontend, UI/UX, DevOps, Python, проектный менеджер." %}</p>
+                    <a class="btn btn-secondary" href="{% url 'specialists:specialist_list' %}">{% trans "Открыть каталог специалистов" %}</a>
+                </article>
+                {% if user.is_authenticated %}
+                    <article class="action-card">
+                        <h2>{% trans "Личный кабинет" %}</h2>
+                        <p>{% trans "Профиль, проекты, команды, отклики, приглашения и избранное находятся в кабинете." %}</p>
+                        <a class="btn btn-secondary" href="{% url 'accounts:profile' %}">{% trans "Перейти в кабинет" %}</a>
+                    </article>
+                {% endif %}
+            </div>
+        </section>
+    {% else %}
+        {% if search_mode != "specialists" %}
+            <section class="container section">
+                <div class="section-head">
+                    <div>
+                        <p class="eyebrow">{% trans "проекты" %}</p>
+                        <h2>{% trans "Найденные проекты" %}</h2>
+                        <p class="lead">{% trans "Совпадения по названию, описанию, цели, технологиям и открытым ролям." %}</p>
+                    </div>
+                    <a class="btn btn-secondary" href="{% url 'projects:project_list' %}?q={{ query|urlencode }}">{% trans "Все проекты" %}</a>
+                </div>
+                {% if projects %}
+                    <div class="search-results-list">
+                        {% for project in projects %}
+                            <article class="search-result-card">
+                                <div>
+                                    <div class="card-meta">
+                                        <span>{{ project.get_stage_display }}</span>
+                                        <span>{{ project.get_participation_format_display }}</span>
+                                    </div>
+                                    <h3>
+                                        <a href="{{ project.get_absolute_url }}">{{ project.title }}</a>
+                                    </h3>
+                                    <p>{{ project.short_description }}</p>
+                                    <div class="tag-row">
+                                        {% for technology in project.technologies.all|slice:":5" %}
+                                            <span class="tag">{{ technology.name }}</span>
+                                        {% empty %}
+                                            <span class="tag">{% trans "Стек не указан" %}</span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <a class="btn btn-secondary" href="{{ project.get_absolute_url }}">{% trans "Открыть" %}</a>
+                            </article>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <article class="action-card">
+                        <h3>{% trans "Проекты не найдены" %}</h3>
+                        <p class="empty">{% trans "Попробуй другой запрос или перейди в каталог проектов с фильтрами." %}</p>
+                        <a class="btn btn-primary" href="{% url 'projects:project_list' %}">{% trans "Перейти в каталог проектов" %}</a>
+                    </article>
+                {% endif %}
+            </section>
+        {% endif %}
+        {% if search_mode != "projects" %}
+            <section class="container section">
+                <div class="section-head">
+                    <div>
+                        <p class="eyebrow">{% trans "специалисты" %}</p>
+                        <h2>{% trans "Найденные специалисты" %}</h2>
+                        <p class="lead">{% trans "Совпадения по имени, роли, описанию профиля и технологиям." %}</p>
+                    </div>
+                    <a class="btn btn-secondary" href="{% url 'specialists:specialist_list' %}?q={{ query|urlencode }}">{% trans "Все специалисты" %}</a>
+                </div>
+                {% if specialists %}
+                    <div class="search-results-list">
+                        {% for specialist in specialists %}
+                            <article class="search-result-card">
+                                <div>
+                                    <div class="card-meta">
+                                        <span>{{ specialist.get_level_display }}</span>
+                                        <span>{{ specialist.get_status_display }}</span>
+                                    </div>
+                                    <h3>
+                                        <a href="{{ specialist.get_absolute_url }}">{{ specialist.get_display_name }}</a>
+                                    </h3>
+                                    {% if specialist.main_role %}<p>{{ specialist.main_role.name }}</p>{% endif %}
+                                    <p>{{ specialist.bio|default:"Описание пока не заполнено."|truncatechars:160 }}</p>
+                                    <div class="tag-row">
+                                        {% for technology in specialist.technologies.all|slice:":5" %}
+                                            <span class="tag">{{ technology.name }}</span>
+                                        {% empty %}
+                                            <span class="tag">{% trans "Стек не указан" %}</span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <a class="btn btn-secondary" href="{{ specialist.get_absolute_url }}">{% trans "Открыть" %}</a>
+                            </article>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <article class="action-card">
+                        <h3>{% trans "Специалисты не найдены" %}</h3>
+                        <p class="empty">{% trans "Попробуй другой запрос или перейди в каталог специалистов с фильтрами." %}</p>
+                        <a class="btn btn-primary" href="{% url 'specialists:specialist_list' %}">{% trans "Перейти в каталог специалистов" %}</a>
+                    </article>
+                {% endif %}
+            </section>
+        {% endif %}
+    {% endif %}
 {% endblock %}
