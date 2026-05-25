@@ -218,21 +218,19 @@ h4 {
   top: 0;
   z-index: 50;
   border-bottom: 1px solid var(--color-border);
-  background: rgba(0, 37, 78, 0.92);
+  background: rgba(0, 31, 68, 0.94);
   backdrop-filter: blur(18px);
 }
 
-.header-main,
-.header-inner {
+.header-main {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-columns: auto minmax(260px, 1fr) auto auto;
   align-items: center;
-  gap: 20px;
-  padding: 14px 0 10px;
+  gap: 22px;
+  padding: 14px 0;
 }
 
 .logo {
-  grid-column: 1;
   color: var(--color-text);
   font-family: var(--font-heading);
   font-size: 24px;
@@ -248,29 +246,111 @@ h4 {
   text-decoration: none;
 }
 
-.main-nav,
-.nav {
-  grid-column: 2;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+.header-search {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
   align-items: center;
-  gap: 8px;
+  min-width: 0;
+  border: 1px solid rgba(51, 204, 255, 0.22);
+  border-radius: var(--radius-md);
+  background: rgba(0, 31, 68, 0.62);
+  overflow: hidden;
 }
 
-.main-nav a,
-.nav a,
-.cabinet-nav a,
-.user-chip,
-.user-pill {
-  display: inline-flex;
-  align-items: center;
-  border: 1px solid transparent;
-  border-radius: var(--radius-pill);
+.header-search-button {
+  width: 42px;
+  height: 42px;
+  border-right: 1px solid rgba(51, 204, 255, 0.16);
+  background: transparent;
+  color: var(--color-cyan);
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.header-search-button:hover {
+  background: rgba(51, 204, 255, 0.1);
+}
+
+.header-search input {
+  min-height: 42px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
   color: var(--color-text);
-  line-height: 1;
+}
+
+.header-search input:focus {
+  outline: none;
+}
+
+.main-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+}
+
+.main-nav .nav-link {
+  position: relative;
+  padding: 8px 0;
+  color: var(--color-text);
+  font-weight: 800;
   text-decoration: none;
   white-space: nowrap;
+}
+
+.main-nav .nav-link:hover {
+  color: var(--color-cyan);
+  text-decoration: none;
+}
+
+.main-nav .nav-link.is-active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -3px;
+  height: 2px;
+  border-radius: var(--radius-pill);
+  background: var(--color-cream);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  white-space: nowrap;
+}
+
+.language-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+.language-form select {
+  width: auto;
+  min-width: 68px;
+  min-height: 38px;
+  border-radius: var(--radius-md);
+  padding: 8px 28px 8px 12px;
+}
+
+.header-icon-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 38px;
+  height: 38px;
+  border: 1px solid rgba(51, 204, 255, 0.32);
+  border-radius: var(--radius-pill);
+  background: rgba(0, 31, 68, 0.5);
+  color: var(--color-text);
+  font-weight: 800;
+  text-decoration: none;
+  line-height: 1;
   transition:
     border-color var(--transition-base),
     background var(--transition-base),
@@ -278,31 +358,16 @@ h4 {
     transform var(--transition-base);
 }
 
-.main-nav a,
-.nav a {
-  padding: 8px 12px;
-  font-size: 15px;
-}
-
-.main-nav a:hover,
-.nav a:hover,
-.cabinet-nav a:hover,
-.user-chip:hover,
-.user-pill:hover {
-  border-color: rgba(51, 204, 255, 0.58);
-  background: rgba(51, 204, 255, 0.09);
+.header-icon-link:hover {
+  transform: translateY(-1px);
+  border-color: var(--color-cyan);
+  background: rgba(51, 204, 255, 0.12);
   color: var(--color-cyan);
   text-decoration: none;
 }
 
-.header-auth,
-.header-actions {
-  grid-column: 3;
-  display: flex;
-  flex-wrap: nowrap;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 8px;
+.header-profile-link {
+  background: rgba(51, 0, 153, 0.34);
 }
 
 .user-chip,
@@ -312,24 +377,6 @@ h4 {
   border-color: rgba(51, 204, 255, 0.36);
   padding: 8px 12px;
   background: rgba(51, 0, 153, 0.32);
-  color: var(--color-cyan);
-  font-size: 14px;
-}
-
-.cabinet-nav {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-  padding: 0 0 12px;
-}
-
-.cabinet-nav a {
-  min-height: 34px;
-  border-color: rgba(51, 204, 255, 0.22);
-  padding: 8px 12px;
-  background: rgba(51, 0, 153, 0.24);
   color: var(--color-cyan);
   font-size: 14px;
 }
@@ -1189,7 +1236,6 @@ html.bw-mode .btn,
 html.bw-mode .card-link,
 html.bw-mode .main-nav a,
 html.bw-mode .nav a,
-html.bw-mode .cabinet-nav a,
 html.bw-mode .user-chip,
 html.bw-mode .user-pill,
 html.bw-mode .pagination a,
@@ -1205,11 +1251,6 @@ html.bw-mode .btn:hover,
 html.bw-mode .card-link:hover,
 html.bw-mode .main-nav a:hover,
 html.bw-mode .nav a:hover,
-html.bw-mode .cabinet-nav a:hover {
-  background: #ffffff;
-  color: #000000;
-}
-
 html.bw-mode input,
 html.bw-mode select,
 html.bw-mode textarea {
@@ -1270,30 +1311,51 @@ html.bw-mode .accessibility-toggle[aria-pressed="true"] {
 }
 
 @media (max-width: 980px) {
-  .header-main,
-  .header-inner {
+  .header-main {
     grid-template-columns: 1fr auto;
     gap: 12px;
-    padding: 14px 0;
   }
 
   .logo {
     grid-column: 1;
   }
 
-  .header-auth,
   .header-actions {
     grid-column: 2;
   }
 
-  .main-nav,
-  .nav {
+  .header-search {
     grid-column: 1 / -1;
-    justify-content: flex-start;
+    order: 3;
   }
 
-  .cabinet-nav {
+  .main-nav {
+    grid-column: 1 / -1;
+    order: 4;
     justify-content: flex-start;
+  }
+}
+
+@media (max-width: 640px) {
+  .header-main {
+    grid-template-columns: 1fr;
+  }
+
+  .logo,
+  .header-search,
+  .main-nav,
+  .header-actions {
+    grid-column: 1;
+  }
+
+  .header-actions {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .main-nav {
+    gap: 18px;
+    overflow-x: auto;
   }
 }
 
@@ -1362,8 +1424,7 @@ html.bw-mode .accessibility-toggle[aria-pressed="true"] {
   }
 
   .main-nav,
-  .nav,
-  .cabinet-nav {
+  .nav {
     flex-wrap: nowrap;
     justify-content: flex-start;
     overflow-x: auto;
@@ -1372,7 +1433,6 @@ html.bw-mode .accessibility-toggle[aria-pressed="true"] {
 
   .main-nav a,
   .nav a,
-  .cabinet-nav a,
   .user-chip,
   .user-pill,
   .btn-small {

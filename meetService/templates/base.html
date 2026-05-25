@@ -9,7 +9,6 @@
         <title>
             {% block title %}MeetService{% endblock %}
         </title>
-        <link rel="stylesheet" href="{% static 'css/site.css' %}">
         <script>
           (function () {
             try {
@@ -20,6 +19,7 @@
             }
           })();
         </script>
+        <link rel="stylesheet" href="{% static 'css/site.css' %}">
         {% block extra_head %}{% endblock %}
     </head>
     <body class="{% block body_class %}{% endblock %}">
@@ -28,33 +28,55 @@
                 <a class="logo"
                    href="{% url 'projects:home' %}"
                    aria-label="На главную страницу MeetService">{% service_name %}</a>
-                <nav class="main-nav" aria-label="Основная навигация">
-                    <a href="{% url 'projects:home' %}">{% trans "Главная" %}</a>
-                    <a href="{% url 'projects:project_list' %}">{% trans "Проекты" %}</a>
-                    <a href="{% url 'specialists:specialist_list' %}">{% trans "Специалисты" %}</a>
-                    <a href="{% url 'projects:home' %}#about">{% trans "О сервисе" %}</a>
-                </nav>
-                <form action="{% url 'set_language' %}" method="post" class="language-form">
-                    {% csrf_token %}
-                    <input name="next" type="hidden" value="{{ request.get_full_path }}">
+                <form class="header-search"
+                      action="{% url 'projects:project_list' %}"
+                      method="get"
+                      role="search">
+                    <button class="header-search-button"
+                            type="submit"
+                            aria-label="{% trans 'Искать' %}">⌕</button>
+                    <input type="search"
+                           name="q"
+                           value="{{ request.GET.q }}"
+                           placeholder="{% trans 'Поисковая строка' %}"
+                           aria-label="{% trans 'Глобальный поиск' %}">
+                </form>
+                {% with current_view=request.resolver_match.view_name %}
+                    <nav class="main-nav" aria-label="Основная навигация">
+                        <a class="nav-link {% if current_view == 'projects:project_list' or current_view == 'projects:project_detail' %}is-active{% endif %}"
+                           href="{% url 'projects:project_list' %}">{% trans "Проекты" %}</a>
+                        <a class="nav-link {% if current_view == 'specialists:specialist_list' or current_view == 'specialists:specialist_detail' %}is-active{% endif %}"
+                           href="{% url 'specialists:specialist_list' %}">{% trans "Специалисты" %}</a>
+                    </nav>
+                {% endwith %}
+                <div class="header-actions">
                     <button class="btn btn-small accessibility-toggle"
                             type="button"
                             id="bw-mode-toggle"
                             aria-pressed="false">Ч/Б</button>
-                    <select name="language" onchange="this.form.submit()">
-                        <option value="ru" {% if LANGUAGE_CODE == "ru" %}selected{% endif %}>RU</option>
-                        <option value="en" {% if LANGUAGE_CODE == "en" %}selected{% endif %}>EN</option>
-                    </select>
-                </form>
-                <div class="header-auth">
+                    <form action="{% url 'set_language' %}" method="post" class="language-form">
+                        {% csrf_token %}
+                        <input name="next" type="hidden" value="{{ request.get_full_path }}">
+                        <select name="language"
+                                aria-label="{% trans 'Выбор языка' %}"
+                                onchange="this.form.submit()">
+                            <option value="ru" {% if LANGUAGE_CODE == "ru" %}selected{% endif %}>RU</option>
+                            <option value="en" {% if LANGUAGE_CODE == "en" %}selected{% endif %}>EN</option>
+                        </select>
+                    </form>
                     {% if user.is_authenticated %}
-                        <a class="user-chip user-chip-name" href="{% url 'accounts:profile' %}">{{ user.username }}</a>
-                        <form class="inline-form"
-                              method="post"
-                              action="{% url 'accounts:logout' %}">
-                            {% csrf_token %}
-                            <button class="btn btn-secondary btn-small" type="submit">{% trans "Выход" %}</button>
-                        </form>
+                        <a class="header-icon-link"
+                           href="{% url 'interactions:favorite_project_list' %}"
+                           title="{% trans 'Избранное' %}"
+                           aria-label="{% trans 'Избранное' %}">★</a>
+                        <a class="header-icon-link"
+                           href="{% url 'interactions:invitation_list' %}"
+                           title="{% trans 'Уведомления' %}"
+                           aria-label="{% trans 'Уведомления' %}">!</a>
+                        <a class="header-icon-link header-profile-link"
+                           href="{% url 'accounts:profile' %}"
+                           title="{% trans 'Личный кабинет' %}"
+                           aria-label="{% trans 'Личный кабинет' %}">{{ user.username|slice:":1"|upper }}</a>
                     {% else %}
                         <a class="btn btn-secondary btn-small" href="{% url 'accounts:login' %}">{% trans "Вход" %}</a>
                         <a class="btn btn-primary btn-small"
@@ -62,17 +84,6 @@
                     {% endif %}
                 </div>
             </div>
-            {% if user.is_authenticated %}
-                <nav class="container cabinet-nav" aria-label="Навигация личного кабинета">
-                    <a href="{% url 'accounts:profile' %}">{% trans "Кабинет" %}</a>
-                    <a href="{% url 'specialists:specialist_profile_edit' %}">{% trans "Профиль специалиста" %}</a>
-                    <a href="{% url 'projects:my_projects' %}">{% trans "Мои проекты" %}</a>
-                    <a href="{% url 'projects:my_teams' %}">{% trans "Мои команды" %}</a>
-                    <a href="{% url 'interactions:application_list' %}">{% trans "Мои отклики" %}</a>
-                    <a href="{% url 'interactions:invitation_list' %}">{% trans "Мои приглашения" %}</a>
-                    <a href="{% url 'interactions:favorite_project_list' %}">{% trans "Избранное" %}</a>
-                </nav>
-            {% endif %}
         </header>
         {% if messages %}
             <div class="container messages" role="status" aria-live="polite">
