@@ -714,6 +714,26 @@ option {
   color: var(--color-muted);
 }
 
+.form-grid>* {
+  min-width: 0;
+}
+
+.form-grid input,
+.form-grid select,
+.form-grid textarea {
+  max-width: 100%;
+}
+
+.form-grid input[type="checkbox"],
+.form-grid input[type="radio"] {
+  width: auto;
+}
+
+.form-grid>div:has(input[type="file"]),
+.form-grid>p:has(input[type="file"]) {
+  grid-column: 1 / -1;
+}
+
 .form-label {
   color: var(--color-text);
   font-weight: 800;
