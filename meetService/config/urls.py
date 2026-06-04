@@ -27,8 +27,14 @@ admin.site.site_header = "MeetService - администрирование"
 admin.site.site_title = "MeetService Admin"
 admin.site.index_title = "Админка сервиса по поиску IT-команды"
 
+# fool function to test Sentry
+# def trigger_error(request):
+#    division_by_zero = 1 / 0
+
+
 urlpatterns = [
     path("admin/", admin.site.urls),
+    # path("sentry-debug/", trigger_error),
     path("api/", include("apps.api.urls")),
     path("search/", views.global_search, name="global_search"),
     path("", include("apps.projects.urls")),
@@ -48,5 +54,10 @@ if settings.DEBUG:
     urlpatterns += [
         path("__debug__/", include(debug_toolbar.urls)),
     ]
+
+    if getattr(settings, "SILK_ENABLED", False):
+        urlpatterns += [
+            path("silk/", include("silk.urls", namespace="silk")),
+        ]
 
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

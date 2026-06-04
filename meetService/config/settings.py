@@ -4,6 +4,8 @@ import environ
 
 from django.utils.translation import gettext_lazy as _
 
+from config.telemetry import build_sentry_config, initialize_sentry
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -17,8 +19,15 @@ env = environ.Env(
     DJANGO_SECURE_HSTS_SECONDS=(int, 0),
     DJANGO_SECURE_HSTS_INCLUDE_SUBDOMAINS=(bool, False),
     DJANGO_SECURE_HSTS_PRELOAD=(bool, False),
+    DJANGO_SILK_ENABLED=(bool, True),
+    DJANGO_SILK_AUTHENTICATION=(bool, True),
+    DJANGO_SILK_AUTHORISATION=(bool, True),
+    DJANGO_SILK_PYTHON_PROFILER=(bool, False),
     EMAIL_PORT=(int, 587),
     EMAIL_USE_TLS=(bool, True),
+    SENTRY_PROFILES_SAMPLE_RATE=(float, 0.0),
+    SENTRY_SEND_DEFAULT_PII=(bool, False),
+    SENTRY_TRACES_SAMPLE_RATE=(float, 0.0),
 )
 
 environ.Env.read_env(BASE_DIR / ".env")
@@ -69,6 +78,19 @@ if DEBUG:
         "::1",
     ]
 
+SILK_ENABLED = DEBUG and env.bool("DJANGO_SILK_ENABLED", default=True)
+
+if SILK_ENABLED:
+    INSTALLED_APPS += [
+        "silk",
+    ]
+    SILKY_AUTHENTICATION = env.bool("DJANGO_SILK_AUTHENTICATION", default=True)
+    SILKY_AUTHORISATION = env.bool("DJANGO_SILK_AUTHORISATION", default=True)
+    SILKY_PYTHON_PROFILER = env.bool("DJANGO_SILK_PYTHON_PROFILER", default=False)
+
+    SILKY_MAX_REQUEST_BODY_SIZE = 1024
+    SILKY_MAX_RESPONSE_BODY_SIZE = 1024
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -83,6 +105,9 @@ MIDDLEWARE = [
 
 if DEBUG:
     MIDDLEWARE.insert(1, "debug_toolbar.middleware.DebugToolbarMiddleware")
+
+if SILK_ENABLED:
+    MIDDLEWARE.insert(0, "silk.middleware.SilkyMiddleware")
 
 ROOT_URLCONF = "config.urls"
 
@@ -248,3 +273,14 @@ CACHES = {
 }
 
 CACHE_TIMEOUT = 60 * 5
+
+
+SENTRY_CONFIG = build_sentry_config(
+    dsn=env("SENTRY_DSN", default=""),
+    environment=env("SENTRY_ENVIRONMENT", default="development"),
+    traces_sample_rate=env.float("SENTRY_TRACES_SAMPLE_RATE", default=0.0),
+    profiles_sample_rate=env.float("SENTRY_PROFILES_SAMPLE_RATE", default=0.0),
+    send_default_pii=env.bool("SENTRY_SEND_DEFAULT_PII", default=False),
+    release=env("SENTRY_RELEASE", default=""),
+)
+SENTRY_ENABLED = initialize_sentry(SENTRY_CONFIG)

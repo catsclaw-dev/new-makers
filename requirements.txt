@@ -7,6 +7,7 @@ django-filter==25.2
 django-debug-toolbar==6.3.0
 django-environ==0.13.0
 django-import-export==4.4.1
+django-silk==5.5.0
 django-simple-history==3.11.0
 djangorestframework==3.17.1
 et_xmlfile==2.0.0
@@ -19,6 +20,7 @@ pillow==12.2.0
 python-dateutil==2.9.0.post0
 PyYAML==6.0.3
 reportlab==4.5.0
+sentry-sdk==2.61.1
 six==1.17.0
 sqlparse==0.5.5
 tablib==3.9.0
