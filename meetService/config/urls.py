@@ -29,6 +29,7 @@ admin.site.index_title = "Админка сервиса по поиску IT-к�
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("api/", include("apps.api.urls")),
     path("search/", views.global_search, name="global_search"),
     path("", include("apps.projects.urls")),
     path("accounts/", include("apps.accounts.urls")),
