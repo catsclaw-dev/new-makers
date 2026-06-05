@@ -16,6 +16,31 @@
             <a class="btn btn-primary" href="{% url 'projects:project_create' %}">Создать проект</a>
         </div>
     </section>
+    {% if show_email_required_notice %}
+        <section class="container">
+            <article class="action-card">
+                <h2>Укажите email для уведомлений</h2>
+                <p class="empty">
+                    Сейчас email не указан, поэтому письма по откликам и приглашениям
+                    не смогут приходить на почту.
+                </p>
+                <form class="form-grid" method="post" action="{% url 'accounts:update_email' %}">
+                    {% csrf_token %}
+                    {% for field in email_form %}
+                        <div class="form-field">
+                            <div class="form-label-row">
+                                <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                {% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}
+                            </div>
+                            {{ field }}
+                            {% for error in field.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
+                        </div>
+                    {% endfor %}
+                    <button class="btn btn-primary" type="submit">Сохранить email</button>
+                </form>
+            </article>
+        </section>
+    {% endif %}
     <section class="container cabinet-layout">
         <div class="cabinet-main">
             <section class="cabinet-section">
@@ -335,6 +360,21 @@
                 <p>
                     <strong>Email:</strong> {{ user.email|default:"не указан" }}
                 </p>
+                {% if not user.is_staff and not user.is_superuser %}
+                    <form class="form-grid" method="post" action="{% url 'accounts:update_email' %}">
+                        {% csrf_token %}
+                        {% for field in email_form %}
+                            <div class="form-field">
+                                <div class="form-label-row">
+                                    <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                </div>
+                                {{ field }}
+                                {% for error in field.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
+                            </div>
+                        {% endfor %}
+                        <button class="btn btn-secondary" type="submit">Обновить email</button>
+                    </form>
+                {% endif %}
                 <form class="inline-form"
                       method="post"
                       action="{% url 'accounts:logout' %}">

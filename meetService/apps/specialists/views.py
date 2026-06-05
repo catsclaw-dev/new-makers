@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import HttpRequest, HttpResponse
+from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import Q
@@ -28,6 +28,7 @@ def specialist_list(request: HttpRequest) -> HttpResponse:
     specialists = (
         SpecialistProfile.objects.select_related("user", "main_role")
         .prefetch_related("technologies")
+        .exclude(status=SpecialistProfile.AvailabilityStatus.HIDDEN)
         .order_by("-created_at")
     )
 
@@ -91,6 +92,15 @@ def specialist_detail(request: HttpRequest, pk: int | None) -> HttpResponse:
         ),
         pk=pk,
     )
+
+    if specialist.status == SpecialistProfile.AvailabilityStatus.HIDDEN:
+        can_view_hidden = (
+            request.user.is_authenticated
+            and (request.user.is_staff or specialist.user_id == request.user.id)
+        )
+
+        if not can_view_hidden:
+            raise Http404("Профиль специалиста не найден.")
 
     memberships = (
         ProjectMembership.objects.select_related("project", "role")

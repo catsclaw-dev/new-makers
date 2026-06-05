@@ -6,10 +6,10 @@ reportUnusedImport = false
 
 [tool.mypy]
 plugins = ["mypy_django_plugin.main"]
-python_executable = ".venv/bin/python"
+python_executable = "venv/bin/python"
 
 [tool.django-stubs]
-django_settings_module = "test_drf.settings"
+django_settings_module = "config.settings"
 
 
 [tool.djlint]

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Ошибка OAuth — MeetService{% endblock %}
+{% block content %}
+    <section class="container auth-page">
+        <article class="auth-card">
+            <p class="eyebrow">oauth</p>
+            <h1>Не удалось войти</h1>
+            <p class="lead">Во время входа через внешний аккаунт произошла ошибка.</p>
+            <a class="btn btn-primary full-width" href="{% url 'accounts:login' %}">Вернуться ко входу</a>
+        </article>
+    </section>
+{% endblock %}

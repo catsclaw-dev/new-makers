@@ -25,6 +25,7 @@ from apps.api.permissions import (
     IsFavoriteOwner,
     IsInvitationRecipientOrAdmin,
     IsProjectOwnerOrAdmin,
+    IsReviewAuthorOrAdmin,
     IsSpecialistOwnerOrAdmin,
     is_admin,
 )
@@ -200,7 +201,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer: Serializer) -> None:
         """
-        Выполняет логику функции.
+        Создаёт проект от имени текущего пользователя.
         Args:
             serializer: Сериализатор с проверенными данными
         """
@@ -213,7 +214,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     def perform_update(self, serializer: Serializer) -> None:
         """
-        Выполняет логику функции.
+        Обновляет проект и фиксирует пользователя, который внёс изменения.
         Args:
             serializer: Сериализатор с проверенными данными
         """
@@ -473,7 +474,7 @@ class ProjectVacancyViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer: Serializer) -> None:
         """
-        Выполняет логику функции.
+        Создаёт открытую роль после проверки доступа к проекту.
         Args:
             serializer: Сериализатор с проверенными данными
         """
@@ -560,7 +561,7 @@ class SpecialistProfileViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer: Serializer) -> None:
         """
-        Выполняет логику функции.
+        Создаёт профиль специалиста для текущего пользователя.
         Args:
             serializer: Сериализатор с проверенными данными
         """
@@ -575,7 +576,7 @@ class SpecialistProfileViewSet(viewsets.ModelViewSet):
 
     def perform_update(self, serializer: Serializer) -> None:
         """
-        Выполняет логику функции.
+        Обновляет профиль специалиста и автора изменений.
         Args:
             serializer: Сериализатор с проверенными данными
         """
@@ -872,7 +873,10 @@ class ReviewViewSet(viewsets.ModelViewSet):
         if self.action in ["publish", "hide", "reject"]:
             return [IsAuthenticated(), IsAdminOrReadOnly()]
 
-        return [IsAuthenticated()]
+        if self.action == "create":
+            return [IsAuthenticated()]
+
+        return [IsAuthenticated(), IsReviewAuthorOrAdmin()]
 
     def get_queryset(self) -> QuerySet:
         """

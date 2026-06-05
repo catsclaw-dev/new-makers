@@ -27,15 +27,10 @@ admin.site.site_header = "MeetService - администрирование"
 admin.site.site_title = "MeetService Admin"
 admin.site.index_title = "Админка сервиса по поиску IT-команды"
 
-# fool function to test Sentry
-# def trigger_error(request):
-#    division_by_zero = 1 / 0
-
-
 urlpatterns = [
     path("admin/", admin.site.urls),
-    # path("sentry-debug/", trigger_error),
     path("api/", include("apps.api.urls")),
+    path("oauth/", include("allauth.urls")),
     path("search/", views.global_search, name="global_search"),
     path("", include("apps.projects.urls")),
     path("accounts/", include("apps.accounts.urls")),

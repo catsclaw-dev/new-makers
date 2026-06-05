@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Вход через {{ provider.name }} — MeetService{% endblock %}
+{% block content %}
+    <section class="container auth-page">
+        <article class="auth-card">
+            <p class="eyebrow">oauth</p>
+            {% if process == "connect" %}
+                <h1>Подключение {{ provider.name }}</h1>
+                <p class="lead">Вы собираетесь подключить внешний аккаунт {{ provider.name }}.</p>
+            {% else %}
+                <h1>Вход через {{ provider.name }}</h1>
+                <p class="lead">Вы будете перенаправлены к провайдеру {{ provider.name }} для авторизации.</p>
+            {% endif %}
+            <form method="post" class="form-grid">
+                {% csrf_token %}
+                <button class="btn btn-primary full-width" type="submit">Продолжить</button>
+            </form>
+            <p class="auth-switch">
+                <a href="{% url 'accounts:login' %}">Вернуться ко входу</a>
+            </p>
+        </article>
+    </section>
+{% endblock %}

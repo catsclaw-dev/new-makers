@@ -7,7 +7,7 @@ from apps.interactions.models import Application, Invitation
 
 def notification_counts(request: HttpRequest) -> dict[str, int]:
     """
-    Выполняет логику функции.
+    Возвращает количество ожидающих откликов и приглашений для шапки сайта.
     Args:
         request: HTTP-запрос текущего пользователя
     """

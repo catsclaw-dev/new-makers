@@ -194,6 +194,9 @@ class Application(models.Model):
                 self.status = Application.Status.ACCEPTED
                 self.reviewed_at = reviewed_at
                 self.reviewed_by = reviewed_by
+                from apps.interactions.emails import enqueue_application_status_email
+
+                enqueue_application_status_email(application.pk)
 
                 return already_member
 
@@ -211,6 +214,9 @@ class Application(models.Model):
             self.status = Application.Status.ACCEPTED
             self.reviewed_at = reviewed_at
             self.reviewed_by = reviewed_by
+            from apps.interactions.emails import enqueue_application_status_email
+
+            enqueue_application_status_email(application.pk)
 
             return membership
 
@@ -246,6 +252,9 @@ class Application(models.Model):
             self.status = Application.Status.REJECTED
             self.reviewed_at = reviewed_at
             self.reviewed_by = reviewed_by
+            from apps.interactions.emails import enqueue_application_status_email
+
+            enqueue_application_status_email(application.pk)
 
 
 class Invitation(models.Model):
@@ -430,6 +439,9 @@ class Invitation(models.Model):
 
                 self.status = Invitation.Status.ACCEPTED
                 self.responded_at = responded_at
+                from apps.interactions.emails import enqueue_invitation_status_email
+
+                enqueue_invitation_status_email(invitation.pk)
 
                 return already_member
 
@@ -450,6 +462,9 @@ class Invitation(models.Model):
 
             self.status = Invitation.Status.ACCEPTED
             self.responded_at = responded_at
+            from apps.interactions.emails import enqueue_invitation_status_email
+
+            enqueue_invitation_status_email(invitation.pk)
 
             return membership
 
@@ -471,6 +486,9 @@ class Invitation(models.Model):
 
         self.status = Invitation.Status.DECLINED
         self.responded_at = responded_at
+        from apps.interactions.emails import enqueue_invitation_status_email
+
+        enqueue_invitation_status_email(self.pk)
 
 
 class FavoriteProject(models.Model):

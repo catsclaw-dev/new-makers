@@ -5,6 +5,10 @@ from django.core.exceptions import ValidationError
 from django.db import models
 
 from apps.accounts.models import User
+from apps.interactions.emails import (
+    enqueue_application_created_email,
+    enqueue_invitation_created_email,
+)
 from apps.interactions.models import Application, Invitation
 from apps.projects.models import Project, ProjectVacancy
 from apps.specialists.models import SpecialistProfile
@@ -112,6 +116,7 @@ class ApplicationForm(forms.ModelForm):
 
         if commit:
             application.save()
+            enqueue_application_created_email(application.pk)
 
         return application
 
@@ -231,5 +236,6 @@ class InvitationForm(forms.ModelForm):
 
         if commit:
             invitation.save()
+            enqueue_invitation_created_email(invitation.pk)
 
         return invitation

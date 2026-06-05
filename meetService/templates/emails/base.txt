@@ -1,0 +1,17 @@
+{{ title }}
+
+{{ greeting }}
+
+{{ intro }}
+
+{% if plain_message %}Сообщение:
+{{ plain_message }}
+
+{% endif %}{% if details %}{% for label, value in details %}{{ label }}: {{ value }}
+{% endfor %}
+{% endif %}{% if action_url %}{{ action_label }}:
+{{ action_url }}
+{% endif %}
+
+MeetService
+Сервис поиска IT-команды

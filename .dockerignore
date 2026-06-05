@@ -1,0 +1,11 @@
+.git
+__pycache__/
+**/__pycache__/
+*.pyc
+.mypy_cache/
+.env
+.env.*
+!.env.example
+db.sqlite3
+venv/
+meetService/media/

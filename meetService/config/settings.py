@@ -7,12 +7,15 @@ from django.utils.translation import gettext_lazy as _
 from config.telemetry import build_sentry_config, initialize_sentry
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+PROJECT_ROOT = BASE_DIR.parent
 
 
 env = environ.Env(
+    CELERY_TASK_ALWAYS_EAGER=(bool, False),
     DJANGO_DEBUG=(bool, False),
     DJANGO_ALLOWED_HOSTS=(list, []),
     DJANGO_CSRF_TRUSTED_ORIGINS=(list, []),
+    DJANGO_SITE_ID=(int, 1),
     DJANGO_SECURE_SSL_REDIRECT=(bool, False),
     DJANGO_SESSION_COOKIE_SECURE=(bool, False),
     DJANGO_CSRF_COOKIE_SECURE=(bool, False),
@@ -25,14 +28,14 @@ env = environ.Env(
     DJANGO_SILK_PYTHON_PROFILER=(bool, False),
     EMAIL_PORT=(int, 587),
     EMAIL_USE_TLS=(bool, True),
+    EMAIL_NOTIFICATIONS_ENABLED=(bool, True),
     SENTRY_PROFILES_SAMPLE_RATE=(float, 0.0),
     SENTRY_SEND_DEFAULT_PII=(bool, False),
     SENTRY_TRACES_SAMPLE_RATE=(float, 0.0),
 )
 
-environ.Env.read_env(BASE_DIR / ".env")
+environ.Env.read_env(PROJECT_ROOT / ".env")
 
-# old key in commits not actual :3
 SECRET_KEY = env("DJANGO_SECRET_KEY")
 
 DEBUG = env("DJANGO_DEBUG")
@@ -53,10 +56,17 @@ INSTALLED_APPS = [
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
+    "django.contrib.sites",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.github",
+    "allauth.socialaccount.providers.google",
     "rest_framework",
     "django_filters",
+    "django_celery_beat",
     "import_export",
     "simple_history",
     "apps.api.apps.ApiConfig",
@@ -93,12 +103,14 @@ if SILK_ENABLED:
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "simple_history.middleware.HistoryRequestMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
@@ -136,9 +148,20 @@ WSGI_APPLICATION = "config.wsgi.application"
 DATABASES = {
     "default": env.db(
         "DATABASE_URL",
-        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+        default=f"sqlite:///{PROJECT_ROOT / 'db.sqlite3'}",
     )
 }
+
+default_database = DATABASES["default"]
+
+if (
+    default_database["ENGINE"] == "django.db.backends.sqlite3"
+    and default_database["NAME"] != ":memory:"
+):
+    database_name = Path(default_database["NAME"])
+
+    if not database_name.is_absolute():
+        default_database["NAME"] = str(PROJECT_ROOT / database_name)
 
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -176,16 +199,30 @@ LOCALE_PATHS = [
 
 AUTH_USER_MODEL = "accounts.User"
 
+SITE_ID = env.int("DJANGO_SITE_ID", default=1)
 
-MEDIA_URL = "media/"
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
+]
+
+
+MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 STATIC_ROOT = BASE_DIR / "staticfiles"
+
+if not DEBUG:
+    STORAGES = {
+        "staticfiles": {
+            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        },
+    }
 
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
@@ -213,6 +250,59 @@ LOGIN_URL = "accounts:login"
 LOGIN_REDIRECT_URL = "accounts:profile"
 LOGOUT_REDIRECT_URL = "projects:home"
 
+ACCOUNT_EMAIL_VERIFICATION = "none"
+ACCOUNT_LOGIN_METHODS = {
+    "username",
+    "email",
+}
+ACCOUNT_SIGNUP_FIELDS = [
+    "username*",
+    "email*",
+    "password1*",
+    "password2*",
+]
+ACCOUNT_UNIQUE_EMAIL = True
+SOCIALACCOUNT_AUTO_SIGNUP = True
+SOCIALACCOUNT_ADAPTER = "apps.accounts.adapters.MeetServiceSocialAccountAdapter"
+SOCIALACCOUNT_LOGIN_ON_GET = True
+
+GOOGLE_OAUTH_CLIENT_ID = env("GOOGLE_OAUTH_CLIENT_ID", default="")
+GOOGLE_OAUTH_CLIENT_SECRET = env("GOOGLE_OAUTH_CLIENT_SECRET", default="")
+GITHUB_OAUTH_CLIENT_ID = env("GITHUB_OAUTH_CLIENT_ID", default="")
+GITHUB_OAUTH_CLIENT_SECRET = env("GITHUB_OAUTH_CLIENT_SECRET", default="")
+
+SOCIALACCOUNT_PROVIDERS = {
+    "github": {
+        "SCOPE": [
+            "user",
+            "user:email",
+        ],
+    },
+    "google": {
+        "SCOPE": [
+            "profile",
+            "email",
+        ],
+        "AUTH_PARAMS": {
+            "access_type": "online",
+        },
+    },
+}
+
+if GOOGLE_OAUTH_CLIENT_ID and GOOGLE_OAUTH_CLIENT_SECRET:
+    SOCIALACCOUNT_PROVIDERS["google"]["APP"] = {
+        "client_id": GOOGLE_OAUTH_CLIENT_ID,
+        "secret": GOOGLE_OAUTH_CLIENT_SECRET,
+        "key": "",
+    }
+
+if GITHUB_OAUTH_CLIENT_ID and GITHUB_OAUTH_CLIENT_SECRET:
+    SOCIALACCOUNT_PROVIDERS["github"]["APP"] = {
+        "client_id": GITHUB_OAUTH_CLIENT_ID,
+        "secret": GITHUB_OAUTH_CLIENT_SECRET,
+        "key": "",
+    }
+
 
 EMAIL_BACKEND = env(
     "EMAIL_BACKEND",
@@ -227,6 +317,8 @@ DEFAULT_FROM_EMAIL = env(
     "DEFAULT_FROM_EMAIL",
     default="MeetService <noreply@meetservice.local>",
 )
+EMAIL_NOTIFICATIONS_ENABLED = env.bool("EMAIL_NOTIFICATIONS_ENABLED", default=True)
+SITE_URL = env("SITE_URL", default="http://127.0.0.1:8000").rstrip("/")
 
 
 SECURE_SSL_REDIRECT = env.bool(
@@ -273,6 +365,42 @@ CACHES = {
 }
 
 CACHE_TIMEOUT = 60 * 5
+
+
+CELERY_BROKER_URL = env(
+    "CELERY_BROKER_URL",
+    default="redis://localhost:6379/0",
+)
+CELERY_RESULT_BACKEND = env(
+    "CELERY_RESULT_BACKEND",
+    default=CELERY_BROKER_URL,
+)
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TIMEZONE = TIME_ZONE
+CELERY_TASK_ALWAYS_EAGER = env.bool("CELERY_TASK_ALWAYS_EAGER", default=False)
+CELERY_TASK_EAGER_PROPAGATES = True
+INVITATION_EXPIRE_DAYS = env.int("INVITATION_EXPIRE_DAYS", default=14)
+
+CELERY_BEAT_SCHEDULE = {
+    "expire-stale-invitations": {
+        "task": "apps.interactions.tasks.expire_stale_invitations",
+        "schedule": 60 * 60,
+    },
+    "send-pending-application-digest": {
+        "task": "apps.interactions.tasks.send_pending_application_digest",
+        "schedule": 60 * 60 * 24,
+    },
+    "send-pending-invitation-digest": {
+        "task": "apps.interactions.tasks.send_pending_invitation_digest",
+        "schedule": 60 * 60 * 24,
+    },
+    "sync-project-vacancy-counts": {
+        "task": "apps.projects.tasks.sync_project_vacancy_counts",
+        "schedule": 60 * 30,
+    },
+}
 
 
 SENTRY_CONFIG = build_sentry_config(

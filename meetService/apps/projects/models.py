@@ -57,19 +57,19 @@ class ProjectManager(models.Manager):
 
     def published(self) -> QuerySet:
         """
-        Выполняет логику функции.
+        Возвращает только опубликованные проекты.
         """
         return self.get_queryset().published()
 
     def with_open_vacancy_count(self) -> QuerySet:
         """
-        Выполняет логику функции.
+        Добавляет количество открытых ролей к каждому проекту.
         """
         return self.get_queryset().with_open_vacancy_count()
 
     def urgent(self) -> QuerySet:
         """
-        Выполняет логику функции.
+        Возвращает опубликованные проекты с открытыми ролями.
         """
         return self.get_queryset().urgent()
 
@@ -547,7 +547,8 @@ class ProjectMembership(models.Model):
         constraints = [
             models.UniqueConstraint(
                 fields=["project", "specialist", "role"],
-                name="unique_project_specialist_role",
+                condition=Q(status__in=["active", "paused"]),
+                name="unique_active_project_specialist_role",
             ),
         ]
 

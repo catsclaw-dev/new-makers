@@ -138,3 +138,27 @@ class IsFavoriteOwner(BasePermission):
             and request.user.is_authenticated
             and obj.user_id == request.user.id
         )
+
+
+class IsReviewAuthorOrAdmin(BasePermission):
+    """Allows review writes only to the review author or staff users."""
+
+    def has_object_permission(self, request: Request, view: object, obj: object) -> bool:
+        """
+        Проверяет доступ к конкретному отзыву.
+        Args:
+            request: HTTP-запрос текущего пользователя
+            view: Представление, которое обрабатывает запрос
+            obj: Объект отзыва
+        """
+        if request.method in SAFE_METHODS:
+            return True
+
+        return bool(
+            is_admin(request.user)
+            or (
+                request.user
+                and request.user.is_authenticated
+                and obj.author_id == request.user.id
+            )
+        )

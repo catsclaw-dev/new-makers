@@ -1,0 +1,109 @@
+services:
+  web:
+    build: .
+    command: >
+      sh -c "python manage.py migrate --noinput &&
+             python manage.py collectstatic --noinput &&
+             gunicorn config.wsgi:application --bind 0.0.0.0:8000"
+    working_dir: /app/meetService
+    environment:
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-change-me-docker-only}
+      DJANGO_DEBUG: ${DJANGO_DEBUG:-False}
+      DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS:-127.0.0.1,localhost,0.0.0.0}
+      DJANGO_CSRF_TRUSTED_ORIGINS: ${DJANGO_CSRF_TRUSTED_ORIGINS:-http://127.0.0.1:8000,http://localhost:8000}
+      DATABASE_URL: ${DOCKER_DATABASE_URL:-sqlite:////app/db.sqlite3}
+      EMAIL_BACKEND: django.core.mail.backends.smtp.EmailBackend
+      EMAIL_HOST: mailhog
+      EMAIL_PORT: 1025
+      EMAIL_USE_TLS: "False"
+      DEFAULT_FROM_EMAIL: ${DEFAULT_FROM_EMAIL:-MeetService <noreply@meetservice.local>}
+      EMAIL_NOTIFICATIONS_ENABLED: ${EMAIL_NOTIFICATIONS_ENABLED:-True}
+      SITE_URL: ${SITE_URL:-http://127.0.0.1:8000}
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
+      INVITATION_EXPIRE_DAYS: ${INVITATION_EXPIRE_DAYS:-14}
+      GOOGLE_OAUTH_CLIENT_ID: ${GOOGLE_OAUTH_CLIENT_ID:-}
+      GOOGLE_OAUTH_CLIENT_SECRET: ${GOOGLE_OAUTH_CLIENT_SECRET:-}
+      GITHUB_OAUTH_CLIENT_ID: ${GITHUB_OAUTH_CLIENT_ID:-}
+      GITHUB_OAUTH_CLIENT_SECRET: ${GITHUB_OAUTH_CLIENT_SECRET:-}
+      SENTRY_DSN: ${SENTRY_DSN:-}
+      DJANGO_SILK_ENABLED: ${DJANGO_SILK_ENABLED:-False}
+    volumes:
+      - ./db.sqlite3:/app/db.sqlite3
+      - ./meetService/media:/app/meetService/media
+      - static_data:/app/meetService/staticfiles
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+      - mailhog
+
+  celery_worker:
+    build: .
+    command: celery -A config worker --loglevel=info
+    working_dir: /app/meetService
+    environment:
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-change-me-docker-only}
+      DJANGO_DEBUG: ${DJANGO_DEBUG:-False}
+      DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS:-127.0.0.1,localhost,0.0.0.0}
+      DATABASE_URL: ${DOCKER_DATABASE_URL:-sqlite:////app/db.sqlite3}
+      EMAIL_BACKEND: django.core.mail.backends.smtp.EmailBackend
+      EMAIL_HOST: mailhog
+      EMAIL_PORT: 1025
+      EMAIL_USE_TLS: "False"
+      EMAIL_NOTIFICATIONS_ENABLED: ${EMAIL_NOTIFICATIONS_ENABLED:-True}
+      SITE_URL: ${SITE_URL:-http://127.0.0.1:8000}
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
+      INVITATION_EXPIRE_DAYS: ${INVITATION_EXPIRE_DAYS:-14}
+      GOOGLE_OAUTH_CLIENT_ID: ${GOOGLE_OAUTH_CLIENT_ID:-}
+      GOOGLE_OAUTH_CLIENT_SECRET: ${GOOGLE_OAUTH_CLIENT_SECRET:-}
+      GITHUB_OAUTH_CLIENT_ID: ${GITHUB_OAUTH_CLIENT_ID:-}
+      GITHUB_OAUTH_CLIENT_SECRET: ${GITHUB_OAUTH_CLIENT_SECRET:-}
+      SENTRY_DSN: ${SENTRY_DSN:-}
+      DJANGO_SILK_ENABLED: ${DJANGO_SILK_ENABLED:-False}
+    volumes:
+      - ./db.sqlite3:/app/db.sqlite3
+      - ./meetService/media:/app/meetService/media
+    depends_on:
+      - redis
+      - mailhog
+
+  celery_beat:
+    build: .
+    command: celery -A config beat --loglevel=info
+    working_dir: /app/meetService
+    environment:
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-change-me-docker-only}
+      DJANGO_DEBUG: ${DJANGO_DEBUG:-False}
+      DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS:-127.0.0.1,localhost,0.0.0.0}
+      DATABASE_URL: ${DOCKER_DATABASE_URL:-sqlite:////app/db.sqlite3}
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
+      EMAIL_NOTIFICATIONS_ENABLED: ${EMAIL_NOTIFICATIONS_ENABLED:-True}
+      SITE_URL: ${SITE_URL:-http://127.0.0.1:8000}
+      INVITATION_EXPIRE_DAYS: ${INVITATION_EXPIRE_DAYS:-14}
+      GOOGLE_OAUTH_CLIENT_ID: ${GOOGLE_OAUTH_CLIENT_ID:-}
+      GOOGLE_OAUTH_CLIENT_SECRET: ${GOOGLE_OAUTH_CLIENT_SECRET:-}
+      GITHUB_OAUTH_CLIENT_ID: ${GITHUB_OAUTH_CLIENT_ID:-}
+      GITHUB_OAUTH_CLIENT_SECRET: ${GITHUB_OAUTH_CLIENT_SECRET:-}
+      SENTRY_DSN: ${SENTRY_DSN:-}
+      DJANGO_SILK_ENABLED: ${DJANGO_SILK_ENABLED:-False}
+    volumes:
+      - ./db.sqlite3:/app/db.sqlite3
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  mailhog:
+    image: mailhog/mailhog:v1.0.1
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+
+volumes:
+  static_data:

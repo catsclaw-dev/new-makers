@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Вход" %} — MeetService{% endblock %}
+{% block extra_head %}
+    <meta http-equiv="refresh" content="0;URL='{{ redirect_to }}'">
+{% endblock %}
+{% block content %}
+    <section class="container auth-page">
+        <article class="auth-card">
+            <p class="eyebrow">oauth</p>
+            <h1>Переадресация</h1>
+            <p class="lead">Перенаправляем на страницу авторизации.</p>
+            <a class="btn btn-primary full-width" href="{{ redirect_to }}">Продолжить</a>
+        </article>
+    </section>
+{% endblock %}

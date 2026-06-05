@@ -8,6 +8,10 @@ from rest_framework import serializers
 
 from apps.api.permissions import is_admin
 from apps.directories.models import Role, Technology
+from apps.interactions.emails import (
+    enqueue_application_created_email,
+    enqueue_invitation_created_email,
+)
 from apps.interactions.models import Application, FavoriteProject, Invitation
 from apps.projects.models import (
     Project,
@@ -916,11 +920,13 @@ class ApplicationSerializer(serializers.ModelSerializer):
         vacancy = validated_data["vacancy"]
 
         try:
-            return Application.objects.create(
+            application = Application.objects.create(
                 project=vacancy.project,
                 specialist=request.user.specialist_profile,
                 **validated_data,
             )
+            enqueue_application_created_email(application.pk)
+            return application
         except (DjangoValidationError, IntegrityError) as error:
             raise_serializer_validation(error)
 
@@ -1043,11 +1049,13 @@ class InvitationSerializer(serializers.ModelSerializer):
         vacancy = validated_data["vacancy"]
 
         try:
-            return Invitation.objects.create(
+            invitation = Invitation.objects.create(
                 project=vacancy.project,
                 invited_by=request.user,
                 **validated_data,
             )
+            enqueue_invitation_created_email(invitation.pk)
+            return invitation
         except (DjangoValidationError, IntegrityError) as error:
             raise_serializer_validation(error)
 

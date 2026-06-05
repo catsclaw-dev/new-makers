@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 from django.contrib.auth import get_user_model
+from django.db import IntegrityError, transaction
 from django.test import TestCase
 from django.urls import reverse
 
 from apps.directories.models import Role
-from apps.projects.models import Project, ProjectVacancy
+from apps.projects.models import Project, ProjectMembership, ProjectVacancy
+from apps.specialists.models import SpecialistProfile
 
 
 User = get_user_model()
@@ -26,9 +28,18 @@ class ProjectBusinessTests(TestCase):
             email="other@example.com",
             password="password",
         )
+        self.specialist_user = User.objects.create_user(
+            username="specialist",
+            email="specialist@example.com",
+            password="password",
+        )
         self.role = Role.objects.create(
             name="Backend-разработчик",
             slug="backend-developer",
+        )
+        self.specialist = SpecialistProfile.objects.create(
+            user=self.specialist_user,
+            bio="Специалист для проверки повторного участия.",
         )
 
     def create_project(self, **kwargs: object) -> object:
@@ -105,3 +116,44 @@ class ProjectBusinessTests(TestCase):
 
         self.assertEqual(other_response.status_code, 404)
         self.assertEqual(owner_response.status_code, 200)
+
+    def test_specialist_can_be_added_again_after_left_membership(self) -> None:
+        """
+        Проверяет повторное добавление специалиста после выхода из проекта.
+        """
+        project = self.create_project(status=Project.Status.PUBLISHED)
+        ProjectMembership.objects.create(
+            project=project,
+            specialist=self.specialist,
+            role=self.role,
+            status=ProjectMembership.Status.LEFT,
+        )
+
+        membership = ProjectMembership.objects.create(
+            project=project,
+            specialist=self.specialist,
+            role=self.role,
+            status=ProjectMembership.Status.ACTIVE,
+        )
+
+        self.assertEqual(membership.status, ProjectMembership.Status.ACTIVE)
+
+    def test_specialist_cannot_have_duplicate_active_membership(self) -> None:
+        """
+        Проверяет запрет двух активных участий в одной роли проекта.
+        """
+        project = self.create_project(status=Project.Status.PUBLISHED)
+        ProjectMembership.objects.create(
+            project=project,
+            specialist=self.specialist,
+            role=self.role,
+            status=ProjectMembership.Status.ACTIVE,
+        )
+
+        with self.assertRaises(IntegrityError), transaction.atomic():
+            ProjectMembership.objects.create(
+                project=project,
+                specialist=self.specialist,
+                role=self.role,
+                status=ProjectMembership.Status.ACTIVE,
+            )

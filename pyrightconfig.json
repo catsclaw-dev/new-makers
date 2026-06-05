@@ -8,7 +8,7 @@
     "meetService/media",
     "meetService/staticfiles"
   ],
-  "venvPath": "/home/catsclaw/projs/web-course-2-sem",
+  "venvPath": ".",
   "venv": "venv",
   "pythonVersion": "3.13"
 }

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+  </head>
+  <body style="margin:0;padding:0;background:#f3f5f2;color:#1f2933;font-family:Arial,Helvetica,sans-serif;">
+    <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;">{{ preheader }}</div>
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f3f5f2;padding:32px 12px;">
+      <tr>
+        <td align="center">
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:640px;background:#ffffff;border:1px solid #d9e2d0;border-radius:8px;overflow:hidden;">
+            <tr>
+              <td style="background:#20382f;padding:22px 28px;">
+                <div style="font-size:20px;line-height:24px;font-weight:700;color:#ffffff;">MeetService</div>
+                <div style="font-size:13px;line-height:20px;color:#cfe0d4;margin-top:4px;">Сервис поиска IT-команды</div>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:30px 28px 8px;">
+                <h1 style="margin:0 0 16px;font-size:26px;line-height:32px;color:#20382f;">{{ title }}</h1>
+                <p style="margin:0 0 16px;font-size:16px;line-height:24px;">{{ greeting }}</p>
+                <p style="margin:0 0 22px;font-size:16px;line-height:24px;color:#334155;">{{ intro }}</p>
+                {% if message %}
+                  <div style="margin:0 0 24px;padding:16px 18px;border-left:4px solid #547c5f;background:#f6faf5;color:#24352c;font-size:15px;line-height:23px;">
+                    {{ message|linebreaksbr }}
+                  </div>
+                {% endif %}
+                {% if details %}
+                  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin:0 0 26px;border-collapse:collapse;">
+                    {% for label, value in details %}
+                      <tr>
+                        <td style="padding:10px 0;border-bottom:1px solid #e5ece2;color:#667085;font-size:14px;line-height:20px;width:36%;">{{ label }}</td>
+                        <td style="padding:10px 0;border-bottom:1px solid #e5ece2;color:#1f2933;font-size:14px;line-height:20px;font-weight:600;">{{ value }}</td>
+                      </tr>
+                    {% endfor %}
+                  </table>
+                {% endif %}
+                {% if action_url %}
+                  <a href="{{ action_url }}" style="display:inline-block;background:#547c5f;color:#ffffff;text-decoration:none;padding:12px 18px;border-radius:6px;font-size:15px;line-height:20px;font-weight:700;">{{ action_label }}</a>
+                {% endif %}
+              </td>
+            </tr>
+            {% if action_url %}
+              <tr>
+                <td style="padding:24px 28px 28px;color:#667085;font-size:13px;line-height:20px;">
+                  Если кнопка не открывается, скопируйте ссылку в браузер:<br>
+                  <a href="{{ action_url }}" style="color:#38604a;word-break:break-all;">{{ action_url }}</a>
+                </td>
+              </tr>
+            {% endif %}
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

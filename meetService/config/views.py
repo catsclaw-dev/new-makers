@@ -10,7 +10,7 @@ from apps.specialists.models import SpecialistProfile
 
 def global_search(request: HttpRequest) -> HttpResponse:
     """
-    Выполняет логику функции.
+    Выполняет глобальный поиск по проектам и специалистам.
     Args:
         request: HTTP-запрос текущего пользователя
     """
