@@ -18,7 +18,9 @@ class SentryTelemetryTests(SimpleTestCase):
     """Tests for Sentry configuration helpers."""
 
     def test_empty_dsn_disables_sentry(self) -> None:
-        """Sentry is not initialized when DSN is empty."""
+        """
+        Sentry is not initialized when DSN is empty.
+        """
         config = build_sentry_config(
             dsn="",
             environment="production",
@@ -30,7 +32,9 @@ class SentryTelemetryTests(SimpleTestCase):
         self.assertIsNone(config)
 
     def test_whitespace_dsn_disables_sentry(self) -> None:
-        """Whitespace-only DSN is treated as missing."""
+        """
+        Whitespace-only DSN is treated as missing.
+        """
         config = build_sentry_config(
             dsn="   ",
             environment="production",
@@ -42,7 +46,9 @@ class SentryTelemetryTests(SimpleTestCase):
         self.assertIsNone(config)
 
     def test_dsn_is_trimmed(self) -> None:
-        """Sentry DSN is stripped before being stored."""
+        """
+        Sentry DSN is stripped before being stored.
+        """
         config = build_sentry_config(
             dsn=" https://example@sentry.local/1 ",
             environment="production",
@@ -55,7 +61,9 @@ class SentryTelemetryTests(SimpleTestCase):
         self.assertEqual(config.dsn, "https://example@sentry.local/1")
 
     def test_blank_environment_defaults_to_development(self) -> None:
-        """Empty Sentry environment falls back to development."""
+        """
+        Empty Sentry environment falls back to development.
+        """
         config = build_sentry_config(
             dsn="https://example@sentry.local/1",
             environment=" ",
@@ -68,19 +76,27 @@ class SentryTelemetryTests(SimpleTestCase):
         self.assertEqual(config.environment, "development")
 
     def test_sample_rate_below_zero_is_clamped(self) -> None:
-        """Sentry sample rates cannot be lower than zero."""
+        """
+        Sentry sample rates cannot be lower than zero.
+        """
         self.assertEqual(clamp_sample_rate(-1.0), 0.0)
 
     def test_sample_rate_above_one_is_clamped(self) -> None:
-        """Sentry sample rates cannot be greater than one."""
+        """
+        Sentry sample rates cannot be greater than one.
+        """
         self.assertEqual(clamp_sample_rate(2.0), 1.0)
 
     def test_valid_sample_rate_is_preserved(self) -> None:
-        """Valid Sentry sample rates are not changed."""
+        """
+        Valid Sentry sample rates are not changed.
+        """
         self.assertEqual(clamp_sample_rate(0.75), 0.75)
 
     def test_build_config_clamps_tracing_rates(self) -> None:
-        """Trace and profile rates are normalized while building config."""
+        """
+        Trace and profile rates are normalized while building config.
+        """
         config = build_sentry_config(
             dsn="https://example@sentry.local/1",
             environment="production",
@@ -94,7 +110,9 @@ class SentryTelemetryTests(SimpleTestCase):
         self.assertEqual(config.profiles_sample_rate, 0.0)
 
     def test_init_kwargs_omit_empty_release(self) -> None:
-        """Sentry init kwargs do not include an empty release."""
+        """
+        Sentry init kwargs do not include an empty release.
+        """
         kwargs = sentry_init_kwargs(
             SentryConfig(
                 dsn="https://example@sentry.local/1",
@@ -109,7 +127,9 @@ class SentryTelemetryTests(SimpleTestCase):
         self.assertNotIn("release", kwargs)
 
     def test_init_kwargs_include_release_when_present(self) -> None:
-        """Sentry release is passed when configured."""
+        """
+        Sentry release is passed when configured.
+        """
         kwargs = sentry_init_kwargs(
             SentryConfig(
                 dsn="https://example@sentry.local/1",
@@ -124,11 +144,15 @@ class SentryTelemetryTests(SimpleTestCase):
         self.assertEqual(kwargs["release"], "meetservice@1.0.0")
 
     def test_initialize_sentry_returns_false_without_config(self) -> None:
-        """Sentry initialization reports disabled state when config is absent."""
+        """
+        Sentry initialization reports disabled state when config is absent.
+        """
         self.assertFalse(initialize_sentry(None))
 
     def test_initialize_sentry_calls_sdk_init(self) -> None:
-        """Sentry initialization delegates to sentry_sdk.init."""
+        """
+        Sentry initialization delegates to sentry_sdk.init.
+        """
         sentry_sdk = ModuleType("sentry_sdk")
         sentry_sdk.init = mock.Mock()
 

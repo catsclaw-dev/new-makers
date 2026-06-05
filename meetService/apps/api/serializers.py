@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import IntegrityError
@@ -19,7 +21,12 @@ from apps.specialists.models import SpecialistProfile, SpecialistTechnology
 User = get_user_model()
 
 
-def raise_serializer_validation(error) -> None:
+def raise_serializer_validation(error: object) -> None:
+    """
+    Преобразует Django-ошибку в ошибку сериализатора.
+    Args:
+        error: Объект ошибки
+    """
     if hasattr(error, "message_dict"):
         raise serializers.ValidationError(error.message_dict)
 
@@ -41,7 +48,12 @@ class UserBriefSerializer(serializers.ModelSerializer):
         )
         read_only_fields = fields
 
-    def get_display_name(self, obj) -> str:
+    def get_display_name(self, obj: object) -> str:
+        """
+        Возвращает значение `name`.
+        Args:
+            obj: Объект модели
+        """
         return obj.get_full_name() or obj.username
 
 
@@ -66,21 +78,36 @@ class RoleSerializer(serializers.ModelSerializer):
         )
         read_only_fields = ("created_at", "updated_at")
 
-    def get_open_vacancies_count(self, obj) -> int:
+    def get_open_vacancies_count(self, obj: object) -> int:
+        """
+        Возвращает значение `open vacancies count`.
+        Args:
+            obj: Объект модели
+        """
         return getattr(
             obj,
             "open_vacancies_count",
             obj.project_vacancies.filter(status=ProjectVacancy.Status.OPEN).count(),
         )
 
-    def get_main_specialists_count(self, obj) -> int:
+    def get_main_specialists_count(self, obj: object) -> int:
+        """
+        Возвращает значение `main specialists count`.
+        Args:
+            obj: Объект модели
+        """
         return getattr(
             obj,
             "main_specialists_count",
             obj.main_specialists.count(),
         )
 
-    def get_preferred_specialists_count(self, obj) -> int:
+    def get_preferred_specialists_count(self, obj: object) -> int:
+        """
+        Возвращает значение `preferred specialists count`.
+        Args:
+            obj: Объект модели
+        """
         return getattr(
             obj,
             "preferred_specialists_count",
@@ -112,17 +139,32 @@ class TechnologySerializer(serializers.ModelSerializer):
         )
         read_only_fields = ("created_at", "updated_at")
 
-    def get_projects_count(self, obj) -> int:
+    def get_projects_count(self, obj: object) -> int:
+        """
+        Возвращает значение `projects count`.
+        Args:
+            obj: Объект модели
+        """
         return getattr(obj, "projects_count", obj.projects.count())
 
-    def get_published_projects_count(self, obj) -> int:
+    def get_published_projects_count(self, obj: object) -> int:
+        """
+        Возвращает значение `published projects count`.
+        Args:
+            obj: Объект модели
+        """
         return getattr(
             obj,
             "published_projects_count",
             obj.projects.filter(status=Project.Status.PUBLISHED).count(),
         )
 
-    def get_specialists_count(self, obj) -> int:
+    def get_specialists_count(self, obj: object) -> int:
+        """
+        Возвращает значение `specialists count`.
+        Args:
+            obj: Объект модели
+        """
         return getattr(obj, "specialists_count", obj.specialists.count())
 
 
@@ -143,10 +185,20 @@ class ProjectBriefSerializer(serializers.ModelSerializer):
         )
         read_only_fields = fields
 
-    def get_owner_name(self, obj) -> str:
+    def get_owner_name(self, obj: object) -> str:
+        """
+        Возвращает значение `owner name`.
+        Args:
+            obj: Объект модели
+        """
         return obj.owner.get_full_name() or obj.owner.username
 
-    def get_open_vacancy_count(self, obj) -> int:
+    def get_open_vacancy_count(self, obj: object) -> int:
+        """
+        Возвращает значение `open vacancy count`.
+        Args:
+            obj: Объект модели
+        """
         return getattr(
             obj,
             "open_vacancy_count",
@@ -198,13 +250,28 @@ class ProjectVacancySerializer(serializers.ModelSerializer):
             "updated_at",
         )
 
-    def get_remaining_slots(self, obj) -> int:
+    def get_remaining_slots(self, obj: object) -> int:
+        """
+        Возвращает значение `remaining slots`.
+        Args:
+            obj: Объект модели
+        """
         return obj.remaining_slots()
 
-    def get_is_open(self, obj) -> bool:
+    def get_is_open(self, obj: object) -> bool:
+        """
+        Возвращает значение `is open`.
+        Args:
+            obj: Объект модели
+        """
         return obj.is_open()
 
-    def validate(self, attrs):
+    def validate(self, attrs: dict[str, object]) -> dict[str, object]:
+        """
+        Проверяет данные сериализатора.
+        Args:
+            attrs: Данные сериализатора
+        """
         project = self.context.get("project") or attrs.get("project")
 
         if self.instance is not None and project is None:
@@ -223,13 +290,24 @@ class ProjectVacancySerializer(serializers.ModelSerializer):
         attrs["project"] = project
         return attrs
 
-    def create(self, validated_data):
+    def create(self, validated_data: dict[str, object]) -> object:
+        """
+        Создаёт объект из проверенных данных.
+        Args:
+            validated_data: Проверенные данные сериализатора
+        """
         try:
             return super().create(validated_data)
         except DjangoValidationError as error:
             raise_serializer_validation(error)
 
-    def update(self, instance, validated_data):
+    def update(self, instance: object, validated_data: dict[str, object]) -> object:
+        """
+        Обновляет объект проверенными данными.
+        Args:
+            instance: Экземпляр объекта для обновления
+            validated_data: Проверенные данные сериализатора
+        """
         try:
             return super().update(instance, validated_data)
         except DjangoValidationError as error:
@@ -298,7 +376,12 @@ class ProjectSerializer(serializers.ModelSerializer):
             "updated_at",
         )
 
-    def get_open_vacancy_count(self, obj) -> int:
+    def get_open_vacancy_count(self, obj: object) -> int:
+        """
+        Возвращает значение `open vacancy count`.
+        Args:
+            obj: Объект модели
+        """
         return getattr(
             obj,
             "open_vacancy_count",
@@ -308,13 +391,28 @@ class ProjectSerializer(serializers.ModelSerializer):
             ).count(),
         )
 
-    def get_members_count(self, obj) -> int:
+    def get_members_count(self, obj: object) -> int:
+        """
+        Возвращает значение `members count`.
+        Args:
+            obj: Объект модели
+        """
         return getattr(obj, "members_count", obj.memberships.count())
 
-    def get_favorite_count(self, obj) -> int:
+    def get_favorite_count(self, obj: object) -> int:
+        """
+        Возвращает значение `favorite count`.
+        Args:
+            obj: Объект модели
+        """
         return getattr(obj, "favorite_count", obj.favorited_by.count())
 
-    def get_is_favorite(self, obj) -> bool:
+    def get_is_favorite(self, obj: object) -> bool:
+        """
+        Возвращает значение `is favorite`.
+        Args:
+            obj: Объект модели
+        """
         annotated_value = getattr(obj, "is_favorited", None)
 
         if annotated_value is not None:
@@ -330,11 +428,21 @@ class ProjectSerializer(serializers.ModelSerializer):
             project=obj,
         ).exists()
 
-    def get_can_manage(self, obj) -> bool:
+    def get_can_manage(self, obj: object) -> bool:
+        """
+        Возвращает значение `can manage`.
+        Args:
+            obj: Объект модели
+        """
         request = self.context.get("request")
         return bool(request and obj.can_be_edited_by(request.user))
 
-    def get_can_apply(self, obj) -> bool:
+    def get_can_apply(self, obj: object) -> bool:
+        """
+        Возвращает значение `can apply`.
+        Args:
+            obj: Объект модели
+        """
         request = self.context.get("request")
 
         if not request or not request.user.is_authenticated:
@@ -361,18 +469,43 @@ class ProjectSerializer(serializers.ModelSerializer):
         ).exists()
 
     def validate_title(self, value: str) -> str:
+        """
+        Проверяет поле `title`.
+        Args:
+            value: Проверяемое значение
+        """
         return value.strip()
 
     def validate_short_description(self, value: str) -> str:
+        """
+        Проверяет поле `short description`.
+        Args:
+            value: Проверяемое значение
+        """
         return value.strip()
 
     def validate_description(self, value: str) -> str:
+        """
+        Проверяет поле `description`.
+        Args:
+            value: Проверяемое значение
+        """
         return value.strip()
 
     def validate_goal(self, value: str) -> str:
+        """
+        Проверяет поле `goal`.
+        Args:
+            value: Проверяемое значение
+        """
         return value.strip()
 
-    def create(self, validated_data):
+    def create(self, validated_data: dict[str, object]) -> object:
+        """
+        Создаёт объект из проверенных данных.
+        Args:
+            validated_data: Проверенные данные сериализатора
+        """
         technology_ids = validated_data.pop("technology_ids", [])
 
         try:
@@ -383,7 +516,13 @@ class ProjectSerializer(serializers.ModelSerializer):
         self._sync_technologies(project, technology_ids)
         return project
 
-    def update(self, instance, validated_data):
+    def update(self, instance: object, validated_data: dict[str, object]) -> object:
+        """
+        Обновляет объект проверенными данными.
+        Args:
+            instance: Экземпляр объекта для обновления
+            validated_data: Проверенные данные сериализатора
+        """
         technology_ids = validated_data.pop("technology_ids", None)
 
         try:
@@ -396,7 +535,13 @@ class ProjectSerializer(serializers.ModelSerializer):
 
         return project
 
-    def _sync_technologies(self, project, technologies) -> None:
+    def _sync_technologies(self, project: Project, technologies: list[Technology]) -> None:
+        """
+        Синхронизирует связанные данные объекта.
+        Args:
+            project: Объект проекта
+            technologies: Список технологий
+        """
         ProjectTechnology.objects.filter(project=project).exclude(
             technology__in=technologies
         ).delete()
@@ -485,13 +630,28 @@ class SpecialistProfileSerializer(serializers.ModelSerializer):
             "updated_at",
         )
 
-    def get_display_name(self, obj) -> str:
+    def get_display_name(self, obj: object) -> str:
+        """
+        Возвращает значение `name`.
+        Args:
+            obj: Объект модели
+        """
         return obj.get_display_name()
 
-    def get_is_available(self, obj) -> bool:
+    def get_is_available(self, obj: object) -> bool:
+        """
+        Возвращает значение `is available`.
+        Args:
+            obj: Объект модели
+        """
         return obj.is_available_for_project()
 
-    def get_active_projects_count(self, obj) -> int:
+    def get_active_projects_count(self, obj: object) -> int:
+        """
+        Возвращает значение `active projects count`.
+        Args:
+            obj: Объект модели
+        """
         return getattr(
             obj,
             "active_projects_count",
@@ -500,16 +660,36 @@ class SpecialistProfileSerializer(serializers.ModelSerializer):
             ).count(),
         )
 
-    def get_applications_count(self, obj) -> int:
+    def get_applications_count(self, obj: object) -> int:
+        """
+        Возвращает значение `applications count`.
+        Args:
+            obj: Объект модели
+        """
         return getattr(obj, "applications_count", obj.applications.count())
 
-    def get_invitations_count(self, obj) -> int:
+    def get_invitations_count(self, obj: object) -> int:
+        """
+        Возвращает значение `invitations count`.
+        Args:
+            obj: Объект модели
+        """
         return getattr(obj, "invitations_count", obj.invitations.count())
 
-    def get_reviews_count(self, obj) -> int:
+    def get_reviews_count(self, obj: object) -> int:
+        """
+        Возвращает значение `reviews count`.
+        Args:
+            obj: Объект модели
+        """
         return getattr(obj, "reviews_count", obj.received_reviews.count())
 
-    def get_average_rating(self, obj):
+    def get_average_rating(self, obj: object) -> float | None:
+        """
+        Возвращает значение `average rating`.
+        Args:
+            obj: Объект модели
+        """
         average_rating = getattr(obj, "average_rating", None)
 
         if average_rating is None:
@@ -517,7 +697,12 @@ class SpecialistProfileSerializer(serializers.ModelSerializer):
 
         return round(float(average_rating), 2)
 
-    def get_can_edit(self, obj) -> bool:
+    def get_can_edit(self, obj: object) -> bool:
+        """
+        Возвращает значение `can edit`.
+        Args:
+            obj: Объект модели
+        """
         request = self.context.get("request")
         return bool(
             request
@@ -526,6 +711,11 @@ class SpecialistProfileSerializer(serializers.ModelSerializer):
         )
 
     def validate_bio(self, value: str) -> str:
+        """
+        Проверяет поле `bio`.
+        Args:
+            value: Проверяемое значение
+        """
         value = value.strip()
 
         if value and len(value) < 20:
@@ -535,7 +725,12 @@ class SpecialistProfileSerializer(serializers.ModelSerializer):
 
         return value
 
-    def create(self, validated_data):
+    def create(self, validated_data: dict[str, object]) -> object:
+        """
+        Создаёт объект из проверенных данных.
+        Args:
+            validated_data: Проверенные данные сериализатора
+        """
         preferred_role_ids = validated_data.pop("preferred_role_ids", [])
         technology_ids = validated_data.pop("technology_ids", [])
 
@@ -548,7 +743,13 @@ class SpecialistProfileSerializer(serializers.ModelSerializer):
         self._sync_technologies(profile, technology_ids)
         return profile
 
-    def update(self, instance, validated_data):
+    def update(self, instance: object, validated_data: dict[str, object]) -> object:
+        """
+        Обновляет объект проверенными данными.
+        Args:
+            instance: Экземпляр объекта для обновления
+            validated_data: Проверенные данные сериализатора
+        """
         preferred_role_ids = validated_data.pop("preferred_role_ids", None)
         technology_ids = validated_data.pop("technology_ids", None)
 
@@ -565,7 +766,13 @@ class SpecialistProfileSerializer(serializers.ModelSerializer):
 
         return profile
 
-    def _sync_technologies(self, profile, technologies) -> None:
+    def _sync_technologies(self, profile: SpecialistProfile, technologies: list[Technology]) -> None:
+        """
+        Синхронизирует связанные данные объекта.
+        Args:
+            profile: Значение параметра `profile`
+            technologies: Список технологий
+        """
         SpecialistTechnology.objects.filter(specialist=profile).exclude(
             technology__in=technologies
         ).delete()
@@ -613,10 +820,20 @@ class ApplicationSerializer(serializers.ModelSerializer):
             "reviewed_by",
         )
 
-    def get_specialist_name(self, obj) -> str:
+    def get_specialist_name(self, obj: object) -> str:
+        """
+        Возвращает значение `specialist name`.
+        Args:
+            obj: Объект модели
+        """
         return obj.specialist.get_display_name()
 
     def validate_message(self, value: str) -> str:
+        """
+        Проверяет поле `message`.
+        Args:
+            value: Проверяемое значение
+        """
         value = value.strip()
 
         if not value:
@@ -624,7 +841,12 @@ class ApplicationSerializer(serializers.ModelSerializer):
 
         return value
 
-    def validate(self, attrs):
+    def validate(self, attrs: dict[str, object]) -> dict[str, object]:
+        """
+        Проверяет данные сериализатора.
+        Args:
+            attrs: Данные сериализатора
+        """
         request = self.context.get("request")
 
         if not request or not request.user.is_authenticated:
@@ -684,7 +906,12 @@ class ApplicationSerializer(serializers.ModelSerializer):
 
         return attrs
 
-    def create(self, validated_data):
+    def create(self, validated_data: dict[str, object]) -> object:
+        """
+        Создаёт объект из проверенных данных.
+        Args:
+            validated_data: Проверенные данные сериализатора
+        """
         request = self.context["request"]
         vacancy = validated_data["vacancy"]
 
@@ -730,9 +957,19 @@ class InvitationSerializer(serializers.ModelSerializer):
         )
 
     def validate_message(self, value: str) -> str:
+        """
+        Проверяет поле `message`.
+        Args:
+            value: Проверяемое значение
+        """
         return value.strip()
 
-    def validate(self, attrs):
+    def validate(self, attrs: dict[str, object]) -> dict[str, object]:
+        """
+        Проверяет данные сериализатора.
+        Args:
+            attrs: Данные сериализатора
+        """
         request = self.context.get("request")
 
         if not request or not request.user.is_authenticated:
@@ -796,7 +1033,12 @@ class InvitationSerializer(serializers.ModelSerializer):
 
         return attrs
 
-    def create(self, validated_data):
+    def create(self, validated_data: dict[str, object]) -> object:
+        """
+        Создаёт объект из проверенных данных.
+        Args:
+            validated_data: Проверенные данные сериализатора
+        """
         request = self.context["request"]
         vacancy = validated_data["vacancy"]
 
@@ -823,7 +1065,12 @@ class FavoriteProjectSerializer(serializers.ModelSerializer):
         )
         read_only_fields = ("added_at",)
 
-    def validate_project(self, project):
+    def validate_project(self, project: Project) -> Project:
+        """
+        Проверяет поле `project`.
+        Args:
+            project: Объект проекта
+        """
         request = self.context.get("request")
 
         if project.status not in [Project.Status.PUBLISHED, Project.Status.CLOSED]:
@@ -842,7 +1089,12 @@ class FavoriteProjectSerializer(serializers.ModelSerializer):
 
         return project
 
-    def create(self, validated_data):
+    def create(self, validated_data: dict[str, object]) -> object:
+        """
+        Создаёт объект из проверенных данных.
+        Args:
+            validated_data: Проверенные данные сериализатора
+        """
         request = self.context["request"]
 
         try:
@@ -885,10 +1137,20 @@ class ReviewSerializer(serializers.ModelSerializer):
             "updated_at",
         )
 
-    def get_is_public(self, obj) -> bool:
+    def get_is_public(self, obj: object) -> bool:
+        """
+        Возвращает значение `is public`.
+        Args:
+            obj: Объект модели
+        """
         return obj.is_public()
 
     def validate_text(self, value: str) -> str:
+        """
+        Проверяет поле `text`.
+        Args:
+            value: Проверяемое значение
+        """
         value = value.strip()
 
         if not value:
@@ -896,7 +1158,12 @@ class ReviewSerializer(serializers.ModelSerializer):
 
         return value
 
-    def validate(self, attrs):
+    def validate(self, attrs: dict[str, object]) -> dict[str, object]:
+        """
+        Проверяет данные сериализатора.
+        Args:
+            attrs: Данные сериализатора
+        """
         request = self.context.get("request")
 
         if not request or not request.user.is_authenticated:
@@ -933,7 +1200,12 @@ class ReviewSerializer(serializers.ModelSerializer):
 
         return attrs
 
-    def create(self, validated_data):
+    def create(self, validated_data: dict[str, object]) -> object:
+        """
+        Создаёт объект из проверенных данных.
+        Args:
+            validated_data: Проверенные данные сериализатора
+        """
         request = self.context["request"]
 
         try:

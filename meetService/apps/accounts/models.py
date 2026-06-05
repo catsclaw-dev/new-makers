@@ -23,7 +23,9 @@ class User(AbstractUser):
     history = HistoricalRecords(verbose_name=_("история изменений"))
 
     def has_active_owned_projects(self) -> bool:
-        """Проверяет, есть ли у пользователя собственные неархивные проекты."""
+        """
+        Проверяет, есть ли у пользователя собственные неархивные проекты.
+        """
         if not self.pk:
             return False
 
@@ -36,7 +38,9 @@ class User(AbstractUser):
         )
 
     def get_dynamic_role(self) -> str:
-        """Возвращает динамическую роль пользователя на сервисе."""
+        """
+        Возвращает динамическую роль пользователя на сервисе.
+        """
         if self.is_staff or self.is_superuser or self.role == self.UserRole.ADMIN:
             return self.UserRole.ADMIN
 
@@ -46,16 +50,22 @@ class User(AbstractUser):
         return self.UserRole.SPECIALIST
 
     def get_dynamic_role_display(self) -> str:
-        """Возвращает человекочитаемое название динамической роли."""
+        """
+        Возвращает человекочитаемое название динамической роли.
+        """
         dynamic_role = self.get_dynamic_role()
         return self.UserRole(dynamic_role).label
 
     def is_dynamic_project_owner(self) -> bool:
-        """Проверяет, является ли пользователь владельцем активных проектов."""
+        """
+        Проверяет, является ли пользователь владельцем активных проектов.
+        """
         return self.get_dynamic_role() == self.UserRole.PROJECT_OWNER
 
     def is_dynamic_specialist(self) -> bool:
-        """Проверяет, отображается ли пользователь как специалист."""
+        """
+        Проверяет, отображается ли пользователь как специалист.
+        """
         return self.get_dynamic_role() == self.UserRole.SPECIALIST
 
     class Meta:
@@ -64,6 +74,9 @@ class User(AbstractUser):
         ordering = ["username"]
 
     def __str__(self) -> str:
+        """
+        Возвращает строковое представление объекта.
+        """
         return self.get_full_name() or self.username
 
 

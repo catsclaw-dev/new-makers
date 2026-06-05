@@ -1,6 +1,9 @@
+from __future__ import annotations
+
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from rest_framework import status
+from rest_framework.response import Response
 from rest_framework.test import APITestCase
 
 from apps.directories.models import Role, Technology
@@ -13,7 +16,10 @@ User = get_user_model()
 
 
 class MeetServiceApiTests(APITestCase):
-    def setUp(self):
+    def setUp(self) -> None:
+        """
+        Подготавливает тестовые данные.
+        """
         self.owner = User.objects.create_user(
             username="owner",
             email="owner@example.com",
@@ -65,10 +71,18 @@ class MeetServiceApiTests(APITestCase):
             required_count=2,
         )
 
-    def response_results(self, response):
+    def response_results(self, response: Response) -> list[dict[str, object]]:
+        """
+        Выполняет логику функции.
+        Args:
+            response: Значение параметра `response`
+        """
         return response.data.get("results", response.data)
 
-    def test_public_project_list_shows_published_projects_only(self):
+    def test_public_project_list_shows_published_projects_only(self) -> None:
+        """
+        Проверяет сценарий `test_public_project_list_shows_published_projects_only`.
+        """
         Project.objects.create(
             owner=self.owner,
             title="Draft API",
@@ -85,7 +99,10 @@ class MeetServiceApiTests(APITestCase):
         self.assertIn(self.project.title, titles)
         self.assertNotIn("Draft API", titles)
 
-    def test_project_filter_by_technology_and_open_vacancies(self):
+    def test_project_filter_by_technology_and_open_vacancies(self) -> None:
+        """
+        Проверяет сценарий `test_project_filter_by_technology_and_open_vacancies`.
+        """
         response = self.client.get(
             reverse("api:project-list"),
             {
@@ -100,7 +117,10 @@ class MeetServiceApiTests(APITestCase):
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]["id"], self.project.id)
 
-    def test_project_serializer_uses_request_context_for_user_fields(self):
+    def test_project_serializer_uses_request_context_for_user_fields(self) -> None:
+        """
+        Проверяет сценарий `test_project_serializer_uses_request_context_for_user_fields`.
+        """
         FavoriteProject.objects.create(user=self.specialist_user, project=self.project)
         self.client.force_authenticate(self.specialist_user)
 
@@ -113,7 +133,10 @@ class MeetServiceApiTests(APITestCase):
         self.assertTrue(response.data["can_apply"])
         self.assertFalse(response.data["can_manage"])
 
-    def test_specialist_can_create_application(self):
+    def test_specialist_can_create_application(self) -> None:
+        """
+        Проверяет сценарий `test_specialist_can_create_application`.
+        """
         self.client.force_authenticate(self.specialist_user)
 
         response = self.client.post(
@@ -133,7 +156,10 @@ class MeetServiceApiTests(APITestCase):
             ).exists()
         )
 
-    def test_owner_can_accept_application(self):
+    def test_owner_can_accept_application(self) -> None:
+        """
+        Проверяет сценарий `test_owner_can_accept_application`.
+        """
         application = Application.objects.create(
             project=self.project,
             vacancy=self.vacancy,
@@ -158,7 +184,10 @@ class MeetServiceApiTests(APITestCase):
             ).exists()
         )
 
-    def test_project_owner_can_create_vacancy_via_nested_endpoint(self):
+    def test_project_owner_can_create_vacancy_via_nested_endpoint(self) -> None:
+        """
+        Проверяет сценарий `test_project_owner_can_create_vacancy_via_nested_endpoint`.
+        """
         self.client.force_authenticate(self.owner)
 
         response = self.client.post(
@@ -178,7 +207,10 @@ class MeetServiceApiTests(APITestCase):
             ProjectVacancy.objects.filter(project=self.project, title="QA").exists()
         )
 
-    def test_non_owner_cannot_create_project_vacancy(self):
+    def test_non_owner_cannot_create_project_vacancy(self) -> None:
+        """
+        Проверяет сценарий `test_non_owner_cannot_create_project_vacancy`.
+        """
         self.client.force_authenticate(self.specialist_user)
 
         response = self.client.post(

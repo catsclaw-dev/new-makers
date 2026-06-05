@@ -9,7 +9,9 @@ import config.urls
 
 
 def reload_urlconf() -> None:
-    """Reload project URLs after settings overrides change conditional routes."""
+    """
+    Reload project URLs after settings overrides change conditional routes.
+    """
     importlib.reload(config.urls)
     clear_url_caches()
 
@@ -19,14 +21,18 @@ class SilkConfigurationTests(SimpleTestCase):
 
     @override_settings(DEBUG=True, SILK_ENABLED=True, ROOT_URLCONF="config.urls")
     def test_silk_url_is_available_when_enabled(self) -> None:
-        """Silk index route is mounted when debug profiling is enabled."""
+        """
+        Silk index route is mounted when debug profiling is enabled.
+        """
         reload_urlconf()
 
         self.assertEqual(reverse("silk:summary"), "/silk/")
 
     @override_settings(DEBUG=True, SILK_ENABLED=False, ROOT_URLCONF="config.urls")
     def test_silk_url_is_hidden_when_disabled(self) -> None:
-        """Silk index route is not mounted when profiling flag is disabled."""
+        """
+        Silk index route is not mounted when profiling flag is disabled.
+        """
         reload_urlconf()
 
         with self.assertRaises(NoReverseMatch):

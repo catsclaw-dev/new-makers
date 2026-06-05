@@ -1,14 +1,17 @@
+from __future__ import annotations
+
 from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.core.exceptions import ValidationError
 from django.db import models, transaction
 from django.urls import reverse
-from django.db.models import F, Q, constraints, Count
+from django.db.models import F, Q, constraints, Count, QuerySet
 from django.utils import timezone
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from simple_history.models import HistoricalRecords
 
+from apps.accounts.models import User
 from apps.directories.models import Role, Technology
 from apps.specialists.models import SpecialistProfile
 from apps.common_validators import validate_project_cover_image, validate_project_file
@@ -17,12 +20,16 @@ from apps.common_validators import validate_project_cover_image, validate_projec
 class ProjectQuerySet(models.QuerySet):
     """Набор запросов для проектов."""
 
-    def published(self):
-        """Возвращает только опубликованные проекты."""
+    def published(self) -> QuerySet:
+        """
+        Возвращает только опубликованные проекты.
+        """
         return self.filter(status="published")
 
-    def with_open_vacancy_count(self):
-        """Добавляет количество открытых ролей к каждому проекту."""
+    def with_open_vacancy_count(self) -> QuerySet:
+        """
+        Добавляет количество открытых ролей к каждому проекту.
+        """
         return self.annotate(
             open_vacancy_count=Count(
                 "vacancies",
@@ -30,8 +37,10 @@ class ProjectQuerySet(models.QuerySet):
             )
         )
 
-    def urgent(self):
-        """Возвращает опубликованные проекты, где есть открытые роли."""
+    def urgent(self) -> QuerySet:
+        """
+        Возвращает опубликованные проекты, где есть открытые роли.
+        """
         return (
             self.published().with_open_vacancy_count().filter(open_vacancy_count__gt=0)
         )
@@ -40,16 +49,28 @@ class ProjectQuerySet(models.QuerySet):
 class ProjectManager(models.Manager):
     """Собственный менеджер модели Project."""
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet:
+        """
+        Возвращает queryset с нужными фильтрами и оптимизациями.
+        """
         return ProjectQuerySet(self.model, using=self._db)
 
-    def published(self):
+    def published(self) -> QuerySet:
+        """
+        Выполняет логику функции.
+        """
         return self.get_queryset().published()
 
-    def with_open_vacancy_count(self):
+    def with_open_vacancy_count(self) -> QuerySet:
+        """
+        Выполняет логику функции.
+        """
         return self.get_queryset().with_open_vacancy_count()
 
-    def urgent(self):
+    def urgent(self) -> QuerySet:
+        """
+        Выполняет логику функции.
+        """
         return self.get_queryset().urgent()
 
 
@@ -191,29 +212,50 @@ class Project(models.Model):
         ordering = ["-created_at"]
 
     def __str__(self) -> str:
+        """
+        Возвращает строковое представление объекта.
+        """
         return self.title
 
     def get_absolute_url(self) -> str:
+        """
+        Возвращает значение `absolute url`.
+        """
         return reverse("projects:project_detail", kwargs={"slug": self.slug})
 
     def is_published(self) -> bool:
-        """Проверяет, опубликован ли проект."""
+        """
+        Проверяет, опубликован ли проект.
+        """
         return self.status == self.Status.PUBLISHED
 
     def has_open_vacancies(self) -> bool:
-        """Проверяет, есть ли у проекта открытые роли."""
+        """
+        Проверяет, есть ли у проекта открытые роли.
+        """
         return self.vacancies.filter(status=ProjectVacancy.Status.OPEN).exists()
 
     def can_publish(self) -> bool:
-        """Проект можно публиковать только при наличии открытых ролей."""
+        """
+        Проект можно публиковать только при наличии открытых ролей.
+        """
         return self.has_open_vacancies()
 
-    def can_be_edited_by(self, user) -> bool:
-        """Редактировать проект может владелец или администратор."""
+    def can_be_edited_by(self, user: User | None) -> bool:
+        """
+        Редактировать проект может владелец или администратор.
+        Args:
+            user: Объект пользователя
+        """
         return bool(user and (user.is_staff or self.owner_id == user.id))
 
-    def save(self, *args, **kwargs):
-        """Очищает текстовые поля и создаёт slug, если он не указан."""
+    def save(self, *args: object, **kwargs: object) -> None:
+        """
+        Очищает текстовые поля и создаёт slug, если он не указан.
+        Args:
+            *args: Позиционные аргументы
+            **kwargs: Именованные аргументы
+        """
         self.title = self.title.strip()
         self.short_description = self.short_description.strip()
         self.description = self.description.strip()
@@ -276,6 +318,9 @@ class ProjectTechnology(models.Model):
         ]
 
     def __str__(self) -> str:
+        """
+        Возвращает строковое представление объекта.
+        """
         return f"{self.project} — {self.technology}"
 
 
@@ -358,26 +403,40 @@ class ProjectVacancy(models.Model):
         ]
 
     def __str__(self) -> str:
+        """
+        Возвращает строковое представление объекта.
+        """
         return f"{self.project} — {self.title}"
 
     def is_open(self) -> bool:
-        """Проверяет, открыта ли роль для откликов."""
+        """
+        Проверяет, открыта ли роль для откликов.
+        """
         return (
             self.status == self.Status.OPEN and self.current_count < self.required_count
         )
 
     def remaining_slots(self) -> int:
-        """Возвращает количество свободных мест по роли."""
+        """
+        Возвращает количество свободных мест по роли.
+        """
         return max(self.required_count - self.current_count, 0)
 
     def close_if_filled(self) -> None:
-        """Закрывает роль, если нужное количество участников уже набрано."""
+        """
+        Закрывает роль, если нужное количество участников уже набрано.
+        """
         if self.current_count >= self.required_count:
             self.status = self.Status.CLOSED
             self.save(update_fields=["current_count", "status", "updated_at"])
 
-    def add_specialist(self, *, specialist, added_by=None):
-        "Атомарное добавление специалиста на вакансию"
+    def add_specialist(self, *, specialist: SpecialistProfile, added_by: User | None = None) -> ProjectMembership:
+        """
+        Атомарное добавление специалиста на вакансию.
+        Args:
+            specialist: Профиль специалиста
+            added_by: Пользователь, добавивший участника
+        """
         with transaction.atomic():
             vacancy = (
                 ProjectVacancy.objects.select_for_update()
@@ -413,7 +472,13 @@ class ProjectVacancy(models.Model):
 
             return membership
 
-    def save(self, *args, **kwargs):
+    def save(self, *args: object, **kwargs: object) -> None:
+        """
+        Сохраняет объект с учетом бизнес-правил.
+        Args:
+            *args: Позиционные аргументы
+            **kwargs: Именованные аргументы
+        """
         self.title = self.title.strip()
         self.description = self.description.strip()
 
@@ -487,10 +552,15 @@ class ProjectMembership(models.Model):
         ]
 
     def __str__(self) -> str:
+        """
+        Возвращает строковое представление объекта.
+        """
         return f"{self.specialist} в проекте {self.project}"
 
     def is_active(self) -> bool:
-        """Проверяет, является ли участник активным."""
+        """
+        Проверяет, является ли участник активным.
+        """
         return self.status == self.Status.ACTIVE
 
 
@@ -544,8 +614,17 @@ class ProjectFile(models.Model):
         ordering = ["-uploaded_at"]
 
     def __str__(self) -> str:
+        """
+        Возвращает строковое представление объекта.
+        """
         return f"{self.project} — {self.title}"
 
-    def save(self, *args, **kwargs):
+    def save(self, *args: object, **kwargs: object) -> None:
+        """
+        Сохраняет объект с учетом бизнес-правил.
+        Args:
+            *args: Позиционные аргументы
+            **kwargs: Именованные аргументы
+        """
         self.title = self.title.strip()
         super().save(*args, **kwargs)

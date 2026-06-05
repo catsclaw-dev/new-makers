@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from django import forms
 
 from apps.specialists.models import SpecialistProfile
@@ -124,8 +126,10 @@ class SpecialistProfileForm(forms.ModelForm):
             "all": ("css/site.css",),
         }
 
-    def clean_experience_years(self):
-        """Проверяет корректность опыта."""
+    def clean_experience_years(self) -> object:
+        """
+        Проверяет корректность опыта.
+        """
         experience_years = self.cleaned_data.get("experience_years")
 
         if experience_years is not None and experience_years > 60:
@@ -133,8 +137,10 @@ class SpecialistProfileForm(forms.ModelForm):
 
         return experience_years
 
-    def clean_bio(self):
-        """Очищает описание специалиста."""
+    def clean_bio(self) -> object:
+        """
+        Очищает описание специалиста.
+        """
         bio = self.cleaned_data.get("bio", "").strip()
 
         if bio and len(bio) < 20:
@@ -144,8 +150,12 @@ class SpecialistProfileForm(forms.ModelForm):
 
         return bio
 
-    def save(self, commit=True):
-        """Сохраняет профиль специалиста через commit=False."""
+    def save(self, commit: bool = True) -> object:
+        """
+        Сохраняет профиль специалиста через commit=False.
+        Args:
+            commit: Признак необходимости сохранить объект в базе данных
+        """
         profile = super().save(commit=False)
 
         if profile.bio:

@@ -1,6 +1,9 @@
+from __future__ import annotations
+
 from pathlib import Path
 
 from django.core.exceptions import ValidationError
+from django.core.files.uploadedfile import UploadedFile
 from django.utils.translation import gettext_lazy as _
 
 
@@ -18,8 +21,13 @@ PROJECT_FILE_EXTENSIONS = {
 }
 
 
-def validate_file_size(file, *, max_size_mb: int) -> None:
-    """Проверяет максимальный размер загружаемого файла."""
+def validate_file_size(file: UploadedFile, *, max_size_mb: int) -> None:
+    """
+    Проверяет максимальный размер загружаемого файла.
+    Args:
+        file: Значение параметра `file`
+        max_size_mb: Значение параметра `max_size_mb`
+    """
     max_size_bytes = max_size_mb * 1024 * 1024
 
     if file.size > max_size_bytes:
@@ -31,8 +39,13 @@ def validate_file_size(file, *, max_size_mb: int) -> None:
         )
 
 
-def validate_file_extension(file, *, allowed_extensions: set[str]) -> None:
-    """Проверяет расширение загружаемого файла."""
+def validate_file_extension(file: UploadedFile, *, allowed_extensions: set[str]) -> None:
+    """
+    Проверяет расширение загружаемого файла.
+    Args:
+        file: Значение параметра `file`
+        allowed_extensions: Значение параметра `allowed_extensions`
+    """
     extension = Path(file.name).suffix.lower().lstrip(".")
 
     if extension not in allowed_extensions:
@@ -45,19 +58,31 @@ def validate_file_extension(file, *, allowed_extensions: set[str]) -> None:
         )
 
 
-def validate_avatar_image(file) -> None:
-    """Проверяет аватар специалиста."""
+def validate_avatar_image(file: UploadedFile) -> None:
+    """
+    Проверяет аватар специалиста.
+    Args:
+        file: Значение параметра `file`
+    """
     validate_file_size(file, max_size_mb=2)
     validate_file_extension(file, allowed_extensions=IMAGE_EXTENSIONS)
 
 
-def validate_project_cover_image(file) -> None:
-    """Проверяет обложку проекта."""
+def validate_project_cover_image(file: UploadedFile) -> None:
+    """
+    Проверяет обложку проекта.
+    Args:
+        file: Значение параметра `file`
+    """
     validate_file_size(file, max_size_mb=5)
     validate_file_extension(file, allowed_extensions=IMAGE_EXTENSIONS)
 
 
-def validate_project_file(file) -> None:
-    """Проверяет файл, прикрепляемый к проекту."""
+def validate_project_file(file: UploadedFile) -> None:
+    """
+    Проверяет файл, прикрепляемый к проекту.
+    Args:
+        file: Значение параметра `file`
+    """
     validate_file_size(file, max_size_mb=10)
     validate_file_extension(file, allowed_extensions=PROJECT_FILE_EXTENSIONS)

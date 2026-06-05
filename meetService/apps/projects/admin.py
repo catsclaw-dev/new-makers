@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import io
 import textwrap
 from pathlib import Path
@@ -7,10 +9,10 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
 
-from django.http import HttpResponse
+from django.http import HttpRequest, HttpResponse
 from django.utils import timezone
 from django.contrib import admin
-from django.db.models import Count
+from django.db.models import Count, QuerySet
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 from import_export.admin import ImportExportModelAdmin
@@ -29,7 +31,9 @@ PDF_FONT_NAME = "Helvetica"
 
 
 def register_pdf_font() -> str:
-    """Регистрирует шрифт с поддержкой кириллицы для PDF."""
+    """
+    Регистрирует шрифт с поддержкой кириллицы для PDF.
+    """
     font_candidates = [
         Path("C:/Windows/Fonts/arial.ttf"),
         Path("C:/Windows/Fonts/DejaVuSans.ttf"),
@@ -56,7 +60,16 @@ def draw_wrapped_text(
     width: int = 95,
     line_height: int = 14,
 ) -> int:
-    """Рисует длинный текст несколькими строками и возвращает новую координату Y."""
+    """
+    Рисует длинный текст несколькими строками и возвращает новую координату Y.
+    Args:
+        pdf: Значение параметра `pdf`
+        text: Текстовое значение
+        x: Координата по горизонтали
+        y: Координата по вертикали
+        width: Ширина области
+        line_height: Высота строки
+    """
     text = str(text or "-")
     for line in textwrap.wrap(text, width=width):
         pdf.drawString(x, y, line)
@@ -260,7 +273,12 @@ class ProjectAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
         ),
     )
 
-    def get_queryset(self, request):
+    def get_queryset(self, request: HttpRequest) -> QuerySet:
+        """
+        Возвращает queryset с нужными фильтрами и оптимизациями.
+        Args:
+            request: HTTP-запрос текущего пользователя
+        """
         queryset = super().get_queryset(request)
         return (
             queryset.select_related(
@@ -279,7 +297,15 @@ class ProjectAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
             )
         )
 
-    def save_model(self, request, obj, form, change):
+    def save_model(self, request: HttpRequest, obj: object, form: object, change: bool) -> object:
+        """
+        Сохраняет модель в административном интерфейсе.
+        Args:
+            request: HTTP-запрос текущего пользователя
+            obj: Объект модели
+            form: Форма с проверенными данными
+            change: Признак редактирования существующего объекта
+        """
         if not obj.pk:
             obj.created_by = request.user
         obj.updated_by = request.user
@@ -287,18 +313,38 @@ class ProjectAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
 
     @admin.display(description="Открытых ролей")
     def display_open_vacancies_count(self, obj: Project) -> int:
+        """
+        Возвращает значение для отображения в интерфейсе администратора.
+        Args:
+            obj: Объект модели
+        """
         return obj.vacancies.filter(status=ProjectVacancy.Status.OPEN).count()
 
     @admin.display(description="Участников")
     def display_members_count(self, obj: Project) -> int:
+        """
+        Возвращает значение для отображения в интерфейсе администратора.
+        Args:
+            obj: Объект модели
+        """
         return getattr(obj, "members_count", obj.memberships.count())
 
     @admin.display(description="Технологий")
     def display_technologies_count(self, obj: Project) -> int:
+        """
+        Возвращает значение для отображения в интерфейсе администратора.
+        Args:
+            obj: Объект модели
+        """
         return getattr(obj, "technologies_count", obj.technologies.count())
 
     @admin.display(description="Предпросмотр обложки")
     def display_cover_preview(self, obj: Project) -> str:
+        """
+        Возвращает значение для отображения в интерфейсе администратора.
+        Args:
+            obj: Объект модели
+        """
         if obj and obj.cover_image:
             return format_html(
                 '<img src="{}" style="max-height: 140px; border-radius: 8px;" />',
@@ -307,8 +353,13 @@ class ProjectAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
         return "Обложка не загружена"
 
     @admin.action(description="Сформировать PDF по выбранным проектам")
-    def export_projects_to_pdf(self, request, queryset):
-        """Генерирует PDF-отчёт по выбранным проектам из админки."""
+    def export_projects_to_pdf(self, request: HttpRequest, queryset: QuerySet) -> object:
+        """
+        Генерирует PDF-отчёт по выбранным проектам из админки.
+        Args:
+            request: HTTP-запрос текущего пользователя
+            queryset: Набор объектов для обработки
+        """
         font_name = register_pdf_font()
 
         queryset = (
@@ -330,12 +381,20 @@ class ProjectAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
         line_height = 16
 
         def new_page() -> None:
+            """
+            Выполняет логику функции.
+            """
             nonlocal y
             pdf.showPage()
             pdf.setFont(font_name, 11)
             y = int(page_height) - 50
 
         def ensure_space(required_height: int = 80) -> None:
+            """
+            Выполняет логику функции.
+            Args:
+                required_height: Минимальная требуемая высота
+            """
             if y < required_height:
                 new_page()
 
@@ -575,6 +634,11 @@ class ProjectVacancyAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
 
     @admin.display(description="Свободных мест")
     def display_remaining_slots(self, obj: ProjectVacancy) -> int:
+        """
+        Возвращает значение для отображения в интерфейсе администратора.
+        Args:
+            obj: Объект модели
+        """
         return obj.remaining_slots()
 
 
@@ -621,6 +685,11 @@ class ProjectMembershipAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
 
     @admin.display(boolean=True, description="Активен")
     def display_is_active(self, obj: ProjectMembership) -> bool:
+        """
+        Возвращает значение для отображения в интерфейсе администратора.
+        Args:
+            obj: Объект модели
+        """
         return obj.is_active()
 
 

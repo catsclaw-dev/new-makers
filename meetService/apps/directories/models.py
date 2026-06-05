@@ -47,9 +47,15 @@ class Role(models.Model):
         ordering = ["name"]
 
     def __str__(self) -> str:
+        """
+        Возвращает строковое представление объекта.
+        """
         return self.name
 
     def get_absolute_url(self) -> str:
+        """
+        Возвращает значение `absolute url`.
+        """
         return reverse("role_detail", kwargs={"slug": self.slug})
 
 
@@ -107,7 +113,13 @@ class Technology(models.Model):
         ordering = ["category", "name"]
 
     def __str__(self) -> str:
+        """
+        Возвращает строковое представление объекта.
+        """
         return self.name
 
     def get_absolute_url(self) -> str:
+        """
+        Возвращает значение `absolute url`.
+        """
         return reverse("technology_detail", kwargs={"slug": self.slug})

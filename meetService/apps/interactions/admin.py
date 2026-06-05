@@ -1,5 +1,9 @@
+from __future__ import annotations
+
 from django.contrib import admin, messages
 from django.core.exceptions import ValidationError
+from django.db.models import QuerySet
+from django.http import HttpRequest
 from django.utils.translation import gettext_lazy as _
 from import_export.admin import ImportExportModelAdmin
 from simple_history.admin import SimpleHistoryAdmin
@@ -90,7 +94,12 @@ class ApplicationAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
         ),
     )
 
-    def get_queryset(self, request):
+    def get_queryset(self, request: HttpRequest) -> QuerySet:
+        """
+        Возвращает queryset с нужными фильтрами и оптимизациями.
+        Args:
+            request: HTTP-запрос текущего пользователя
+        """
         queryset = super().get_queryset(request)
         return queryset.select_related(
             "project",
@@ -103,15 +112,31 @@ class ApplicationAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
         )
 
     @admin.display(description="Владелец проекта")
-    def display_project_owner(self, obj: Application):
+    def display_project_owner(self, obj: Application) -> str:
+        """
+        Возвращает значение для отображения в интерфейсе администратора.
+        Args:
+            obj: Объект модели
+        """
         return obj.project.owner
 
     @admin.display(boolean=True, description="Активный")
     def display_is_active(self, obj: Application) -> bool:
+        """
+        Возвращает значение для отображения в интерфейсе администратора.
+        Args:
+            obj: Объект модели
+        """
         return obj.status in Application.ACTIVE_STATUSES
 
     @admin.action(description="Принять выбранные отклики")
-    def accept_applications(self, request, queryset):
+    def accept_applications(self, request: HttpRequest, queryset: QuerySet) -> object:
+        """
+        Выполняет логику функции.
+        Args:
+            request: HTTP-запрос текущего пользователя
+            queryset: Набор объектов для обработки
+        """
         accepted_count = 0
 
         for application in queryset:
@@ -132,7 +157,13 @@ class ApplicationAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
         )
 
     @admin.action(description="Отклонить выбранные отклики")
-    def reject_applications(self, request, queryset):
+    def reject_applications(self, request: HttpRequest, queryset: QuerySet) -> object:
+        """
+        Выполняет логику функции.
+        Args:
+            request: HTTP-запрос текущего пользователя
+            queryset: Набор объектов для обработки
+        """
         rejected_count = 0
 
         for application in queryset:
@@ -223,7 +254,12 @@ class InvitationAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
         ),
     )
 
-    def get_queryset(self, request):
+    def get_queryset(self, request: HttpRequest) -> QuerySet:
+        """
+        Возвращает queryset с нужными фильтрами и оптимизациями.
+        Args:
+            request: HTTP-запрос текущего пользователя
+        """
         queryset = super().get_queryset(request)
         return queryset.select_related(
             "project",
@@ -236,10 +272,21 @@ class InvitationAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
 
     @admin.display(boolean=True, description="Ожидает ответа")
     def display_is_pending(self, obj: Invitation) -> bool:
+        """
+        Возвращает значение для отображения в интерфейсе администратора.
+        Args:
+            obj: Объект модели
+        """
         return obj.status == Invitation.Status.PENDING
 
     @admin.action(description="Принять выбранные приглашения")
-    def accept_invitations(self, request, queryset):
+    def accept_invitations(self, request: HttpRequest, queryset: QuerySet) -> object:
+        """
+        Выполняет логику функции.
+        Args:
+            request: HTTP-запрос текущего пользователя
+            queryset: Набор объектов для обработки
+        """
         accepted_count = 0
 
         for invitation in queryset:
@@ -260,7 +307,13 @@ class InvitationAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
         )
 
     @admin.action(description="Отклонить выбранные приглашения")
-    def decline_invitations(self, request, queryset):
+    def decline_invitations(self, request: HttpRequest, queryset: QuerySet) -> object:
+        """
+        Выполняет логику функции.
+        Args:
+            request: HTTP-запрос текущего пользователя
+            queryset: Набор объектов для обработки
+        """
         declined_count = 0
 
         for invitation in queryset:
@@ -307,7 +360,12 @@ class FavoriteProjectAdmin(ImportExportModelAdmin):
     readonly_fields = ("added_at",)
     date_hierarchy = "added_at"
 
-    def get_queryset(self, request):
+    def get_queryset(self, request: HttpRequest) -> QuerySet:
+        """
+        Возвращает queryset с нужными фильтрами и оптимизациями.
+        Args:
+            request: HTTP-запрос текущего пользователя
+        """
         queryset = super().get_queryset(request)
         return queryset.select_related(
             "user",
@@ -317,8 +375,18 @@ class FavoriteProjectAdmin(ImportExportModelAdmin):
 
     @admin.display(description="Статус проекта")
     def display_project_status(self, obj: FavoriteProject) -> str:
+        """
+        Возвращает значение для отображения в интерфейсе администратора.
+        Args:
+            obj: Объект модели
+        """
         return obj.project.get_status_display()
 
     @admin.display(description="Владелец проекта")
-    def display_project_owner(self, obj: FavoriteProject):
+    def display_project_owner(self, obj: FavoriteProject) -> str:
+        """
+        Возвращает значение для отображения в интерфейсе администратора.
+        Args:
+            obj: Объект модели
+        """
         return obj.project.owner

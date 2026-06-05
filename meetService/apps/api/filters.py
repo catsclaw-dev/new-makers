@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 import django_filters
-from django.db.models import F
+from django.db.models import F, QuerySet
 
 from apps.interactions.models import Application, Invitation
 from apps.projects.models import Project, ProjectVacancy
@@ -34,7 +36,14 @@ class ProjectFilter(django_filters.FilterSet):
             "has_open_vacancies",
         )
 
-    def filter_has_open_vacancies(self, queryset, name, value):
+    def filter_has_open_vacancies(self, queryset: QuerySet, name: str, value: object) -> object:
+        """
+        Применяет пользовательскую фильтрацию queryset.
+        Args:
+            queryset: Набор объектов для обработки
+            name: Название поля или объекта
+            value: Проверяемое значение
+        """
         open_filter = {
             "vacancies__status": ProjectVacancy.Status.OPEN,
             "vacancies__current_count__lt": F("vacancies__required_count"),
@@ -62,7 +71,14 @@ class ProjectVacancyFilter(django_filters.FilterSet):
             "is_open",
         )
 
-    def filter_is_open(self, queryset, name, value):
+    def filter_is_open(self, queryset: QuerySet, name: str, value: object) -> object:
+        """
+        Применяет пользовательскую фильтрацию queryset.
+        Args:
+            queryset: Набор объектов для обработки
+            name: Название поля или объекта
+            value: Проверяемое значение
+        """
         open_filter = {
             "status": ProjectVacancy.Status.OPEN,
             "current_count__lt": F("required_count"),
@@ -99,7 +115,14 @@ class SpecialistProfileFilter(django_filters.FilterSet):
             "is_available",
         )
 
-    def filter_is_available(self, queryset, name, value):
+    def filter_is_available(self, queryset: QuerySet, name: str, value: object) -> object:
+        """
+        Применяет пользовательскую фильтрацию queryset.
+        Args:
+            queryset: Набор объектов для обработки
+            name: Название поля или объекта
+            value: Проверяемое значение
+        """
         available_statuses = [
             SpecialistProfile.AvailabilityStatus.LOOKING,
             SpecialistProfile.AvailabilityStatus.OPEN,

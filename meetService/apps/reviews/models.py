@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from django.db import models
 
 
@@ -88,10 +90,15 @@ class Review(models.Model):
         ]
 
     def __str__(self) -> str:
+        """
+        Возвращает строковое представление объекта.
+        """
         return f"Отзыв {self.author} о {self.specialist} — {self.rating}/5"
 
-    def clean(self):
-        """Проверяет бизнес-правила отзыва."""
+    def clean(self) -> None:
+        """
+        Проверяет бизнес-правила отзыва.
+        """
         errors = {}
 
         if self.author_id and self.specialist_id:
@@ -112,27 +119,40 @@ class Review(models.Model):
         if errors:
             raise ValidationError(errors)
 
-    def save(self, *args, **kwargs):
-        """Перед сохранением очищает текст и запускает валидацию."""
+    def save(self, *args: object, **kwargs: object) -> None:
+        """
+        Перед сохранением очищает текст и запускает валидацию.
+        Args:
+            *args: Позиционные аргументы
+            **kwargs: Именованные аргументы
+        """
         self.text = self.text.strip()
         self.full_clean()
         super().save(*args, **kwargs)
 
     def publish(self) -> None:
-        """Публикует отзыв."""
+        """
+        Публикует отзыв.
+        """
         self.status = self.Status.PUBLISHED
         self.save(update_fields=["status", "updated_at"])
 
     def hide(self) -> None:
-        """Скрывает отзыв."""
+        """
+        Скрывает отзыв.
+        """
         self.status = self.Status.HIDDEN
         self.save(update_fields=["status", "updated_at"])
 
     def reject(self) -> None:
-        """Отклоняет отзыв."""
+        """
+        Отклоняет отзыв.
+        """
         self.status = self.Status.REJECTED
         self.save(update_fields=["status", "updated_at"])
 
     def is_public(self) -> bool:
-        """Проверяет, опубликован ли отзыв."""
+        """
+        Проверяет, опубликован ли отзыв.
+        """
         return self.status == self.Status.PUBLISHED

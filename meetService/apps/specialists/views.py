@@ -1,5 +1,8 @@
+from __future__ import annotations
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import Q
@@ -10,8 +13,12 @@ from apps.specialists.models import SpecialistProfile
 from apps.specialists.forms import SpecialistProfileForm
 
 
-def specialist_list(request):
-    """Каталог специалистов с поиском, фильтрами и пагинацией."""
+def specialist_list(request: HttpRequest) -> HttpResponse:
+    """
+    Каталог специалистов с поиском, фильтрами и пагинацией.
+    Args:
+        request: HTTP-запрос текущего пользователя
+    """
     query = request.GET.get("q", "").strip()
     role_slug = request.GET.get("role", "").strip()
     technology_slug = request.GET.get("technology", "").strip()
@@ -71,8 +78,13 @@ def specialist_list(request):
     return render(request, "specialists/specialist_list.html", context)
 
 
-def specialist_detail(request, pk):
-    """Детальная страница специалиста."""
+def specialist_detail(request: HttpRequest, pk: int | None) -> HttpResponse:
+    """
+    Детальная страница специалиста.
+    Args:
+        request: HTTP-запрос текущего пользователя
+        pk: Идентификатор объекта
+    """
     specialist = get_object_or_404(
         SpecialistProfile.objects.select_related("user", "main_role").prefetch_related(
             "technologies"
@@ -94,8 +106,12 @@ def specialist_detail(request, pk):
 
 
 @login_required
-def specialist_profile_edit(request):
-    """Создание или редактирование профиля специалиста текущего пользователя."""
+def specialist_profile_edit(request: HttpRequest) -> HttpResponse:
+    """
+    Создание или редактирование профиля специалиста текущего пользователя.
+    Args:
+        request: HTTP-запрос текущего пользователя
+    """
     profile = SpecialistProfile.objects.filter(user=request.user).first()
 
     if request.method == "POST":

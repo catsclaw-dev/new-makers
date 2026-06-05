@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from django import forms
 
 from apps.directories.models import Role, Technology
@@ -124,19 +126,30 @@ class ProjectForm(forms.ModelForm):
             "all": ("css/site.css",),
         }
 
-    def __init__(self, *args, **kwargs):
-        """Подставляет выбранные технологии при редактировании проекта."""
+    def __init__(self, *args: object, **kwargs: object) -> object:
+        """
+        Подставляет выбранные технологии при редактировании проекта.
+        Args:
+            *args: Позиционные аргументы
+            **kwargs: Именованные аргументы
+        """
         super().__init__(*args, **kwargs)
 
         if self.instance and self.instance.pk:
             self.fields["technologies"].initial = self.instance.technologies.all()
 
-    def clean_title(self):
-        """Очищает название проекта."""
+    def clean_title(self) -> object:
+        """
+        Очищает название проекта.
+        """
         return self.cleaned_data["title"].strip()
 
-    def save_technologies(self, project):
-        """Сохраняет выбранные технологии через промежуточную модель."""
+    def save_technologies(self, project: Project) -> object:
+        """
+        Сохраняет выбранные технологии через промежуточную модель.
+        Args:
+            project: Объект проекта
+        """
         selected_technologies = self.cleaned_data.get("technologies", [])
 
         ProjectTechnology.objects.filter(project=project).exclude(
@@ -216,13 +229,20 @@ class ProjectVacancyForm(forms.ModelForm):
             "all": ("css/site.css",),
         }
 
-    def __init__(self, *args, **kwargs):
-        """Показывает только активные роли."""
+    def __init__(self, *args: object, **kwargs: object) -> object:
+        """
+        Показывает только активные роли.
+        Args:
+            *args: Позиционные аргументы
+            **kwargs: Именованные аргументы
+        """
         super().__init__(*args, **kwargs)
         self.fields["role"].queryset = Role.objects.filter(is_active=True).order_by(
             "name"
         )
 
-    def clean_title(self):
-        """Очищает название роли."""
+    def clean_title(self) -> object:
+        """
+        Очищает название роли.
+        """
         return self.cleaned_data["title"].strip()

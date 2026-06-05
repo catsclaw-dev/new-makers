@@ -1,11 +1,19 @@
+from __future__ import annotations
+
 from django.db.models import Q
-from django.shortcuts import render
+from django.http import HttpRequest, HttpResponse
+from django.shortcuts import redirect, render
 
 from apps.projects.models import Project
 from apps.specialists.models import SpecialistProfile
 
 
-def global_search(request):
+def global_search(request: HttpRequest) -> HttpResponse:
+    """
+    Выполняет логику функции.
+    Args:
+        request: HTTP-запрос текущего пользователя
+    """
     raw_query = request.GET.get("q", "").strip()
     query = raw_query
     search_mode = "all"

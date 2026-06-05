@@ -1,7 +1,10 @@
+from __future__ import annotations
+
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView, LogoutView
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
 
 from apps.accounts.forms import RegisterForm
@@ -9,8 +12,12 @@ from apps.interactions.models import Application, FavoriteProject, Invitation
 from apps.projects.models import Project, ProjectMembership
 
 
-def register(request):
-    """Регистрация нового пользователя."""
+def register(request: HttpRequest) -> HttpResponse:
+    """
+    Регистрация нового пользователя.
+    Args:
+        request: HTTP-запрос текущего пользователя
+    """
     if request.user.is_authenticated:
         return redirect("accounts:profile")
 
@@ -42,8 +49,12 @@ class AccountLogoutView(LogoutView):
 
 
 @login_required
-def profile(request):
-    """Личный кабинет пользователя с динамическим определением роли."""
+def profile(request: HttpRequest) -> HttpResponse:
+    """
+    Личный кабинет пользователя с динамическим определением роли.
+    Args:
+        request: HTTP-запрос текущего пользователя
+    """
     user = request.user
 
     owned_projects_queryset = Project.objects.filter(owner=user)

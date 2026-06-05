@@ -1,11 +1,16 @@
+from __future__ import annotations
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, models
+from django.db.models import QuerySet
+from django.http import HttpRequest, HttpResponse
 from django.views.decorators.http import require_POST
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
+from apps.accounts.models import User
 from apps.interactions.forms import ApplicationForm, InvitationForm
 from apps.interactions.models import Application, FavoriteProject, Invitation
 from apps.projects.models import Project, ProjectMembership, ProjectVacancy
@@ -13,8 +18,13 @@ from apps.specialists.models import SpecialistProfile
 
 
 @login_required
-def project_apply(request, slug):
-    """Создание отклика специалиста на проект."""
+def project_apply(request: HttpRequest, slug: str) -> HttpResponse:
+    """
+    Создание отклика специалиста на проект.
+    Args:
+        request: HTTP-запрос текущего пользователя
+        slug: URL-идентификатор объекта
+    """
     project = get_object_or_404(
         Project.objects.select_related("owner").prefetch_related("vacancies__role"),
         slug=slug,
@@ -65,8 +75,12 @@ def project_apply(request, slug):
 
 
 @login_required
-def application_list(request):
-    """Страница откликов: отправленные отклики и входящие отклики владельца."""
+def application_list(request: HttpRequest) -> HttpResponse:
+    """
+    Страница откликов: отправленные отклики и входящие отклики владельца.
+    Args:
+        request: HTTP-запрос текущего пользователя
+    """
     try:
         specialist = request.user.specialist_profile
     except SpecialistProfile.DoesNotExist:
@@ -112,8 +126,13 @@ def application_list(request):
 
 @require_POST
 @login_required
-def favorite_project_toggle(request, slug):
-    """Добавляет проект в избранное или удаляет его при повторном действии."""
+def favorite_project_toggle(request: HttpRequest, slug: str) -> HttpResponse:
+    """
+    Добавляет проект в избранное или удаляет его при повторном действии.
+    Args:
+        request: HTTP-запрос текущего пользователя
+        slug: URL-идентификатор объекта
+    """
     project = get_object_or_404(
         Project.objects.filter(
             status__in=[
@@ -143,8 +162,12 @@ def favorite_project_toggle(request, slug):
 
 
 @login_required
-def favorite_project_list(request):
-    """Список избранных проектов текущего пользователя."""
+def favorite_project_list(request: HttpRequest) -> HttpResponse:
+    """
+    Список избранных проектов текущего пользователя.
+    Args:
+        request: HTTP-запрос текущего пользователя
+    """
     favorites = (
         FavoriteProject.objects.select_related("project", "project__owner")
         .prefetch_related("project__technologies", "project__vacancies__role")
@@ -158,8 +181,12 @@ def favorite_project_list(request):
     return render(request, "interactions/favorite_project_list.html", context)
 
 
-def user_has_project_for_invitation(user):
-    """Проверяет, есть ли у пользователя опубликованный проект с открытыми ролями."""
+def user_has_project_for_invitation(user: User | None) -> bool:
+    """
+    Проверяет, есть ли у пользователя опубликованный проект с открытыми ролями.
+    Args:
+        user: Объект пользователя
+    """
     if user.is_staff or user.is_superuser:
         return Project.objects.filter(
             status=Project.Status.PUBLISHED,
@@ -176,8 +203,13 @@ def user_has_project_for_invitation(user):
 
 
 @login_required
-def invite_specialist(request, pk):
-    """Приглашение специалиста в опубликованный проект текущего пользователя."""
+def invite_specialist(request: HttpRequest, pk: int | None) -> HttpResponse:
+    """
+    Приглашение специалиста в опубликованный проект текущего пользователя.
+    Args:
+        request: HTTP-запрос текущего пользователя
+        pk: Идентификатор объекта
+    """
     specialist = get_object_or_404(
         SpecialistProfile.objects.select_related("user", "main_role").prefetch_related(
             "technologies"
@@ -295,8 +327,12 @@ def invite_specialist(request, pk):
 
 
 @login_required
-def invitation_list(request):
-    """Список приглашений: активные полученные и все отправленные."""
+def invitation_list(request: HttpRequest) -> HttpResponse:
+    """
+    Список приглашений: активные полученные и все отправленные.
+    Args:
+        request: HTTP-запрос текущего пользователя
+    """
     try:
         specialist = request.user.specialist_profile
     except SpecialistProfile.DoesNotExist:
@@ -343,8 +379,13 @@ def invitation_list(request):
 
 @login_required
 @require_POST
-def invitation_accept(request, pk):
-    """Принятие приглашения специалистом."""
+def invitation_accept(request: HttpRequest, pk: int | None) -> HttpResponse:
+    """
+    Принятие приглашения специалистом.
+    Args:
+        request: HTTP-запрос текущего пользователя
+        pk: Идентификатор объекта
+    """
     invitation = get_object_or_404(
         Invitation.objects.select_related(
             "project",
@@ -373,8 +414,13 @@ def invitation_accept(request, pk):
 
 @login_required
 @require_POST
-def invitation_decline(request, pk):
-    """Отклонение приглашения специалистом."""
+def invitation_decline(request: HttpRequest, pk: int | None) -> HttpResponse:
+    """
+    Отклонение приглашения специалистом.
+    Args:
+        request: HTTP-запрос текущего пользователя
+        pk: Идентификатор объекта
+    """
     invitation = get_object_or_404(
         Invitation,
         pk=pk,
@@ -392,8 +438,12 @@ def invitation_decline(request, pk):
     return redirect("interactions:invitation_list")
 
 
-def get_applications_available_for_review(user):
-    """Возвращает отклики, которые пользователь может принять или отклонить."""
+def get_applications_available_for_review(user: User | None) -> QuerySet:
+    """
+    Возвращает отклики, которые пользователь может принять или отклонить.
+    Args:
+        user: Объект пользователя
+    """
     applications = Application.objects.select_related(
         "project",
         "vacancy",
@@ -412,8 +462,13 @@ def get_applications_available_for_review(user):
 
 @login_required
 @require_POST
-def application_accept(request, pk):
-    """Принятие отклика владельцем проекта или администратором."""
+def application_accept(request: HttpRequest, pk: int | None) -> HttpResponse:
+    """
+    Принятие отклика владельцем проекта или администратором.
+    Args:
+        request: HTTP-запрос текущего пользователя
+        pk: Идентификатор объекта
+    """
     application = get_object_or_404(
         get_applications_available_for_review(request.user),
         pk=pk,
@@ -436,8 +491,13 @@ def application_accept(request, pk):
 
 @login_required
 @require_POST
-def application_reject(request, pk):
-    """Отклонение отклика владельцем проекта или администратором."""
+def application_reject(request: HttpRequest, pk: int | None) -> HttpResponse:
+    """
+    Отклонение отклика владельцем проекта или администратором.
+    Args:
+        request: HTTP-запрос текущего пользователя
+        pk: Идентификатор объекта
+    """
     application = get_object_or_404(
         get_applications_available_for_review(request.user),
         pk=pk,

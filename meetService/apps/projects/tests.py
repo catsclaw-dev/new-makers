@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
@@ -10,7 +12,10 @@ User = get_user_model()
 
 
 class ProjectBusinessTests(TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
+        """
+        Подготавливает тестовые данные.
+        """
         self.owner = User.objects.create_user(
             username="owner",
             email="owner@example.com",
@@ -26,7 +31,12 @@ class ProjectBusinessTests(TestCase):
             slug="backend-developer",
         )
 
-    def create_project(self, **kwargs):
+    def create_project(self, **kwargs: object) -> object:
+        """
+        Создает связанные данные приложения.
+        Args:
+            **kwargs: Именованные аргументы
+        """
         defaults = {
             "owner": self.owner,
             "title": "Командный сервис",
@@ -37,7 +47,10 @@ class ProjectBusinessTests(TestCase):
         defaults.update(kwargs)
         return Project.objects.create(**defaults)
 
-    def test_vacancy_closes_when_required_count_reached(self):
+    def test_vacancy_closes_when_required_count_reached(self) -> None:
+        """
+        Проверяет сценарий `test_vacancy_closes_when_required_count_reached`.
+        """
         project = self.create_project(status=Project.Status.PUBLISHED)
 
         vacancy = ProjectVacancy.objects.create(
@@ -51,7 +64,10 @@ class ProjectBusinessTests(TestCase):
 
         self.assertEqual(vacancy.status, ProjectVacancy.Status.CLOSED)
 
-    def test_project_open_vacancy_annotation_counts_only_open_roles(self):
+    def test_project_open_vacancy_annotation_counts_only_open_roles(self) -> None:
+        """
+        Проверяет сценарий `test_project_open_vacancy_annotation_counts_only_open_roles`.
+        """
         project = self.create_project(status=Project.Status.PUBLISHED)
         ProjectVacancy.objects.create(
             project=project,
@@ -74,7 +90,10 @@ class ProjectBusinessTests(TestCase):
 
         self.assertEqual(annotated_project.open_vacancy_count, 1)
 
-    def test_draft_project_is_visible_to_owner_only(self):
+    def test_draft_project_is_visible_to_owner_only(self) -> None:
+        """
+        Проверяет сценарий `test_draft_project_is_visible_to_owner_only`.
+        """
         project = self.create_project(status=Project.Status.DRAFT)
         url = reverse("projects:project_detail", kwargs={"slug": project.slug})
 

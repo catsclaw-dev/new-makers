@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from import_export import fields, resources
 
 from .models import Project
@@ -35,23 +37,58 @@ class ProjectResource(resources.ModelResource):
         )
         export_order = fields
 
-    def dehydrate_owner(self, obj):
+    def dehydrate_owner(self, obj: object) -> object:
+        """
+        Возвращает значение поля для экспорта данных.
+        Args:
+            obj: Объект модели
+        """
         return obj.owner.get_username() if obj.owner else ""
 
-    def dehydrate_status_display(self, obj):
+    def dehydrate_status_display(self, obj: object) -> object:
+        """
+        Возвращает значение поля для экспорта данных.
+        Args:
+            obj: Объект модели
+        """
         return obj.get_status_display()
 
-    def dehydrate_stage_display(self, obj):
+    def dehydrate_stage_display(self, obj: object) -> object:
+        """
+        Возвращает значение поля для экспорта данных.
+        Args:
+            obj: Объект модели
+        """
         return obj.get_stage_display()
 
-    def dehydrate_participation_format_display(self, obj):
+    def dehydrate_participation_format_display(self, obj: object) -> object:
+        """
+        Возвращает значение поля для экспорта данных.
+        Args:
+            obj: Объект модели
+        """
         return obj.get_participation_format_display()
 
-    def dehydrate_technologies_list(self, obj):
+    def dehydrate_technologies_list(self, obj: object) -> object:
+        """
+        Возвращает значение поля для экспорта данных.
+        Args:
+            obj: Объект модели
+        """
         return ", ".join(obj.technologies.values_list("name", flat=True))
 
-    def dehydrate_open_vacancies_count(self, obj):
+    def dehydrate_open_vacancies_count(self, obj: object) -> int:
+        """
+        Возвращает значение поля для экспорта данных.
+        Args:
+            obj: Объект модели
+        """
         return obj.vacancies.filter(status="open").count()
 
-    def dehydrate_members_count(self, obj):
+    def dehydrate_members_count(self, obj: object) -> int:
+        """
+        Возвращает значение поля для экспорта данных.
+        Args:
+            obj: Объект модели
+        """
         return obj.memberships.count()

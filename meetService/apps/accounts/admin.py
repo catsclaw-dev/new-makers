@@ -61,7 +61,11 @@ class UserAdmin(DjangoUserAdmin):
 
     @admin.display(description="ФИО")
     def display_full_name(self, obj: User) -> str:
-        """Возвращает полное имя пользователя или прочерк."""
+        """
+        Возвращает полное имя пользователя или прочерк.
+        Args:
+            obj: Объект модели
+        """
         return obj.get_full_name() or "—"
 
 

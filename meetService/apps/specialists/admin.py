@@ -1,5 +1,8 @@
+from __future__ import annotations
+
 from django.contrib import admin
-from django.db.models import Avg, Count, Q
+from django.db.models import Avg, Count, Q, QuerySet
+from django.http import HttpRequest
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 from import_export.admin import ImportExportModelAdmin
@@ -74,7 +77,13 @@ class SpecialistApplicationInline(admin.TabularInline):
         "reviewed_by",
     )
 
-    def has_add_permission(self, request, obj=None):
+    def has_add_permission(self, request: HttpRequest, obj: object = None) -> bool:
+        """
+        Выполняет логику функции.
+        Args:
+            request: HTTP-запрос текущего пользователя
+            obj: Объект модели
+        """
         return False
 
 
@@ -103,7 +112,13 @@ class SpecialistInvitationInline(admin.TabularInline):
         "responded_at",
     )
 
-    def has_add_permission(self, request, obj=None):
+    def has_add_permission(self, request: HttpRequest, obj: object = None) -> bool:
+        """
+        Выполняет логику функции.
+        Args:
+            request: HTTP-запрос текущего пользователя
+            obj: Объект модели
+        """
         return False
 
 
@@ -132,7 +147,13 @@ class SpecialistReviewInline(admin.TabularInline):
         "updated_at",
     )
 
-    def has_add_permission(self, request, obj=None):
+    def has_add_permission(self, request: HttpRequest, obj: object = None) -> bool:
+        """
+        Выполняет логику функции.
+        Args:
+            request: HTTP-запрос текущего пользователя
+            obj: Объект модели
+        """
         return False
 
 
@@ -289,7 +310,12 @@ class SpecialistProfileAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
         ),
     )
 
-    def get_queryset(self, request):
+    def get_queryset(self, request: HttpRequest) -> QuerySet:
+        """
+        Возвращает queryset с нужными фильтрами и оптимизациями.
+        Args:
+            request: HTTP-запрос текущего пользователя
+        """
         queryset = super().get_queryset(request)
         return (
             queryset.select_related(
@@ -317,7 +343,15 @@ class SpecialistProfileAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
             )
         )
 
-    def save_model(self, request, obj, form, change):
+    def save_model(self, request: HttpRequest, obj: object, form: object, change: bool) -> object:
+        """
+        Сохраняет модель в административном интерфейсе.
+        Args:
+            request: HTTP-запрос текущего пользователя
+            obj: Объект модели
+            form: Форма с проверенными данными
+            change: Признак редактирования существующего объекта
+        """
         if not obj.pk:
             obj.created_by = request.user
         obj.updated_by = request.user
@@ -325,30 +359,65 @@ class SpecialistProfileAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
 
     @admin.display(description="Специалист")
     def display_name(self, obj: SpecialistProfile) -> str:
+        """
+        Возвращает значение для отображения в интерфейсе администратора.
+        Args:
+            obj: Объект модели
+        """
         return obj.get_display_name()
 
     @admin.display(description="Технологий")
     def display_technology_count(self, obj: SpecialistProfile) -> int:
+        """
+        Возвращает значение для отображения в интерфейсе администратора.
+        Args:
+            obj: Объект модели
+        """
         return getattr(obj, "technologies_count", obj.technologies.count())
 
     @admin.display(description="Активных проектов")
     def display_active_projects_count(self, obj: SpecialistProfile) -> int:
+        """
+        Возвращает значение для отображения в интерфейсе администратора.
+        Args:
+            obj: Объект модели
+        """
         return getattr(obj, "active_projects_count", obj.project_memberships.count())
 
     @admin.display(description="Откликов")
     def display_applications_count(self, obj: SpecialistProfile) -> int:
+        """
+        Возвращает значение для отображения в интерфейсе администратора.
+        Args:
+            obj: Объект модели
+        """
         return getattr(obj, "applications_count", obj.applications.count())
 
     @admin.display(description="Приглашений")
     def display_invitations_count(self, obj: SpecialistProfile) -> int:
+        """
+        Возвращает значение для отображения в интерфейсе администратора.
+        Args:
+            obj: Объект модели
+        """
         return getattr(obj, "invitations_count", obj.invitations.count())
 
     @admin.display(description="Отзывов")
     def display_reviews_count(self, obj: SpecialistProfile) -> int:
+        """
+        Возвращает значение для отображения в интерфейсе администратора.
+        Args:
+            obj: Объект модели
+        """
         return getattr(obj, "reviews_count", obj.received_reviews.count())
 
     @admin.display(description="Средняя оценка")
     def display_average_rating(self, obj: SpecialistProfile) -> str:
+        """
+        Возвращает значение для отображения в интерфейсе администратора.
+        Args:
+            obj: Объект модели
+        """
         average_rating = getattr(obj, "average_rating", None)
 
         if average_rating is None:
@@ -358,10 +427,20 @@ class SpecialistProfileAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
 
     @admin.display(boolean=True, description="Доступен")
     def display_is_available(self, obj: SpecialistProfile) -> bool:
+        """
+        Возвращает значение для отображения в интерфейсе администратора.
+        Args:
+            obj: Объект модели
+        """
         return obj.is_available_for_project()
 
     @admin.display(description="Предпросмотр аватара")
     def display_avatar_preview(self, obj: SpecialistProfile) -> str:
+        """
+        Возвращает значение для отображения в интерфейсе администратора.
+        Args:
+            obj: Объект модели
+        """
         if obj and obj.avatar:
             return format_html(
                 '<img src="{}" style="max-height: 120px; border-radius: 8px;" />',
@@ -370,17 +449,35 @@ class SpecialistProfileAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
         return "Аватар не загружен"
 
     @admin.action(description="Установить статус «Ищу проект»")
-    def mark_as_looking(self, request, queryset):
+    def mark_as_looking(self, request: HttpRequest, queryset: QuerySet) -> object:
+        """
+        Выполняет логику функции.
+        Args:
+            request: HTTP-запрос текущего пользователя
+            queryset: Набор объектов для обработки
+        """
         updated_count = queryset.update(status=SpecialistProfile.AvailabilityStatus.LOOKING)
         self.message_user(request, f"Обновлено профилей: {updated_count}")
 
     @admin.action(description="Установить статус «Открыт к предложениям»")
-    def mark_as_open(self, request, queryset):
+    def mark_as_open(self, request: HttpRequest, queryset: QuerySet) -> object:
+        """
+        Выполняет логику функции.
+        Args:
+            request: HTTP-запрос текущего пользователя
+            queryset: Набор объектов для обработки
+        """
         updated_count = queryset.update(status=SpecialistProfile.AvailabilityStatus.OPEN)
         self.message_user(request, f"Обновлено профилей: {updated_count}")
 
     @admin.action(description="Установить статус «Занят»")
-    def mark_as_busy(self, request, queryset):
+    def mark_as_busy(self, request: HttpRequest, queryset: QuerySet) -> object:
+        """
+        Выполняет логику функции.
+        Args:
+            request: HTTP-запрос текущего пользователя
+            queryset: Набор объектов для обработки
+        """
         updated_count = queryset.update(status=SpecialistProfile.AvailabilityStatus.BUSY)
         self.message_user(request, f"Обновлено профилей: {updated_count}")
 

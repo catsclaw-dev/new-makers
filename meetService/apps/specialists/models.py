@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
@@ -171,24 +173,39 @@ class SpecialistProfile(models.Model):
         ordering = ["-created_at"]
 
     def __str__(self) -> str:
+        """
+        Возвращает строковое представление объекта.
+        """
         return f"{self.user} — {self.get_level_display()}"
 
     def get_absolute_url(self) -> str:
+        """
+        Возвращает значение `absolute url`.
+        """
         return reverse("specialists:specialist_detail", kwargs={"pk": self.pk})
 
     def is_available_for_project(self) -> bool:
-        """Проверяет, доступен ли специалист для участия в проекте."""
+        """
+        Проверяет, доступен ли специалист для участия в проекте.
+        """
         return self.status in {
             self.AvailabilityStatus.LOOKING,
             self.AvailabilityStatus.OPEN,
         }
 
     def get_display_name(self) -> str:
-        """Возвращает удобное имя специалиста для карточек и админки."""
+        """
+        Возвращает удобное имя специалиста для карточек и админки.
+        """
         return self.user.get_full_name() or self.user.username
 
-    def save(self, *args, **kwargs):
-        """Перед сохранением убирает лишние пробелы из текстового описания."""
+    def save(self, *args: object, **kwargs: object) -> None:
+        """
+        Перед сохранением убирает лишние пробелы из текстового описания.
+        Args:
+            *args: Позиционные аргументы
+            **kwargs: Именованные аргументы
+        """
         self.bio = self.bio.strip()
         super().save(*args, **kwargs)
 
@@ -250,4 +267,7 @@ class SpecialistTechnology(models.Model):
         ]
 
     def __str__(self) -> str:
+        """
+        Возвращает строковое представление объекта.
+        """
         return f"{self.specialist} — {self.technology}"

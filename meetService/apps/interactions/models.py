@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from enum import member
 from django.db import models, transaction
 
@@ -9,6 +11,7 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from simple_history.models import HistoricalRecords
 
+from apps.accounts.models import User
 from apps.projects.models import Project, ProjectMembership, ProjectVacancy
 from apps.specialists.models import SpecialistProfile
 
@@ -89,10 +92,15 @@ class Application(models.Model):
         ]
 
     def __str__(self) -> str:
+        """
+        Возвращает строковое представление объекта.
+        """
         return f"{self.specialist} → {self.project}"
 
-    def clean(self):
-        """Проверяет бизнес-правила отклика."""
+    def clean(self) -> None:
+        """
+        Проверяет бизнес-правила отклика.
+        """
         errors = {}
 
         if (
@@ -136,14 +144,23 @@ class Application(models.Model):
         if errors:
             raise ValidationError(errors)
 
-    def save(self, *args, **kwargs):
-        """Перед сохранением очищает сообщение и запускает валидацию."""
+    def save(self, *args: object, **kwargs: object) -> None:
+        """
+        Перед сохранением очищает сообщение и запускает валидацию.
+        Args:
+            *args: Позиционные аргументы
+            **kwargs: Именованные аргументы
+        """
         self.message = self.message.strip()
         self.full_clean()
         super().save(*args, **kwargs)
 
-    def accept(self, reviewed_by=None) -> ProjectMembership:
-        """Принимает отклик и добавляет специалиста в команду проекта."""
+    def accept(self, reviewed_by: User | None = None) -> ProjectMembership:
+        """
+        Принимает отклик и добавляет специалиста в команду проекта.
+        Args:
+            reviewed_by: Пользователь, выполняющий рассмотрение
+        """
         with transaction.atomic():
             application = (
                 Application.objects.select_for_update()
@@ -197,8 +214,12 @@ class Application(models.Model):
 
             return membership
 
-    def reject(self, reviewed_by=None) -> None:
-        """Отклоняет отклик."""
+    def reject(self, reviewed_by: User | None = None) -> None:
+        """
+        Отклоняет отклик.
+        Args:
+            reviewed_by: Пользователь, выполняющий рассмотрение
+        """
         with transaction.atomic():
             application = (
                 Application.objects.select_for_update()
@@ -297,10 +318,15 @@ class Invitation(models.Model):
         ]
 
     def __str__(self) -> str:
+        """
+        Возвращает строковое представление объекта.
+        """
         return f"{self.project} → {self.specialist}"
 
-    def clean(self):
-        """Проверяет бизнес-правила отклика."""
+    def clean(self) -> None:
+        """
+        Проверяет бизнес-правила отклика.
+        """
         errors = {}
 
         if (
@@ -355,14 +381,21 @@ class Invitation(models.Model):
         if errors:
             raise ValidationError(errors)
 
-    def save(self, *args, **kwargs):
-        """Перед сохранением очищает сообщение и запускает валидацию."""
+    def save(self, *args: object, **kwargs: object) -> None:
+        """
+        Перед сохранением очищает сообщение и запускает валидацию.
+        Args:
+            *args: Позиционные аргументы
+            **kwargs: Именованные аргументы
+        """
         self.message = self.message.strip()
         self.full_clean()
         super().save(*args, **kwargs)
 
     def accept(self) -> ProjectMembership:
-        """Принимает приглашение и добавляет специалиста в команду проекта."""
+        """
+        Принимает приглашение и добавляет специалиста в команду проекта.
+        """
         with transaction.atomic():
             invitation = (
                 Invitation.objects.select_for_update()
@@ -421,7 +454,9 @@ class Invitation(models.Model):
             return membership
 
     def decline(self) -> None:
-        """Отклоняет приглашение."""
+        """
+        Отклоняет приглашение.
+        """
         if self.status != self.Status.PENDING:
             raise ValidationError(
                 _("Можно отклонить только приглашение со статусом «Ожидает ответа».")
@@ -470,4 +505,7 @@ class FavoriteProject(models.Model):
         ]
 
     def __str__(self) -> str:
+        """
+        Возвращает строковое представление объекта.
+        """
         return f"{self.user} добавил «{self.project}» в избранное"

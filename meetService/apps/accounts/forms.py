@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 
@@ -67,8 +69,10 @@ class RegisterForm(UserCreationForm):
             "all": ("css/site.css",),
         }
 
-    def clean_email(self):
-        """Проверяет уникальность email."""
+    def clean_email(self) -> str:
+        """
+        Проверяет уникальность email.
+        """
         email = self.cleaned_data["email"].strip().lower()
 
         if User.objects.filter(email__iexact=email).exists():
@@ -78,8 +82,12 @@ class RegisterForm(UserCreationForm):
 
         return email
 
-    def save(self, commit=True):
-        """Сохраняет пользователя как специалиста по умолчанию."""
+    def save(self, commit: bool = True) -> object:
+        """
+        Сохраняет пользователя как специалиста по умолчанию.
+        Args:
+            commit: Признак необходимости сохранить объект в базе данных
+        """
         user = super().save(commit=False)
         user.email = self.cleaned_data["email"].strip().lower()
         user.role = User.UserRole.SPECIALIST

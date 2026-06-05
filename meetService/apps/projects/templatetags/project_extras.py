@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from django import template
 from django.db.models import Count, Q
 
@@ -8,8 +10,13 @@ register = template.Library()
 
 
 @register.filter
-def short_text(value, length=120):
-    """Обрезает длинный текст до указанной длины."""
+def short_text(value: object, length: int = 120) -> object:
+    """
+    Обрезает длинный текст до указанной длины.
+    Args:
+        value: Проверяемое значение
+        length: Значение параметра `length`
+    """
     if not value:
         return ""
 
@@ -22,8 +29,12 @@ def short_text(value, length=120):
 
 
 @register.filter
-def vacancy_word(count):
-    """Возвращает слово 'роль' в правильной форме."""
+def vacancy_word(count: int) -> object:
+    """
+    Возвращает слово 'роль' в правильной форме.
+    Args:
+        count: Количество объектов
+    """
     try:
         count = int(count)
     except (TypeError, ValueError):
@@ -39,14 +50,21 @@ def vacancy_word(count):
 
 
 @register.simple_tag
-def service_name():
-    """Простой шаблонный тег с названием сервиса."""
+def service_name() -> object:
+    """
+    Простой шаблонный тег с названием сервиса.
+    """
     return "MeetService"
 
 
 @register.simple_tag(takes_context=True)
-def current_query_string(context, **kwargs):
-    """Возвращает query string с учётом текущих GET-параметров."""
+def current_query_string(context: dict[str, object], **kwargs: object) -> object:
+    """
+    Возвращает query string с учётом текущих GET-параметров.
+    Args:
+        context: Контекст шаблона или сериализатора
+        **kwargs: Именованные аргументы
+    """
     request = context.get("request")
 
     if request is None:
@@ -61,8 +79,12 @@ def current_query_string(context, **kwargs):
 
 
 @register.inclusion_tag("projects/tags/popular_technologies.html")
-def show_popular_technologies(limit=8):
-    """Возвращает QuerySet популярных технологий для отдельного блока."""
+def show_popular_technologies(limit: int = 8) -> object:
+    """
+    Возвращает QuerySet популярных технологий для отдельного блока.
+    Args:
+        limit: Максимальное количество элементов
+    """
     technologies = (
         Technology.objects.filter(is_active=True)
         .annotate(

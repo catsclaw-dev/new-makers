@@ -1,7 +1,11 @@
+from __future__ import annotations
+
 from django.contrib import admin
 
 from django.contrib import admin, messages
 from django.core.exceptions import ValidationError
+from django.db.models import QuerySet
+from django.http import HttpRequest
 from django.utils.translation import gettext_lazy as _
 from import_export.admin import ImportExportModelAdmin
 from simple_history.admin import SimpleHistoryAdmin
@@ -104,7 +108,12 @@ class ReviewAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
         ),
     )
 
-    def get_queryset(self, request):
+    def get_queryset(self, request: HttpRequest) -> QuerySet:
+        """
+        Возвращает queryset с нужными фильтрами и оптимизациями.
+        Args:
+            request: HTTP-запрос текущего пользователя
+        """
         queryset = super().get_queryset(request)
         return queryset.select_related(
             "project",
@@ -114,6 +123,11 @@ class ReviewAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
         )
 
     def display_short_text(self, obj: Review) -> str:
+        """
+        Возвращает значение для отображения в интерфейсе администратора.
+        Args:
+            obj: Объект модели
+        """
         if not obj.text:
             return "—"
 
@@ -126,10 +140,21 @@ class ReviewAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
 
     @admin.display(boolean=True, description="Опубликован")
     def display_is_public(self, obj: Review) -> bool:
+        """
+        Возвращает значение для отображения в интерфейсе администратора.
+        Args:
+            obj: Объект модели
+        """
         return obj.is_public()
 
     @admin.action(description="Опубликовать выбранные отзывы")
-    def publish_reviews(self, request, queryset):
+    def publish_reviews(self, request: HttpRequest, queryset: QuerySet) -> object:
+        """
+        Выполняет логику функции.
+        Args:
+            request: HTTP-запрос текущего пользователя
+            queryset: Набор объектов для обработки
+        """
         published_count = 0
 
         for review in queryset:
@@ -150,7 +175,13 @@ class ReviewAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
         )
 
     @admin.action(description="Скрыть выбранные отзывы")
-    def hide_reviews(self, request, queryset):
+    def hide_reviews(self, request: HttpRequest, queryset: QuerySet) -> object:
+        """
+        Выполняет логику функции.
+        Args:
+            request: HTTP-запрос текущего пользователя
+            queryset: Набор объектов для обработки
+        """
         hidden_count = 0
 
         for review in queryset:
@@ -164,7 +195,13 @@ class ReviewAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
         )
 
     @admin.action(description="Отклонить выбранные отзывы")
-    def reject_reviews(self, request, queryset):
+    def reject_reviews(self, request: HttpRequest, queryset: QuerySet) -> object:
+        """
+        Выполняет логику функции.
+        Args:
+            request: HTTP-запрос текущего пользователя
+            queryset: Набор объектов для обработки
+        """
         rejected_count = 0
 
         for review in queryset:

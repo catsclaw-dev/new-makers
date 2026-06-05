@@ -17,7 +17,11 @@ class SentryConfig:
 
 
 def clamp_sample_rate(value: float) -> float:
-    """Return a Sentry sample rate constrained to the valid 0..1 interval."""
+    """
+    Return a Sentry sample rate constrained to the valid 0..1 interval.
+    Args:
+        value: Проверяемое значение
+    """
     return max(0.0, min(value, 1.0))
 
 
@@ -30,7 +34,16 @@ def build_sentry_config(
     send_default_pii: bool,
     release: str = "",
 ) -> SentryConfig | None:
-    """Build Sentry configuration or return None when DSN is empty."""
+    """
+    Build Sentry configuration or return None when DSN is empty.
+    Args:
+        dsn: DSN проекта Sentry
+        environment: Название окружения Sentry
+        traces_sample_rate: Доля трассируемых запросов
+        profiles_sample_rate: Доля профилируемых запросов
+        send_default_pii: Признак отправки персональных данных
+        release: Версия релиза приложения
+    """
     dsn = dsn.strip()
 
     if not dsn:
@@ -47,7 +60,11 @@ def build_sentry_config(
 
 
 def sentry_init_kwargs(config: SentryConfig) -> dict[str, Any]:
-    """Convert SentryConfig into keyword arguments accepted by sentry_sdk.init."""
+    """
+    Convert SentryConfig into keyword arguments accepted by sentry_sdk.init.
+    Args:
+        config: Конфигурация Sentry
+    """
     kwargs: dict[str, Any] = {
         "dsn": config.dsn,
         "environment": config.environment,
@@ -63,7 +80,11 @@ def sentry_init_kwargs(config: SentryConfig) -> dict[str, Any]:
 
 
 def initialize_sentry(config: SentryConfig | None) -> bool:
-    """Initialize Sentry when config is present and report whether it was enabled."""
+    """
+    Initialize Sentry when config is present and report whether it was enabled.
+    Args:
+        config: Конфигурация Sentry
+    """
     if config is None:
         return False
 

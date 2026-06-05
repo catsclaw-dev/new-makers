@@ -1,5 +1,8 @@
+from __future__ import annotations
+
 from django.contrib import admin
-from django.db.models import Count, Q
+from django.db.models import Count, Q, QuerySet
+from django.http import HttpRequest
 from django.utils.translation import gettext_lazy as _
 from import_export.admin import ImportExportModelAdmin
 from simple_history.admin import SimpleHistoryAdmin
@@ -87,7 +90,12 @@ class RoleAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
         ),
     )
 
-    def get_queryset(self, request):
+    def get_queryset(self, request: HttpRequest) -> QuerySet:
+        """
+        Возвращает queryset с нужными фильтрами и оптимизациями.
+        Args:
+            request: HTTP-запрос текущего пользователя
+        """
         queryset = super().get_queryset(request)
         return queryset.annotate(
             open_vacancies_count=Count(
@@ -107,27 +115,59 @@ class RoleAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
 
     @admin.display(description="Открытых ролей")
     def display_open_vacancies_count(self, obj: Role) -> int:
+        """
+        Возвращает значение для отображения в интерфейсе администратора.
+        Args:
+            obj: Объект модели
+        """
         return getattr(obj, "open_vacancies_count", 0)
 
     @admin.display(description="Основная у специалистов")
     def display_main_specialists_count(self, obj: Role) -> int:
+        """
+        Возвращает значение для отображения в интерфейсе администратора.
+        Args:
+            obj: Объект модели
+        """
         return getattr(obj, "main_specialists_count", 0)
 
     @admin.display(description="Интересует специалистов")
     def display_preferred_specialists_count(self, obj: Role) -> int:
+        """
+        Возвращает значение для отображения в интерфейсе администратора.
+        Args:
+            obj: Объект модели
+        """
         return getattr(obj, "preferred_specialists_count", 0)
 
     @admin.display(description="Статус")
     def display_status(self, obj: Role) -> str:
+        """
+        Возвращает значение для отображения в интерфейсе администратора.
+        Args:
+            obj: Объект модели
+        """
         return "Активна" if obj.is_active else "Отключена"
 
     @admin.action(description="Активировать выбранные роли")
-    def activate_roles(self, request, queryset):
+    def activate_roles(self, request: HttpRequest, queryset: QuerySet) -> object:
+        """
+        Выполняет массовое действие в административном интерфейсе.
+        Args:
+            request: HTTP-запрос текущего пользователя
+            queryset: Набор объектов для обработки
+        """
         updated_count = queryset.update(is_active=True)
         self.message_user(request, f"Активировано ролей: {updated_count}")
 
     @admin.action(description="Отключить выбранные роли")
-    def deactivate_roles(self, request, queryset):
+    def deactivate_roles(self, request: HttpRequest, queryset: QuerySet) -> object:
+        """
+        Выполняет массовое действие в административном интерфейсе.
+        Args:
+            request: HTTP-запрос текущего пользователя
+            queryset: Набор объектов для обработки
+        """
         updated_count = queryset.update(is_active=False)
         self.message_user(request, f"Отключено ролей: {updated_count}")
 
@@ -213,7 +253,12 @@ class TechnologyAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
         ),
     )
 
-    def get_queryset(self, request):
+    def get_queryset(self, request: HttpRequest) -> QuerySet:
+        """
+        Возвращает queryset с нужными фильтрами и оптимизациями.
+        Args:
+            request: HTTP-запрос текущего пользователя
+        """
         queryset = super().get_queryset(request)
         return queryset.annotate(
             projects_count=Count(
@@ -233,26 +278,58 @@ class TechnologyAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
 
     @admin.display(description="Проектов")
     def display_projects_count(self, obj: Technology) -> int:
+        """
+        Возвращает значение для отображения в интерфейсе администратора.
+        Args:
+            obj: Объект модели
+        """
         return getattr(obj, "projects_count", 0)
 
     @admin.display(description="Опубликованных проектов")
     def display_published_projects_count(self, obj: Technology) -> int:
+        """
+        Возвращает значение для отображения в интерфейсе администратора.
+        Args:
+            obj: Объект модели
+        """
         return getattr(obj, "published_projects_count", 0)
 
     @admin.display(description="Специалистов")
     def display_specialists_count(self, obj: Technology) -> int:
+        """
+        Возвращает значение для отображения в интерфейсе администратора.
+        Args:
+            obj: Объект модели
+        """
         return getattr(obj, "specialists_count", 0)
 
     @admin.display(description="Категория")
     def display_category_label(self, obj: Technology) -> str:
+        """
+        Возвращает значение для отображения в интерфейсе администратора.
+        Args:
+            obj: Объект модели
+        """
         return obj.get_category_display()
 
     @admin.action(description="Активировать выбранные технологии")
-    def activate_technologies(self, request, queryset):
+    def activate_technologies(self, request: HttpRequest, queryset: QuerySet) -> object:
+        """
+        Выполняет массовое действие в административном интерфейсе.
+        Args:
+            request: HTTP-запрос текущего пользователя
+            queryset: Набор объектов для обработки
+        """
         updated_count = queryset.update(is_active=True)
         self.message_user(request, f"Активировано технологий: {updated_count}")
 
     @admin.action(description="Отключить выбранные технологии")
-    def deactivate_technologies(self, request, queryset):
+    def deactivate_technologies(self, request: HttpRequest, queryset: QuerySet) -> object:
+        """
+        Выполняет массовое действие в административном интерфейсе.
+        Args:
+            request: HTTP-запрос текущего пользователя
+            queryset: Набор объектов для обработки
+        """
         updated_count = queryset.update(is_active=False)
         self.message_user(request, f"Отключено технологий: {updated_count}")

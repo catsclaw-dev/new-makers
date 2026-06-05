@@ -1,7 +1,16 @@
+from __future__ import annotations
+
+from django.http import HttpRequest
+
 from apps.interactions.models import Application, Invitation
 
 
-def notification_counts(request):
+def notification_counts(request: HttpRequest) -> dict[str, int]:
+    """
+    Выполняет логику функции.
+    Args:
+        request: HTTP-запрос текущего пользователя
+    """
     if not request.user.is_authenticated:
         return {
             "header_applications_count": 0,

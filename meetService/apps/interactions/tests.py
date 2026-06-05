@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.test import TestCase
@@ -12,7 +14,10 @@ User = get_user_model()
 
 
 class ApplicationBusinessTests(TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
+        """
+        Подготавливает тестовые данные.
+        """
         self.owner = User.objects.create_user(
             username="owner",
             email="owner@example.com",
@@ -51,7 +56,10 @@ class ApplicationBusinessTests(TestCase):
             required_count=1,
         )
 
-    def test_application_to_own_project_is_invalid(self):
+    def test_application_to_own_project_is_invalid(self) -> None:
+        """
+        Проверяет сценарий `test_application_to_own_project_is_invalid`.
+        """
         application = Application(
             project=self.project,
             vacancy=self.vacancy,
@@ -62,7 +70,10 @@ class ApplicationBusinessTests(TestCase):
         with self.assertRaises(ValidationError):
             application.full_clean()
 
-    def test_duplicate_active_application_is_invalid(self):
+    def test_duplicate_active_application_is_invalid(self) -> None:
+        """
+        Проверяет сценарий `test_duplicate_active_application_is_invalid`.
+        """
         Application.objects.create(
             project=self.project,
             vacancy=self.vacancy,
@@ -80,7 +91,10 @@ class ApplicationBusinessTests(TestCase):
         with self.assertRaises(ValidationError):
             duplicate.full_clean()
 
-    def test_accept_application_adds_specialist_to_project(self):
+    def test_accept_application_adds_specialist_to_project(self) -> None:
+        """
+        Проверяет сценарий `test_accept_application_adds_specialist_to_project`.
+        """
         application = Application.objects.create(
             project=self.project,
             vacancy=self.vacancy,

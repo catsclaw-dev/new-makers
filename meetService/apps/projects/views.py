@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db import models, transaction
@@ -6,7 +8,7 @@ from django.views.decorators.http import require_POST
 from django.shortcuts import get_object_or_404, render, redirect
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
-from django.http import Http404, HttpResponseRedirect
+from django.http import Http404, HttpRequest, HttpResponse, HttpResponseRedirect
 from django.conf import settings
 from django.core.cache import cache
 
@@ -18,8 +20,12 @@ from apps.specialists.models import SpecialistProfile
 from apps.projects.forms import ProjectForm, ProjectVacancyForm
 
 
-def home(request):
-    """Главная страница сервиса с поиском, виджетами и агрегатами."""
+def home(request: HttpRequest) -> HttpResponse:
+    """
+    Главная страница сервиса с поиском, виджетами и агрегаторными функциями.
+    Args:
+        request: HTTP-запрос текущего пользователя
+    """
     query = request.GET.get("q", "").strip()
 
     viewed_project_ids = request.session.get("viewed_project_ids", [])
@@ -204,8 +210,12 @@ def home(request):
     return render(request, "projects/home.html", context)
 
 
-def project_list(request):
-    """Каталог проектов с поиском, фильтрацией, сортировкой и пагинацией."""
+def project_list(request: HttpRequest) -> HttpResponse:
+    """
+    Каталог проектов с поиском, фильтрацией, сортировкой и пагинацией.
+    Args:
+        request: HTTP-запрос текущего пользователя
+    """
     query = request.GET.get("q", "").strip()
     technology_slug = request.GET.get("technology", "").strip()
     role_slug = request.GET.get("role", "").strip()
@@ -273,11 +283,12 @@ def project_list(request):
     return render(request, "projects/project_list.html", context)
 
 
-def project_detail(request, slug):
-    """Детальная страница проекта.
-
-    Опубликованные проекты видят все.
-    Черновики, архивные и закрытые проекты видит только владелец или администратор.
+def project_detail(request: HttpRequest, slug: str) -> HttpResponse:
+    """
+    Детальная страница проекта.
+    Args:
+        request: HTTP-запрос текущего пользователя
+        slug: URL-идентификатор проекта
     """
     project = get_object_or_404(
         Project.objects.select_related("owner").prefetch_related(
@@ -365,8 +376,12 @@ def project_detail(request, slug):
 
 
 @login_required
-def my_projects(request):
-    """Проекты, которыми владеет текущий пользователь, и архив владельца."""
+def my_projects(request: HttpRequest) -> HttpResponse:
+    """
+    Проекты, которыми владеет текущий пользователь, и архив владельца.
+    Args:
+        request: HTTP-запрос текущего пользователя
+    """
     active_projects = (
         Project.objects.select_related("owner")
         .prefetch_related("technologies", "vacancies__role")
@@ -415,8 +430,12 @@ def my_projects(request):
 
 
 @login_required
-def my_teams(request):
-    """Проекты, в командах которых состоит или состоял текущий специалист."""
+def my_teams(request: HttpRequest) -> HttpResponse:
+    """
+    Проекты, в командах которых состоит или состоял текущий специалист.
+    Args:
+        request: HTTP-запрос текущего пользователя
+    """
     specialist_profile = getattr(request.user, "specialist_profile", None)
 
     memberships = ProjectMembership.objects.none()
@@ -487,8 +506,12 @@ def my_teams(request):
 
 
 @login_required
-def project_create(request):
-    """Создание нового проекта вместе с первой открытой ролью."""
+def project_create(request: HttpRequest) -> HttpResponse:
+    """
+    Создание нового проекта вместе с первой открытой ролью.
+    Args:
+        request: HTTP-запрос текущего пользователя
+    """
     if request.method == "POST":
         form = ProjectForm(
             request.POST,
@@ -535,8 +558,13 @@ def project_create(request):
 
 
 @login_required
-def project_update(request, slug):
-    """Редактирование проекта владельцем или администратором."""
+def project_update(request: HttpRequest, slug: str) -> HttpResponse:
+    """
+    Редактирование проекта владельцем или администратором.
+    Args:
+        request: HTTP-запрос текущего пользователя
+        slug: URL-идентификатор проекта
+    """
     project = get_object_or_404(Project, slug=slug)
 
     if not project.can_be_edited_by(request.user):
@@ -572,11 +600,12 @@ def project_update(request, slug):
 
 
 @login_required
-def project_delete(request, slug):
-    """Удаление проекта.
-
-    Владелец может удалить только черновик.
-    Администратор может удалить проект любого статуса.
+def project_delete(request: HttpRequest, slug: str) -> HttpResponse:
+    """
+    Удаление проекта.
+    Args:
+        request: HTTP-запрос текущего пользователя
+        slug: URL-идентификатор проекта
     """
     project = get_object_or_404(Project, slug=slug)
 
@@ -607,8 +636,13 @@ def project_delete(request, slug):
 
 
 @login_required
-def project_vacancy_create(request, slug):
-    """Добавление открытой роли к проекту."""
+def project_vacancy_create(request: HttpRequest, slug: str) -> HttpResponse:
+    """
+    Добавление открытой роли к проекту.
+    Args:
+        request: HTTP-запрос текущего пользователя
+        slug: URL-идентификатор проекта
+    """
     project = get_object_or_404(Project, slug=slug)
 
     if not project.can_be_edited_by(request.user):
@@ -643,8 +677,13 @@ def project_vacancy_create(request, slug):
 
 @require_POST
 @login_required
-def project_submit_for_moderation(request, slug):
-    """Отправляет черновик проекта на модерацию."""
+def project_submit_for_moderation(request: HttpRequest, slug: str) -> HttpResponse:
+    """
+    Отправляет черновик проекта на модерацию.
+    Args:
+        request: HTTP-запрос текущего пользователя
+        slug: URL-идентификатор проекта
+    """
     project = get_object_or_404(Project, slug=slug)
 
     if not project.can_be_edited_by(request.user):
@@ -682,8 +721,13 @@ def project_submit_for_moderation(request, slug):
 
 @require_POST
 @login_required
-def project_close(request, slug):
-    """Закрывает опубликованный проект для новых откликов и вакансий."""
+def project_close(request: HttpRequest, slug: str) -> HttpResponse:
+    """
+    Закрывает опубликованный проект для новых откликов и вакансий.
+    Args:
+        request: HTTP-запрос текущего пользователя
+        slug: URL-идентификатор проекта
+    """
     project = get_object_or_404(Project, slug=slug)
 
     if not project.can_be_edited_by(request.user):
@@ -708,8 +752,13 @@ def project_close(request, slug):
 
 @require_POST
 @login_required
-def project_reopen(request, slug):
-    """Повторно открывает закрытый проект."""
+def project_reopen(request: HttpRequest, slug: str) -> HttpResponse:
+    """
+    Повторно открывает закрытый проект.
+    Args:
+        request: HTTP-запрос текущего пользователя
+        slug: URL-идентификатор проекта
+    """
     project = get_object_or_404(Project, slug=slug)
 
     if not project.can_be_edited_by(request.user):
@@ -733,8 +782,13 @@ def project_reopen(request, slug):
 
 
 @login_required
-def project_archive(request, slug):
-    """Окончательно архивирует проект без возможности восстановления."""
+def project_archive(request: HttpRequest, slug: str) -> HttpResponse:
+    """
+    Окончательно архивирует проект без возможности восстановления.
+    Args:
+        request: HTTP-запрос текущего пользователя
+        slug: URL-идентификатор проекта
+    """
     project = get_object_or_404(Project, slug=slug)
 
     if not project.can_be_edited_by(request.user):
