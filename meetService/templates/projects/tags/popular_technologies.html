@@ -1,3 +1,4 @@
+{% load i18n %}
 {% if technologies %}
     <div class="tag-cloud">
         {% for technology in technologies %}
@@ -8,5 +9,5 @@
         {% endfor %}
     </div>
 {% else %}
-    <p class="empty">Технологии пока не добавлены.</p>
+    <p class="empty">{% trans "Технологии пока не добавлены." %}</p>
 {% endif %}

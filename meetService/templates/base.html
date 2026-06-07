@@ -1,13 +1,14 @@
 {% load static %}
 {% load project_extras %}
 {% load i18n %}
+{% get_current_language as LANGUAGE_CODE %}
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="{{ LANGUAGE_CODE }}">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>
-            {% block title %}MeetService{% endblock %}
+            {% block title %}New-Makers{% endblock %}
         </title>
         <script>
           (function () {
@@ -27,7 +28,7 @@
             <div class="container header-main">
                 <a class="logo"
                    href="{% url 'projects:home' %}"
-                   aria-label="На главную страницу MeetService">{% service_name %}</a>
+                   aria-label="{% trans 'На главную страницу New-Makers' %}">{% service_name %}</a>
                 <form class="header-search"
                       action="{% url 'global_search' %}"
                       method="get"
@@ -47,7 +48,7 @@
                            aria-label="{% trans 'Глобальный поиск' %}">
                 </form>
                 {% with current_view=request.resolver_match.view_name %}
-                    <nav class="main-nav" aria-label="Основная навигация">
+                    <nav class="main-nav" aria-label="{% trans 'Основная навигация' %}">
                         <a class="nav-link {% if current_view == 'projects:project_list' %}is-active{% endif %}"
                            href="{% url 'projects:project_list' %}">{% trans "Проекты" %}</a>
                         <a class="nav-link {% if current_view == 'specialists:specialist_list' %}is-active{% endif %}"
@@ -58,7 +59,7 @@
                     <button class="btn btn-small accessibility-toggle"
                             type="button"
                             id="bw-mode-toggle"
-                            aria-pressed="false">Ч/Б</button>
+                            aria-pressed="false">{% trans "Ч/Б" %}</button>
                     <form action="{% url 'set_language' %}" method="post" class="language-form">
                         {% csrf_token %}
                         <input name="next" type="hidden" value="{{ request.get_full_path }}">
@@ -116,11 +117,16 @@
         </main>
         <footer class="site-footer">
             <div class="container footer-inner">
-                <p>© MeetService — {% trans "сервис поиска IT-команды" %}</p>
+                <p>© New-Makers — {% trans "сервис поиска IT-команды" %}</p>
                 <p>{% trans "Курсовой проект на Django" %}</p>
             </div>
         </footer>
         <script>
+          const bwColorLabel = "{% trans 'Цвет' %}";
+          const bwMonochromeLabel = "{% trans 'Ч/Б' %}";
+          const bwRestoreTitle = "{% trans 'Вернуть цветную тему' %}";
+          const bwEnableTitle = "{% trans 'Включить чёрно-белый режим' %}";
+
           (function () {
             const root = document.documentElement;
             const button = document.getElementById("bw-mode-toggle");
@@ -132,10 +138,10 @@
             function updateButtonState() {
               const enabled = root.classList.contains("bw-mode");
               button.setAttribute("aria-pressed", enabled ? "true" : "false");
-              button.textContent = enabled ? "Цвет" : "Ч/Б";
+              button.textContent = enabled ? bwColorLabel : bwMonochromeLabel;
               button.title = enabled
-                ? "Вернуть цветную тему"
-                : "Включить чёрно-белый режим";
+                ? bwRestoreTitle
+                : bwEnableTitle;
             }
 
             updateButtonState();

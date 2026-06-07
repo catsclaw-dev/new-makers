@@ -1,17 +1,18 @@
 {% extends "base.html" %}
-{% block title %}Доступ запрещён — MeetService{% endblock %}
+{% load i18n %}
+{% block title %}{% trans "Доступ запрещён" %} — New-Makers{% endblock %}
 {% block content %}
 <section class="container section">
   <article class="error-card">
-    <p class="eyebrow">ошибка 403</p>
-    <h1>Доступ запрещён</h1>
-    <p>У тебя нет прав для выполнения этого действия или просмотра этой страницы.</p>
+    <p class="eyebrow">{% trans "ошибка 403" %}</p>
+    <h1>{% trans "Доступ запрещён" %}</h1>
+    <p>{% trans "У тебя нет прав для выполнения этого действия или просмотра этой страницы." %}</p>
     <div class="hero-actions">
-      <a class="btn btn-primary" href="{% url 'projects:home' %}">На главную</a>
+      <a class="btn btn-primary" href="{% url 'projects:home' %}">{% trans "На главную" %}</a>
       {% if user.is_authenticated %}
-      <a class="btn btn-secondary" href="{% url 'accounts:profile' %}">В личный кабинет</a>
+      <a class="btn btn-secondary" href="{% url 'accounts:profile' %}">{% trans "В личный кабинет" %}</a>
       {% else %}
-      <a class="btn btn-secondary" href="{% url 'accounts:login' %}">Войти</a>
+      <a class="btn btn-secondary" href="{% url 'accounts:login' %}">{% trans "Войти" %}</a>
       {% endif %}
     </div>
   </article>

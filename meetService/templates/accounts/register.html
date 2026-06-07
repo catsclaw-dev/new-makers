@@ -1,14 +1,12 @@
 {% extends "base.html" %}
-{% block title %}Регистрация — MeetService{% endblock %}
+{% load i18n %}
+{% block title %}{% trans "Регистрация" %} — New-Makers{% endblock %}
 {% block content %}
     <section class="container auth-page">
         <article class="auth-card">
-            <p class="eyebrow">новый аккаунт</p>
-            <h1>Регистрация</h1>
-            <p class="lead">
-                Создай аккаунт, чтобы откликаться на проекты, собирать команду
-                и управлять своим профилем специалиста.
-            </p>
+            <p class="eyebrow">{% trans "новый аккаунт" %}</p>
+            <h1>{% trans "Регистрация" %}</h1>
+            <p class="lead">{% trans "Создай аккаунт, чтобы откликаться на проекты, собирать команду и управлять своим профилем специалиста." %}</p>
             <form method="post" class="form-grid">
                 {% csrf_token %}
                 {% if form.non_field_errors %}<div class="form-errors">{{ form.non_field_errors }}</div>{% endif %}
@@ -22,11 +20,11 @@
                         {% for error in field.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
                     </div>
                 {% endfor %}
-                <button class="btn btn-primary full-width" type="submit">Зарегистрироваться</button>
+                <button class="btn btn-primary full-width" type="submit">{% trans "Зарегистрироваться" %}</button>
             </form>
             <p class="auth-switch">
-                Уже есть аккаунт?
-                <a href="{% url 'accounts:login' %}">Войти</a>
+                {% trans "Уже есть аккаунт?" %}
+                <a href="{% url 'accounts:login' %}">{% trans "Войти" %}</a>
             </p>
         </article>
     </section>

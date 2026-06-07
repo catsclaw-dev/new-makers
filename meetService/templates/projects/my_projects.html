@@ -1,25 +1,29 @@
 {% extends "base.html" %}
-{% block title %}Мои проекты — MeetService{% endblock %}
+{% load i18n %}
+{% trans "Описание проекта пока не заполнено." as project_description_fallback %}
+{% trans "Закрыть проект для новых участников?" as close_project_confirm %}
+{% trans "Снова открыть проект для набора участников?" as reopen_project_confirm %}
+{% block title %}{% trans "Мои проекты" %} — New-Makers{% endblock %}
 {% block content %}
     <section class="container page-head">
-        <p class="eyebrow">владелец проекта</p>
-        <h1>Мои проекты</h1>
+        <p class="eyebrow">{% trans "владелец проекта" %}</p>
+        <h1>{% trans "Мои проекты" %}</h1>
         <p class="lead">
-            Здесь собраны проекты, где в поле «владелец проекта» указан твой аккаунт.
-            Активных проектов: {{ projects_count }}.
-            Архивных проектов: {{ archived_projects_count }}.
+            {% blocktrans %}Здесь собраны проекты, где в поле «владелец проекта» указан твой аккаунт.{% endblocktrans %}
+            {% blocktrans count counter=projects_count %}Активный проект: {{ counter }}.{% plural %}Активных проектов: {{ counter }}.{% endblocktrans %}
+            {% blocktrans count counter=archived_projects_count %}Архивный проект: {{ counter }}.{% plural %}Архивных проектов: {{ counter }}.{% endblocktrans %}
         </p>
         <div class="hero-actions">
-            <a class="btn btn-primary" href="{% url 'projects:project_create' %}">Создать проект</a>
+            <a class="btn btn-primary" href="{% url 'projects:project_create' %}">{% trans "Создать проект" %}</a>
         </div>
     </section>
     <section class="container section">
         <div class="section-head">
             <div>
-                <p class="eyebrow">активная работа</p>
-                <h2>Мои проекты</h2>
+                <p class="eyebrow">{% trans "активная работа" %}</p>
+                <h2>{% trans "Мои проекты" %}</h2>
             </div>
-            <p class="empty">Показываются черновики, проекты на модерации, опубликованные и закрытые проекты.</p>
+            <p class="empty">{% trans "Показываются черновики, проекты на модерации, опубликованные и закрытые проекты." %}</p>
         </div>
         <div class="cards-grid">
             {% for project in projects %}
@@ -42,52 +46,52 @@
                             <h3>
                                 <a href="{{ project.get_absolute_url }}">{{ project.title }}</a>
                             </h3>
-                            <p class="project-description">{{ project.short_description|default:"Описание проекта пока не заполнено." }}</p>
+                            <p class="project-description">{{ project.short_description|default:project_description_fallback }}</p>
                         </div>
                         <div class="project-card-bottom">
                             <div class="tag-row">
                                 {% for technology in project.technologies.all|slice:":4" %}
                                     <span class="tag">{{ technology.name }}</span>
                                 {% empty %}
-                                    <span class="tag">Стек не указан</span>
+                                    <span class="tag">{% trans "Стек не указан" %}</span>
                                 {% endfor %}
                             </div>
                             <div class="project-actions">
-                                <a class="btn btn-secondary" href="{{ project.get_absolute_url }}">Открыть</a>
+                                <a class="btn btn-secondary" href="{{ project.get_absolute_url }}">{% trans "Открыть" %}</a>
                                 {% if project.status != "archived" %}
                                     <a class="btn btn-primary"
-                                       href="{% url 'projects:project_update' project.slug %}">Редактировать</a>
+                                       href="{% url 'projects:project_update' project.slug %}">{% trans "Редактировать" %}</a>
                                 {% endif %}
                                 {% if project.status != "closed" and project.status != "archived" %}
                                     <a class="btn btn-secondary"
                                        href="{% url 'projects:project_vacancy_create' project.slug %}">
-                                        Добавить роль
+                                        {% trans "Добавить роль" %}
                                     </a>
                                 {% endif %}
                                 {% if project.status == "published" %}
                                     <form class="inline-form"
                                           method="post"
                                           action="{% url 'projects:project_close' project.slug %}"
-                                          onsubmit="return confirm('Закрыть проект для новых участников?');">
+                                          onsubmit="return confirm('{{ close_project_confirm|escapejs }}');">
                                         {% csrf_token %}
-                                        <button class="btn btn-secondary full-width" type="submit">Закрыть набор</button>
+                                        <button class="btn btn-secondary full-width" type="submit">{% trans "Закрыть набор" %}</button>
                                     </form>
                                 {% elif project.status == "closed" %}
                                     <form class="inline-form"
                                           method="post"
                                           action="{% url 'projects:project_reopen' project.slug %}"
-                                          onsubmit="return confirm('Снова открыть проект для набора участников?');">
+                                          onsubmit="return confirm('{{ reopen_project_confirm|escapejs }}');">
                                         {% csrf_token %}
-                                        <button class="btn btn-primary full-width" type="submit">Открыть набор</button>
+                                        <button class="btn btn-primary full-width" type="submit">{% trans "Открыть набор" %}</button>
                                     </form>
                                 {% endif %}
                                 {% if project.status == "published" or project.status == "closed" %}
                                     <a class="btn btn-secondary"
-                                       href="{% url 'projects:project_archive' project.slug %}">В архив</a>
+                                       href="{% url 'projects:project_archive' project.slug %}">{% trans "В архив" %}</a>
                                 {% endif %}
                                 {% if project.status == "draft" %}
                                     <a class="btn btn-danger"
-                                       href="{% url 'projects:project_delete' project.slug %}">Удалить черновик</a>
+                                       href="{% url 'projects:project_delete' project.slug %}">{% trans "Удалить черновик" %}</a>
                                 {% endif %}
                             </div>
                         </div>
@@ -95,28 +99,27 @@
                 </article>
             {% empty %}
                 <article class="action-card">
-                    <h2>У тебя пока нет активных проектов</h2>
+                    <h2>{% trans "У тебя пока нет активных проектов" %}</h2>
                     <p class="empty">
-                        Создай первый проект. Он сохранится как черновик,
-                        после чего ты сможешь добавить открытую роль.
+                        {% blocktrans %}Создай первый проект. Он сохранится как черновик, после чего ты сможешь добавить открытую роль.{% endblocktrans %}
                     </p>
-                    <a class="btn btn-primary" href="{% url 'projects:project_create' %}">Создать проект</a>
+                    <a class="btn btn-primary" href="{% url 'projects:project_create' %}">{% trans "Создать проект" %}</a>
                 </article>
             {% endfor %}
         </div>
         {% if projects.has_other_pages %}
-            <nav class="pagination" aria-label="Пагинация моих проектов">
+            <nav class="pagination" aria-label="{% trans 'Пагинация моих проектов' %}">
                 {% if projects.has_previous %}
                     <a class="btn btn-secondary"
                        href="?page={{ projects.previous_page_number }}{% if archived_projects.number %}&archive_page={{ archived_projects.number }}{% endif %}">
-                        Назад
+                        {% trans "Назад" %}
                     </a>
                 {% endif %}
-                <span class="pagination-current">Страница {{ projects.number }} из {{ projects.paginator.num_pages }}</span>
+                <span class="pagination-current">{% blocktrans with current=projects.number total=projects.paginator.num_pages %}Страница {{ current }} из {{ total }}{% endblocktrans %}</span>
                 {% if projects.has_next %}
                     <a class="btn btn-secondary"
                        href="?page={{ projects.next_page_number }}{% if archived_projects.number %}&archive_page={{ archived_projects.number }}{% endif %}">
-                        Вперёд
+                        {% trans "Вперёд" %}
                     </a>
                 {% endif %}
             </nav>
@@ -125,12 +128,11 @@
     <section class="container section">
         <div class="section-head">
             <div>
-                <p class="eyebrow">история владельца</p>
-                <h2>Архивные проекты</h2>
+                <p class="eyebrow">{% trans "история владельца" %}</p>
+                <h2>{% trans "Архивные проекты" %}</h2>
             </div>
             <p class="empty">
-                Эти проекты окончательно закрыты. Их нельзя редактировать,
-                открыть заново или пополнить ролями.
+                {% blocktrans %}Эти проекты окончательно закрыты. Их нельзя редактировать, открыть заново или пополнить ролями.{% endblocktrans %}
             </p>
         </div>
         <div class="cards-grid">
@@ -154,44 +156,44 @@
                             <h3>
                                 <a href="{{ project.get_absolute_url }}">{{ project.title }}</a>
                             </h3>
-                            <p class="project-description">{{ project.short_description|default:"Описание проекта пока не заполнено." }}</p>
+                            <p class="project-description">{{ project.short_description|default:project_description_fallback }}</p>
                         </div>
                         <div class="project-card-bottom">
                             <div class="tag-row">
                                 {% for technology in project.technologies.all|slice:":4" %}
                                     <span class="tag">{{ technology.name }}</span>
                                 {% empty %}
-                                    <span class="tag">Стек не указан</span>
+                                    <span class="tag">{% trans "Стек не указан" %}</span>
                                 {% endfor %}
                             </div>
                             <div class="project-actions">
-                                <a class="btn btn-secondary" href="{{ project.get_absolute_url }}">Открыть историю</a>
+                                <a class="btn btn-secondary" href="{{ project.get_absolute_url }}">{% trans "Открыть историю" %}</a>
                             </div>
                         </div>
                     </div>
                 </article>
             {% empty %}
                 <article class="action-card">
-                    <h2>Архив пока пуст</h2>
-                    <p class="empty">Здесь появятся проекты, которые ты окончательно закроешь.</p>
+                    <h2>{% trans "Архив пока пуст" %}</h2>
+                    <p class="empty">{% trans "Здесь появятся проекты, которые ты окончательно закроешь." %}</p>
                 </article>
             {% endfor %}
         </div>
         {% if archived_projects.has_other_pages %}
-            <nav class="pagination" aria-label="Пагинация архивных проектов">
+            <nav class="pagination" aria-label="{% trans 'Пагинация архивных проектов' %}">
                 {% if archived_projects.has_previous %}
                     <a class="btn btn-secondary"
                        href="?page={{ projects.number }}&archive_page={{ archived_projects.previous_page_number }}">
-                        Назад
+                        {% trans "Назад" %}
                     </a>
                 {% endif %}
                 <span class="pagination-current">
-                    Страница {{ archived_projects.number }} из {{ archived_projects.paginator.num_pages }}
+                    {% blocktrans with current=archived_projects.number total=archived_projects.paginator.num_pages %}Страница {{ current }} из {{ total }}{% endblocktrans %}
                 </span>
                 {% if archived_projects.has_next %}
                     <a class="btn btn-secondary"
                        href="?page={{ projects.number }}&archive_page={{ archived_projects.next_page_number }}">
-                        Вперёд
+                        {% trans "Вперёд" %}
                     </a>
                 {% endif %}
             </nav>

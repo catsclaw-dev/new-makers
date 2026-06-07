@@ -1,13 +1,11 @@
 {% extends "base.html" %}
-{% block title %}{{ page_title }} — MeetService{% endblock %}
+{% load i18n %}
+{% block title %}{{ page_title }} — New-Makers{% endblock %}
 {% block content %}
     <section class="container page-head">
-        <p class="eyebrow">профиль специалиста</p>
+        <p class="eyebrow">{% trans "профиль специалиста" %}</p>
         <h1>{{ page_title }}</h1>
-        <p class="lead">
-            Заполни анкету, чтобы откликаться на проекты, получать приглашения
-            и отображаться в каталоге специалистов.
-        </p>
+        <p class="lead">{% trans "Заполни анкету, чтобы откликаться на проекты, получать приглашения и отображаться в каталоге специалистов." %}</p>
     </section>
     <section class="container section">
         <div class="form-shell">
@@ -30,7 +28,7 @@
                 {% endfor %}
                 <div class="form-actions form-field-wide">
                     <button class="btn btn-primary" type="submit">{{ submit_text }}</button>
-                    <a class="btn btn-secondary" href="{% url 'accounts:profile' %}">Отмена</a>
+                    <a class="btn btn-secondary" href="{% url 'accounts:profile' %}">{% trans "Отмена" %}</a>
                 </div>
             </form>
         </div>

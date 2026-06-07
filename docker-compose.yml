@@ -19,8 +19,8 @@ services:
       DEFAULT_FROM_EMAIL: ${DEFAULT_FROM_EMAIL:-MeetService <noreply@meetservice.local>}
       EMAIL_NOTIFICATIONS_ENABLED: ${EMAIL_NOTIFICATIONS_ENABLED:-True}
       SITE_URL: ${SITE_URL:-http://127.0.0.1:8000}
-      CELERY_BROKER_URL: redis://redis:6379/0
-      CELERY_RESULT_BACKEND: redis://redis:6379/0
+      CELERY_BROKER_URL: ${CELERY_BROKER_URL:-amqp://meetservice:meetservice@rabbitmq:5672//}
+      CELERY_RESULT_BACKEND: ${CELERY_RESULT_BACKEND:-redis://redis:6379/0}
       INVITATION_EXPIRE_DAYS: ${INVITATION_EXPIRE_DAYS:-14}
       GOOGLE_OAUTH_CLIENT_ID: ${GOOGLE_OAUTH_CLIENT_ID:-}
       GOOGLE_OAUTH_CLIENT_SECRET: ${GOOGLE_OAUTH_CLIENT_SECRET:-}
@@ -35,8 +35,12 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - redis
-      - mailhog
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      mailhog:
+        condition: service_started
 
   celery_worker:
     build: .
@@ -53,8 +57,8 @@ services:
       EMAIL_USE_TLS: "False"
       EMAIL_NOTIFICATIONS_ENABLED: ${EMAIL_NOTIFICATIONS_ENABLED:-True}
       SITE_URL: ${SITE_URL:-http://127.0.0.1:8000}
-      CELERY_BROKER_URL: redis://redis:6379/0
-      CELERY_RESULT_BACKEND: redis://redis:6379/0
+      CELERY_BROKER_URL: ${CELERY_BROKER_URL:-amqp://meetservice:meetservice@rabbitmq:5672//}
+      CELERY_RESULT_BACKEND: ${CELERY_RESULT_BACKEND:-redis://redis:6379/0}
       INVITATION_EXPIRE_DAYS: ${INVITATION_EXPIRE_DAYS:-14}
       GOOGLE_OAUTH_CLIENT_ID: ${GOOGLE_OAUTH_CLIENT_ID:-}
       GOOGLE_OAUTH_CLIENT_SECRET: ${GOOGLE_OAUTH_CLIENT_SECRET:-}
@@ -66,8 +70,12 @@ services:
       - ./db.sqlite3:/app/db.sqlite3
       - ./meetService/media:/app/meetService/media
     depends_on:
-      - redis
-      - mailhog
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      mailhog:
+        condition: service_started
 
   celery_beat:
     build: .
@@ -78,8 +86,8 @@ services:
       DJANGO_DEBUG: ${DJANGO_DEBUG:-False}
       DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS:-127.0.0.1,localhost,0.0.0.0}
       DATABASE_URL: ${DOCKER_DATABASE_URL:-sqlite:////app/db.sqlite3}
-      CELERY_BROKER_URL: redis://redis:6379/0
-      CELERY_RESULT_BACKEND: redis://redis:6379/0
+      CELERY_BROKER_URL: ${CELERY_BROKER_URL:-amqp://meetservice:meetservice@rabbitmq:5672//}
+      CELERY_RESULT_BACKEND: ${CELERY_RESULT_BACKEND:-redis://redis:6379/0}
       EMAIL_NOTIFICATIONS_ENABLED: ${EMAIL_NOTIFICATIONS_ENABLED:-True}
       SITE_URL: ${SITE_URL:-http://127.0.0.1:8000}
       INVITATION_EXPIRE_DAYS: ${INVITATION_EXPIRE_DAYS:-14}
@@ -92,7 +100,27 @@ services:
     volumes:
       - ./db.sqlite3:/app/db.sqlite3
     depends_on:
-      - redis
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  rabbitmq:
+    image: rabbitmq:4.2-management-alpine
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER:-meetservice}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS:-meetservice}
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
 
   redis:
     image: redis:7-alpine
@@ -106,4 +134,5 @@ services:
       - "8025:8025"
 
 volumes:
+  rabbitmq_data:
   static_data:

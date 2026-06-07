@@ -1,26 +1,24 @@
 {% extends "base.html" %}
-{% block title %}Отклики — MeetService{% endblock %}
+{% load i18n %}
+{% block title %}{% trans "Отклики" %} — New-Makers{% endblock %}
 {% block content %}
     <section class="container page-head">
-        <p class="eyebrow">личный кабинет</p>
-        <h1>Отклики</h1>
-        <p class="lead">
-            Здесь собраны твои отправленные отклики и входящие заявки на проекты,
-            которыми ты владеешь.
-        </p>
+        <p class="eyebrow">{% trans "личный кабинет" %}</p>
+        <h1>{% trans "Отклики" %}</h1>
+        <p class="lead">{% trans "Здесь собраны твои отправленные отклики и входящие заявки на проекты, которыми ты владеешь." %}</p>
     </section>
     <section class="container section">
         <dl class="stats-grid">
             <div>
                 <dt>{{ sent_count }}</dt>
                 <dd>
-                    моих откликов
+                    {% trans "моих откликов" %}
                 </dd>
             </div>
             <div>
                 <dt>{{ incoming_count }}</dt>
                 <dd>
-                    новых откликов на мои проекты
+                    {% trans "новых откликов на мои проекты" %}
                 </dd>
             </div>
         </dl>
@@ -29,17 +27,17 @@
         <div>
             <div class="section-heading">
                 <div>
-                    <p class="eyebrow">я откликнулся</p>
-                    <h2>Мои отправленные отклики</h2>
+                    <p class="eyebrow">{% trans "я откликнулся" %}</p>
+                    <h2>{% trans "Мои отправленные отклики" %}</h2>
                 </div>
             </div>
             <div class="mini-list">
                 {% if not specialist %}
                     <article class="action-card">
-                        <h3>Профиль специалиста не найден</h3>
-                        <p class="empty">Чтобы отправлять отклики, нужен профиль специалиста.</p>
+                        <h3>{% trans "Профиль специалиста не найден" %}</h3>
+                        <p class="empty">{% trans "Чтобы отправлять отклики, нужен профиль специалиста." %}</p>
                         <a class="btn btn-primary"
-                           href="{% url 'specialists:specialist_profile_edit' %}">Заполнить профиль специалиста</a>
+                           href="{% url 'specialists:specialist_profile_edit' %}">{% trans "Заполнить профиль специалиста" %}</a>
                     </article>
                 {% endif %}
                 {% for application in sent_applications %}
@@ -48,7 +46,7 @@
                             <a href="{{ application.project.get_absolute_url }}">{{ application.project.title }}</a>
                         </h3>
                         <p>
-                            Роль: {{ application.vacancy.title }}
+                            {% trans "Роль:" %} {{ application.vacancy.title }}
                             {% if application.vacancy.role %}· {{ application.vacancy.role.name }}{% endif %}
                         </p>
                         {% if application.message %}<p>{{ application.message }}</p>{% endif %}
@@ -57,12 +55,9 @@
                 {% empty %}
                     {% if specialist %}
                         <article class="action-card">
-                            <h3>Откликов пока нет</h3>
-                            <p class="empty">
-                                Открой каталог проектов и отправь первый отклик
-                                на подходящую роль.
-                            </p>
-                            <a class="btn btn-primary" href="{% url 'projects:project_list' %}">Найти проект</a>
+                            <h3>{% trans "Откликов пока нет" %}</h3>
+                            <p class="empty">{% trans "Открой каталог проектов и отправь первый отклик на подходящую роль." %}</p>
+                            <a class="btn btn-primary" href="{% url 'projects:project_list' %}">{% trans "Найти проект" %}</a>
                         </article>
                     {% endif %}
                 {% endfor %}
@@ -71,8 +66,8 @@
         <div>
             <div class="section-heading">
                 <div>
-                    <p class="eyebrow">мои проекты</p>
-                    <h2>Входящие отклики</h2>
+                    <p class="eyebrow">{% trans "мои проекты" %}</p>
+                    <h2>{% trans "Входящие отклики" %}</h2>
                 </div>
             </div>
             <div class="mini-list">
@@ -82,13 +77,13 @@
                             <a href="{{ application.project.get_absolute_url }}">{{ application.project.title }}</a>
                         </h3>
                         <p>
-                            Кандидат:
+                            {% trans "Кандидат:" %}
                             <a href="{% url 'specialists:specialist_detail' application.specialist.pk %}">
                                 {{ application.specialist.get_display_name }}
                             </a>
                         </p>
                         <p>
-                            Роль: {{ application.vacancy.title }}
+                            {% trans "Роль:" %} {{ application.vacancy.title }}
                             {% if application.vacancy.role %}· {{ application.vacancy.role.name }}{% endif %}
                         </p>
                         {% if application.message %}<p>{{ application.message }}</p>{% endif %}
@@ -98,24 +93,21 @@
                                   method="post"
                                   action="{% url 'interactions:application_accept' application.pk %}">
                                 {% csrf_token %}
-                                <button class="btn btn-primary" type="submit">Принять</button>
+                                <button class="btn btn-primary" type="submit">{% trans "Принять" %}</button>
                             </form>
                             <form class="inline-form"
                                   method="post"
                                   action="{% url 'interactions:application_reject' application.pk %}">
                                 {% csrf_token %}
-                                <button class="btn btn-secondary" type="submit">Отклонить</button>
+                                <button class="btn btn-secondary" type="submit">{% trans "Отклонить" %}</button>
                             </form>
                         </div>
                     </article>
                 {% empty %}
                     <article class="action-card">
-                        <h3>Новых откликов пока нет</h3>
-                        <p class="empty">
-                            Когда специалисты откликнутся на твои проекты,
-                            заявки появятся здесь.
-                        </p>
-                        <a class="btn btn-secondary" href="{% url 'projects:my_projects' %}">Мои проекты</a>
+                        <h3>{% trans "Новых откликов пока нет" %}</h3>
+                        <p class="empty">{% trans "Когда специалисты откликнутся на твои проекты, заявки появятся здесь." %}</p>
+                        <a class="btn btn-secondary" href="{% url 'projects:my_projects' %}">{% trans "Мои проекты" %}</a>
                     </article>
                 {% endfor %}
             </div>

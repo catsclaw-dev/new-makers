@@ -3,6 +3,7 @@ from __future__ import annotations
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import IntegrityError
 from django.db.models import Avg, Count, Exists, F, OuterRef, Q, QuerySet
+from django.utils.translation import gettext_lazy as _
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import NotAuthenticated, PermissionDenied, ValidationError
@@ -232,8 +233,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
         if not is_admin(request.user) and project.status != Project.Status.DRAFT:
             raise ValidationError(
-                "Владелец может удалить только черновик. "
-                "Опубликованный или закрытый проект нужно архивировать."
+                _("Владелец может удалить только черновик. "
+                "Опубликованный или закрытый проект нужно архивировать.")
             )
 
         project.delete()
@@ -268,7 +269,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
         if not project.can_be_edited_by(request.user):
             raise PermissionDenied(
-                "Добавлять роли может только владелец проекта или администратор."
+                _("Добавлять роли может только владелец проекта или администратор.")
             )
 
         serializer = ProjectVacancySerializer(
@@ -293,7 +294,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         project = self.get_object()
 
         if project.status != Project.Status.DRAFT:
-            raise ValidationError("На модерацию можно отправить только черновик.")
+            raise ValidationError(_("На модерацию можно отправить только черновик."))
 
         has_open_vacancies = project.vacancies.filter(
             status=ProjectVacancy.Status.OPEN,
@@ -302,7 +303,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
         if not has_open_vacancies:
             raise ValidationError(
-                "Перед отправкой на модерацию добавь хотя бы одну открытую роль."
+                _("Перед отправкой на модерацию добавь хотя бы одну открытую роль.")
             )
 
         project.status = Project.Status.MODERATION
@@ -323,7 +324,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         project = self.get_object()
 
         if project.status != Project.Status.PUBLISHED:
-            raise ValidationError("Закрыть можно только опубликованный проект.")
+            raise ValidationError(_("Закрыть можно только опубликованный проект."))
 
         project.status = Project.Status.CLOSED
         project.updated_by = request.user
@@ -343,7 +344,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         project = self.get_object()
 
         if project.status != Project.Status.CLOSED:
-            raise ValidationError("Повторно открыть можно только закрытый проект.")
+            raise ValidationError(_("Повторно открыть можно только закрытый проект."))
 
         project.status = Project.Status.PUBLISHED
         project.updated_by = request.user
@@ -364,7 +365,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
         if project.status not in [Project.Status.PUBLISHED, Project.Status.CLOSED]:
             raise ValidationError(
-                "Архивировать можно только опубликованный или закрытый проект."
+                _("Архивировать можно только опубликованный или закрытый проект.")
             )
 
         confirmation_title = request.data.get("confirmation_title", "").strip()
@@ -373,7 +374,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             raise ValidationError(
                 {
                     "confirmation_title": (
-                        "Название проекта введено неверно. Архивация отменена."
+                        _("Название проекта введено неверно. Архивация отменена.")
                     )
                 }
             )
@@ -403,7 +404,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
         if project.status not in PUBLIC_PROJECT_STATUSES:
             raise ValidationError(
-                "В избранное можно добавить только опубликованный или закрытый проект."
+                _("В избранное можно добавить только опубликованный или закрытый проект.")
             )
 
         favorite = FavoriteProject.objects.filter(
@@ -482,7 +483,7 @@ class ProjectVacancyViewSet(viewsets.ModelViewSet):
 
         if not project.can_be_edited_by(self.request.user):
             raise PermissionDenied(
-                "Добавлять роли может только владелец проекта или администратор."
+                _("Добавлять роли может только владелец проекта или администратор.")
             )
 
         serializer.save()
@@ -566,7 +567,7 @@ class SpecialistProfileViewSet(viewsets.ModelViewSet):
             serializer: Сериализатор с проверенными данными
         """
         if SpecialistProfile.objects.filter(user=self.request.user).exists():
-            raise ValidationError("У пользователя уже есть профиль специалиста.")
+            raise ValidationError(_("У пользователя уже есть профиль специалиста."))
 
         serializer.save(
             user=self.request.user,
@@ -673,10 +674,10 @@ class ApplicationViewSet(viewsets.ModelViewSet):
         application = self.get_object()
 
         if not is_admin(request.user) and application.specialist.user_id != request.user.id:
-            raise PermissionDenied("Отменить можно только свой отклик.")
+            raise PermissionDenied(_("Отменить можно только свой отклик."))
 
         if application.status != Application.Status.PENDING:
-            raise ValidationError("Отменить можно только отклик на рассмотрении.")
+            raise ValidationError(_("Отменить можно только отклик на рассмотрении."))
 
         application.status = Application.Status.CANCELLED
         application.save(update_fields=["status"])
@@ -786,10 +787,10 @@ class InvitationViewSet(viewsets.ModelViewSet):
         )
 
         if not can_cancel:
-            raise PermissionDenied("Отменить можно только своё приглашение.")
+            raise PermissionDenied(_("Отменить можно только своё приглашение."))
 
         if invitation.status != Invitation.Status.PENDING:
-            raise ValidationError("Отменить можно только приглашение без ответа.")
+            raise ValidationError(_("Отменить можно только приглашение без ответа."))
 
         invitation.status = Invitation.Status.CANCELLED
         invitation.save(update_fields=["status"])

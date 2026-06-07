@@ -1,23 +1,18 @@
 {% extends "base.html" %}
-{% block title %}Удалить черновик проекта — MeetService{% endblock %}
+{% load i18n %}
+{% block title %}{% trans "Удалить черновик проекта" %} — New-Makers{% endblock %}
 {% block content %}
     <section class="container narrow-page section">
         <article class="action-card">
-            <p class="eyebrow">опасное действие</p>
-            <h1>Удалить черновик проекта?</h1>
-            <p class="lead">
-                Ты собираешься удалить проект <strong>«{{ project.title }}»</strong>.
-                Это действие нельзя отменить.
-            </p>
-            <p class="empty">
-                Удаление доступно только для черновиков. Опубликованные и закрытые
-                проекты нужно переносить в архив.
-            </p>
+            <p class="eyebrow">{% trans "опасное действие" %}</p>
+            <h1>{% trans "Удалить черновик проекта?" %}</h1>
+            <p class="lead">{% blocktrans with project_title=project.title %}Ты собираешься удалить проект <strong>«{{ project_title }}»</strong>. Это действие нельзя отменить.{% endblocktrans %}</p>
+            <p class="empty">{% trans "Удаление доступно только для черновиков. Опубликованные и закрытые проекты нужно переносить в архив." %}</p>
             <form method="post" class="form-grid">
                 {% csrf_token %}
-                <button class="btn btn-danger full-width" type="submit">Да, удалить черновик</button>
+                <button class="btn btn-danger full-width" type="submit">{% trans "Да, удалить черновик" %}</button>
                 <a class="btn btn-secondary full-width"
-                   href="{{ project.get_absolute_url }}">Отмена</a>
+                   href="{{ project.get_absolute_url }}">{% trans "Отмена" %}</a>
             </form>
         </article>
     </section>

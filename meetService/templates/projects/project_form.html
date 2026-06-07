@@ -1,13 +1,11 @@
 {% extends "base.html" %}
-{% block title %}{{ page_title }} — MeetService{% endblock %}
+{% load i18n %}
+{% block title %}{{ page_title }} — New-Makers{% endblock %}
 {% block content %}
     <section class="container page-head">
-        <p class="eyebrow">проект</p>
+        <p class="eyebrow">{% trans "проект" %}</p>
         <h1>{{ page_title }}</h1>
-        <p class="lead">
-            Заполни основную информацию о проекте. При создании проекта сразу добавляется
-            первая открытая роль, чтобы проект можно было отправить на рассмотрение.
-        </p>
+        <p class="lead">{% trans "Заполни основную информацию о проекте. При создании проекта сразу добавляется первая открытая роль, чтобы проект можно было отправить на рассмотрение." %}</p>
     </section>
     <section class="container section">
         <div class="form-shell">
@@ -15,7 +13,7 @@
                 {% csrf_token %}
                 {% if form.non_field_errors %}<div class="form-errors form-field-wide">{{ form.non_field_errors }}</div>{% endif %}
                 <div class="form-section-title form-field-wide">
-                    <h2>Информация о проекте</h2>
+                    <h2>{% trans "Информация о проекте" %}</h2>
                 </div>
                 {% for field in form %}
                     {% if field.name == "technologies" %}
@@ -49,11 +47,8 @@
                 {% endfor %}
                 {% if vacancy_form %}
                     <div class="form-section-title form-field-wide">
-                        <h2>Первая открытая роль</h2>
-                        <p>
-                            Эта роль появится на странице проекта, и специалисты смогут
-                            на неё откликаться после публикации проекта.
-                        </p>
+                        <h2>{% trans "Первая открытая роль" %}</h2>
+                        <p>{% trans "Эта роль появится на странице проекта, и специалисты смогут на неё откликаться после публикации проекта." %}</p>
                     </div>
                     {% if vacancy_form.non_field_errors %}
                         <div class="form-errors form-field-wide">{{ vacancy_form.non_field_errors }}</div>
@@ -82,7 +77,7 @@
                 {% endif %}
                 <div class="form-actions form-field-wide">
                     <button class="btn btn-primary" type="submit">{{ submit_text }}</button>
-                    <a class="btn btn-secondary" href="{% url 'projects:my_projects' %}">Отмена</a>
+                    <a class="btn btn-secondary" href="{% url 'projects:my_projects' %}">{% trans "Отмена" %}</a>
                 </div>
             </form>
         </div>

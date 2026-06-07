@@ -1,13 +1,11 @@
 {% extends "base.html" %}
-{% block title %}Приглашение специалиста — MeetService{% endblock %}
+{% load i18n %}
+{% block title %}{% trans "Приглашение специалиста" %} — New-Makers{% endblock %}
 {% block content %}
     <section class="container page-head">
-        <p class="eyebrow">приглашение</p>
+        <p class="eyebrow">{% trans "приглашение" %}</p>
         <h1>{{ specialist.get_display_name }}</h1>
-        <p class="lead">
-            Выбери открытую роль в своём опубликованном проекте
-            и отправь приглашение специалисту.
-        </p>
+        <p class="lead">{% trans "Выбери открытую роль в своём опубликованном проекте и отправь приглашение специалисту." %}</p>
     </section>
     <section class="container section">
         <div class="form-shell">
@@ -25,9 +23,9 @@
                     </div>
                 {% endfor %}
                 <div class="form-actions form-field-wide">
-                    <button class="btn btn-primary" type="submit">Отправить приглашение</button>
+                    <button class="btn btn-primary" type="submit">{% trans "Отправить приглашение" %}</button>
                     <a class="btn btn-secondary"
-                       href="{% url 'specialists:specialist_detail' specialist.pk %}">Вернуться к профилю</a>
+                       href="{% url 'specialists:specialist_detail' specialist.pk %}">{% trans "Вернуться к профилю" %}</a>
                 </div>
             </form>
         </div>

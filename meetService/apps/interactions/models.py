@@ -169,11 +169,11 @@ class Application(models.Model):
             )
 
             if application.status != application.Status.PENDING:
-                raise ValidationError("Можно принять только отклик на рассмотрении.")
+                raise ValidationError(_("Можно принять только отклик на рассмотрении."))
 
             if reviewed_by and not application.project.can_be_edited_by(reviewed_by):
                 raise ValidationError(
-                    "Принимать отклики может только владелец проекта или администратор."
+                    _("Принимать отклики может только владелец проекта или администратор.")
                 )
 
             already_member = ProjectMembership.objects.filter(
@@ -234,11 +234,11 @@ class Application(models.Model):
             )
 
             if application.status != application.Status.PENDING:
-                raise ValidationError("Можно отклонить только отклик на рассмотрении.")
+                raise ValidationError(_("Можно отклонить только отклик на рассмотрении."))
 
             if reviewed_by and not application.project.can_be_edited_by(reviewed_by):
                 raise ValidationError(
-                    "Отклонять отклики может только владелец проекта или администратор."
+                    _("Отклонять отклики может только владелец проекта или администратор.")
                 )
 
             reviewed_at = timezone.now()

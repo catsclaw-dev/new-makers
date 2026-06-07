@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from django import forms
+from django.utils.translation import gettext_lazy as _
 
 from apps.specialists.models import SpecialistProfile
 
@@ -63,7 +64,7 @@ class SpecialistProfileForm(forms.ModelForm):
                 attrs={
                     "class": "form-control",
                     "rows": 6,
-                    "placeholder": "Расскажи о своём опыте, интересах и проектах.",
+                    "placeholder": _("Расскажи о своём опыте, интересах и проектах."),
                 }
             ),
             "experience_years": forms.NumberInput(
@@ -94,30 +95,30 @@ class SpecialistProfileForm(forms.ModelForm):
         }
 
         labels = {
-            "avatar": "Аватар",
-            "main_role": "Основная роль",
-            "level": "Уровень",
-            "status": "Статус поиска",
-            "bio": "О себе",
-            "experience_years": "Опыт, лет",
+            "avatar": _("Аватар"),
+            "main_role": _("Основная роль"),
+            "level": _("Уровень"),
+            "status": _("Статус поиска"),
+            "bio": _("О себе"),
+            "experience_years": _("Опыт, лет"),
             "github_url": "GitHub",
             "gitlab_url": "GitLab",
-            "portfolio_url": "Портфолио",
+            "portfolio_url": _("Портфолио"),
         }
 
         help_texts = {
-            "main_role": "Выбери роль, по которой тебя будут чаще всего искать.",
-            "status": "Например: ищу проект, открыт к предложениям или занят.",
-            "bio": "Коротко опиши стек, опыт и тип проектов, которые тебе интересны.",
+            "main_role": _("Выбери роль, по которой тебя будут чаще всего искать."),
+            "status": _("Например: ищу проект, открыт к предложениям или занят."),
+            "bio": _("Коротко опиши стек, опыт и тип проектов, которые тебе интересны."),
         }
 
         error_messages = {
             "bio": {
-                "required": "Расскажи немного о себе.",
+                "required": _("Расскажи немного о себе."),
             },
             "experience_years": {
-                "min_value": "Опыт не может быть отрицательным.",
-                "max_value": "Проверь значение опыта.",
+                "min_value": _("Опыт не может быть отрицательным."),
+                "max_value": _("Проверь значение опыта."),
             },
         }
 
@@ -133,7 +134,7 @@ class SpecialistProfileForm(forms.ModelForm):
         experience_years = self.cleaned_data.get("experience_years")
 
         if experience_years is not None and experience_years > 60:
-            raise forms.ValidationError("Опыт не может быть больше 60 лет.")
+            raise forms.ValidationError(_("Опыт не может быть больше 60 лет."))
 
         return experience_years
 
@@ -145,7 +146,7 @@ class SpecialistProfileForm(forms.ModelForm):
 
         if bio and len(bio) < 20:
             raise forms.ValidationError(
-                "Если заполняешь описание, оно должно быть не короче 20 символов."
+                _("Если заполняешь описание, оно должно быть не короче 20 символов.")
             )
 
         return bio

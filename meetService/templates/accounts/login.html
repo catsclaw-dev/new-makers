@@ -1,12 +1,12 @@
 {% extends "base.html" %}
-{% load socialaccount %}
-{% block title %}Вход — MeetService{% endblock %}
+{% load i18n socialaccount %}
+{% block title %}{% trans "Вход" %} — New-Makers{% endblock %}
 {% block content %}
     <section class="container auth-page">
         <article class="auth-card">
-            <p class="eyebrow">аккаунт</p>
-            <h1>Вход</h1>
-            <p class="lead">Войди, чтобы управлять профилем, проектами, откликами и приглашениями.</p>
+            <p class="eyebrow">{% trans "аккаунт" %}</p>
+            <h1>{% trans "Вход" %}</h1>
+            <p class="lead">{% trans "Войди, чтобы управлять профилем, проектами, откликами и приглашениями." %}</p>
             <form method="post" class="form-grid">
                 {% csrf_token %}
                 {% if form.non_field_errors %}<div class="form-errors">{{ form.non_field_errors }}</div>{% endif %}
@@ -20,19 +20,19 @@
                         {% for error in field.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
                     </div>
                 {% endfor %}
-                <button class="btn btn-primary full-width" type="submit">Войти</button>
+                <button class="btn btn-primary full-width" type="submit">{% trans "Войти" %}</button>
             </form>
             {% if google_oauth_enabled %}
                 <a class="btn btn-secondary full-width"
-                   href="{% provider_login_url 'google' %}">Войти через Google</a>
+                   href="{% provider_login_url 'google' %}">{% trans "Войти через Google" %}</a>
             {% endif %}
             {% if github_oauth_enabled %}
                 <a class="btn btn-secondary full-width"
-                   href="{% provider_login_url 'github' %}">Войти через GitHub</a>
+                   href="{% provider_login_url 'github' %}">{% trans "Войти через GitHub" %}</a>
             {% endif %}
             <p class="auth-switch">
-                Нет аккаунта?
-                <a href="{% url 'accounts:register' %}">Зарегистрироваться</a>
+                {% trans "Нет аккаунта?" %}
+                <a href="{% url 'accounts:register' %}">{% trans "Зарегистрироваться" %}</a>
             </p>
         </article>
     </section>

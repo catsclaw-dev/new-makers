@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from django import template
+from django.utils.translation import gettext as _
 from django.db.models import Count, Q
 
 from apps.directories.models import Technology
@@ -38,15 +39,15 @@ def vacancy_word(count: int) -> object:
     try:
         count = int(count)
     except (TypeError, ValueError):
-        return "ролей"
+        return _("ролей")
 
     if count % 10 == 1 and count % 100 != 11:
-        return "роль"
+        return _("роль")
 
     if 2 <= count % 10 <= 4 and not 12 <= count % 100 <= 14:
-        return "роли"
+        return _("роли")
 
-    return "ролей"
+    return _("ролей")
 
 
 @register.simple_tag

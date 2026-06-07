@@ -1,10 +1,11 @@
 {% extends "base.html" %}
-{% block title %}Отклик на проект — MeetService{% endblock %}
+{% load i18n %}
+{% block title %}{% trans "Отклик на проект" %} — New-Makers{% endblock %}
 {% block content %}
     <section class="container page-head">
-        <p class="eyebrow">отклик</p>
+        <p class="eyebrow">{% trans "отклик" %}</p>
         <h1>{{ project.title }}</h1>
-        <p class="lead">Выбери открытую роль и отправь короткое сообщение владельцу проекта.</p>
+        <p class="lead">{% trans "Выбери открытую роль и отправь короткое сообщение владельцу проекта." %}</p>
     </section>
     <section class="container section">
         <div class="form-shell">
@@ -22,8 +23,8 @@
                     </div>
                 {% endfor %}
                 <div class="form-actions form-field-wide">
-                    <button class="btn btn-primary" type="submit">Отправить отклик</button>
-                    <a class="btn btn-secondary" href="{{ project.get_absolute_url }}">Вернуться к проекту</a>
+                    <button class="btn btn-primary" type="submit">{% trans "Отправить отклик" %}</button>
+                    <a class="btn btn-secondary" href="{{ project.get_absolute_url }}">{% trans "Вернуться к проекту" %}</a>
                 </div>
             </form>
         </div>

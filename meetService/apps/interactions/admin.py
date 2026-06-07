@@ -111,7 +111,7 @@ class ApplicationAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
             "reviewed_by",
         )
 
-    @admin.display(description="Владелец проекта")
+    @admin.display(description=_("Владелец проекта"))
     def display_project_owner(self, obj: Application) -> str:
         """
         Возвращает значение для отображения в интерфейсе администратора.
@@ -120,7 +120,7 @@ class ApplicationAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
         """
         return obj.project.owner
 
-    @admin.display(boolean=True, description="Активный")
+    @admin.display(boolean=True, description=_("Активный"))
     def display_is_active(self, obj: Application) -> bool:
         """
         Возвращает значение для отображения в интерфейсе администратора.
@@ -129,7 +129,7 @@ class ApplicationAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
         """
         return obj.status in Application.ACTIVE_STATUSES
 
-    @admin.action(description="Принять выбранные отклики")
+    @admin.action(description=_("Принять выбранные отклики"))
     def accept_applications(self, request: HttpRequest, queryset: QuerySet) -> object:
         """
         Выполняет логику функции.
@@ -146,17 +146,18 @@ class ApplicationAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
             except ValidationError as error:
                 self.message_user(
                     request,
-                    f"Отклик «{application}» не принят: {error}",
+                    _("Отклик «%(application)s» не принят: %(error)s")
+                    % {"application": application, "error": error},
                     level=messages.ERROR,
                 )
 
         self.message_user(
             request,
-            f"Принято откликов: {accepted_count}",
+            _("Принято откликов: %(count)s") % {"count": accepted_count},
             level=messages.SUCCESS,
         )
 
-    @admin.action(description="Отклонить выбранные отклики")
+    @admin.action(description=_("Отклонить выбранные отклики"))
     def reject_applications(self, request: HttpRequest, queryset: QuerySet) -> object:
         """
         Выполняет логику функции.
@@ -172,7 +173,7 @@ class ApplicationAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
 
         self.message_user(
             request,
-            f"Отклонено откликов: {rejected_count}",
+            _("Отклонено откликов: %(count)s") % {"count": rejected_count},
             level=messages.SUCCESS,
         )
 
@@ -270,7 +271,7 @@ class InvitationAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
             "invited_by",
         )
 
-    @admin.display(boolean=True, description="Ожидает ответа")
+    @admin.display(boolean=True, description=_("Ожидает ответа"))
     def display_is_pending(self, obj: Invitation) -> bool:
         """
         Возвращает значение для отображения в интерфейсе администратора.
@@ -279,7 +280,7 @@ class InvitationAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
         """
         return obj.status == Invitation.Status.PENDING
 
-    @admin.action(description="Принять выбранные приглашения")
+    @admin.action(description=_("Принять выбранные приглашения"))
     def accept_invitations(self, request: HttpRequest, queryset: QuerySet) -> object:
         """
         Выполняет логику функции.
@@ -296,17 +297,18 @@ class InvitationAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
             except ValidationError as error:
                 self.message_user(
                     request,
-                    f"Приглашение «{invitation}» не принято: {error}",
+                    _("Приглашение «%(invitation)s» не принято: %(error)s")
+                    % {"invitation": invitation, "error": error},
                     level=messages.ERROR,
                 )
 
         self.message_user(
             request,
-            f"Принято приглашений: {accepted_count}",
+            _("Принято приглашений: %(count)s") % {"count": accepted_count},
             level=messages.SUCCESS,
         )
 
-    @admin.action(description="Отклонить выбранные приглашения")
+    @admin.action(description=_("Отклонить выбранные приглашения"))
     def decline_invitations(self, request: HttpRequest, queryset: QuerySet) -> object:
         """
         Выполняет логику функции.
@@ -322,7 +324,7 @@ class InvitationAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
 
         self.message_user(
             request,
-            f"Отклонено приглашений: {declined_count}",
+            _("Отклонено приглашений: %(count)s") % {"count": declined_count},
             level=messages.SUCCESS,
         )
 
@@ -373,7 +375,7 @@ class FavoriteProjectAdmin(ImportExportModelAdmin):
             "project__owner",
         )
 
-    @admin.display(description="Статус проекта")
+    @admin.display(description=_("Статус проекта"))
     def display_project_status(self, obj: FavoriteProject) -> str:
         """
         Возвращает значение для отображения в интерфейсе администратора.
@@ -382,7 +384,7 @@ class FavoriteProjectAdmin(ImportExportModelAdmin):
         """
         return obj.project.get_status_display()
 
-    @admin.display(description="Владелец проекта")
+    @admin.display(description=_("Владелец проекта"))
     def display_project_owner(self, obj: FavoriteProject) -> str:
         """
         Возвращает значение для отображения в интерфейсе администратора.

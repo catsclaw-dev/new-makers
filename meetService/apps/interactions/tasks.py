@@ -12,6 +12,7 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.html import strip_tags
 from django.utils import timezone
+from django.utils.translation import gettext as _, ngettext
 
 from apps.interactions.models import Application, Invitation
 
@@ -32,22 +33,22 @@ def send_welcome_email(user_id: int) -> int:
         return 0
 
     return _send_theme_email(
-        subject="Добро пожаловать в MeetService",
+        subject=_("Добро пожаловать в New-Makers"),
         recipient=user.email,
         context={
-            "title": "Добро пожаловать в MeetService",
-            "preheader": "Аккаунт создан, можно искать команду и проекты.",
-            "greeting": f"Здравствуйте, {_display_user(user)}.",
+            "title": _("Добро пожаловать в New-Makers"),
+            "preheader": _("Аккаунт создан, можно искать команду и проекты."),
+            "greeting": _("Здравствуйте, %(name)s.") % {"name": _display_user(user)},
             "intro": (
-                "Ваш аккаунт создан. Теперь можно оформить профиль специалиста, "
-                "откликаться на проекты или собрать команду для своей идеи."
+                _("Ваш аккаунт создан. Теперь можно оформить профиль специалиста, "
+                "откликаться на проекты или собрать команду для своей идеи.")
             ),
             "details": [
-                ("Аккаунт", user.username),
-                ("Роль по умолчанию", user.get_dynamic_role_display()),
+                (_("Аккаунт"), user.username),
+                (_("Роль по умолчанию"), user.get_dynamic_role_display()),
             ],
             "action_url": _absolute_url(reverse("accounts:profile")),
-            "action_label": "Открыть профиль",
+            "action_label": _("Открыть профиль"),
         },
     )
 
@@ -78,25 +79,32 @@ def send_application_created_email(application_id: int) -> int:
     specialist_user = application.specialist.user
 
     return _send_theme_email(
-        subject=f"Новый отклик на проект «{application.project.title}»",
+        subject=_("Новый отклик на проект «%(project)s»")
+        % {"project": application.project.title},
         recipient=application.project.owner.email,
         context={
-            "title": "Новый отклик",
-            "preheader": f"{_display_user(specialist_user)} откликнулся на роль.",
-            "greeting": f"Здравствуйте, {_display_user(application.project.owner)}.",
+            "title": _("Новый отклик"),
+            "preheader": _("%(specialist)s откликнулся на роль.")
+            % {"specialist": _display_user(specialist_user)},
+            "greeting": _("Здравствуйте, %(name)s.")
+            % {"name": _display_user(application.project.owner)},
             "intro": (
-                f"Специалист {_display_user(specialist_user)} отправил отклик "
-                f"на роль «{application.vacancy.title}» в проекте "
-                f"«{application.project.title}»."
+                _("Специалист %(specialist)s отправил отклик на роль «%(role)s» "
+                "в проекте «%(project)s».")
+                % {
+                    "specialist": _display_user(specialist_user),
+                    "role": application.vacancy.title,
+                    "project": application.project.title,
+                }
             ),
             "message": application.message,
             "details": [
-                ("Проект", application.project.title),
-                ("Роль", application.vacancy.title),
-                ("Специалист", _display_user(specialist_user)),
+                (_("Проект"), application.project.title),
+                (_("Роль"), application.vacancy.title),
+                (_("Специалист"), _display_user(specialist_user)),
             ],
             "action_url": _absolute_url(reverse("interactions:application_list")),
-            "action_label": "Посмотреть отклики",
+            "action_label": _("Посмотреть отклики"),
         },
     )
 
@@ -124,32 +132,36 @@ def send_application_status_email(application_id: int) -> int:
         return 0
 
     accepted = application.status == Application.Status.ACCEPTED
-    title = "Отклик принят" if accepted else "Отклик отклонён"
+    title = _("Отклик принят") if accepted else _("Отклик отклонён")
     intro = (
-        f"Ваш отклик на роль «{application.vacancy.title}» в проекте "
-        f"«{application.project.title}» принят. Вы добавлены в команду проекта."
+        _("Ваш отклик на роль «%(role)s» в проекте «%(project)s» принят. "
+        "Вы добавлены в команду проекта.")
+        % {"role": application.vacancy.title, "project": application.project.title}
         if accepted
         else (
-            f"Ваш отклик на роль «{application.vacancy.title}» в проекте "
-            f"«{application.project.title}» отклонён."
+            _("Ваш отклик на роль «%(role)s» в проекте «%(project)s» отклонён.")
+            % {"role": application.vacancy.title, "project": application.project.title}
         )
     )
 
     return _send_theme_email(
-        subject=f"{title}: «{application.project.title}»",
+        subject=_('%(status)s: «%(project)s»')
+        % {"status": title, "project": application.project.title},
         recipient=application.specialist.user.email,
         context={
             "title": title,
-            "preheader": f"Статус отклика: {application.get_status_display()}.",
-            "greeting": f"Здравствуйте, {_display_user(application.specialist.user)}.",
+            "preheader": _("Статус отклика: %(status)s.")
+            % {"status": application.get_status_display()},
+            "greeting": _("Здравствуйте, %(name)s.")
+            % {"name": _display_user(application.specialist.user)},
             "intro": intro,
             "details": [
-                ("Проект", application.project.title),
-                ("Роль", application.vacancy.title),
-                ("Статус", application.get_status_display()),
+                (_("Проект"), application.project.title),
+                (_("Роль"), application.vacancy.title),
+                (_("Статус"), application.get_status_display()),
             ],
             "action_url": _absolute_url(reverse("interactions:application_list")),
-            "action_label": "Открыть мои отклики",
+            "action_label": _("Открыть мои отклики"),
         },
     )
 
@@ -178,25 +190,32 @@ def send_invitation_created_email(invitation_id: int) -> int:
         return 0
 
     return _send_theme_email(
-        subject=f"Вас пригласили в проект «{invitation.project.title}»",
+        subject=_("Вас пригласили в проект «%(project)s»")
+        % {"project": invitation.project.title},
         recipient=invitation.specialist.user.email,
         context={
-            "title": "Новое приглашение",
-            "preheader": f"Приглашение на роль «{invitation.vacancy.title}».",
-            "greeting": f"Здравствуйте, {_display_user(invitation.specialist.user)}.",
+            "title": _("Новое приглашение"),
+            "preheader": _("Приглашение на роль «%(role)s».")
+            % {"role": invitation.vacancy.title},
+            "greeting": _("Здравствуйте, %(name)s.")
+            % {"name": _display_user(invitation.specialist.user)},
             "intro": (
-                f"{_display_user(invitation.invited_by)} приглашает вас "
-                f"в проект «{invitation.project.title}» на роль "
-                f"«{invitation.vacancy.title}»."
+                _("%(owner)s приглашает вас в проект «%(project)s» "
+                "на роль «%(role)s».")
+                % {
+                    "owner": _display_user(invitation.invited_by),
+                    "project": invitation.project.title,
+                    "role": invitation.vacancy.title,
+                }
             ),
             "message": invitation.message,
             "details": [
-                ("Проект", invitation.project.title),
-                ("Роль", invitation.vacancy.title),
-                ("Пригласил", _display_user(invitation.invited_by)),
+                (_("Проект"), invitation.project.title),
+                (_("Роль"), invitation.vacancy.title),
+                (_("Пригласил"), _display_user(invitation.invited_by)),
             ],
             "action_url": _absolute_url(reverse("interactions:invitation_list")),
-            "action_label": "Посмотреть приглашение",
+            "action_label": _("Посмотреть приглашение"),
         },
     )
 
@@ -224,29 +243,36 @@ def send_invitation_status_email(invitation_id: int) -> int:
         return 0
 
     accepted = invitation.status == Invitation.Status.ACCEPTED
-    title = "Приглашение принято" if accepted else "Приглашение отклонено"
+    title = _("Приглашение принято") if accepted else _("Приглашение отклонено")
     specialist_user = invitation.specialist.user
 
     return _send_theme_email(
-        subject=f"{title}: «{invitation.project.title}»",
+        subject=_('%(status)s: «%(project)s»')
+        % {"status": title, "project": invitation.project.title},
         recipient=invitation.invited_by.email,
         context={
             "title": title,
-            "preheader": f"{_display_user(specialist_user)} ответил на приглашение.",
-            "greeting": f"Здравствуйте, {_display_user(invitation.invited_by)}.",
+            "preheader": _("%(specialist)s ответил на приглашение.")
+            % {"specialist": _display_user(specialist_user)},
+            "greeting": _("Здравствуйте, %(name)s.")
+            % {"name": _display_user(invitation.invited_by)},
             "intro": (
-                f"Специалист {_display_user(specialist_user)} "
-                f"{'принял' if accepted else 'отклонил'} приглашение "
-                f"в проект «{invitation.project.title}»."
+                _("Специалист %(specialist)s %(decision)s приглашение "
+                "в проект «%(project)s».")
+                % {
+                    "specialist": _display_user(specialist_user),
+                    "decision": _("принял") if accepted else _("отклонил"),
+                    "project": invitation.project.title,
+                }
             ),
             "details": [
-                ("Проект", invitation.project.title),
-                ("Роль", invitation.vacancy.title),
-                ("Специалист", _display_user(specialist_user)),
-                ("Статус", invitation.get_status_display()),
+                (_("Проект"), invitation.project.title),
+                (_("Роль"), invitation.vacancy.title),
+                (_("Специалист"), _display_user(specialist_user)),
+                (_("Статус"), invitation.get_status_display()),
             ],
             "action_url": _absolute_url(reverse("interactions:invitation_list")),
-            "action_label": "Открыть приглашения",
+            "action_label": _("Открыть приглашения"),
         },
     )
 
@@ -284,11 +310,17 @@ def send_pending_application_digest() -> int:
 
         pending_count = getattr(owner, "pending_applications_count", 0)
         send_mail(
-            subject="MeetService: новые отклики ждут рассмотрения",
+            subject=_("New-Makers: новые отклики ждут рассмотрения"),
             message=(
-                f"Здравствуйте, {owner.get_full_name() or owner.username}.\n\n"
-                f"У ваших проектов есть отклики на рассмотрении: {pending_count}.\n"
-                "Откройте личный кабинет MeetService, чтобы принять или отклонить их."
+                _("Здравствуйте, %(name)s.\n\n")
+                % {"name": owner.get_full_name() or owner.username}
+                + ngettext(
+                    "У ваших проектов есть %(count)s отклик на рассмотрении.\n",
+                    "У ваших проектов есть %(count)s откликов на рассмотрении.\n",
+                    pending_count,
+                )
+                % {"count": pending_count}
+                + _("Откройте личный кабинет New-Makers, чтобы принять или отклонить их.")
             ),
             from_email=settings.DEFAULT_FROM_EMAIL,
             recipient_list=[owner.email],
@@ -313,11 +345,17 @@ def send_pending_invitation_digest() -> int:
 
         pending_count = getattr(user, "pending_invitations_count", 0)
         send_mail(
-            subject="MeetService: у вас есть приглашения в проекты",
+            subject=_("New-Makers: у вас есть приглашения в проекты"),
             message=(
-                f"Здравствуйте, {user.get_full_name() or user.username}.\n\n"
-                f"Вас ждут приглашения в проекты: {pending_count}.\n"
-                "Откройте MeetService, чтобы принять или отклонить приглашения."
+                _("Здравствуйте, %(name)s.\n\n")
+                % {"name": user.get_full_name() or user.username}
+                + ngettext(
+                    "Вас ждёт %(count)s приглашение в проект.\n",
+                    "Вас ждут %(count)s приглашений в проекты.\n",
+                    pending_count,
+                )
+                % {"count": pending_count}
+                + _("Откройте New-Makers, чтобы принять или отклонить приглашения.")
             ),
             from_email=settings.DEFAULT_FROM_EMAIL,
             recipient_list=[user.email],
@@ -368,7 +406,7 @@ def _users_with_pending_invitations() -> QuerySet:
 
 def _send_theme_email(*, subject: str, recipient: str, context: dict[str, Any]) -> int:
     """
-    Отправляет HTML-письмо в едином стиле MeetService.
+    Отправляет HTML-письмо в едином стиле New-Makers.
     Args:
         subject: Тема письма
         recipient: Email получателя

@@ -3,18 +3,19 @@ from __future__ import annotations
 from import_export import fields, resources
 
 from .models import Project
+from django.utils.translation import gettext_lazy as _
 
 
 class ProjectResource(resources.ModelResource):
     """Ресурс для экспорта проектов в Excel."""
 
-    owner = fields.Field(column_name="Владелец")
-    status_display = fields.Field(column_name="Статус")
-    stage_display = fields.Field(column_name="Стадия")
-    participation_format_display = fields.Field(column_name="Формат участия")
-    technologies_list = fields.Field(column_name="Технологии")
-    open_vacancies_count = fields.Field(column_name="Открытых ролей")
-    members_count = fields.Field(column_name="Участников")
+    owner = fields.Field(column_name=_("Владелец"))
+    status_display = fields.Field(column_name=_("Статус"))
+    stage_display = fields.Field(column_name=_("Стадия"))
+    participation_format_display = fields.Field(column_name=_("Формат участия"))
+    technologies_list = fields.Field(column_name=_("Технологии"))
+    open_vacancies_count = fields.Field(column_name=_("Открытых ролей"))
+    members_count = fields.Field(column_name=_("Участников"))
 
     class Meta:
         model = Project

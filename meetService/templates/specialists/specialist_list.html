@@ -1,26 +1,27 @@
 {% extends "base.html" %}
-{% load project_extras %}
-{% block title %}Каталог специалистов — MeetService{% endblock %}
+{% load i18n project_extras %}
+{% trans "Специалист пока не заполнил описание профиля." as empty_bio %}
+{% block title %}{% trans "Каталог специалистов" %} — New-Makers{% endblock %}
 {% block content %}
     <section class="container page-head">
-        <p class="eyebrow">каталог</p>
-        <h1>Специалисты</h1>
-        <p class="lead">Ищи участников по роли, стеку, уровню и статусу доступности.</p>
+        <p class="eyebrow">{% trans "каталог" %}</p>
+        <h1>{% trans "Специалисты" %}</h1>
+        <p class="lead">{% trans "Ищи участников по роли, стеку, уровню и статусу доступности." %}</p>
     </section>
     <section class="container catalog-layout">
         <aside class="filters-panel">
             <form method="get">
                 <label>
-                    Поиск
+                    {% trans "Поиск" %}
                     <input type="search"
                            name="q"
                            value="{{ query }}"
                            placeholder="Frontend, Django, QA">
                 </label>
                 <label>
-                    Роль
+                    {% trans "Роль" %}
                     <select name="role">
-                        <option value="">Любая</option>
+                        <option value="">{% trans "Любая" %}</option>
                         {% for role in roles %}
                             <option value="{{ role.slug }}"
                                     {% if role.slug == role_slug %}selected{% endif %}>{{ role.name }}</option>
@@ -28,9 +29,9 @@
                     </select>
                 </label>
                 <label>
-                    Технология
+                    {% trans "Технология" %}
                     <select name="technology">
-                        <option value="">Любая</option>
+                        <option value="">{% trans "Любая" %}</option>
                         {% for technology in technologies %}
                             <option value="{{ technology.slug }}"
                                     {% if technology.slug == technology_slug %}selected{% endif %}>
@@ -40,26 +41,26 @@
                     </select>
                 </label>
                 <label>
-                    Уровень
+                    {% trans "Уровень" %}
                     <select name="level">
-                        <option value="">Любой</option>
+                        <option value="">{% trans "Любой" %}</option>
                         {% for value, label in level_choices %}
                             <option value="{{ value }}" {% if value == level %}selected{% endif %}>{{ label }}</option>
                         {% endfor %}
                     </select>
                 </label>
                 <label>
-                    Статус
+                    {% trans "Статус" %}
                     <select name="status">
-                        <option value="">Любой</option>
+                        <option value="">{% trans "Любой" %}</option>
                         {% for value, label in status_choices %}
                             <option value="{{ value }}" {% if value == status %}selected{% endif %}>{{ label }}</option>
                         {% endfor %}
                     </select>
                 </label>
-                <button class="btn btn-primary full-width" type="submit">Применить</button>
+                <button class="btn btn-primary full-width" type="submit">{% trans "Применить" %}</button>
                 <a class="btn btn-secondary full-width"
-                   href="{% url 'specialists:specialist_list' %}">Сбросить</a>
+                   href="{% url 'specialists:specialist_list' %}">{% trans "Сбросить" %}</a>
             </form>
         </aside>
         <div>
@@ -84,46 +85,43 @@
                                 <h3>
                                     <a href="{% url 'specialists:specialist_detail' specialist.pk %}">{{ specialist.get_display_name }}</a>
                                 </h3>
-                                <p class="project-description">{{ specialist.bio|default:"Специалист пока не заполнил описание профиля." }}</p>
+                                <p class="project-description">{{ specialist.bio|default:empty_bio }}</p>
                             </div>
                             <div class="project-card-bottom">
                                 <div class="tag-row">
                                     {% if specialist.main_role %}
                                         <span class="tag">{{ specialist.main_role.name }}</span>
                                     {% else %}
-                                        <span class="tag">Роль не указана</span>
+                                        <span class="tag">{% trans "Роль не указана" %}</span>
                                     {% endif %}
                                     {% for technology in specialist.technologies.all|slice:":4" %}
                                         <span class="tag">{{ technology.name }}</span>
                                     {% empty %}
-                                        <span class="tag">Стек не указан</span>
+                                        <span class="tag">{% trans "Стек не указан" %}</span>
                                     {% endfor %}
                                 </div>
                                 <a class="card-link"
-                                   href="{% url 'specialists:specialist_detail' specialist.pk %}">Открыть профиль</a>
+                                   href="{% url 'specialists:specialist_detail' specialist.pk %}">{% trans "Открыть профиль" %}</a>
                             </div>
                         </div>
                     </article>
                 {% empty %}
                     <article class="action-card">
-                        <h2>Специалисты не найдены</h2>
-                        <p class="empty">
-                            По выбранным условиям специалистов пока нет.
-                            Попробуй изменить фильтры или сбросить поиск.
-                        </p>
+                        <h2>{% trans "Специалисты не найдены" %}</h2>
+                        <p class="empty">{% trans "По выбранным условиям специалистов пока нет. Попробуй изменить фильтры или сбросить поиск." %}</p>
                         <a class="btn btn-primary"
-                           href="{% url 'specialists:specialist_list' %}">Сбросить фильтры</a>
+                           href="{% url 'specialists:specialist_list' %}">{% trans "Сбросить фильтры" %}</a>
                     </article>
                 {% endfor %}
             </div>
             {% if page_obj.paginator.num_pages > 1 %}
-                <nav class="pagination" aria-label="Пагинация каталога специалистов">
+                <nav class="pagination" aria-label="{% trans 'Пагинация каталога специалистов' %}">
                     {% if page_obj.has_previous %}
-                        <a href="?{% current_query_string page=page_obj.previous_page_number %}">← Назад</a>
+                        <a href="?{% current_query_string page=page_obj.previous_page_number %}">← {% trans "Назад" %}</a>
                     {% endif %}
-                    <span class="pagination-current">Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
+                    <span class="pagination-current">{% blocktrans with current=page_obj.number total=page_obj.paginator.num_pages %}Страница {{ current }} из {{ total }}{% endblocktrans %}</span>
                     {% if page_obj.has_next %}
-                        <a href="?{% current_query_string page=page_obj.next_page_number %}">Вперёд →</a>
+                        <a href="?{% current_query_string page=page_obj.next_page_number %}">{% trans "Вперёд" %} →</a>
                     {% endif %}
                 </nav>
             {% endif %}

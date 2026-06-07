@@ -445,7 +445,7 @@ class ProjectVacancy(models.Model):
             )
 
             if not vacancy.is_open():
-                raise ValidationError("Вакансия уже закрыта или заполнена.")
+                raise ValidationError(_("Вакансия уже закрыта или заполнена."))
 
             already_member = ProjectMembership.objects.filter(
                 project=vacancy.project,
@@ -454,7 +454,7 @@ class ProjectVacancy(models.Model):
             ).exists()
 
             if already_member:
-                raise ValidationError("Специалист уже состоит в команде проекта.")
+                raise ValidationError(_("Специалист уже состоит в команде проекта."))
 
             membership = ProjectMembership.objects.create(
                 project=vacancy.project,

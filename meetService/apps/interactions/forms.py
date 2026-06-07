@@ -3,6 +3,7 @@ from __future__ import annotations
 from django import forms
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 from apps.accounts.models import User
 from apps.interactions.emails import (
@@ -18,18 +19,18 @@ class ApplicationForm(forms.ModelForm):
     """Форма отклика специалиста на открытую роль проекта."""
 
     message = forms.CharField(
-        label="Сопроводительное сообщение",
+        label=_("Сопроводительное сообщение"),
         required=True,
-        help_text="Кратко расскажи, почему ты подходишь команде.",
+        help_text=_("Кратко расскажи, почему ты подходишь команде."),
         widget=forms.Textarea(
             attrs={
                 "class": "form-control",
                 "rows": 5,
-                "placeholder": "Здравствуйте! Хочу присоединиться к проекту, потому что...",
+                "placeholder": _("Здравствуйте! Хочу присоединиться к проекту, потому что..."),
             }
         ),
         error_messages={
-            "required": "Добавь сопроводительное сообщение.",
+            "required": _("Добавь сопроводительное сообщение."),
         },
     )
 
@@ -37,14 +38,14 @@ class ApplicationForm(forms.ModelForm):
         model = Application
         fields = ("vacancy", "message")
         labels = {
-            "vacancy": "Открытая роль",
+            "vacancy": _("Открытая роль"),
         }
         help_texts = {
-            "vacancy": "Выбери роль, на которую хочешь откликнуться.",
+            "vacancy": _("Выбери роль, на которую хочешь откликнуться."),
         }
         error_messages = {
             "vacancy": {
-                "required": "Выбери открытую роль проекта.",
+                "required": _("Выбери открытую роль проекта."),
             },
         }
         widgets = {
@@ -85,10 +86,10 @@ class ApplicationForm(forms.ModelForm):
         vacancy = self.cleaned_data["vacancy"]
 
         if self.project and vacancy.project_id != self.project.pk:
-            raise ValidationError("Выбранная роль не относится к этому проекту.")
+            raise ValidationError(_("Выбранная роль не относится к этому проекту."))
 
         if not vacancy.is_open():
-            raise ValidationError("Эта роль уже закрыта или заполнена.")
+            raise ValidationError(_("Эта роль уже закрыта или заполнена."))
 
         return vacancy
 
@@ -135,16 +136,16 @@ class InvitationForm(forms.ModelForm):
             "responded_at",
         }
         labels = {
-            "vacancy": "Проект и открытая роль",
-            "message": "Сообщение специалисту",
+            "vacancy": _("Проект и открытая роль"),
+            "message": _("Сообщение специалисту"),
         }
         help_texts = {
-            "vacancy": "Выбери открытую роль в одном из своих опубликованных проектов.",
-            "message": "Кратко объясни, почему хочешь пригласить этого специалиста.",
+            "vacancy": _("Выбери открытую роль в одном из своих опубликованных проектов."),
+            "message": _("Кратко объясни, почему хочешь пригласить этого специалиста."),
         }
         error_messages = {
             "vacancy": {
-                "required": "Выбери открытую роль для приглашения.",
+                "required": _("Выбери открытую роль для приглашения."),
             },
         }
         widgets = {
@@ -153,7 +154,7 @@ class InvitationForm(forms.ModelForm):
                 attrs={
                     "class": "form-control",
                     "rows": 5,
-                    "placeholder": "Здравствуйте! Хочу пригласить вас в проект...",
+                    "placeholder": _("Здравствуйте! Хочу пригласить вас в проект..."),
                 }
             ),
         }
@@ -198,10 +199,10 @@ class InvitationForm(forms.ModelForm):
         vacancy = self.cleaned_data["vacancy"]
 
         if vacancy.project.owner_id != self.invited_by.id:
-            raise ValidationError("Можно приглашать только в свои проекты.")
+            raise ValidationError(_("Можно приглашать только в свои проекты."))
 
         if not vacancy.is_open():
-            raise ValidationError("Эта роль уже закрыта или заполнена.")
+            raise ValidationError(_("Эта роль уже закрыта или заполнена."))
 
         return vacancy
 

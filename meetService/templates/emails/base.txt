@@ -1,10 +1,11 @@
+{% load i18n %}
 {{ title }}
 
 {{ greeting }}
 
 {{ intro }}
 
-{% if plain_message %}Сообщение:
+{% if plain_message %}{% trans "Сообщение:" %}
 {{ plain_message }}
 
 {% endif %}{% if details %}{% for label, value in details %}{{ label }}: {{ value }}
@@ -13,5 +14,5 @@
 {{ action_url }}
 {% endif %}
 
-MeetService
-Сервис поиска IT-команды
+New-Makers
+{% trans "Сервис поиска IT-команды" %}

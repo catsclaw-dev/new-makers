@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from django import forms
+from django.utils.translation import gettext_lazy as _
 
 from apps.directories.models import Role, Technology
 from apps.projects.models import Project, ProjectTechnology, ProjectVacancy
@@ -12,8 +13,8 @@ class ProjectForm(forms.ModelForm):
     technologies = forms.ModelMultipleChoiceField(
         queryset=Technology.objects.filter(is_active=True).order_by("name"),
         required=False,
-        label="Технологии",
-        help_text="Выбери технологии, которые используются в проекте.",
+        label=_("Технологии"),
+        help_text=_("Выбери технологии, которые используются в проекте."),
         widget=forms.CheckboxSelectMultiple,
     )
 
@@ -32,64 +33,64 @@ class ProjectForm(forms.ModelForm):
             "demo_url",
         )
         labels = {
-            "title": "Название проекта",
-            "short_description": "Краткое описание",
-            "description": "Подробное описание",
-            "goal": "Цель проекта",
-            "cover_image": "Обложка проекта",
-            "stage": "Стадия",
-            "participation_format": "Формат участия",
-            "repository_url": "Ссылка на репозиторий",
-            "demo_url": "Демо-ссылка",
+            "title": _("Название проекта"),
+            "short_description": _("Краткое описание"),
+            "description": _("Подробное описание"),
+            "goal": _("Цель проекта"),
+            "cover_image": _("Обложка проекта"),
+            "stage": _("Стадия"),
+            "participation_format": _("Формат участия"),
+            "repository_url": _("Ссылка на репозиторий"),
+            "demo_url": _("Демо-ссылка"),
         }
         help_texts = {
-            "title": "Короткое и понятное название проекта.",
-            "short_description": "Текст для карточки проекта.",
-            "description": "Расскажи, что делает проект и кому он полезен.",
-            "goal": "Опиши, какого результата должна добиться команда.",
-            "cover_image": "Изображение будет показано в карточке и на странице проекта.",
+            "title": _("Короткое и понятное название проекта."),
+            "short_description": _("Текст для карточки проекта."),
+            "description": _("Расскажи, что делает проект и кому он полезен."),
+            "goal": _("Опиши, какого результата должна добиться команда."),
+            "cover_image": _("Изображение будет показано в карточке и на странице проекта."),
         }
         error_messages = {
             "title": {
-                "required": "Укажи название проекта.",
-                "max_length": "Название слишком длинное.",
+                "required": _("Укажи название проекта."),
+                "max_length": _("Название слишком длинное."),
             },
             "short_description": {
-                "required": "Добавь краткое описание проекта.",
-                "max_length": "Краткое описание слишком длинное.",
+                "required": _("Добавь краткое описание проекта."),
+                "max_length": _("Краткое описание слишком длинное."),
             },
             "description": {
-                "required": "Добавь подробное описание проекта.",
+                "required": _("Добавь подробное описание проекта."),
             },
             "goal": {
-                "required": "Укажи цель проекта.",
+                "required": _("Укажи цель проекта."),
             },
         }
         widgets = {
             "title": forms.TextInput(
                 attrs={
                     "class": "form-control",
-                    "placeholder": "Например: сервис подбора IT-команды",
+                    "placeholder": _("Например: сервис подбора IT-команды"),
                 }
             ),
             "short_description": forms.TextInput(
                 attrs={
                     "class": "form-control",
-                    "placeholder": "Короткое описание для карточки",
+                    "placeholder": _("Короткое описание для карточки"),
                 }
             ),
             "description": forms.Textarea(
                 attrs={
                     "class": "form-control",
                     "rows": 6,
-                    "placeholder": "Опиши идею, аудиторию и особенности проекта",
+                    "placeholder": _("Опиши идею, аудиторию и особенности проекта"),
                 }
             ),
             "goal": forms.Textarea(
                 attrs={
                     "class": "form-control",
                     "rows": 4,
-                    "placeholder": "Какой результат должна получить команда?",
+                    "placeholder": _("Какой результат должна получить команда?"),
                 }
             ),
             "cover_image": forms.ClearableFileInput(
@@ -179,24 +180,24 @@ class ProjectVacancyForm(forms.ModelForm):
             "required_count",
         )
         labels = {
-            "role": "Роль",
-            "title": "Название открытой роли",
-            "description": "Описание роли",
-            "required_level": "Требуемый уровень",
-            "required_count": "Сколько человек нужно",
+            "role": _("Роль"),
+            "title": _("Название открытой роли"),
+            "description": _("Описание роли"),
+            "required_level": _("Требуемый уровень"),
+            "required_count": _("Сколько человек нужно"),
         }
         help_texts = {
-            "role": "Выбери роль из справочника.",
-            "title": "Например: Junior Backend-разработчик.",
-            "description": "Опиши задачи, ожидания и стек для участника.",
-            "required_count": "Сколько специалистов нужно на эту роль.",
+            "role": _("Выбери роль из справочника."),
+            "title": _("Например: Junior Backend-разработчик."),
+            "description": _("Опиши задачи, ожидания и стек для участника."),
+            "required_count": _("Сколько специалистов нужно на эту роль."),
         }
         error_messages = {
             "title": {
-                "required": "Укажи название открытой роли.",
+                "required": _("Укажи название открытой роли."),
             },
             "description": {
-                "required": "Добавь описание роли.",
+                "required": _("Добавь описание роли."),
             },
         }
         widgets = {
@@ -204,14 +205,14 @@ class ProjectVacancyForm(forms.ModelForm):
             "title": forms.TextInput(
                 attrs={
                     "class": "form-control",
-                    "placeholder": "Например: Backend-разработчик",
+                    "placeholder": _("Например: Backend-разработчик"),
                 }
             ),
             "description": forms.Textarea(
                 attrs={
                     "class": "form-control",
                     "rows": 5,
-                    "placeholder": "Опиши задачи и требования к участнику",
+                    "placeholder": _("Опиши задачи и требования к участнику"),
                 }
             ),
             "required_level": forms.Select(attrs={"class": "form-control"}),

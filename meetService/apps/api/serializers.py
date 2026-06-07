@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import IntegrityError
 from django.db.models import F
+from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
 from apps.api.permissions import is_admin
@@ -283,12 +284,12 @@ class ProjectVacancySerializer(serializers.ModelSerializer):
 
         if project is None:
             raise serializers.ValidationError(
-                {"project": "Укажи проект для открытой роли."}
+                {"project": _("Укажи проект для открытой роли.")}
             )
 
         if project.status in [Project.Status.CLOSED, Project.Status.ARCHIVED]:
             raise serializers.ValidationError(
-                {"project": "Нельзя добавлять роли в закрытый или архивный проект."}
+                {"project": _("Нельзя добавлять роли в закрытый или архивный проект.")}
             )
 
         attrs["project"] = project
@@ -724,7 +725,7 @@ class SpecialistProfileSerializer(serializers.ModelSerializer):
 
         if value and len(value) < 20:
             raise serializers.ValidationError(
-                "Если заполняешь описание, оно должно быть не короче 20 символов."
+                _("Если заполняешь описание, оно должно быть не короче 20 символов.")
             )
 
         return value
@@ -841,7 +842,7 @@ class ApplicationSerializer(serializers.ModelSerializer):
         value = value.strip()
 
         if not value:
-            raise serializers.ValidationError("Добавь сопроводительное сообщение.")
+            raise serializers.ValidationError(_("Добавь сопроводительное сообщение."))
 
         return value
 
@@ -854,35 +855,35 @@ class ApplicationSerializer(serializers.ModelSerializer):
         request = self.context.get("request")
 
         if not request or not request.user.is_authenticated:
-            raise serializers.ValidationError("Для отклика нужно войти в систему.")
+            raise serializers.ValidationError(_("Для отклика нужно войти в систему."))
 
         specialist = getattr(request.user, "specialist_profile", None)
 
         if specialist is None:
             raise serializers.ValidationError(
-                "Чтобы откликнуться на проект, сначала нужен профиль специалиста."
+                _("Чтобы откликнуться на проект, сначала нужен профиль специалиста.")
             )
 
         vacancy = attrs.get("vacancy")
 
         if vacancy is None:
-            raise serializers.ValidationError({"vacancy": "Выбери открытую роль."})
+            raise serializers.ValidationError({"vacancy": _("Выбери открытую роль.")})
 
         project = vacancy.project
 
         if project.owner_id == request.user.id:
             raise serializers.ValidationError(
-                {"project": "Нельзя откликаться на собственный проект."}
+                {"project": _("Нельзя откликаться на собственный проект.")}
             )
 
         if project.status != Project.Status.PUBLISHED:
             raise serializers.ValidationError(
-                {"project": "Нельзя откликаться на неопубликованный проект."}
+                {"project": _("Нельзя откликаться на неопубликованный проект.")}
             )
 
         if not vacancy.is_open():
             raise serializers.ValidationError(
-                {"vacancy": "Нельзя откликаться на закрытую или заполненную роль."}
+                {"vacancy": _("Нельзя откликаться на закрытую или заполненную роль.")}
             )
 
         already_member = ProjectMembership.objects.filter(
@@ -893,7 +894,7 @@ class ApplicationSerializer(serializers.ModelSerializer):
 
         if already_member:
             raise serializers.ValidationError(
-                "Специалист уже состоит в команде проекта."
+                _("Специалист уже состоит в команде проекта.")
             )
 
         duplicate_exists = Application.objects.filter(
@@ -905,7 +906,7 @@ class ApplicationSerializer(serializers.ModelSerializer):
 
         if duplicate_exists:
             raise serializers.ValidationError(
-                "У специалиста уже есть активный отклик на эту роль."
+                _("У специалиста уже есть активный отклик на эту роль.")
             )
 
         return attrs
@@ -980,38 +981,38 @@ class InvitationSerializer(serializers.ModelSerializer):
 
         if not request or not request.user.is_authenticated:
             raise serializers.ValidationError(
-                "Для приглашения специалиста нужно войти в систему."
+                _("Для приглашения специалиста нужно войти в систему.")
             )
 
         vacancy = attrs.get("vacancy")
         specialist = attrs.get("specialist")
 
         if vacancy is None:
-            raise serializers.ValidationError({"vacancy": "Выбери открытую роль."})
+            raise serializers.ValidationError({"vacancy": _("Выбери открытую роль.")})
 
         if specialist is None:
-            raise serializers.ValidationError({"specialist": "Выбери специалиста."})
+            raise serializers.ValidationError({"specialist": _("Выбери специалиста.")})
 
         project = vacancy.project
 
         if not is_admin(request.user) and project.owner_id != request.user.id:
             raise serializers.ValidationError(
-                {"project": "Можно приглашать только в свои проекты."}
+                {"project": _("Можно приглашать только в свои проекты.")}
             )
 
         if specialist.user_id == request.user.id:
             raise serializers.ValidationError(
-                {"specialist": "Нельзя пригласить самого себя в свой проект."}
+                {"specialist": _("Нельзя пригласить самого себя в свой проект.")}
             )
 
         if project.status != Project.Status.PUBLISHED:
             raise serializers.ValidationError(
-                {"project": "Приглашать можно только в опубликованный проект."}
+                {"project": _("Приглашать можно только в опубликованный проект.")}
             )
 
         if not vacancy.is_open():
             raise serializers.ValidationError(
-                {"vacancy": "Приглашать можно только на открытую роль."}
+                {"vacancy": _("Приглашать можно только на открытую роль.")}
             )
 
         already_member = ProjectMembership.objects.filter(
@@ -1022,7 +1023,7 @@ class InvitationSerializer(serializers.ModelSerializer):
 
         if already_member:
             raise serializers.ValidationError(
-                "Специалист уже состоит в команде этого проекта."
+                _("Специалист уже состоит в команде этого проекта.")
             )
 
         duplicate_exists = Invitation.objects.filter(
@@ -1034,7 +1035,7 @@ class InvitationSerializer(serializers.ModelSerializer):
 
         if duplicate_exists:
             raise serializers.ValidationError(
-                "Для этой роли уже есть активное приглашение специалисту."
+                _("Для этой роли уже есть активное приглашение специалисту.")
             )
 
         return attrs
@@ -1083,7 +1084,7 @@ class FavoriteProjectSerializer(serializers.ModelSerializer):
 
         if project.status not in [Project.Status.PUBLISHED, Project.Status.CLOSED]:
             raise serializers.ValidationError(
-                "В избранное можно добавить только опубликованный или закрытый проект."
+                _("В избранное можно добавить только опубликованный или закрытый проект.")
             )
 
         if request and request.user.is_authenticated:
@@ -1093,7 +1094,7 @@ class FavoriteProjectSerializer(serializers.ModelSerializer):
             ).exists()
 
             if duplicate_exists:
-                raise serializers.ValidationError("Проект уже есть в избранном.")
+                raise serializers.ValidationError(_("Проект уже есть в избранном."))
 
         return project
 
@@ -1162,7 +1163,7 @@ class ReviewSerializer(serializers.ModelSerializer):
         value = value.strip()
 
         if not value:
-            raise serializers.ValidationError("Текст отзыва обязателен.")
+            raise serializers.ValidationError(_("Текст отзыва обязателен."))
 
         return value
 
@@ -1175,7 +1176,7 @@ class ReviewSerializer(serializers.ModelSerializer):
         request = self.context.get("request")
 
         if not request or not request.user.is_authenticated:
-            raise serializers.ValidationError("Для создания отзыва нужно войти.")
+            raise serializers.ValidationError(_("Для создания отзыва нужно войти."))
 
         project = attrs.get("project")
         specialist = attrs.get("specialist")
@@ -1185,12 +1186,12 @@ class ReviewSerializer(serializers.ModelSerializer):
 
         if not is_admin(request.user) and project.owner_id != request.user.id:
             raise serializers.ValidationError(
-                {"project": "Оставить отзыв может владелец проекта или администратор."}
+                {"project": _("Оставить отзыв может владелец проекта или администратор.")}
             )
 
         if specialist.user_id == request.user.id:
             raise serializers.ValidationError(
-                {"specialist": "Нельзя оставить отзыв самому себе."}
+                {"specialist": _("Нельзя оставить отзыв самому себе.")}
             )
 
         if not ProjectMembership.objects.filter(
@@ -1200,8 +1201,8 @@ class ReviewSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 {
                     "specialist": (
-                        "Отзыв можно оставить только специалисту, который участвовал "
-                        "в проекте."
+                        _("Отзыв можно оставить только специалисту, который участвовал "
+                        "в проекте.")
                     )
                 }
             )

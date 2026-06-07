@@ -113,7 +113,7 @@ class RoleAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
             ),
         )
 
-    @admin.display(description="Открытых ролей")
+    @admin.display(description=_("Открытых ролей"))
     def display_open_vacancies_count(self, obj: Role) -> int:
         """
         Возвращает значение для отображения в интерфейсе администратора.
@@ -122,7 +122,7 @@ class RoleAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
         """
         return getattr(obj, "open_vacancies_count", 0)
 
-    @admin.display(description="Основная у специалистов")
+    @admin.display(description=_("Основная у специалистов"))
     def display_main_specialists_count(self, obj: Role) -> int:
         """
         Возвращает значение для отображения в интерфейсе администратора.
@@ -131,7 +131,7 @@ class RoleAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
         """
         return getattr(obj, "main_specialists_count", 0)
 
-    @admin.display(description="Интересует специалистов")
+    @admin.display(description=_("Интересует специалистов"))
     def display_preferred_specialists_count(self, obj: Role) -> int:
         """
         Возвращает значение для отображения в интерфейсе администратора.
@@ -140,16 +140,16 @@ class RoleAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
         """
         return getattr(obj, "preferred_specialists_count", 0)
 
-    @admin.display(description="Статус")
+    @admin.display(description=_("Статус"))
     def display_status(self, obj: Role) -> str:
         """
         Возвращает значение для отображения в интерфейсе администратора.
         Args:
             obj: Объект модели
         """
-        return "Активна" if obj.is_active else "Отключена"
+        return _("Активна") if obj.is_active else _("Отключена")
 
-    @admin.action(description="Активировать выбранные роли")
+    @admin.action(description=_("Активировать выбранные роли"))
     def activate_roles(self, request: HttpRequest, queryset: QuerySet) -> object:
         """
         Выполняет массовое действие в административном интерфейсе.
@@ -158,9 +158,12 @@ class RoleAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
             queryset: Набор объектов для обработки
         """
         updated_count = queryset.update(is_active=True)
-        self.message_user(request, f"Активировано ролей: {updated_count}")
+        self.message_user(
+            request,
+            _("Активировано ролей: %(count)s") % {"count": updated_count},
+        )
 
-    @admin.action(description="Отключить выбранные роли")
+    @admin.action(description=_("Отключить выбранные роли"))
     def deactivate_roles(self, request: HttpRequest, queryset: QuerySet) -> object:
         """
         Выполняет массовое действие в административном интерфейсе.
@@ -169,7 +172,10 @@ class RoleAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
             queryset: Набор объектов для обработки
         """
         updated_count = queryset.update(is_active=False)
-        self.message_user(request, f"Отключено ролей: {updated_count}")
+        self.message_user(
+            request,
+            _("Отключено ролей: %(count)s") % {"count": updated_count},
+        )
 
 
 @admin.register(Technology)
@@ -276,7 +282,7 @@ class TechnologyAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
             ),
         )
 
-    @admin.display(description="Проектов")
+    @admin.display(description=_("Проектов"))
     def display_projects_count(self, obj: Technology) -> int:
         """
         Возвращает значение для отображения в интерфейсе администратора.
@@ -285,7 +291,7 @@ class TechnologyAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
         """
         return getattr(obj, "projects_count", 0)
 
-    @admin.display(description="Опубликованных проектов")
+    @admin.display(description=_("Опубликованных проектов"))
     def display_published_projects_count(self, obj: Technology) -> int:
         """
         Возвращает значение для отображения в интерфейсе администратора.
@@ -294,7 +300,7 @@ class TechnologyAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
         """
         return getattr(obj, "published_projects_count", 0)
 
-    @admin.display(description="Специалистов")
+    @admin.display(description=_("Специалистов"))
     def display_specialists_count(self, obj: Technology) -> int:
         """
         Возвращает значение для отображения в интерфейсе администратора.
@@ -303,7 +309,7 @@ class TechnologyAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
         """
         return getattr(obj, "specialists_count", 0)
 
-    @admin.display(description="Категория")
+    @admin.display(description=_("Категория"))
     def display_category_label(self, obj: Technology) -> str:
         """
         Возвращает значение для отображения в интерфейсе администратора.
@@ -312,7 +318,7 @@ class TechnologyAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
         """
         return obj.get_category_display()
 
-    @admin.action(description="Активировать выбранные технологии")
+    @admin.action(description=_("Активировать выбранные технологии"))
     def activate_technologies(self, request: HttpRequest, queryset: QuerySet) -> object:
         """
         Выполняет массовое действие в административном интерфейсе.
@@ -321,9 +327,12 @@ class TechnologyAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
             queryset: Набор объектов для обработки
         """
         updated_count = queryset.update(is_active=True)
-        self.message_user(request, f"Активировано технологий: {updated_count}")
+        self.message_user(
+            request,
+            _("Активировано технологий: %(count)s") % {"count": updated_count},
+        )
 
-    @admin.action(description="Отключить выбранные технологии")
+    @admin.action(description=_("Отключить выбранные технологии"))
     def deactivate_technologies(self, request: HttpRequest, queryset: QuerySet) -> object:
         """
         Выполняет массовое действие в административном интерфейсе.
@@ -332,4 +341,7 @@ class TechnologyAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
             queryset: Набор объектов для обработки
         """
         updated_count = queryset.update(is_active=False)
-        self.message_user(request, f"Отключено технологий: {updated_count}")
+        self.message_user(
+            request,
+            _("Отключено технологий: %(count)s") % {"count": updated_count},
+        )

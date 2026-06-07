@@ -9,6 +9,7 @@ from django.http import HttpRequest, HttpResponse
 from django.views.decorators.http import require_POST
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
+from django.utils.translation import gettext_lazy as _
 
 from apps.accounts.models import User
 from apps.interactions.forms import ApplicationForm, InvitationForm
@@ -35,7 +36,7 @@ def project_apply(request: HttpRequest, slug: str) -> HttpResponse:
     except SpecialistProfile.DoesNotExist:
         messages.error(
             request,
-            "Чтобы откликнуться на проект, сначала нужен профиль специалиста.",
+            _("Чтобы откликнуться на проект, сначала нужен профиль специалиста."),
         )
         return redirect(project.get_absolute_url())
 
@@ -46,7 +47,7 @@ def project_apply(request: HttpRequest, slug: str) -> HttpResponse:
     ).exists()
 
     if already_member:
-        messages.info(request, "Ты уже состоишь в команде этого проекта.")
+        messages.info(request, _("Ты уже состоишь в команде этого проекта."))
         return redirect(project.get_absolute_url())
 
     if request.method == "POST":
@@ -62,7 +63,7 @@ def project_apply(request: HttpRequest, slug: str) -> HttpResponse:
             except ValidationError as error:
                 form.add_error(None, error)
             else:
-                messages.success(request, "Отклик отправлен владельцу проекта.")
+                messages.success(request, _("Отклик отправлен владельцу проекта."))
                 return redirect("interactions:application_list")
     else:
         form = ApplicationForm(project=project, specialist=specialist)
@@ -150,13 +151,13 @@ def favorite_project_toggle(request: HttpRequest, slug: str) -> HttpResponse:
 
     if favorite:
         favorite.delete()
-        messages.info(request, "Проект удалён из избранного.")
+        messages.info(request, _("Проект удалён из избранного."))
     else:
         FavoriteProject.objects.create(
             user=request.user,
             project=project,
         )
-        messages.success(request, "Проект добавлен в избранное.")
+        messages.success(request, _("Проект добавлен в избранное."))
 
     return redirect(project.get_absolute_url())
 
@@ -218,13 +219,13 @@ def invite_specialist(request: HttpRequest, pk: int | None) -> HttpResponse:
     )
 
     if specialist.user == request.user:
-        messages.error(request, "Нельзя пригласить самого себя в свой проект.")
+        messages.error(request, _("Нельзя пригласить самого себя в свой проект."))
         return redirect(specialist.get_absolute_url())
 
     if not user_has_project_for_invitation(request.user):
         messages.error(
             request,
-            "Для приглашения нужен опубликованный проект с открытой ролью.",
+            _("Для приглашения нужен опубликованный проект с открытой ролью."),
         )
         return redirect(specialist.get_absolute_url())
 
@@ -242,7 +243,7 @@ def invite_specialist(request: HttpRequest, pk: int | None) -> HttpResponse:
                 if invitation.project.owner != request.user:
                     form.add_error(
                         "project",
-                        "Можно приглашать только в свои проекты.",
+                        _("Можно приглашать только в свои проекты."),
                     )
                     return render(
                         request,
@@ -256,7 +257,7 @@ def invite_specialist(request: HttpRequest, pk: int | None) -> HttpResponse:
             if invitation.project.status != Project.Status.PUBLISHED:
                 form.add_error(
                     "project",
-                    "Приглашать можно только в опубликованный проект.",
+                    _("Приглашать можно только в опубликованный проект."),
                 )
                 return render(
                     request,
@@ -270,7 +271,7 @@ def invite_specialist(request: HttpRequest, pk: int | None) -> HttpResponse:
             if not invitation.vacancy.is_open():
                 form.add_error(
                     "vacancy",
-                    "Приглашать можно только на открытую роль.",
+                    _("Приглашать можно только на открытую роль."),
                 )
                 return render(
                     request,
@@ -290,7 +291,7 @@ def invite_specialist(request: HttpRequest, pk: int | None) -> HttpResponse:
             if already_member:
                 form.add_error(
                     None,
-                    "Специалист уже состоит в команде этого проекта.",
+                    _("Специалист уже состоит в команде этого проекта."),
                 )
                 return render(
                     request,
@@ -308,10 +309,10 @@ def invite_specialist(request: HttpRequest, pk: int | None) -> HttpResponse:
             except IntegrityError:
                 form.add_error(
                     None,
-                    "Такое активное приглашение уже существует.",
+                    _("Такое активное приглашение уже существует."),
                 )
             else:
-                messages.success(request, "Приглашение отправлено специалисту.")
+                messages.success(request, _("Приглашение отправлено специалисту."))
                 return redirect("interactions:invitation_list")
     else:
         form = InvitationForm(
@@ -405,9 +406,9 @@ def invitation_accept(request: HttpRequest, pk: int | None) -> HttpResponse:
     except ValidationError as error:
         messages.error(request, " ".join(error.messages))
     except IntegrityError:
-        messages.error(request, "Ты уже состоишь в команде этого проекта.")
+        messages.error(request, _("Ты уже состоишь в команде этого проекта."))
     else:
-        messages.success(request, "Приглашение принято. Ты добавлен в команду проекта.")
+        messages.success(request, _("Приглашение принято. Ты добавлен в команду проекта."))
 
     return redirect("interactions:invitation_list")
 
@@ -433,7 +434,7 @@ def invitation_decline(request: HttpRequest, pk: int | None) -> HttpResponse:
     except ValidationError as error:
         messages.error(request, " ".join(error.messages))
     else:
-        messages.info(request, "Приглашение отклонено.")
+        messages.info(request, _("Приглашение отклонено."))
 
     return redirect("interactions:invitation_list")
 
@@ -479,11 +480,11 @@ def application_accept(request: HttpRequest, pk: int | None) -> HttpResponse:
     except ValidationError as error:
         messages.error(request, " ".join(error.messages))
     except IntegrityError:
-        messages.error(request, "Специалист уже состоит в команде проекта.")
+        messages.error(request, _("Специалист уже состоит в команде проекта."))
     else:
         messages.success(
             request,
-            "Отклик принят. Специалист добавлен в команду проекта.",
+            _("Отклик принят. Специалист добавлен в команду проекта."),
         )
 
     return redirect("interactions:application_list")
@@ -508,6 +509,6 @@ def application_reject(request: HttpRequest, pk: int | None) -> HttpResponse:
     except ValidationError as error:
         messages.error(request, " ".join(error.messages))
     else:
-        messages.info(request, "Отклик отклонён.")
+        messages.info(request, _("Отклик отклонён."))
 
     return redirect("interactions:application_list")

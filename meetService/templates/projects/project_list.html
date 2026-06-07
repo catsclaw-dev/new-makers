@@ -1,26 +1,27 @@
 {% extends "base.html" %}
-{% load project_extras %}
-{% block title %}Каталог проектов — MeetService{% endblock %}
+{% load i18n project_extras %}
+{% trans "Открыть проект" as open_project %}
+{% block title %}{% trans "Каталог проектов" %} — New-Makers{% endblock %}
 {% block content %}
     <section class="container page-head">
-        <p class="eyebrow">каталог</p>
-        <h1>Проекты</h1>
-        <p class="lead">Ищи проект по названию, описанию, стеку технологий или открытой роли.</p>
+        <p class="eyebrow">{% trans "каталог" %}</p>
+        <h1>{% trans "Проекты" %}</h1>
+        <p class="lead">{% trans "Ищи проект по названию, описанию, стеку технологий или открытой роли." %}</p>
     </section>
     <section class="container catalog-layout">
         <aside class="filters-panel">
             <form method="get">
                 <label>
-                    Поиск
+                    {% trans "Поиск" %}
                     <input type="search"
                            name="q"
                            value="{{ query }}"
                            placeholder="Django, Frontend, MVP">
                 </label>
                 <label>
-                    Технология
+                    {% trans "Технология" %}
                     <select name="technology">
-                        <option value="">Любая</option>
+                        <option value="">{% trans "Любая" %}</option>
                         {% for technology in technologies %}
                             <option value="{{ technology.slug }}"
                                     {% if technology.slug == technology_slug %}selected{% endif %}>
@@ -30,9 +31,9 @@
                     </select>
                 </label>
                 <label>
-                    Роль
+                    {% trans "Роль" %}
                     <select name="role">
-                        <option value="">Любая</option>
+                        <option value="">{% trans "Любая" %}</option>
                         {% for role in roles %}
                             <option value="{{ role.slug }}"
                                     {% if role.slug == role_slug %}selected{% endif %}>{{ role.name }}</option>
@@ -40,44 +41,41 @@
                     </select>
                 </label>
                 <label>
-                    Сортировка
+                    {% trans "Сортировка" %}
                     <select name="ordering">
                         <option value="-created_at"
-                                {% if ordering == "-created_at" %}selected{% endif %}>Сначала новые</option>
+                                {% if ordering == "-created_at" %}selected{% endif %}>{% trans "Сначала новые" %}</option>
                         <option value="created_at"
-                                {% if ordering == "created_at" %}selected{% endif %}>Сначала старые</option>
-                        <option value="title" {% if ordering == "title" %}selected{% endif %}>Название А–Я</option>
-                        <option value="-title" {% if ordering == "-title" %}selected{% endif %}>Название Я–А</option>
+                                {% if ordering == "created_at" %}selected{% endif %}>{% trans "Сначала старые" %}</option>
+                        <option value="title" {% if ordering == "title" %}selected{% endif %}>{% trans "Название А–Я" %}</option>
+                        <option value="-title" {% if ordering == "-title" %}selected{% endif %}>{% trans "Название Я–А" %}</option>
                     </select>
                 </label>
-                <button class="btn btn-primary full-width" type="submit">Применить</button>
+                <button class="btn btn-primary full-width" type="submit">{% trans "Применить" %}</button>
                 <a class="btn btn-secondary full-width"
-                   href="{% url 'projects:project_list' %}">Сбросить</a>
+                   href="{% url 'projects:project_list' %}">{% trans "Сбросить" %}</a>
             </form>
         </aside>
         <div>
             <div class="cards-grid">
                 {% for project in page_obj %}
-                    {% include "projects/includes/project_card.html" with project=project placeholder_text="IT" cta_text="Открыть проект" %}
+                    {% include "projects/includes/project_card.html" with project=project placeholder_text="IT" cta_text=open_project %}
                 {% empty %}
                     <article class="action-card">
-                        <h2>Проекты не найдены</h2>
-                        <p class="empty">
-                            По выбранным условиям пока нет опубликованных проектов.
-                            Попробуй изменить фильтры или сбросить поиск.
-                        </p>
-                        <a class="btn btn-primary" href="{% url 'projects:project_list' %}">Сбросить фильтры</a>
+                        <h2>{% trans "Проекты не найдены" %}</h2>
+                        <p class="empty">{% trans "По выбранным условиям пока нет опубликованных проектов. Попробуй изменить фильтры или сбросить поиск." %}</p>
+                        <a class="btn btn-primary" href="{% url 'projects:project_list' %}">{% trans "Сбросить фильтры" %}</a>
                     </article>
                 {% endfor %}
             </div>
             {% if page_obj.paginator.num_pages > 1 %}
-                <nav class="pagination" aria-label="Пагинация каталога проектов">
+                <nav class="pagination" aria-label="{% trans 'Пагинация каталога проектов' %}">
                     {% if page_obj.has_previous %}
-                        <a href="?{% current_query_string page=page_obj.previous_page_number %}">← Назад</a>
+                        <a href="?{% current_query_string page=page_obj.previous_page_number %}">← {% trans "Назад" %}</a>
                     {% endif %}
-                    <span class="pagination-current">Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
+                    <span class="pagination-current">{% blocktrans with current=page_obj.number total=page_obj.paginator.num_pages %}Страница {{ current }} из {{ total }}{% endblocktrans %}</span>
                     {% if page_obj.has_next %}
-                        <a href="?{% current_query_string page=page_obj.next_page_number %}">Вперёд →</a>
+                        <a href="?{% current_query_string page=page_obj.next_page_number %}">{% trans "Вперёд" %} →</a>
                     {% endif %}
                 </nav>
             {% endif %}

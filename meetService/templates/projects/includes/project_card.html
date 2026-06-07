@@ -1,4 +1,6 @@
-{% load project_extras %}
+{% load i18n project_extras %}
+{% trans "Описание проекта пока не заполнено." as empty_description %}
+{% trans "Открыть проект" as default_cta %}
 <article class="project-card{% if card_modifier %} {{ card_modifier }}{% endif %}">
     {% if project.cover_image %}
         <img class="project-cover"
@@ -20,7 +22,7 @@
                 <a href="{{ project.get_absolute_url }}">{{ project.title }}</a>
             </h3>
             <p class="project-description">
-                {{ project.short_description|default:"Описание проекта пока не заполнено."|short_text:150 }}
+                {{ project.short_description|default:empty_description|short_text:150 }}
             </p>
         </div>
         <div class="project-card-bottom">
@@ -28,10 +30,10 @@
                 {% for technology in project.technologies.all|slice:":4" %}
                     <span class="tag">{{ technology.name }}</span>
                 {% empty %}
-                    <span class="tag">Стек не указан</span>
+                    <span class="tag">{% trans "Стек не указан" %}</span>
                 {% endfor %}
             </div>
-            <a class="card-link" href="{{ project.get_absolute_url }}">{{ cta_text|default:"Открыть проект" }}</a>
+            <a class="card-link" href="{{ project.get_absolute_url }}">{{ cta_text|default:default_cta }}</a>
         </div>
     </div>
 </article>

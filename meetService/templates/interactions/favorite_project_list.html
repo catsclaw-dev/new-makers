@@ -1,10 +1,12 @@
 {% extends "base.html" %}
-{% block title %}Избранное — MeetService{% endblock %}
+{% load i18n %}
+{% trans "Описание проекта пока не заполнено." as empty_description %}
+{% block title %}{% trans "Избранное" %} — New-Makers{% endblock %}
 {% block content %}
     <section class="container page-head">
-        <p class="eyebrow">личный кабинет</p>
-        <h1>Избранные проекты</h1>
-        <p class="lead">Здесь хранятся проекты, к которым ты хочешь вернуться позже.</p>
+        <p class="eyebrow">{% trans "личный кабинет" %}</p>
+        <h1>{% trans "Избранные проекты" %}</h1>
+        <p class="lead">{% trans "Здесь хранятся проекты, к которым ты хочешь вернуться позже." %}</p>
     </section>
     <section class="container section">
         <div class="cards-grid">
@@ -30,7 +32,7 @@
                                 <a href="{{ favorite.project.get_absolute_url }}">{{ favorite.project.title }}</a>
                             </h3>
                             <p class="project-description">
-                                {{ favorite.project.short_description|default:"Описание проекта пока не заполнено." }}
+                                {{ favorite.project.short_description|default:empty_description }}
                             </p>
                         </div>
                         <div class="project-card-bottom">
@@ -38,17 +40,17 @@
                                 {% for technology in favorite.project.technologies.all|slice:":4" %}
                                     <span class="tag">{{ technology.name }}</span>
                                 {% empty %}
-                                    <span class="tag">Стек не указан</span>
+                                    <span class="tag">{% trans "Стек не указан" %}</span>
                                 {% endfor %}
                             </div>
                             <div class="project-actions">
                                 <a class="btn btn-secondary"
-                                   href="{{ favorite.project.get_absolute_url }}">Открыть проект</a>
+                                   href="{{ favorite.project.get_absolute_url }}">{% trans "Открыть проект" %}</a>
                                 <form class="inline-form"
                                       method="post"
                                       action="{% url 'interactions:favorite_project_toggle' favorite.project.slug %}">
                                     {% csrf_token %}
-                                    <button class="btn btn-danger full-width" type="submit">Удалить</button>
+                                    <button class="btn btn-danger full-width" type="submit">{% trans "Удалить" %}</button>
                                 </form>
                             </div>
                         </div>
@@ -56,9 +58,9 @@
                 </article>
             {% empty %}
                 <article class="action-card">
-                    <h2>Избранных проектов пока нет</h2>
-                    <p class="empty">Открой каталог проектов и сохрани интересные варианты.</p>
-                    <a class="btn btn-primary" href="{% url 'projects:project_list' %}">Перейти в каталог</a>
+                    <h2>{% trans "Избранных проектов пока нет" %}</h2>
+                    <p class="empty">{% trans "Открой каталог проектов и сохрани интересные варианты." %}</p>
+                    <a class="btn btn-primary" href="{% url 'projects:project_list' %}">{% trans "Перейти в каталог" %}</a>
                 </article>
             {% endfor %}
         </div>

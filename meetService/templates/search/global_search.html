@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% trans "Описание пока не заполнено." as empty_description %}
 {% block title %}
-    {% trans "Поиск" %} — MeetService
+    {% trans "Поиск" %} — New-Makers
 {% endblock %}
 {% block content %}
     <section class="container page-head">
@@ -15,52 +16,51 @@
             <p class="lead">{% trans "Введите запрос в поисковую строку в шапке сайта. Поиск найдёт проекты, специалистов, роли и технологии." %}</p>
         {% endif %}
         {% if search_mode == "projects" %}
-            <p class="lead">Режим поиска: только проекты.</p>
+            <p class="lead">{% trans "Режим поиска: только проекты." %}</p>
         {% elif search_mode == "specialists" %}
-            <p class="lead">Режим поиска: только специалисты.</p>
+            <p class="lead">{% trans "Режим поиска: только специалисты." %}</p>
         {% endif %}
         {% if unknown_command %}
             <article class="message message-warning">
-                Команда не распознана. Выполнен обычный поиск по запросу:
-                <strong>{{ query }}</strong>
+                {% blocktrans with query_text=query %}Команда не распознана. Выполнен обычный поиск по запросу: <strong>{{ query_text }}</strong>{% endblocktrans %}
             </article>
         {% endif %}
     </section>
     <section class="container search-command-section">
         <details class="search-command-help" {% if not query %}open{% endif %}>
-            <summary>Команды поиска</summary>
+            <summary>{% trans "Команды поиска" %}</summary>
             <div class="search-command-grid">
                 <article>
                     <code>/projects react</code>
-                    <span>искать только проекты</span>
+                    <span>{% trans "искать только проекты" %}</span>
                 </article>
                 <article>
                     <code>/specialists django</code>
-                    <span>искать только специалистов</span>
+                    <span>{% trans "искать только специалистов" %}</span>
                 </article>
                 <article>
                     <code>/profile</code>
-                    <span>перейти в личный кабинет</span>
+                    <span>{% trans "перейти в личный кабинет" %}</span>
                 </article>
                 <article>
                     <code>/applications</code>
-                    <span>открыть мои отклики</span>
+                    <span>{% trans "открыть мои отклики" %}</span>
                 </article>
                 <article>
                     <code>/invites</code>
-                    <span>открыть приглашения</span>
+                    <span>{% trans "открыть приглашения" %}</span>
                 </article>
                 <article>
                     <code>/favorites</code>
-                    <span>открыть избранное</span>
+                    <span>{% trans "открыть избранное" %}</span>
                 </article>
                 <article>
                     <code>/teams</code>
-                    <span>открыть мои команды</span>
+                    <span>{% trans "открыть мои команды" %}</span>
                 </article>
                 <article>
                     <code>/myprojects</code>
-                    <span>открыть мои проекты</span>
+                    <span>{% trans "открыть мои проекты" %}</span>
                 </article>
             </div>
         </details>
@@ -155,7 +155,7 @@
                                         <a href="{{ specialist.get_absolute_url }}">{{ specialist.get_display_name }}</a>
                                     </h3>
                                     {% if specialist.main_role %}<p>{{ specialist.main_role.name }}</p>{% endif %}
-                                    <p>{{ specialist.bio|default:"Описание пока не заполнено."|truncatechars:160 }}</p>
+                                    <p>{{ specialist.bio|default:empty_description|truncatechars:160 }}</p>
                                     <div class="tag-row">
                                         {% for technology in specialist.technologies.all|slice:":5" %}
                                             <span class="tag">{{ technology.name }}</span>

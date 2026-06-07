@@ -1,22 +1,19 @@
 {% extends "base.html" %}
-{% block title %}Архивация проекта — MeetService{% endblock %}
+{% load i18n %}
+{% block title %}{% trans "Архивация проекта" %} — New-Makers{% endblock %}
 {% block content %}
     <section class="container narrow-page section">
         <article class="action-card">
-            <p class="eyebrow">окончательная архивация</p>
-            <h1>Архивировать проект «{{ project.title }}»?</h1>
-            <p class="lead">
-                Это действие нельзя отменить. Проект исчезнет из публичного каталога,
-                станет недоступен для новых откликов и будет удалён из избранного
-                у всех пользователей.
-            </p>
-            <p class="empty">Для подтверждения введи полное название проекта.</p>
+            <p class="eyebrow">{% trans "окончательная архивация" %}</p>
+            <h1>{% blocktrans with project_title=project.title %}Архивировать проект «{{ project_title }}»?{% endblocktrans %}</h1>
+            <p class="lead">{% trans "Это действие нельзя отменить. Проект исчезнет из публичного каталога, станет недоступен для новых откликов и будет удалён из избранного у всех пользователей." %}</p>
+            <p class="empty">{% trans "Для подтверждения введи полное название проекта." %}</p>
             <form method="post" class="form-grid">
                 {% csrf_token %}
                 <div class="form-field">
                     <div class="form-label-row">
-                        <label class="form-label" for="confirmation_title">Название проекта</label>
-                        <small>Нужно ввести точно: {{ project.title }}</small>
+                        <label class="form-label" for="confirmation_title">{% trans "Название проекта" %}</label>
+                        <small>{% blocktrans with project_title=project.title %}Нужно ввести точно: {{ project_title }}{% endblocktrans %}</small>
                     </div>
                     <input id="confirmation_title"
                            name="confirmation_title"
@@ -28,11 +25,11 @@
                 <div class="form-actions">
                     <button class="btn btn-danger full-width"
                             type="submit"
-                            onclick="return confirm('Последнее подтверждение: окончательно архивировать проект? Восстановить его будет нельзя.');">
-                        Окончательно архивировать
+                            onclick="return confirm('{% trans "Последнее подтверждение: окончательно архивировать проект? Восстановить его будет нельзя." %}');">
+                        {% trans "Окончательно архивировать" %}
                     </button>
                     <a class="btn btn-secondary full-width"
-                       href="{{ project.get_absolute_url }}">Отмена</a>
+                       href="{{ project.get_absolute_url }}">{% trans "Отмена" %}</a>
                 </div>
             </form>
         </article>

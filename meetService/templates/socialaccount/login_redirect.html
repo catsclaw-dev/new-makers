@@ -8,9 +8,9 @@
     <section class="container auth-page">
         <article class="auth-card">
             <p class="eyebrow">oauth</p>
-            <h1>Переадресация</h1>
-            <p class="lead">Перенаправляем на страницу авторизации.</p>
-            <a class="btn btn-primary full-width" href="{{ redirect_to }}">Продолжить</a>
+            <h1>{% trans "Переадресация" %}</h1>
+            <p class="lead">{% trans "Перенаправляем на страницу авторизации." %}</p>
+            <a class="btn btn-primary full-width" href="{{ redirect_to }}">{% trans "Продолжить" %}</a>
         </article>
     </section>
 {% endblock %}

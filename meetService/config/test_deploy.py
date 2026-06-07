@@ -75,18 +75,69 @@ class DeployConfigurationTests(SimpleTestCase):
         self.assertNotIn("postgres", services)
         self.assertIn("sqlite:", services["web"]["environment"]["DATABASE_URL"])
 
-    def test_docker_compose_contains_redis_mailhog_and_celery(self) -> None:
+    def test_docker_compose_contains_rabbitmq_redis_mailhog_and_celery(self) -> None:
         """
-        Проверяет наличие Redis, Mailhog, Celery worker и Celery Beat.
+        Проверяет наличие RabbitMQ, Redis, Mailhog, Celery worker и Celery Beat.
         """
         compose = yaml.safe_load((PROJECT_ROOT / "docker-compose.yml").read_text())
         services = compose["services"]
 
+        self.assertIn("rabbitmq", services)
         self.assertIn("redis", services)
         self.assertIn("mailhog", services)
         self.assertIn("celery_worker", services)
         self.assertIn("celery_beat", services)
         self.assertEqual(services["mailhog"]["ports"], ["1025:1025", "8025:8025"])
+
+    def test_rabbitmq_has_management_ui_healthcheck_and_persistent_data(self) -> None:
+        """
+        Проверяет management UI, healthcheck и volume RabbitMQ.
+        """
+        compose = yaml.safe_load((PROJECT_ROOT / "docker-compose.yml").read_text())
+        rabbitmq = compose["services"]["rabbitmq"]
+
+        self.assertEqual(rabbitmq["image"], "rabbitmq:4.2-management-alpine")
+        self.assertEqual(rabbitmq["ports"], ["5672:5672", "15672:15672"])
+        self.assertIn("healthcheck", rabbitmq)
+        self.assertIn("rabbitmq_data:/var/lib/rabbitmq", rabbitmq["volumes"])
+        self.assertIn("rabbitmq_data", compose["volumes"])
+
+    def test_celery_uses_rabbitmq_broker_and_redis_result_backend(self) -> None:
+        """
+        Проверяет разделение broker и result backend Celery.
+        """
+        compose = yaml.safe_load((PROJECT_ROOT / "docker-compose.yml").read_text())
+
+        for service_name in ("web", "celery_worker", "celery_beat"):
+            environment = compose["services"][service_name]["environment"]
+            self.assertIn("amqp://", environment["CELERY_BROKER_URL"])
+            self.assertIn("rabbitmq:5672", environment["CELERY_BROKER_URL"])
+            self.assertIn("redis://redis:6379/0", environment["CELERY_RESULT_BACKEND"])
+
+        for service_name in ("celery_worker", "celery_beat"):
+            rabbitmq_dependency = compose["services"][service_name]["depends_on"][
+                "rabbitmq"
+            ]
+            self.assertEqual(rabbitmq_dependency["condition"], "service_healthy")
+
+    def test_env_example_contains_rabbitmq_and_redis_celery_urls(self) -> None:
+        """
+        Проверяет переменные RabbitMQ и Redis в шаблоне окружения.
+        """
+        env_example = (PROJECT_ROOT / ".env.example").read_text()
+
+        self.assertIn("RABBITMQ_DEFAULT_USER=", env_example)
+        self.assertIn("RABBITMQ_DEFAULT_PASS=", env_example)
+        self.assertIn("CELERY_BROKER_URL=amqp://", env_example)
+        self.assertIn("@rabbitmq:5672//", env_example)
+        self.assertIn("CELERY_RESULT_BACKEND=redis://redis:6379/0", env_example)
+
+    def test_celery_queues_are_compatible_with_rabbitmq_4_3(self) -> None:
+        """
+        Проверяет exclusive-очереди Celery для совместимости с RabbitMQ 4.3.
+        """
+        self.assertTrue(settings.CELERY_CONTROL_QUEUE_EXCLUSIVE)
+        self.assertTrue(settings.CELERY_EVENT_QUEUE_EXCLUSIVE)
 
     def test_requirements_keep_psycopg_as_optional_deploy_dependency(self) -> None:
         """
@@ -106,6 +157,7 @@ class DeployConfigurationTests(SimpleTestCase):
             "celery[redis]" in requirements
             or ("celery==" in requirements and "redis==" in requirements)
         )
+        self.assertIn("amqp==", requirements)
 
     def test_dockerignore_excludes_env_files(self) -> None:
         """

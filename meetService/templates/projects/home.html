@@ -1,29 +1,26 @@
 {% extends "base.html" %}
-{% load project_extras %}
-{% block title %}Главная — MeetService{% endblock %}
+{% load i18n project_extras %}
+{% trans "Роль не указана" as empty_role %}
+{% block title %}{% trans "Главная" %} — New-Makers{% endblock %}
 {% block content %}
     <section class="home-hero">
         <div class="container home-hero-grid">
             <div class="home-hero-content">
-                <p class="eyebrow">поиск IT-команды</p>
-                <h1>Найди свой проект или собери команду мечты</h1>
-                <p class="hero-text">
-                    MeetService помогает специалистам находить проекты,
-                    а владельцам идей — собирать команду под MVP, стартап,
-                    учебную или коммерческую разработку.
-                </p>
+                <p class="eyebrow">{% trans "поиск IT-команды" %}</p>
+                <h1>{% trans "Найди свой проект или собери команду мечты" %}</h1>
+                <p class="hero-text">{% trans "New-Makers помогает специалистам находить проекты, а владельцам идей — собирать команду под MVP, стартап, учебную или коммерческую разработку." %}</p>
                 <div class="hero-actions">
-                    <a class="btn btn-primary" href="{% url 'projects:project_list' %}">Найти проект</a>
-                    <a class="btn btn-secondary" href="{% url 'specialists:specialist_list' %}">Собрать команду</a>
+                    <a class="btn btn-primary" href="{% url 'projects:project_list' %}">{% trans "Найти проект" %}</a>
+                    <a class="btn btn-secondary" href="{% url 'specialists:specialist_list' %}">{% trans "Собрать команду" %}</a>
                     {% if user.is_authenticated %}
-                        <a class="btn btn-secondary" href="{% url 'projects:project_create' %}">Создать проект</a>
+                        <a class="btn btn-secondary" href="{% url 'projects:project_create' %}">{% trans "Создать проект" %}</a>
                     {% else %}
-                        <a class="btn btn-secondary" href="{% url 'accounts:register' %}">Зарегистрироваться</a>
+                        <a class="btn btn-secondary" href="{% url 'accounts:register' %}">{% trans "Зарегистрироваться" %}</a>
                     {% endif %}
                 </div>
                 <form class="home-search" method="get">
-                    <input type="search" name="q" value="{{ query }}" placeholder="Кого ищем? Django, React, backend, UX, MVP">
-                    <button class="btn btn-primary" type="submit">Найти</button>
+                    <input type="search" name="q" value="{{ query }}" placeholder="{% trans 'Кого ищем? Django, React, backend, UX, MVP' %}">
+                    <button class="btn btn-primary" type="submit">{% trans "Найти" %}</button>
                 </form>
                 <div class="home-quick-tags">
                     {% for technology in hero_technologies %}
@@ -44,13 +41,13 @@
                         <span></span>
                     </div>
                     <div class="home-visual-code">
-                        <span>Привет! Хочу в ваш проект!</span>
-                        <span>Отлично! Присоединяйся!</span>
-                        <span>Буду в конфе через 5 минут!</span>
+                        <span>{% trans "Привет! Хочу в ваш проект!" %}</span>
+                        <span>{% trans "Отлично! Присоединяйся!" %}</span>
+                        <span>{% trans "Буду в конфе через 5 минут!" %}</span>
                     </div>
                     <div class="home-visual-card">
-                        <strong>Собери и свою команду!</strong>
-                        <small>4 открытые роли · 12 откликов</small>
+                        <strong>{% trans "Собери и свою команду!" %}</strong>
+                        <small>{% trans "4 открытые роли · 12 откликов" %}</small>
                     </div>
                 </div>
             </div>
@@ -59,28 +56,28 @@
     <section class="container home-stats">
         <article>
             <strong>{{ statistics.published_projects_count }}</strong>
-            <span>проектов</span>
+            <span>{% trans "проектов" %}</span>
         </article>
         <article>
             <strong>{{ statistics.open_vacancies_count }}</strong>
-            <span>открытых ролей</span>
+            <span>{% trans "открытых ролей" %}</span>
         </article>
         <article>
             <strong>{{ statistics.specialists_count }}</strong>
-            <span>специалистов</span>
+            <span>{% trans "специалистов" %}</span>
         </article>
         <article>
             <strong>{{ statistics.team_members_count }}</strong>
-            <span>участников команд</span>
+            <span>{% trans "участников команд" %}</span>
         </article>
     </section>
     {% if recently_viewed_projects %}
         <section class="container section home-recent-section">
             <div class="section-heading">
                 <div>
-                    <h2>Недавно просмотренные проекты</h2>
+                    <h2>{% trans "Недавно просмотренные проекты" %}</h2>
                 </div>
-                <a href="{% url 'projects:project_list' %}">Все проекты</a>
+                <a href="{% url 'projects:project_list' %}">{% trans "Все проекты" %}</a>
             </div>
             <div class="home-compact-grid">
                 {% for project in recently_viewed_projects %}
@@ -104,10 +101,10 @@
     <section class="container section">
         <div class="section-heading">
             <div>
-                <p class="eyebrow">активные проекты</p>
-                <h2>Проекты, где сейчас ищут команду</h2>
+                <p class="eyebrow">{% trans "активные проекты" %}</p>
+                <h2>{% trans "Проекты, где сейчас ищут команду" %}</h2>
             </div>
-            <a href="{% url 'projects:project_list' %}">Показать все</a>
+            <a href="{% url 'projects:project_list' %}">{% trans "Показать все" %}</a>
         </div>
         <div class="home-compact-grid">
             {% for project in featured_projects %}
@@ -125,16 +122,16 @@
                             {% for technology in project.technologies.all|slice:":3" %}
                                 <span class="tag">{{ technology.name }}</span>
                             {% empty %}
-                                <span class="tag">Стек не указан</span>
+                                <span class="tag">{% trans "Стек не указан" %}</span>
                             {% endfor %}
                         </div>
-                        <span class="home-count">открытых ролей: {{ project.open_vacancy_count }}</span>
+                        <span class="home-count">{% blocktrans with count=project.open_vacancy_count %}открытых ролей: {{ count }}{% endblocktrans %}</span>
                     </div>
                 </article>
             {% empty %}
                 <article class="action-card">
-                    <h2>Пока нет активных проектов</h2>
-                    <p class="empty">Когда появятся опубликованные проекты с открытыми ролями, они будут здесь.</p>
+                    <h2>{% trans "Пока нет активных проектов" %}</h2>
+                    <p class="empty">{% trans "Когда появятся опубликованные проекты с открытыми ролями, они будут здесь." %}</p>
                 </article>
             {% endfor %}
         </div>
@@ -143,10 +140,10 @@
         <div>
             <div class="section-heading">
                 <div>
-                    <p class="eyebrow">открытые роли</p>
-                    <h2>Кого ищут в команды</h2>
+                    <p class="eyebrow">{% trans "открытые роли" %}</p>
+                    <h2>{% trans "Кого ищут в команды" %}</h2>
                 </div>
-                <a href="{% url 'projects:project_list' %}">Все роли</a>
+                <a href="{% url 'projects:project_list' %}">{% trans "Все роли" %}</a>
             </div>
             <div class="home-list">
                 {% for vacancy in featured_vacancies %}
@@ -157,20 +154,20 @@
                             </h3>
                             <p>{{ vacancy.project.title }} · {{ vacancy.get_required_level_display }}</p>
                         </div>
-                        <span>мест: {{ vacancy.current_count }}/{{ vacancy.required_count }}</span>
+                        <span>{% trans "мест:" %} {{ vacancy.current_count }}/{{ vacancy.required_count }}</span>
                     </article>
                 {% empty %}
-                    <p class="empty">Сейчас нет открытых ролей.</p>
+                    <p class="empty">{% trans "Сейчас нет открытых ролей." %}</p>
                 {% endfor %}
             </div>
         </div>
         <div>
             <div class="section-heading">
                 <div>
-                    <p class="eyebrow">специалисты</p>
-                    <h2>Открыты к проектам</h2>
+                    <p class="eyebrow">{% trans "специалисты" %}</p>
+                    <h2>{% trans "Открыты к проектам" %}</h2>
                 </div>
-                <a href="{% url 'specialists:specialist_list' %}">Все специалисты</a>
+                <a href="{% url 'specialists:specialist_list' %}">{% trans "Все специалисты" %}</a>
             </div>
             <div class="home-list">
                 {% for specialist in active_specialists %}
@@ -179,14 +176,14 @@
                             <h3>
                                 <a href="{% url 'specialists:specialist_detail' specialist.pk %}">{{ specialist.get_display_name }}</a>
                             </h3>
-                            <p>{{ specialist.main_role|default:"Роль не указана" }} · {{ specialist.get_level_display }}</p>
+                            <p>{{ specialist.main_role|default:empty_role }} · {{ specialist.get_level_display }}</p>
                             <div class="tag-row">
                                 {% for technology in specialist.technologies.all|slice:":3" %}<span class="tag">{{ technology.name }}</span>{% endfor %}
                             </div>
                         </div>
                     </article>
                 {% empty %}
-                    <p class="empty">Пока нет специалистов, открытых к проектам.</p>
+                    <p class="empty">{% trans "Пока нет специалистов, открытых к проектам." %}</p>
                 {% endfor %}
             </div>
         </div>
@@ -194,81 +191,78 @@
     <section class="container section">
         <div class="section-heading">
             <div>
-                <p class="eyebrow">стек</p>
-                <h2>Популярные технологии</h2>
+                <p class="eyebrow">{% trans "стек" %}</p>
+                <h2>{% trans "Популярные технологии" %}</h2>
             </div>
-            <a href="{% url 'projects:project_list' %}">Каталог проектов</a>
+            <a href="{% url 'projects:project_list' %}">{% trans "Каталог проектов" %}</a>
         </div>
         <div class="home-tech-cloud">
             {% for technology in popular_technologies %}
                 <a href="{% url 'projects:project_list' %}?technology={{ technology.slug }}">
                     <strong>{{ technology.name }}</strong>
-                    <span>{{ technology.project_count }} проектов</span>
+                    <span>{% blocktrans count count=technology.project_count %}{{ count }} проект{% plural %}{{ count }} проектов{% endblocktrans %}</span>
                 </a>
             {% empty %}
-                <p class="empty">Технологии появятся после добавления проектов.</p>
+                <p class="empty">{% trans "Технологии появятся после добавления проектов." %}</p>
             {% endfor %}
         </div>
     </section>
     <section class="container section">
         <div class="section-heading">
             <div>
-                <p class="eyebrow">как это работает</p>
-                <h2>От идеи до команды</h2>
+                <p class="eyebrow">{% trans "как это работает" %}</p>
+                <h2>{% trans "От идеи до команды" %}</h2>
             </div>
         </div>
         <div class="home-steps">
             <article>
                 <span>01</span>
-                <h3>Владелец создаёт проект</h3>
-                <p>Описывает цель, стадию, стек и открытые роли для команды.</p>
+                <h3>{% trans "Владелец создаёт проект" %}</h3>
+                <p>{% trans "Описывает цель, стадию, стек и открытые роли для команды." %}</p>
             </article>
             <article>
                 <span>02</span>
-                <h3>Специалист находит роль</h3>
-                <p>Ищет проект по технологиям, роли, уровню и формату участия.</p>
+                <h3>{% trans "Специалист находит роль" %}</h3>
+                <p>{% trans "Ищет проект по технологиям, роли, уровню и формату участия." %}</p>
             </article>
             <article>
                 <span>03</span>
-                <h3>Команда собирается</h3>
-                <p>Отклик или приглашение превращаются в участника команды.</p>
+                <h3>{% trans "Команда собирается" %}</h3>
+                <p>{% trans "Отклик или приглашение превращаются в участника команды." %}</p>
             </article>
         </div>
     </section>
     <section class="container section">
         <div class="home-cta">
-            <p class="eyebrow">есть идея?</p>
-            <h2>Соберите команду под свой проект</h2>
-            <p>
-                Создайте проект, добавьте первую открытую роль и покажите специалистам,
-                зачем к вам присоединяться.
-            </p>
-            <a class="btn btn-primary" href="{% url 'projects:project_create' %}">Создать проект</a>
+            <p class="eyebrow">{% trans "есть идея?" %}</p>
+            <h2>{% trans "Соберите команду под свой проект" %}</h2>
+            <p>{% trans "Создайте проект, добавьте первую открытую роль и покажите специалистам, зачем к вам присоединяться." %}</p>
+            <a class="btn btn-primary" href="{% url 'projects:project_create' %}">{% trans "Создать проект" %}</a>
         </div>
     </section>
     <section class="container section">
         <div class="section-heading">
             <div>
                 <p class="eyebrow">FAQ</p>
-                <h2>Ответы на вопросы</h2>
+                <h2>{% trans "Ответы на вопросы" %}</h2>
             </div>
         </div>
         <div class="home-faq">
             <details>
-                <summary>Нужна ли регистрация для просмотра проектов?</summary>
-                <p>Нет. Гость может смотреть каталоги, карточки проектов и профили специалистов.</p>
+                <summary>{% trans "Нужна ли регистрация для просмотра проектов?" %}</summary>
+                <p>{% trans "Нет. Гость может смотреть каталоги, карточки проектов и профили специалистов." %}</p>
             </details>
             <details>
-                <summary>Как откликнуться на роль?</summary>
-                <p>Нужно войти в аккаунт специалиста, заполнить профиль и отправить отклик на открытой роли проекта.</p>
+                <summary>{% trans "Как откликнуться на роль?" %}</summary>
+                <p>{% trans "Нужно войти в аккаунт специалиста, заполнить профиль и отправить отклик на открытой роли проекта." %}</p>
             </details>
             <details>
-                <summary>Можно ли создать проект без команды?</summary>
-                <p>Да. Владелец создаёт проект, добавляет открытые роли и постепенно собирает участников.</p>
+                <summary>{% trans "Можно ли создать проект без команды?" %}</summary>
+                <p>{% trans "Да. Владелец создаёт проект, добавляет открытые роли и постепенно собирает участников." %}</p>
             </details>
             <details>
-                <summary>Это сайт вакансий?</summary>
-                <p>Нет. Главный смысл сервиса — собрать команду вокруг проекта, идеи, MVP или разработки.</p>
+                <summary>{% trans "Это сайт вакансий?" %}</summary>
+                <p>{% trans "Нет. Главный смысл сервиса — собрать команду вокруг проекта, идеи, MVP или разработки." %}</p>
             </details>
         </div>
     </section>

@@ -10,6 +10,7 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
 from django.views.decorators.http import require_POST
+from django.utils.translation import gettext_lazy as _
 
 from apps.accounts.forms import AccountEmailForm, RegisterForm
 from apps.interactions.emails import enqueue_welcome_email
@@ -37,7 +38,7 @@ def register(request: HttpRequest) -> HttpResponse:
                 user,
                 backend="django.contrib.auth.backends.ModelBackend",
             )
-            messages.success(request, "Регистрация завершена.")
+            messages.success(request, _("Регистрация завершена."))
             return redirect("accounts:profile")
     else:
         form = RegisterForm()
@@ -95,11 +96,11 @@ def profile(request: HttpRequest) -> HttpResponse:
     is_specialist = specialist_profile is not None or not is_project_owner
 
     dynamic_role_display = (
-        "Администратор"
+        _("Администратор")
         if user.is_staff or user.is_superuser
-        else "Владелец проекта"
+        else _("Владелец проекта")
         if is_project_owner
-        else "Специалист"
+        else _("Специалист")
     )
 
     owned_projects = active_owned_projects_queryset.order_by("-created_at")[:5]
@@ -206,7 +207,7 @@ def update_email(request: HttpRequest) -> HttpResponse:
 
     if form.is_valid():
         form.save()
-        messages.success(request, "Email обновлён.")
+        messages.success(request, _("Email обновлён."))
     else:
         for errors in form.errors.values():
             for error in errors:

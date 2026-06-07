@@ -136,9 +136,9 @@ class ReviewAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
 
         return f"{obj.text[:80]}..."
 
-    display_short_text.short_description = "Краткий текст"
+    display_short_text.short_description = _("Краткий текст")
 
-    @admin.display(boolean=True, description="Опубликован")
+    @admin.display(boolean=True, description=_("Опубликован"))
     def display_is_public(self, obj: Review) -> bool:
         """
         Возвращает значение для отображения в интерфейсе администратора.
@@ -147,7 +147,7 @@ class ReviewAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
         """
         return obj.is_public()
 
-    @admin.action(description="Опубликовать выбранные отзывы")
+    @admin.action(description=_("Опубликовать выбранные отзывы"))
     def publish_reviews(self, request: HttpRequest, queryset: QuerySet) -> object:
         """
         Выполняет логику функции.
@@ -164,17 +164,18 @@ class ReviewAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
             except ValidationError as error:
                 self.message_user(
                     request,
-                    f"Отзыв «{review}» не опубликован: {error}",
+                    _("Отзыв «%(review)s» не опубликован: %(error)s")
+                    % {"review": review, "error": error},
                     level=messages.ERROR,
                 )
 
         self.message_user(
             request,
-            f"Опубликовано отзывов: {published_count}",
+            _("Опубликовано отзывов: %(count)s") % {"count": published_count},
             level=messages.SUCCESS,
         )
 
-    @admin.action(description="Скрыть выбранные отзывы")
+    @admin.action(description=_("Скрыть выбранные отзывы"))
     def hide_reviews(self, request: HttpRequest, queryset: QuerySet) -> object:
         """
         Выполняет логику функции.
@@ -190,11 +191,11 @@ class ReviewAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
 
         self.message_user(
             request,
-            f"Скрыто отзывов: {hidden_count}",
+            _("Скрыто отзывов: %(count)s") % {"count": hidden_count},
             level=messages.SUCCESS,
         )
 
-    @admin.action(description="Отклонить выбранные отзывы")
+    @admin.action(description=_("Отклонить выбранные отзывы"))
     def reject_reviews(self, request: HttpRequest, queryset: QuerySet) -> object:
         """
         Выполняет логику функции.
@@ -210,6 +211,6 @@ class ReviewAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
 
         self.message_user(
             request,
-            f"Отклонено отзывов: {rejected_count}",
+            _("Отклонено отзывов: %(count)s") % {"count": rejected_count},
             level=messages.SUCCESS,
         )

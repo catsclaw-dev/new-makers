@@ -1,13 +1,11 @@
 {% extends "base.html" %}
-{% block title %}{{ page_title }} — MeetService{% endblock %}
+{% load i18n %}
+{% block title %}{{ page_title }} — New-Makers{% endblock %}
 {% block content %}
     <section class="container page-head">
-        <p class="eyebrow">открытая роль</p>
+        <p class="eyebrow">{% trans "открытая роль" %}</p>
         <h1>{{ page_title }}</h1>
-        <p class="lead">
-            Проект: <strong>«{{ project.title }}»</strong>.
-            Добавь роль, на которую смогут откликаться специалисты.
-        </p>
+        <p class="lead">{% blocktrans with project_title=project.title %}Проект: <strong>«{{ project_title }}»</strong>. Добавь роль, на которую смогут откликаться специалисты.{% endblocktrans %}</p>
     </section>
     <section class="container section">
         <div class="form-shell">
@@ -26,7 +24,7 @@
                 {% endfor %}
                 <div class="form-actions form-field-wide">
                     <button class="btn btn-primary" type="submit">{{ submit_text }}</button>
-                    <a class="btn btn-secondary" href="{{ project.get_absolute_url }}">Отмена</a>
+                    <a class="btn btn-secondary" href="{{ project.get_absolute_url }}">{% trans "Отмена" %}</a>
                 </div>
             </form>
         </div>

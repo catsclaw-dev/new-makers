@@ -1,20 +1,18 @@
 {% extends "base.html" %}
-{% block title %}Ошибка безопасности — MeetService{% endblock %}
+{% load i18n %}
+{% block title %}{% trans "Ошибка безопасности" %} — New-Makers{% endblock %}
 {% block content %}
 <section class="container section">
   <article class="error-card">
-    <p class="eyebrow">ошибка CSRF</p>
-    <h1>Форма устарела или отправлена некорректно</h1>
-    <p>
-      Django отклонил запрос для защиты аккаунта. Обычно это происходит,
-      если страница была открыта слишком долго или форма отправлена без CSRF-токена.
-    </p>
+    <p class="eyebrow">{% trans "ошибка CSRF" %}</p>
+    <h1>{% trans "Форма устарела или отправлена некорректно" %}</h1>
+    <p>{% trans "Django отклонил запрос для защиты аккаунта. Обычно это происходит, если страница была открыта слишком долго или форма отправлена без CSRF-токена." %}</p>
     <div class="hero-actions">
-      <a class="btn btn-primary" href="{% url 'projects:home' %}">На главную</a>
+      <a class="btn btn-primary" href="{% url 'projects:home' %}">{% trans "На главную" %}</a>
       {% if user.is_authenticated %}
-      <a class="btn btn-secondary" href="{% url 'accounts:profile' %}">В личный кабинет</a>
+      <a class="btn btn-secondary" href="{% url 'accounts:profile' %}">{% trans "В личный кабинет" %}</a>
       {% else %}
-      <a class="btn btn-secondary" href="{% url 'accounts:login' %}">Войти</a>
+      <a class="btn btn-secondary" href="{% url 'accounts:login' %}">{% trans "Войти" %}</a>
       {% endif %}
     </div>
   </article>

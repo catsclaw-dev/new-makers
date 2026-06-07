@@ -11,6 +11,7 @@ from django.contrib import messages
 from django.http import Http404, HttpRequest, HttpResponse, HttpResponseRedirect
 from django.conf import settings
 from django.core.cache import cache
+from django.utils.translation import gettext_lazy as _
 
 
 from apps.directories.models import Role, Technology
@@ -308,7 +309,7 @@ def project_detail(request: HttpRequest, slug: str) -> HttpResponse:
 
     if project.status not in public_statuses:
         if not project.can_be_edited_by(request.user):
-            raise Http404("Проект не найден.")
+            raise Http404(_("Проект не найден."))
 
     viewed_project_ids = request.session.get("viewed_project_ids", [])
     viewed_project_ids = [
@@ -541,7 +542,7 @@ def project_create(request: HttpRequest) -> HttpResponse:
 
             messages.success(
                 request,
-                "Проект создан как черновик. Первая открытая роль добавлена.",
+                _("Проект создан как черновик. Первая открытая роль добавлена."),
             )
             return HttpResponseRedirect(project.get_absolute_url())
     else:
@@ -551,8 +552,8 @@ def project_create(request: HttpRequest) -> HttpResponse:
     context = {
         "form": form,
         "vacancy_form": vacancy_form,
-        "page_title": "Создать проект",
-        "submit_text": "Создать проект",
+        "page_title": _("Создать проект"),
+        "submit_text": _("Создать проект"),
     }
     return render(request, "projects/project_form.html", context)
 
@@ -569,11 +570,11 @@ def project_update(request: HttpRequest, slug: str) -> HttpResponse:
 
     if not project.can_be_edited_by(request.user):
         raise PermissionDenied(
-            "Редактировать проект может только владелец или администратор."
+            _("Редактировать проект может только владелец или администратор.")
         )
 
     if project.status == Project.Status.ARCHIVED:
-        raise Http404("Архивный проект нельзя редактировать.")
+        raise Http404(_("Архивный проект нельзя редактировать."))
 
     if request.method == "POST":
         form = ProjectForm(request.POST, request.FILES, instance=project)
@@ -585,7 +586,7 @@ def project_update(request: HttpRequest, slug: str) -> HttpResponse:
 
             form.save_technologies(project)
 
-            messages.success(request, "Проект обновлён.")
+            messages.success(request, _("Проект обновлён."))
             return redirect(project.get_absolute_url())
     else:
         form = ProjectForm(instance=project)
@@ -593,8 +594,8 @@ def project_update(request: HttpRequest, slug: str) -> HttpResponse:
     context = {
         "form": form,
         "project": project,
-        "page_title": "Редактировать проект",
-        "submit_text": "Сохранить изменения",
+        "page_title": _("Редактировать проект"),
+        "submit_text": _("Сохранить изменения"),
     }
     return render(request, "projects/project_form.html", context)
 
@@ -611,14 +612,14 @@ def project_delete(request: HttpRequest, slug: str) -> HttpResponse:
 
     if not project.can_be_edited_by(request.user):
         raise PermissionDenied(
-            "Удалить проект может только владелец или администратор."
+            _("Удалить проект может только владелец или администратор.")
         )
 
     if not request.user.is_staff and project.status != Project.Status.DRAFT:
         messages.error(
             request,
-            "Владелец может удалить только черновик. "
-            "Опубликованный или закрытый проект нужно архивировать.",
+            _("Владелец может удалить только черновик. "
+            "Опубликованный или закрытый проект нужно архивировать."),
         )
         return redirect(project.get_absolute_url())
 
@@ -626,7 +627,10 @@ def project_delete(request: HttpRequest, slug: str) -> HttpResponse:
         project_title = project.title
         project.delete()
 
-        messages.info(request, f"Проект «{project_title}» удалён.")
+        messages.info(
+            request,
+            _("Проект «%(title)s» удалён.") % {"title": project_title},
+        )
         return redirect("projects:my_projects")
 
     context = {
@@ -647,11 +651,11 @@ def project_vacancy_create(request: HttpRequest, slug: str) -> HttpResponse:
 
     if not project.can_be_edited_by(request.user):
         raise PermissionDenied(
-            "Добавлять роли может только владелец проекта или администратор."
+            _("Добавлять роли может только владелец проекта или администратор.")
         )
 
     if project.status in [Project.Status.CLOSED, Project.Status.ARCHIVED]:
-        raise Http404("Нельзя добавлять роли в закрытый или архивный проект.")
+        raise Http404(_("Нельзя добавлять роли в закрытый или архивный проект."))
 
     if request.method == "POST":
         form = ProjectVacancyForm(request.POST)
@@ -661,7 +665,7 @@ def project_vacancy_create(request: HttpRequest, slug: str) -> HttpResponse:
             vacancy.project = project
             vacancy.save()
 
-            messages.success(request, "Открытая роль добавлена к проекту.")
+            messages.success(request, _("Открытая роль добавлена к проекту."))
             return redirect("projects:my_projects")
     else:
         form = ProjectVacancyForm()
@@ -669,8 +673,8 @@ def project_vacancy_create(request: HttpRequest, slug: str) -> HttpResponse:
     context = {
         "form": form,
         "project": project,
-        "page_title": "Добавить открытую роль",
-        "submit_text": "Добавить роль",
+        "page_title": _("Добавить открытую роль"),
+        "submit_text": _("Добавить роль"),
     }
     return render(request, "projects/vacancy_form.html", context)
 
@@ -688,14 +692,14 @@ def project_submit_for_moderation(request: HttpRequest, slug: str) -> HttpRespon
 
     if not project.can_be_edited_by(request.user):
         raise PermissionDenied(
-            "Отправить проект на модерацию может только владелец или администратор."
+            _("Отправить проект на модерацию может только владелец или администратор.")
         )
 
     if request.method != "POST":
         return redirect(project.get_absolute_url())
 
     if project.status != Project.Status.DRAFT:
-        messages.error(request, "На модерацию можно отправить только черновик.")
+        messages.error(request, _("На модерацию можно отправить только черновик."))
         return redirect(project.get_absolute_url())
 
     has_open_vacancies = ProjectVacancy.objects.filter(
@@ -707,7 +711,7 @@ def project_submit_for_moderation(request: HttpRequest, slug: str) -> HttpRespon
     if not has_open_vacancies:
         messages.error(
             request,
-            "Перед отправкой на модерацию добавь хотя бы одну открытую роль.",
+            _("Перед отправкой на модерацию добавь хотя бы одну открытую роль."),
         )
         return redirect(project.get_absolute_url())
 
@@ -715,7 +719,7 @@ def project_submit_for_moderation(request: HttpRequest, slug: str) -> HttpRespon
     project.updated_by = request.user
     project.save(update_fields=["status", "updated_by", "updated_at"])
 
-    messages.success(request, "Проект отправлен на рассмотрение модератору.")
+    messages.success(request, _("Проект отправлен на рассмотрение модератору."))
     return redirect(project.get_absolute_url())
 
 
@@ -732,21 +736,21 @@ def project_close(request: HttpRequest, slug: str) -> HttpResponse:
 
     if not project.can_be_edited_by(request.user):
         raise PermissionDenied(
-            "Закрыть проект может только владелец или администратор."
+            _("Закрыть проект может только владелец или администратор.")
         )
 
     if request.method != "POST":
         return redirect(project.get_absolute_url())
 
     if project.status != Project.Status.PUBLISHED:
-        messages.error(request, "Закрыть можно только опубликованный проект.")
+        messages.error(request, _("Закрыть можно только опубликованный проект."))
         return redirect(project.get_absolute_url())
 
     project.status = Project.Status.CLOSED
     project.updated_by = request.user
     project.save(update_fields=["status", "updated_by", "updated_at"])
 
-    messages.success(request, "Проект закрыт для новых участников.")
+    messages.success(request, _("Проект закрыт для новых участников."))
     return redirect(project.get_absolute_url())
 
 
@@ -763,21 +767,21 @@ def project_reopen(request: HttpRequest, slug: str) -> HttpResponse:
 
     if not project.can_be_edited_by(request.user):
         raise PermissionDenied(
-            "Открыть проект заново может только владелец или администратор."
+            _("Открыть проект заново может только владелец или администратор.")
         )
 
     if request.method != "POST":
         return redirect(project.get_absolute_url())
 
     if project.status != Project.Status.CLOSED:
-        messages.error(request, "Повторно открыть можно только закрытый проект.")
+        messages.error(request, _("Повторно открыть можно только закрытый проект."))
         return redirect(project.get_absolute_url())
 
     project.status = Project.Status.PUBLISHED
     project.updated_by = request.user
     project.save(update_fields=["status", "updated_by", "updated_at"])
 
-    messages.success(request, "Проект снова открыт для набора участников.")
+    messages.success(request, _("Проект снова открыт для набора участников."))
     return redirect(project.get_absolute_url())
 
 
@@ -793,13 +797,13 @@ def project_archive(request: HttpRequest, slug: str) -> HttpResponse:
 
     if not project.can_be_edited_by(request.user):
         raise PermissionDenied(
-            "Архивировать проект может только владелец или администратор."
+            _("Архивировать проект может только владелец или администратор.")
         )
 
     if project.status not in [Project.Status.PUBLISHED, Project.Status.CLOSED]:
         messages.error(
             request,
-            "Архивировать можно только опубликованный или закрытый проект.",
+            _("Архивировать можно только опубликованный или закрытый проект."),
         )
         return redirect(project.get_absolute_url())
 
@@ -809,7 +813,7 @@ def project_archive(request: HttpRequest, slug: str) -> HttpResponse:
         if confirmation_title != project.title:
             messages.error(
                 request,
-                "Название проекта введено неверно. Архивация отменена.",
+                _("Название проекта введено неверно. Архивация отменена."),
             )
             return redirect("projects:project_archive", slug=project.slug)
 
@@ -825,7 +829,7 @@ def project_archive(request: HttpRequest, slug: str) -> HttpResponse:
 
         messages.success(
             request,
-            "Проект окончательно перенесён в архив и удалён из избранного.",
+            _("Проект окончательно перенесён в архив и удалён из избранного."),
         )
         return redirect("projects:my_projects")
 

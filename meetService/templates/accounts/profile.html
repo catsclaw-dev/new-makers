@@ -1,29 +1,27 @@
 {% extends "base.html" %}
-{% block title %}Личный кабинет — MeetService{% endblock %}
+{% load i18n %}
+{% trans "Роль не указана" as empty_role %}
+{% trans "Описание проекта пока не заполнено." as empty_description %}
+{% trans "не указан" as not_specified %}
+{% block title %}{% trans "Личный кабинет" %} — New-Makers{% endblock %}
 {% block content %}
     <section class="container page-head cabinet-head">
         <div>
-            <p class="eyebrow">личный кабинет</p>
+            <p class="eyebrow">{% trans "личный кабинет" %}</p>
             <h1>{{ user.get_full_name|default:user.username }}</h1>
-            <p class="lead">
-                {{ sent_applications_count }} откликов · {{ incoming_applications_count }} приглашений ·
-                роль на сервисе: {{ dynamic_role_display }}
-            </p>
+            <p class="lead">{% blocktrans with applications=sent_applications_count invitations=incoming_applications_count role=dynamic_role_display %}{{ applications }} откликов · {{ invitations }} приглашений · роль на сервисе: {{ role }}{% endblocktrans %}</p>
         </div>
         <div class="hero-actions">
             <a class="btn btn-secondary"
-               href="{% url 'specialists:specialist_profile_edit' %}">Редактировать профиль</a>
-            <a class="btn btn-primary" href="{% url 'projects:project_create' %}">Создать проект</a>
+               href="{% url 'specialists:specialist_profile_edit' %}">{% trans "Редактировать профиль" %}</a>
+            <a class="btn btn-primary" href="{% url 'projects:project_create' %}">{% trans "Создать проект" %}</a>
         </div>
     </section>
     {% if show_email_required_notice %}
         <section class="container">
             <article class="action-card">
-                <h2>Укажите email для уведомлений</h2>
-                <p class="empty">
-                    Сейчас email не указан, поэтому письма по откликам и приглашениям
-                    не смогут приходить на почту.
-                </p>
+                <h2>{% trans "Укажите email для уведомлений" %}</h2>
+                <p class="empty">{% trans "Сейчас email не указан, поэтому письма по откликам и приглашениям не смогут приходить на почту." %}</p>
                 <form class="form-grid" method="post" action="{% url 'accounts:update_email' %}">
                     {% csrf_token %}
                     {% for field in email_form %}
@@ -36,7 +34,7 @@
                             {% for error in field.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
                         </div>
                     {% endfor %}
-                    <button class="btn btn-primary" type="submit">Сохранить email</button>
+                    <button class="btn btn-primary" type="submit">{% trans "Сохранить email" %}</button>
                 </form>
             </article>
         </section>
@@ -46,65 +44,65 @@
             <section class="cabinet-section">
                 <div class="section-heading">
                     <div>
-                        <p class="eyebrow">профиль</p>
-                        <h2>Мой профиль</h2>
+                        <p class="eyebrow">{% trans "профиль" %}</p>
+                        <h2>{% trans "Мой профиль" %}</h2>
                     </div>
                 </div>
                 <article class="action-card cabinet-profile-card">
                     {% if specialist_profile %}
-                        <h3>{{ specialist_profile.main_role|default:"Роль не указана" }}</h3>
+                        <h3>{{ specialist_profile.main_role|default:empty_role }}</h3>
                         <p>{{ specialist_profile.get_level_display }}</p>
                         <div class="tag-row">
                             {% for technology in specialist_profile.technologies.all|slice:":5" %}
                                 <span class="tag">{{ technology.name }}</span>
                             {% empty %}
-                                <span class="tag">Стек не заполнен</span>
+                                <span class="tag">{% trans "Стек не заполнен" %}</span>
                             {% endfor %}
                         </div>
-                        <p>Статус: {{ specialist_profile.get_status_display }}</p>
+                        <p>{% trans "Статус:" %} {{ specialist_profile.get_status_display }}</p>
                         <div class="hero-actions">
                             <a class="btn btn-primary"
-                               href="{{ specialist_profile.get_absolute_url }}">Открыть профиль</a>
+                               href="{{ specialist_profile.get_absolute_url }}">{% trans "Открыть профиль" %}</a>
                             <a class="btn btn-secondary"
-                               href="{% url 'specialists:specialist_profile_edit' %}">Редактировать</a>
+                               href="{% url 'specialists:specialist_profile_edit' %}">{% trans "Редактировать" %}</a>
                         </div>
                     {% else %}
-                        <p class="empty">Профиль специалиста ещё не создан.</p>
+                        <p class="empty">{% trans "Профиль специалиста ещё не создан." %}</p>
                         <a class="btn btn-primary"
-                           href="{% url 'specialists:specialist_profile_edit' %}">Заполнить профиль</a>
+                           href="{% url 'specialists:specialist_profile_edit' %}">{% trans "Заполнить профиль" %}</a>
                     {% endif %}
                 </article>
             </section>
             <section class="cabinet-section">
                 <div class="section-heading">
                     <div>
-                        <p class="eyebrow">статистика</p>
-                        <h2>Активность</h2>
+                        <p class="eyebrow">{% trans "статистика" %}</p>
+                        <h2>{% trans "Активность" %}</h2>
                     </div>
                 </div>
                 <dl class="stats-grid cabinet-stats">
                     <div>
                         <dt>{{ owned_projects_count }}</dt>
                         <dd>
-                            моих проектов
+                            {% trans "моих проектов" %}
                         </dd>
                     </div>
                     <div>
                         <dt>{{ sent_applications_count }}</dt>
                         <dd>
-                            моих откликов
+                            {% trans "моих откликов" %}
                         </dd>
                     </div>
                     <div>
                         <dt>{{ incoming_applications_count }}</dt>
                         <dd>
-                            приглашений
+                            {% trans "приглашений" %}
                         </dd>
                     </div>
                     <div>
                         <dt>{{ favorites_count }}</dt>
                         <dd>
-                            избранных проектов
+                            {% trans "избранных проектов" %}
                         </dd>
                     </div>
                 </dl>
@@ -113,10 +111,10 @@
                 <article class="action-card cabinet-feed-card">
                     <div class="section-heading">
                         <div>
-                            <p class="eyebrow">отклики</p>
-                            <h2>Мои отклики</h2>
+                            <p class="eyebrow">{% trans "отклики" %}</p>
+                            <h2>{% trans "Мои отклики" %}</h2>
                         </div>
-                        <a href="{% url 'interactions:application_list' %}">Все</a>
+                        <a href="{% url 'interactions:application_list' %}">{% trans "Все" %}</a>
                     </div>
                     <div class="cabinet-feed">
                         {% for application in recent_sent_applications %}
@@ -131,19 +129,19 @@
                                 <span>{{ application.get_status_display }} · {{ application.applied_at|date:"d.m.Y" }}</span>
                             </article>
                         {% empty %}
-                            <p class="empty">Ты пока не отправлял отклики.</p>
+                            <p class="empty">{% trans "Ты пока не отправлял отклики." %}</p>
                         {% endfor %}
                     </div>
                     <a class="btn btn-primary"
-                       href="{% url 'interactions:application_list' %}">Открыть отклики</a>
+                       href="{% url 'interactions:application_list' %}">{% trans "Открыть отклики" %}</a>
                 </article>
                 <article class="action-card cabinet-feed-card">
                     <div class="section-heading">
                         <div>
-                            <p class="eyebrow">приглашения</p>
-                            <h2>Мои приглашения</h2>
+                            <p class="eyebrow">{% trans "приглашения" %}</p>
+                            <h2>{% trans "Мои приглашения" %}</h2>
                         </div>
-                        <a href="{% url 'interactions:invitation_list' %}">Все</a>
+                        <a href="{% url 'interactions:invitation_list' %}">{% trans "Все" %}</a>
                     </div>
                     <div class="cabinet-feed">
                         {% for invitation in recent_received_invitations %}
@@ -158,21 +156,21 @@
                                 <span>{{ invitation.get_status_display }} · {{ invitation.invited_at|date:"d.m.Y" }}</span>
                             </article>
                         {% empty %}
-                            <p class="empty">Новых приглашений пока нет.</p>
+                            <p class="empty">{% trans "Новых приглашений пока нет." %}</p>
                         {% endfor %}
                     </div>
                     <a class="btn btn-primary"
-                       href="{% url 'interactions:invitation_list' %}">Открыть приглашения</a>
+                       href="{% url 'interactions:invitation_list' %}">{% trans "Открыть приглашения" %}</a>
                 </article>
             </section>
             {% if is_project_owner %}
                 <section class="cabinet-section">
                     <div class="section-heading">
                         <div>
-                            <p class="eyebrow">входящие</p>
-                            <h2>Новые отклики на мои проекты</h2>
+                            <p class="eyebrow">{% trans "входящие" %}</p>
+                            <h2>{% trans "Новые отклики на мои проекты" %}</h2>
                         </div>
-                        <a href="{% url 'interactions:application_list' %}">Все входящие</a>
+                        <a href="{% url 'interactions:application_list' %}">{% trans "Все входящие" %}</a>
                     </div>
                     <div class="mini-list">
                         {% for application in recent_incoming_applications %}
@@ -185,11 +183,8 @@
                             </article>
                         {% empty %}
                             <article class="action-card">
-                                <h3>Новых входящих откликов нет</h3>
-                                <p class="empty">
-                                    Когда специалисты будут откликаться на твои проекты,
-                                    они появятся здесь.
-                                </p>
+                                <h3>{% trans "Новых входящих откликов нет" %}</h3>
+                                <p class="empty">{% trans "Когда специалисты будут откликаться на твои проекты, они появятся здесь." %}</p>
                             </article>
                         {% endfor %}
                     </div>
@@ -199,12 +194,12 @@
                 <section class="cabinet-section">
                     <div class="section-heading">
                         <div>
-                            <p class="eyebrow">проекты</p>
-                            <h2>Мои проекты</h2>
+                            <p class="eyebrow">{% trans "проекты" %}</p>
+                            <h2>{% trans "Мои проекты" %}</h2>
                         </div>
                         <div class="hero-actions">
-                            <a href="{% url 'projects:my_projects' %}">Все мои проекты</a>
-                            <a href="{% url 'projects:project_create' %}">Создать проект</a>
+                            <a href="{% url 'projects:my_projects' %}">{% trans "Все мои проекты" %}</a>
+                            <a href="{% url 'projects:project_create' %}">{% trans "Создать проект" %}</a>
                         </div>
                     </div>
                     <div class="mini-list">
@@ -213,14 +208,14 @@
                                 <h3>
                                     <a href="{{ project.get_absolute_url }}">{{ project.title }}</a>
                                 </h3>
-                                <p>{{ project.short_description|default:"Описание проекта пока не заполнено." }}</p>
+                                <p>{{ project.short_description|default:empty_description }}</p>
                                 <span>{{ project.get_status_display }} · {{ project.created_at|date:"d.m.Y" }}</span>
                             </article>
                         {% empty %}
                             <article class="action-card">
-                                <h3>Активных проектов пока нет</h3>
-                                <p class="empty">Создай проект, чтобы собрать команду.</p>
-                                <a class="btn btn-primary" href="{% url 'projects:project_create' %}">Создать проект</a>
+                                <h3>{% trans "Активных проектов пока нет" %}</h3>
+                                <p class="empty">{% trans "Создай проект, чтобы собрать команду." %}</p>
+                                <a class="btn btn-primary" href="{% url 'projects:project_create' %}">{% trans "Создать проект" %}</a>
                             </article>
                         {% endfor %}
                     </div>
@@ -229,10 +224,10 @@
             <section class="cabinet-section">
                 <div class="section-heading">
                     <div>
-                        <p class="eyebrow">команды</p>
-                        <h2>Мои команды</h2>
+                        <p class="eyebrow">{% trans "команды" %}</p>
+                        <h2>{% trans "Мои команды" %}</h2>
                     </div>
-                    <a href="{% url 'projects:my_teams' %}">Все команды</a>
+                    <a href="{% url 'projects:my_teams' %}">{% trans "Все команды" %}</a>
                 </div>
                 <div class="mini-list">
                     {% if specialist_profile %}
@@ -246,20 +241,17 @@
                             </article>
                         {% empty %}
                             <article class="action-card">
-                                <h3>Ты пока не состоишь в командах</h3>
-                                <p class="empty">Откликнись на проект или прими приглашение владельца.</p>
-                                <a class="btn btn-primary" href="{% url 'projects:project_list' %}">Найти проект</a>
+                                <h3>{% trans "Ты пока не состоишь в командах" %}</h3>
+                                <p class="empty">{% trans "Откликнись на проект или прими приглашение владельца." %}</p>
+                                <a class="btn btn-primary" href="{% url 'projects:project_list' %}">{% trans "Найти проект" %}</a>
                             </article>
                         {% endfor %}
                     {% else %}
                         <article class="action-card">
-                            <h3>Профиль специалиста не создан</h3>
-                            <p class="empty">
-                                Чтобы откликаться на проекты и состоять в командах,
-                                заполни профиль специалиста.
-                            </p>
+                            <h3>{% trans "Профиль специалиста не создан" %}</h3>
+                            <p class="empty">{% trans "Чтобы откликаться на проекты и состоять в командах, заполни профиль специалиста." %}</p>
                             <a class="btn btn-primary"
-                               href="{% url 'specialists:specialist_profile_edit' %}">Заполнить профиль</a>
+                               href="{% url 'specialists:specialist_profile_edit' %}">{% trans "Заполнить профиль" %}</a>
                         </article>
                     {% endif %}
                 </div>
@@ -282,35 +274,35 @@
                     <div class="hero-actions">
                         {% if specialist_profile %}
                             <a class="btn btn-primary"
-                               href="{{ specialist_profile.get_absolute_url }}">Мой профиль</a>
+                               href="{{ specialist_profile.get_absolute_url }}">{% trans "Мой профиль" %}</a>
                         {% else %}
                             <a class="btn btn-primary"
-                               href="{% url 'specialists:specialist_profile_edit' %}">Заполнить профиль</a>
+                               href="{% url 'specialists:specialist_profile_edit' %}">{% trans "Заполнить профиль" %}</a>
                         {% endif %}
                     </div>
                 </div>
             </article>
             <article class="action-card">
-                <h2>Предпочтения</h2>
+                <h2>{% trans "Предпочтения" %}</h2>
                 {% if specialist_profile %}
                     <p>
-                        <strong>Статус:</strong> {{ specialist_profile.get_status_display }}
+                        <strong>{% trans "Статус:" %}</strong> {{ specialist_profile.get_status_display }}
                     </p>
                     <p>
-                        <strong>Уровень:</strong> {{ specialist_profile.get_level_display }}
+                        <strong>{% trans "Уровень:" %}</strong> {{ specialist_profile.get_level_display }}
                     </p>
                     <p>
-                        <strong>В неделю:</strong> {{ specialist_profile.weekly_hours }} ч.
+                        <strong>{% trans "В неделю:" %}</strong> {% blocktrans with hours=specialist_profile.weekly_hours %}{{ hours }} ч.{% endblocktrans %}
                     </p>
                     <p>
-                        <strong>Часовой пояс:</strong> {{ specialist_profile.timezone|default:"не указан" }}
+                        <strong>{% trans "Часовой пояс:" %}</strong> {{ specialist_profile.timezone|default:not_specified }}
                     </p>
                 {% else %}
-                    <p class="empty">Профиль специалиста пока не заполнен.</p>
+                    <p class="empty">{% trans "Профиль специалиста пока не заполнен." %}</p>
                 {% endif %}
             </article>
             <article class="action-card">
-                <h2>Контакты</h2>
+                <h2>{% trans "Контакты" %}</h2>
                 {% if specialist_profile %}
                     {% if specialist_profile.github_url %}
                         <p>
@@ -325,40 +317,40 @@
                     {% if specialist_profile.telegram %}<p>{{ specialist_profile.telegram }}</p>{% endif %}
                     {% if specialist_profile.portfolio_url %}
                         <p>
-                            <a href="{{ specialist_profile.portfolio_url }}">Портфолио</a>
+                            <a href="{{ specialist_profile.portfolio_url }}">{% trans "Портфолио" %}</a>
                         </p>
                     {% endif %}
                     {% if not specialist_profile.github_url and not specialist_profile.gitlab_url and not specialist_profile.telegram and not specialist_profile.portfolio_url %}
-                        <p class="empty">Контакты пока не указаны.</p>
+                        <p class="empty">{% trans "Контакты пока не указаны." %}</p>
                     {% endif %}
                 {% else %}
-                    <p class="empty">Контакты появятся после заполнения профиля.</p>
+                    <p class="empty">{% trans "Контакты появятся после заполнения профиля." %}</p>
                 {% endif %}
             </article>
             <article class="action-card">
-                <h2>Избранное</h2>
+                <h2>{% trans "Избранное" %}</h2>
                 <p>
-                    <strong>{{ favorites_count }}</strong> сохранённых проектов.
+                    {% blocktrans with count=favorites_count %}<strong>{{ count }}</strong> сохранённых проектов.{% endblocktrans %}
                 </p>
                 <a class="btn btn-secondary"
-                   href="{% url 'interactions:favorite_project_list' %}">Открыть избранное</a>
+                   href="{% url 'interactions:favorite_project_list' %}">{% trans "Открыть избранное" %}</a>
             </article>
             <article class="action-card">
-                <h2>Поиск</h2>
-                <p>Найди проект для участия или специалиста в команду.</p>
+                <h2>{% trans "Поиск" %}</h2>
+                <p>{% trans "Найди проект для участия или специалиста в команду." %}</p>
                 <div class="hero-actions">
-                    <a class="btn btn-secondary" href="{% url 'projects:project_list' %}">Найти проект</a>
+                    <a class="btn btn-secondary" href="{% url 'projects:project_list' %}">{% trans "Найти проект" %}</a>
                     <a class="btn btn-secondary"
-                       href="{% url 'specialists:specialist_list' %}">Найти специалиста</a>
+                       href="{% url 'specialists:specialist_list' %}">{% trans "Найти специалиста" %}</a>
                 </div>
             </article>
             <article class="action-card">
-                <h2>Аккаунт</h2>
+                <h2>{% trans "Аккаунт" %}</h2>
                 <p>
-                    <strong>Логин:</strong> {{ user.username }}
+                    <strong>{% trans "Логин:" %}</strong> {{ user.username }}
                 </p>
                 <p>
-                    <strong>Email:</strong> {{ user.email|default:"не указан" }}
+                    <strong>Email:</strong> {{ user.email|default:not_specified }}
                 </p>
                 {% if not user.is_staff and not user.is_superuser %}
                     <form class="form-grid" method="post" action="{% url 'accounts:update_email' %}">
@@ -372,14 +364,14 @@
                                 {% for error in field.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
                             </div>
                         {% endfor %}
-                        <button class="btn btn-secondary" type="submit">Обновить email</button>
+                        <button class="btn btn-secondary" type="submit">{% trans "Обновить email" %}</button>
                     </form>
                 {% endif %}
                 <form class="inline-form"
                       method="post"
                       action="{% url 'accounts:logout' %}">
                     {% csrf_token %}
-                    <button class="btn btn-danger" type="submit">Выйти из аккаунта</button>
+                    <button class="btn btn-danger" type="submit">{% trans "Выйти из аккаунта" %}</button>
                 </form>
             </article>
         </aside>

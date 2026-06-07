@@ -6,6 +6,7 @@ from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import Q
+from django.utils.translation import gettext_lazy as _
 
 from apps.directories.models import Role, Technology
 from apps.projects.models import ProjectMembership
@@ -100,7 +101,7 @@ def specialist_detail(request: HttpRequest, pk: int | None) -> HttpResponse:
         )
 
         if not can_view_hidden:
-            raise Http404("Профиль специалиста не найден.")
+            raise Http404(_("Профиль специалиста не найден."))
 
     memberships = (
         ProjectMembership.objects.select_related("project", "role")
@@ -142,12 +143,12 @@ def specialist_profile_edit(request: HttpRequest) -> HttpResponse:
             specialist_profile.save()
             form.save_m2m()
 
-            messages.success(request, "Профиль специалиста сохранён.")
+            messages.success(request, _("Профиль специалиста сохранён."))
             return redirect("projects:my_teams")
 
         messages.error(
             request,
-            "Профиль специалиста не сохранён. Проверь ошибки в форме.",
+            _("Профиль специалиста не сохранён. Проверь ошибки в форме."),
         )
     else:
         form = SpecialistProfileForm(instance=profile)
@@ -156,10 +157,10 @@ def specialist_profile_edit(request: HttpRequest) -> HttpResponse:
         "form": form,
         "profile": profile,
         "page_title": (
-            "Редактировать профиль специалиста"
+            _("Редактировать профиль специалиста")
             if profile
-            else "Заполнить профиль специалиста"
+            else _("Заполнить профиль специалиста")
         ),
-        "submit_text": "Сохранить профиль",
+        "submit_text": _("Сохранить профиль"),
     }
     return render(request, "specialists/specialist_profile_form.html", context)

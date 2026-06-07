@@ -311,7 +311,7 @@ class ProjectAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
         obj.updated_by = request.user
         super().save_model(request, obj, form, change)
 
-    @admin.display(description="Открытых ролей")
+    @admin.display(description=_("Открытых ролей"))
     def display_open_vacancies_count(self, obj: Project) -> int:
         """
         Возвращает значение для отображения в интерфейсе администратора.
@@ -320,7 +320,7 @@ class ProjectAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
         """
         return obj.vacancies.filter(status=ProjectVacancy.Status.OPEN).count()
 
-    @admin.display(description="Участников")
+    @admin.display(description=_("Участников"))
     def display_members_count(self, obj: Project) -> int:
         """
         Возвращает значение для отображения в интерфейсе администратора.
@@ -329,7 +329,7 @@ class ProjectAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
         """
         return getattr(obj, "members_count", obj.memberships.count())
 
-    @admin.display(description="Технологий")
+    @admin.display(description=_("Технологий"))
     def display_technologies_count(self, obj: Project) -> int:
         """
         Возвращает значение для отображения в интерфейсе администратора.
@@ -338,7 +338,7 @@ class ProjectAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
         """
         return getattr(obj, "technologies_count", obj.technologies.count())
 
-    @admin.display(description="Предпросмотр обложки")
+    @admin.display(description=_("Предпросмотр обложки"))
     def display_cover_preview(self, obj: Project) -> str:
         """
         Возвращает значение для отображения в интерфейсе администратора.
@@ -350,9 +350,9 @@ class ProjectAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
                 '<img src="{}" style="max-height: 140px; border-radius: 8px;" />',
                 obj.cover_image.url,
             )
-        return "Обложка не загружена"
+        return _("Обложка не загружена")
 
-    @admin.action(description="Сформировать PDF по выбранным проектам")
+    @admin.action(description=_("Сформировать PDF по выбранным проектам"))
     def export_projects_to_pdf(self, request: HttpRequest, queryset: QuerySet) -> object:
         """
         Генерирует PDF-отчёт по выбранным проектам из админки.
@@ -398,16 +398,17 @@ class ProjectAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
             if y < required_height:
                 new_page()
 
-        pdf.setTitle("Отчёт по проектам")
+        pdf.setTitle(_("Отчёт по проектам"))
         pdf.setFont(font_name, 16)
-        pdf.drawString(x, y, "Отчёт по выбранным проектам")
+        pdf.drawString(x, y, _("Отчёт по выбранным проектам"))
         y -= 24
 
         pdf.setFont(font_name, 10)
         pdf.drawString(
             x,
             y,
-            f"Дата формирования: {timezone.localtime().strftime('%d.%m.%Y %H:%M')}",
+            _("Дата формирования: %(date)s")
+            % {"date": timezone.localtime().strftime("%d.%m.%Y %H:%M")},
         )
         y -= 28
 
@@ -427,14 +428,14 @@ class ProjectAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
             pdf.setFont(font_name, 10)
 
             fields = [
-                ("Владелец", project.owner),
-                ("Статус", project.get_status_display()),
-                ("Стадия", project.get_stage_display()),
-                ("Формат участия", project.get_participation_format_display()),
-                ("Краткое описание", project.short_description),
-                ("Цель", project.goal),
-                ("Репозиторий", project.repository_url or "-"),
-                ("Демо", project.demo_url or "-"),
+                (_("Владелец"), project.owner),
+                (_("Статус"), project.get_status_display()),
+                (_("Стадия"), project.get_stage_display()),
+                (_("Формат участия"), project.get_participation_format_display()),
+                (_("Краткое описание"), project.short_description),
+                (_("Цель"), project.goal),
+                (_("Репозиторий"), project.repository_url or "-"),
+                (_("Демо"), project.demo_url or "-"),
             ]
 
             for label, value in fields:
@@ -454,7 +455,8 @@ class ProjectAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
             ensure_space(70)
             y = draw_wrapped_text(
                 pdf,
-                f"Технологии: {technologies or '-'}",
+                _("Технологии: %(technologies)s")
+                % {"technologies": technologies or "-"},
                 x + 12,
                 y,
                 width=100,
@@ -463,18 +465,23 @@ class ProjectAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
 
             vacancies = project.vacancies.all()
             ensure_space(70)
-            pdf.drawString(x + 12, y, "Открытые роли:")
+            pdf.drawString(x + 12, y, _("Открытые роли:"))
             y -= line_height
 
             if vacancies:
                 for vacancy in vacancies:
                     ensure_space(70)
-                    vacancy_text = (
-                        f"- {vacancy.title}; роль: {vacancy.role}; "
-                        f"уровень: {vacancy.get_required_level_display()}; "
-                        f"статус: {vacancy.get_status_display()}; "
-                        f"набрано: {vacancy.current_count}/{vacancy.required_count}"
-                    )
+                    vacancy_text = _(
+                        "- %(title)s; роль: %(role)s; уровень: %(level)s; "
+                        "статус: %(status)s; набрано: %(current)s/%(required)s"
+                    ) % {
+                        "title": vacancy.title,
+                        "role": vacancy.role,
+                        "level": vacancy.get_required_level_display(),
+                        "status": vacancy.get_status_display(),
+                        "current": vacancy.current_count,
+                        "required": vacancy.required_count,
+                    }
                     y = draw_wrapped_text(
                         pdf,
                         vacancy_text,
@@ -484,22 +491,24 @@ class ProjectAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
                         line_height=line_height,
                     )
             else:
-                pdf.drawString(x + 24, y, "- Нет открытых ролей")
+                pdf.drawString(x + 24, y, _("- Нет открытых ролей"))
                 y -= line_height
 
             files = project.files.all()
             ensure_space(70)
-            pdf.drawString(x + 12, y, "Файлы проекта:")
+            pdf.drawString(x + 12, y, _("Файлы проекта:"))
             y -= line_height
 
             if files:
                 for project_file in files:
                     ensure_space(70)
-                    file_text = (
-                        f"- {project_file.title}; "
-                        f"тип: {project_file.get_file_type_display()}; "
-                        f"путь: {project_file.file.name}"
-                    )
+                    file_text = _(
+                        "- %(title)s; тип: %(type)s; путь: %(path)s"
+                    ) % {
+                        "title": project_file.title,
+                        "type": project_file.get_file_type_display(),
+                        "path": project_file.file.name,
+                    }
                     y = draw_wrapped_text(
                         pdf,
                         file_text,
@@ -509,7 +518,7 @@ class ProjectAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
                         line_height=line_height,
                     )
             else:
-                pdf.drawString(x + 24, y, "- Нет прикреплённых файлов")
+                pdf.drawString(x + 24, y, _("- Нет прикреплённых файлов"))
                 y -= line_height
 
             y -= 12
@@ -632,7 +641,7 @@ class ProjectVacancyAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
         ),
     )
 
-    @admin.display(description="Свободных мест")
+    @admin.display(description=_("Свободных мест"))
     def display_remaining_slots(self, obj: ProjectVacancy) -> int:
         """
         Возвращает значение для отображения в интерфейсе администратора.
@@ -683,7 +692,7 @@ class ProjectMembershipAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
     readonly_fields = ("joined_at",)
     date_hierarchy = "joined_at"
 
-    @admin.display(boolean=True, description="Активен")
+    @admin.display(boolean=True, description=_("Активен"))
     def display_is_active(self, obj: ProjectMembership) -> bool:
         """
         Возвращает значение для отображения в интерфейсе администратора.
