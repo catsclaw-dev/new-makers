@@ -7,7 +7,6 @@ from apps.api.views import (
     InvitationViewSet,
     ProjectVacancyViewSet,
     ProjectViewSet,
-    ReviewViewSet,
     RoleViewSet,
     SpecialistProfileViewSet,
     TechnologyViewSet,
@@ -24,7 +23,6 @@ router.register("specialists", SpecialistProfileViewSet, basename="specialist")
 router.register("applications", ApplicationViewSet, basename="application")
 router.register("invitations", InvitationViewSet, basename="invitation")
 router.register("favorites", FavoriteProjectViewSet, basename="favorite")
-router.register("reviews", ReviewViewSet, basename="review")
 
 urlpatterns = [
     path("", include(router.urls)),

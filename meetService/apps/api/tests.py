@@ -8,8 +8,12 @@ from rest_framework.test import APITestCase
 
 from apps.directories.models import Role, Technology
 from apps.interactions.models import Application, FavoriteProject
-from apps.projects.models import Project, ProjectMembership, ProjectTechnology, ProjectVacancy
-from apps.reviews.models import Review
+from apps.projects.models import (
+    Project,
+    ProjectMembership,
+    ProjectTechnology,
+    ProjectVacancy,
+)
 from apps.specialists.models import SpecialistProfile
 
 
@@ -227,89 +231,3 @@ class MeetServiceApiTests(APITestCase):
         )
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-    def test_user_cannot_update_another_author_review(self) -> None:
-        """
-        Проверяет запрет редактирования чужого опубликованного отзыва.
-        """
-        ProjectMembership.objects.create(
-            project=self.project,
-            specialist=self.specialist,
-            role=self.role,
-            added_by=self.owner,
-        )
-        review = Review.objects.create(
-            project=self.project,
-            author=self.owner,
-            specialist=self.specialist,
-            rating=5,
-            text="Специалист хорошо показал себя в проекте.",
-            status=Review.Status.PUBLISHED,
-        )
-        self.client.force_authenticate(self.specialist_user)
-
-        response = self.client.patch(
-            reverse("api:review-detail", kwargs={"pk": review.pk}),
-            {"text": "Пытаюсь изменить чужой отзыв."},
-            format="json",
-        )
-
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-    def test_review_author_can_update_own_review(self) -> None:
-        """
-        Проверяет редактирование собственного отзыва.
-        """
-        ProjectMembership.objects.create(
-            project=self.project,
-            specialist=self.specialist,
-            role=self.role,
-            added_by=self.owner,
-        )
-        review = Review.objects.create(
-            project=self.project,
-            author=self.owner,
-            specialist=self.specialist,
-            rating=5,
-            text="Специалист хорошо показал себя в проекте.",
-            status=Review.Status.PUBLISHED,
-        )
-        self.client.force_authenticate(self.owner)
-
-        response = self.client.patch(
-            reverse("api:review-detail", kwargs={"pk": review.pk}),
-            {"text": "Обновленный текст собственного отзыва."},
-            format="json",
-        )
-        review.refresh_from_db()
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(review.text, "Обновленный текст собственного отзыва.")
-
-    def test_admin_can_delete_any_review(self) -> None:
-        """
-        Проверяет удаление любого отзыва администратором.
-        """
-        ProjectMembership.objects.create(
-            project=self.project,
-            specialist=self.specialist,
-            role=self.role,
-            added_by=self.owner,
-        )
-        review = Review.objects.create(
-            project=self.project,
-            author=self.owner,
-            specialist=self.specialist,
-            rating=5,
-            text="Специалист хорошо показал себя в проекте.",
-            status=Review.Status.PUBLISHED,
-        )
-        self.client.force_authenticate(self.admin)
-
-        response = self.client.delete(
-            reverse("api:review-detail", kwargs={"pk": review.pk}),
-            format="json",
-        )
-
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertFalse(Review.objects.filter(pk=review.pk).exists())

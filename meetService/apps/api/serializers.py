@@ -20,7 +20,6 @@ from apps.projects.models import (
     ProjectTechnology,
     ProjectVacancy,
 )
-from apps.reviews.models import Review
 from apps.specialists.models import SpecialistProfile, SpecialistTechnology
 
 User = get_user_model()
@@ -121,7 +120,9 @@ class RoleSerializer(serializers.ModelSerializer):
 
 
 class TechnologySerializer(serializers.ModelSerializer):
-    category_display = serializers.CharField(source="get_category_display", read_only=True)
+    category_display = serializers.CharField(
+        source="get_category_display", read_only=True
+    )
     projects_count = serializers.SerializerMethodField()
     published_projects_count = serializers.SerializerMethodField()
     specialists_count = serializers.SerializerMethodField()
@@ -540,7 +541,9 @@ class ProjectSerializer(serializers.ModelSerializer):
 
         return project
 
-    def _sync_technologies(self, project: Project, technologies: list[Technology]) -> None:
+    def _sync_technologies(
+        self, project: Project, technologies: list[Technology]
+    ) -> None:
         """
         Синхронизирует связанные данные объекта.
         Args:
@@ -587,8 +590,6 @@ class SpecialistProfileSerializer(serializers.ModelSerializer):
     active_projects_count = serializers.SerializerMethodField()
     applications_count = serializers.SerializerMethodField()
     invitations_count = serializers.SerializerMethodField()
-    reviews_count = serializers.SerializerMethodField()
-    average_rating = serializers.SerializerMethodField()
     can_edit = serializers.SerializerMethodField()
 
     class Meta:
@@ -625,8 +626,6 @@ class SpecialistProfileSerializer(serializers.ModelSerializer):
             "active_projects_count",
             "applications_count",
             "invitations_count",
-            "reviews_count",
-            "average_rating",
             "can_edit",
         )
         read_only_fields = (
@@ -680,27 +679,6 @@ class SpecialistProfileSerializer(serializers.ModelSerializer):
             obj: Объект модели
         """
         return getattr(obj, "invitations_count", obj.invitations.count())
-
-    def get_reviews_count(self, obj: object) -> int:
-        """
-        Возвращает значение `reviews count`.
-        Args:
-            obj: Объект модели
-        """
-        return getattr(obj, "reviews_count", obj.received_reviews.count())
-
-    def get_average_rating(self, obj: object) -> float | None:
-        """
-        Возвращает значение `average rating`.
-        Args:
-            obj: Объект модели
-        """
-        average_rating = getattr(obj, "average_rating", None)
-
-        if average_rating is None:
-            return None
-
-        return round(float(average_rating), 2)
 
     def get_can_edit(self, obj: object) -> bool:
         """
@@ -771,7 +749,9 @@ class SpecialistProfileSerializer(serializers.ModelSerializer):
 
         return profile
 
-    def _sync_technologies(self, profile: SpecialistProfile, technologies: list[Technology]) -> None:
+    def _sync_technologies(
+        self, profile: SpecialistProfile, technologies: list[Technology]
+    ) -> None:
         """
         Синхронизирует связанные данные объекта.
         Args:
@@ -1084,7 +1064,9 @@ class FavoriteProjectSerializer(serializers.ModelSerializer):
 
         if project.status not in [Project.Status.PUBLISHED, Project.Status.CLOSED]:
             raise serializers.ValidationError(
-                _("В избранное можно добавить только опубликованный или закрытый проект.")
+                _(
+                    "В избранное можно добавить только опубликованный или закрытый проект."
+                )
             )
 
         if request and request.user.is_authenticated:
@@ -1112,115 +1094,4 @@ class FavoriteProjectSerializer(serializers.ModelSerializer):
                 **validated_data,
             )
         except IntegrityError as error:
-            raise_serializer_validation(error)
-
-
-class ReviewSerializer(serializers.ModelSerializer):
-    project_detail = ProjectBriefSerializer(source="project", read_only=True)
-    specialist_detail = SpecialistProfileSerializer(source="specialist", read_only=True)
-    author = UserBriefSerializer(read_only=True)
-    status_display = serializers.CharField(source="get_status_display", read_only=True)
-    is_public = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Review
-        fields = (
-            "id",
-            "project",
-            "project_detail",
-            "author",
-            "specialist",
-            "specialist_detail",
-            "rating",
-            "text",
-            "status",
-            "status_display",
-            "is_public",
-            "created_at",
-            "updated_at",
-        )
-        read_only_fields = (
-            "author",
-            "status",
-            "created_at",
-            "updated_at",
-        )
-
-    def get_is_public(self, obj: object) -> bool:
-        """
-        Возвращает значение `is public`.
-        Args:
-            obj: Объект модели
-        """
-        return obj.is_public()
-
-    def validate_text(self, value: str) -> str:
-        """
-        Проверяет поле `text`.
-        Args:
-            value: Проверяемое значение
-        """
-        value = value.strip()
-
-        if not value:
-            raise serializers.ValidationError(_("Текст отзыва обязателен."))
-
-        return value
-
-    def validate(self, attrs: dict[str, object]) -> dict[str, object]:
-        """
-        Проверяет данные сериализатора.
-        Args:
-            attrs: Данные сериализатора
-        """
-        request = self.context.get("request")
-
-        if not request or not request.user.is_authenticated:
-            raise serializers.ValidationError(_("Для создания отзыва нужно войти."))
-
-        project = attrs.get("project")
-        specialist = attrs.get("specialist")
-
-        if project is None or specialist is None:
-            return attrs
-
-        if not is_admin(request.user) and project.owner_id != request.user.id:
-            raise serializers.ValidationError(
-                {"project": _("Оставить отзыв может владелец проекта или администратор.")}
-            )
-
-        if specialist.user_id == request.user.id:
-            raise serializers.ValidationError(
-                {"specialist": _("Нельзя оставить отзыв самому себе.")}
-            )
-
-        if not ProjectMembership.objects.filter(
-            project=project,
-            specialist=specialist,
-        ).exists():
-            raise serializers.ValidationError(
-                {
-                    "specialist": (
-                        _("Отзыв можно оставить только специалисту, который участвовал "
-                        "в проекте.")
-                    )
-                }
-            )
-
-        return attrs
-
-    def create(self, validated_data: dict[str, object]) -> object:
-        """
-        Создаёт объект из проверенных данных.
-        Args:
-            validated_data: Проверенные данные сериализатора
-        """
-        request = self.context["request"]
-
-        try:
-            return Review.objects.create(
-                author=request.user,
-                **validated_data,
-            )
-        except (DjangoValidationError, IntegrityError) as error:
             raise_serializer_validation(error)

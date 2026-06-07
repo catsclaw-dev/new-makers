@@ -21,7 +21,6 @@ from apps.projects.models import (
     ProjectTechnology,
     ProjectVacancy,
 )
-from apps.reviews.models import Review
 from apps.specialists.models import SpecialistProfile, SpecialistTechnology
 
 
@@ -30,23 +29,59 @@ User = get_user_model()
 
 
 ROLE_DATA = [
-    ("Frontend-разработчик", "frontend-developer", "Разрабатывает пользовательский интерфейс и клиентскую часть приложения."),
-    ("Backend-разработчик", "backend-developer", "Отвечает за серверную логику, API и интеграции."),
-    ("Fullstack-разработчик", "fullstack-developer", "Работает и с frontend, и с backend частью проекта."),
-    ("UI/UX-дизайнер", "ui-ux-designer", "Проектирует интерфейсы, пользовательские сценарии и визуальный стиль."),
-    ("QA-инженер", "qa-engineer", "Тестирует продукт, находит ошибки и контролирует качество."),
-    ("DevOps-инженер", "devops-engineer", "Настраивает инфраструктуру, деплой, CI/CD и окружения."),
-    ("Project Manager", "project-manager", "Управляет задачами, сроками, командой и коммуникацией."),
+    (
+        "Frontend-разработчик",
+        "frontend-developer",
+        "Разрабатывает пользовательский интерфейс и клиентскую часть приложения.",
+    ),
+    (
+        "Backend-разработчик",
+        "backend-developer",
+        "Отвечает за серверную логику, API и интеграции.",
+    ),
+    (
+        "Fullstack-разработчик",
+        "fullstack-developer",
+        "Работает и с frontend, и с backend частью проекта.",
+    ),
+    (
+        "UI/UX-дизайнер",
+        "ui-ux-designer",
+        "Проектирует интерфейсы, пользовательские сценарии и визуальный стиль.",
+    ),
+    (
+        "QA-инженер",
+        "qa-engineer",
+        "Тестирует продукт, находит ошибки и контролирует качество.",
+    ),
+    (
+        "DevOps-инженер",
+        "devops-engineer",
+        "Настраивает инфраструктуру, деплой, CI/CD и окружения.",
+    ),
+    (
+        "Project Manager",
+        "project-manager",
+        "Управляет задачами, сроками, командой и коммуникацией.",
+    ),
     ("Data Scientist", "data-scientist", "Анализирует данные и создаёт ML-модели."),
     ("Mobile-разработчик", "mobile-developer", "Разрабатывает мобильные приложения."),
-    ("Product Owner", "product-owner", "Формирует видение продукта, цели и приоритеты."),
+    (
+        "Product Owner",
+        "product-owner",
+        "Формирует видение продукта, цели и приоритеты.",
+    ),
 ]
 
 
 TECHNOLOGY_DATA = [
     ("Python", "python", Technology.TechnologyCategory.LANGUAGE),
     ("Django", "django", Technology.TechnologyCategory.FRAMEWORK),
-    ("Django REST Framework", "django-rest-framework", Technology.TechnologyCategory.FRAMEWORK),
+    (
+        "Django REST Framework",
+        "django-rest-framework",
+        Technology.TechnologyCategory.FRAMEWORK,
+    ),
     ("JavaScript", "javascript", Technology.TechnologyCategory.LANGUAGE),
     ("TypeScript", "typescript", Technology.TechnologyCategory.LANGUAGE),
     ("React", "react", Technology.TechnologyCategory.FRAMEWORK),
@@ -113,8 +148,6 @@ class Command(BaseCommand):
         if options["clear"]:
             self.clear_data()
 
-
-
         roles = self.create_roles()
         technologies = self.create_technologies()
 
@@ -126,13 +159,14 @@ class Command(BaseCommand):
         projects = self.create_projects(owners, technologies)
         vacancies = self.create_project_vacancies(projects, roles)
         memberships = self.create_memberships(projects, vacancies, specialists, owners)
-        applications = self.create_applications(projects, vacancies, specialists, memberships)
-        invitations = self.create_invitations(projects, vacancies, specialists, owners, memberships)
+        applications = self.create_applications(
+            projects, vacancies, specialists, memberships
+        )
+        invitations = self.create_invitations(
+            projects, vacancies, specialists, owners, memberships
+        )
         favorites = self.create_favorites(projects, users)
-        files = self.create_project_files(projects, owners)
-        reviews = self.create_reviews(memberships)
-
-
+        files = self.create_project_files(projects)
 
         self.sync_vacancy_counts(vacancies)
 
@@ -149,13 +183,11 @@ class Command(BaseCommand):
         self.stdout.write(f"Приглашений: {len(invitations)}")
         self.stdout.write(f"Избранных проектов: {len(favorites)}")
         self.stdout.write(f"Файлов проектов: {len(files)}")
-        self.stdout.write(f"Отзывов: {len(reviews)}")
 
     def clear_data(self) -> None:
         """
         Очищает демонстрационные данные, не удаляя суперпользователей.
         """
-        Review.objects.all().delete()
         FavoriteProject.objects.all().delete()
         Invitation.objects.all().delete()
         Application.objects.all().delete()
@@ -241,7 +273,9 @@ class Command(BaseCommand):
 
         return users
 
-    def create_specialist_profiles(self, users: object, roles: list[Role], technologies: list[Technology]) -> list[object]:
+    def create_specialist_profiles(
+        self, users: object, roles: list[Role], technologies: list[Technology]
+    ) -> list[object]:
         """
         Создает связанные данные приложения.
         Args:
@@ -320,7 +354,9 @@ class Command(BaseCommand):
 
         return profiles
 
-    def create_projects(self, owners: list[User], technologies: list[Technology]) -> list[object]:
+    def create_projects(
+        self, owners: list[User], technologies: list[Technology]
+    ) -> list[object]:
         """
         Создает связанные данные приложения.
         Args:
@@ -395,7 +431,9 @@ class Command(BaseCommand):
 
         return projects
 
-    def create_project_vacancies(self, projects: list[Project], roles: list[Role]) -> list[object]:
+    def create_project_vacancies(
+        self, projects: list[Project], roles: list[Role]
+    ) -> list[object]:
         """
         Создает связанные данные приложения.
         Args:
@@ -432,7 +470,13 @@ class Command(BaseCommand):
 
         return vacancies
 
-    def create_memberships(self, projects: list[Project], vacancies: list[ProjectVacancy], specialists: list[SpecialistProfile], owners: list[User]) -> list[object]:
+    def create_memberships(
+        self,
+        projects: list[Project],
+        vacancies: list[ProjectVacancy],
+        specialists: list[SpecialistProfile],
+        owners: list[User],
+    ) -> list[object]:
         """
         Создает связанные данные приложения.
         Args:
@@ -444,13 +488,21 @@ class Command(BaseCommand):
         memberships = []
         used_pairs = set()
 
-        published_projects = [project for project in projects if project.status == Project.Status.PUBLISHED]
+        published_projects = [
+            project
+            for project in projects
+            if project.status == Project.Status.PUBLISHED
+        ]
 
         for project in published_projects:
-            project_vacancies = [vacancy for vacancy in vacancies if vacancy.project_id == project.id]
+            project_vacancies = [
+                vacancy for vacancy in vacancies if vacancy.project_id == project.id
+            ]
             random.shuffle(project_vacancies)
 
-            for vacancy in project_vacancies[: random.randint(1, min(2, len(project_vacancies)))]:
+            for vacancy in project_vacancies[
+                : random.randint(1, min(2, len(project_vacancies)))
+            ]:
                 available_specialists = [
                     specialist
                     for specialist in specialists
@@ -482,7 +534,13 @@ class Command(BaseCommand):
 
         return memberships
 
-    def create_applications(self, projects: list[Project], vacancies: list[ProjectVacancy], specialists: list[SpecialistProfile], memberships: list[ProjectMembership]) -> list[object]:
+    def create_applications(
+        self,
+        projects: list[Project],
+        vacancies: list[ProjectVacancy],
+        specialists: list[SpecialistProfile],
+        memberships: list[ProjectMembership],
+    ) -> list[object]:
         """
         Создает связанные данные приложения.
         Args:
@@ -495,14 +553,19 @@ class Command(BaseCommand):
         membership_pairs = {(m.project_id, m.specialist_id) for m in memberships}
         used_active = set()
 
-        published_projects = [project for project in projects if project.status == Project.Status.PUBLISHED]
+        published_projects = [
+            project
+            for project in projects
+            if project.status == Project.Status.PUBLISHED
+        ]
 
         for _ in range(28):
             project = random.choice(published_projects)
             project_vacancies = [
                 vacancy
                 for vacancy in vacancies
-                if vacancy.project_id == project.id and vacancy.status == ProjectVacancy.Status.OPEN
+                if vacancy.project_id == project.id
+                and vacancy.status == ProjectVacancy.Status.OPEN
             ]
 
             if not project_vacancies:
@@ -544,8 +607,14 @@ class Command(BaseCommand):
                         f"Мой опыт: {fake.sentence(nb_words=12)}"
                     ),
                     status=status,
-                    reviewed_at=timezone.now() if status in [Application.Status.REJECTED, Application.Status.CANCELLED] else None,
-                    reviewed_by=project.owner if status in [Application.Status.REJECTED, Application.Status.CANCELLED] else None,
+                    reviewed_at=timezone.now()
+                    if status
+                    in [Application.Status.REJECTED, Application.Status.CANCELLED]
+                    else None,
+                    reviewed_by=project.owner
+                    if status
+                    in [Application.Status.REJECTED, Application.Status.CANCELLED]
+                    else None,
                 )
             except Exception:
                 continue
@@ -557,7 +626,14 @@ class Command(BaseCommand):
 
         return applications
 
-    def create_invitations(self, projects: list[Project], vacancies: list[ProjectVacancy], specialists: list[SpecialistProfile], owners: list[User], memberships: list[ProjectMembership]) -> list[object]:
+    def create_invitations(
+        self,
+        projects: list[Project],
+        vacancies: list[ProjectVacancy],
+        specialists: list[SpecialistProfile],
+        owners: list[User],
+        memberships: list[ProjectMembership],
+    ) -> list[object]:
         """
         Создает связанные данные приложения.
         Args:
@@ -571,14 +647,19 @@ class Command(BaseCommand):
         membership_pairs = {(m.project_id, m.specialist_id) for m in memberships}
         used_pending = set()
 
-        published_projects = [project for project in projects if project.status == Project.Status.PUBLISHED]
+        published_projects = [
+            project
+            for project in projects
+            if project.status == Project.Status.PUBLISHED
+        ]
 
         for _ in range(24):
             project = random.choice(published_projects)
             project_vacancies = [
                 vacancy
                 for vacancy in vacancies
-                if vacancy.project_id == project.id and vacancy.status == ProjectVacancy.Status.OPEN
+                if vacancy.project_id == project.id
+                and vacancy.status == ProjectVacancy.Status.OPEN
             ]
 
             if not project_vacancies:
@@ -621,7 +702,10 @@ class Command(BaseCommand):
                         f"Будем рады видеть вас в команде."
                     ),
                     status=status,
-                    responded_at=timezone.now() if status in [Invitation.Status.DECLINED, Invitation.Status.CANCELLED] else None,
+                    responded_at=timezone.now()
+                    if status
+                    in [Invitation.Status.DECLINED, Invitation.Status.CANCELLED]
+                    else None,
                 )
             except Exception:
                 continue
@@ -670,12 +754,14 @@ class Command(BaseCommand):
 
         return favorites
 
-    def create_project_files(self, projects: list[Project], owners: list[User]) -> list[object]:
+    def create_project_files(
+        self,
+        projects: list[Project],
+    ) -> list[object]:
         """
         Создает связанные данные приложения.
         Args:
             projects: Список проектов
-            owners: Список владельцев проектов
         """
         files = []
 
@@ -701,54 +787,6 @@ class Command(BaseCommand):
 
         return files
 
-    def create_reviews(self, memberships: list[ProjectMembership]) -> list[object]:
-        """
-        Создает связанные данные приложения.
-        Args:
-            memberships: Список участников проектов
-        """
-        reviews = []
-        used_reviews = set()
-
-        active_memberships = [
-            membership
-            for membership in memberships
-            if membership.status == ProjectMembership.Status.ACTIVE
-        ]
-
-        for membership in active_memberships:
-            key = (membership.project_id, membership.project.owner_id, membership.specialist_id)
-
-            if key in used_reviews:
-                continue
-
-            try:
-                review = Review.objects.create(
-                    project=membership.project,
-                    author=membership.project.owner,
-                    specialist=membership.specialist,
-                    rating=random.randint(3, 5),
-                    text=(
-                        f"{fake.text(max_nb_chars=260)} "
-                        "Специалист участвовал в обсуждениях, выполнял задачи и помогал команде двигаться к MVP."
-                    ),
-                    status=random.choice(
-                        [
-                            Review.Status.PUBLISHED,
-                            Review.Status.PUBLISHED,
-                            Review.Status.DRAFT,
-                            Review.Status.HIDDEN,
-                        ]
-                    ),
-                )
-            except Exception:
-                continue
-
-            used_reviews.add(key)
-            reviews.append(review)
-
-        return reviews
-
     def sync_vacancy_counts(self, vacancies: list[ProjectVacancy]) -> None:
         """
         Синхронизирует current_count у вакансий после генерации участников.
@@ -771,7 +809,9 @@ class Command(BaseCommand):
 
             vacancy.save(update_fields=["current_count", "status", "updated_at"])
 
-    def generate_image_file(self, text: str, filename: str, size: tuple[int, int]) -> ContentFile:
+    def generate_image_file(
+        self, text: str, filename: str, size: tuple[int, int]
+    ) -> ContentFile:
         """
         Генерирует простую PNG-картинку для avatar/cover_image.
         Args:

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from django.contrib import admin
-from django.db.models import Avg, Count, Q, QuerySet
+from django.db.models import Count, Q, QuerySet
 from django.http import HttpRequest
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
@@ -10,7 +10,6 @@ from simple_history.admin import SimpleHistoryAdmin
 
 from apps.interactions.models import Application, Invitation
 from apps.projects.models import ProjectMembership
-from apps.reviews.models import Review
 
 from .models import SpecialistProfile, SpecialistTechnology
 
@@ -122,41 +121,6 @@ class SpecialistInvitationInline(admin.TabularInline):
         return False
 
 
-class SpecialistReviewInline(admin.TabularInline):
-    """Inline для отзывов о специалисте."""
-
-    model = Review
-    extra = 0
-    can_delete = False
-    fields = (
-        "project",
-        "author",
-        "rating",
-        "status",
-        "text",
-        "created_at",
-        "updated_at",
-    )
-    readonly_fields = (
-        "project",
-        "author",
-        "rating",
-        "status",
-        "text",
-        "created_at",
-        "updated_at",
-    )
-
-    def has_add_permission(self, request: HttpRequest, obj: object = None) -> bool:
-        """
-        Выполняет логику функции.
-        Args:
-            request: HTTP-запрос текущего пользователя
-            obj: Объект модели
-        """
-        return False
-
-
 @admin.register(SpecialistProfile)
 class SpecialistProfileAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
     """Админ-панель профилей специалистов."""
@@ -174,8 +138,6 @@ class SpecialistProfileAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
         "display_active_projects_count",
         "display_applications_count",
         "display_invitations_count",
-        "display_reviews_count",
-        "display_average_rating",
         "display_is_available",
         "created_at",
     )
@@ -192,7 +154,6 @@ class SpecialistProfileAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
         "project_memberships__status",
         "applications__status",
         "invitations__status",
-        "received_reviews__status",
         "created_at",
         "updated_at",
     )
@@ -217,9 +178,7 @@ class SpecialistProfileAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
         "created_by",
         "updated_by",
     )
-    filter_horizontal = (
-        "preferred_roles",
-    )
+    filter_horizontal = ("preferred_roles",)
     readonly_fields = (
         "created_at",
         "updated_at",
@@ -228,8 +187,6 @@ class SpecialistProfileAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
         "display_active_projects_count",
         "display_applications_count",
         "display_invitations_count",
-        "display_reviews_count",
-        "display_average_rating",
     )
     date_hierarchy = "created_at"
     inlines = (
@@ -237,7 +194,6 @@ class SpecialistProfileAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
         SpecialistProjectMembershipInline,
         SpecialistApplicationInline,
         SpecialistInvitationInline,
-        SpecialistReviewInline,
     )
     actions = (
         "mark_as_looking",
@@ -292,8 +248,6 @@ class SpecialistProfileAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
                     "display_active_projects_count",
                     "display_applications_count",
                     "display_invitations_count",
-                    "display_reviews_count",
-                    "display_average_rating",
                 ),
             },
         ),
@@ -330,20 +284,19 @@ class SpecialistProfileAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
                 technologies_count=Count("technologies", distinct=True),
                 active_projects_count=Count(
                     "project_memberships",
-                    filter=Q(project_memberships__status=ProjectMembership.Status.ACTIVE),
+                    filter=Q(
+                        project_memberships__status=ProjectMembership.Status.ACTIVE
+                    ),
                     distinct=True,
                 ),
                 applications_count=Count("applications", distinct=True),
                 invitations_count=Count("invitations", distinct=True),
-                reviews_count=Count("received_reviews", distinct=True),
-                average_rating=Avg(
-                    "received_reviews__rating",
-                    filter=Q(received_reviews__status=Review.Status.PUBLISHED),
-                ),
             )
         )
 
-    def save_model(self, request: HttpRequest, obj: object, form: object, change: bool) -> object:
+    def save_model(
+        self, request: HttpRequest, obj: object, form: object, change: bool
+    ) -> object:
         """
         Сохраняет модель в административном интерфейсе.
         Args:
@@ -402,29 +355,6 @@ class SpecialistProfileAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
         """
         return getattr(obj, "invitations_count", obj.invitations.count())
 
-    @admin.display(description=_("Отзывов"))
-    def display_reviews_count(self, obj: SpecialistProfile) -> int:
-        """
-        Возвращает значение для отображения в интерфейсе администратора.
-        Args:
-            obj: Объект модели
-        """
-        return getattr(obj, "reviews_count", obj.received_reviews.count())
-
-    @admin.display(description=_("Средняя оценка"))
-    def display_average_rating(self, obj: SpecialistProfile) -> str:
-        """
-        Возвращает значение для отображения в интерфейсе администратора.
-        Args:
-            obj: Объект модели
-        """
-        average_rating = getattr(obj, "average_rating", None)
-
-        if average_rating is None:
-            return "—"
-
-        return f"{average_rating:.1f}/5"
-
     @admin.display(boolean=True, description=_("Доступен"))
     def display_is_available(self, obj: SpecialistProfile) -> bool:
         """
@@ -456,7 +386,9 @@ class SpecialistProfileAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
             request: HTTP-запрос текущего пользователя
             queryset: Набор объектов для обработки
         """
-        updated_count = queryset.update(status=SpecialistProfile.AvailabilityStatus.LOOKING)
+        updated_count = queryset.update(
+            status=SpecialistProfile.AvailabilityStatus.LOOKING
+        )
         self.message_user(
             request,
             _("Обновлено профилей: %(count)s") % {"count": updated_count},
@@ -470,7 +402,9 @@ class SpecialistProfileAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
             request: HTTP-запрос текущего пользователя
             queryset: Набор объектов для обработки
         """
-        updated_count = queryset.update(status=SpecialistProfile.AvailabilityStatus.OPEN)
+        updated_count = queryset.update(
+            status=SpecialistProfile.AvailabilityStatus.OPEN
+        )
         self.message_user(
             request,
             _("Обновлено профилей: %(count)s") % {"count": updated_count},
@@ -484,7 +418,9 @@ class SpecialistProfileAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
             request: HTTP-запрос текущего пользователя
             queryset: Набор объектов для обработки
         """
-        updated_count = queryset.update(status=SpecialistProfile.AvailabilityStatus.BUSY)
+        updated_count = queryset.update(
+            status=SpecialistProfile.AvailabilityStatus.BUSY
+        )
         self.message_user(
             request,
             _("Обновлено профилей: %(count)s") % {"count": updated_count},
@@ -524,7 +460,5 @@ class SpecialistTechnologyAdmin(ImportExportModelAdmin):
         "specialist",
         "technology",
     )
-    readonly_fields = (
-        "created_at",
-    )
+    readonly_fields = ("created_at",)
     date_hierarchy = "created_at"

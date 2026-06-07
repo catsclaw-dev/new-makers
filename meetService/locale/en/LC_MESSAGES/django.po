@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: New-Makers\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-07 17:40+0300\n"
+"POT-Creation-Date: 2026-06-07 21:39+0300\n"
 "PO-Revision-Date: 2026-06-07 18:30+0300\n"
 "Last-Translator: CatsClaw <dev@example.local>\n"
 "Language-Team: English\n"
@@ -62,26 +62,35 @@ msgid "Петров"
 msgstr "Smith"
 
 #: meetService/apps/accounts/forms.py:81
-msgid "Пользователь с таким email уже зарегистрирован. Войдите через обычную форму или через тот OAuth-провайдер, к которому привязана эта почта."
-msgstr "A user with this email is already registered. Sign in with the regular form or with the OAuth provider linked to this email."
+msgid ""
+"Пользователь с таким email уже зарегистрирован. Войдите через обычную форму "
+"или через тот OAuth-провайдер, к которому привязана эта почта."
+msgstr ""
+"A user with this email is already registered. Sign in with the regular form "
+"or with the OAuth provider linked to this email."
 
 #: meetService/apps/accounts/forms.py:117
 msgid "На эту почту будут приходить уведомления по откликам и приглашениям."
-msgstr "Notifications about applications and invitations will be sent to this email."
+msgstr ""
+"Notifications about applications and invitations will be sent to this email."
 
 #: meetService/apps/accounts/forms.py:119
 msgid "Email обязателен для уведомлений."
 msgstr "Email is required for notifications."
 
 #: meetService/apps/accounts/forms.py:155
-msgid "Пользователь с таким email уже зарегистрирован. Используйте другую почту или войдите в аккаунт, к которому она уже привязана."
-msgstr "A user with this email is already registered. Use another email or sign in to the account linked to it."
+msgid ""
+"Пользователь с таким email уже зарегистрирован. Используйте другую почту или "
+"войдите в аккаунт, к которому она уже привязана."
+msgstr ""
+"A user with this email is already registered. Use another email or sign in "
+"to the account linked to it."
 
 #: meetService/apps/accounts/models.py:11
 #: meetService/apps/accounts/views.py:103
 #: meetService/apps/interactions/tasks.py:104
 #: meetService/apps/interactions/tasks.py:271
-#: meetService/apps/specialists/admin.py:360
+#: meetService/apps/specialists/admin.py:313
 msgid "Специалист"
 msgstr "Specialist"
 
@@ -112,7 +121,6 @@ msgstr "Defines the user's main scenario on the website."
 #: meetService/apps/projects/models.py:207
 #: meetService/apps/projects/models.py:392
 #: meetService/apps/projects/models.py:541
-#: meetService/apps/reviews/models.py:75
 #: meetService/apps/specialists/models.py:168
 msgid "история изменений"
 msgstr "change history"
@@ -128,7 +136,6 @@ msgid "пользователи"
 msgstr "users"
 
 #: meetService/apps/accounts/views.py:41
-#| msgid "Регистрация"
 msgid "Регистрация завершена."
 msgstr "Registration completed."
 
@@ -136,190 +143,173 @@ msgstr "Registration completed."
 msgid "Email обновлён."
 msgstr "Email updated."
 
-#: meetService/apps/api/serializers.py:287
+#: meetService/apps/api/serializers.py:288
 msgid "Укажи проект для открытой роли."
 msgstr "Specify a project for the open role."
 
-#: meetService/apps/api/serializers.py:292
+#: meetService/apps/api/serializers.py:293
 #: meetService/apps/projects/views.py:658
 msgid "Нельзя добавлять роли в закрытый или архивный проект."
 msgstr "Roles cannot be added to a closed or archived project."
 
-#: meetService/apps/api/serializers.py:728
+#: meetService/apps/api/serializers.py:706
 #: meetService/apps/specialists/forms.py:149
 msgid "Если заполняешь описание, оно должно быть не короче 20 символов."
-msgstr "If you fill in the description, it must be at least 20 characters long."
+msgstr ""
+"If you fill in the description, it must be at least 20 characters long."
 
-#: meetService/apps/api/serializers.py:845
+#: meetService/apps/api/serializers.py:825
 #: meetService/apps/interactions/forms.py:33
 msgid "Добавь сопроводительное сообщение."
 msgstr "Add a cover message."
 
-#: meetService/apps/api/serializers.py:858
+#: meetService/apps/api/serializers.py:838
 msgid "Для отклика нужно войти в систему."
 msgstr "You need to sign in to apply."
 
-#: meetService/apps/api/serializers.py:864
+#: meetService/apps/api/serializers.py:844
 #: meetService/apps/interactions/views.py:39
 msgid "Чтобы откликнуться на проект, сначала нужен профиль специалиста."
 msgstr "To apply to a project, you need a specialist profile first."
 
-#: meetService/apps/api/serializers.py:870
-#: meetService/apps/api/serializers.py:991
+#: meetService/apps/api/serializers.py:850
+#: meetService/apps/api/serializers.py:971
 msgid "Выбери открытую роль."
 msgstr "Select an open role."
 
-#: meetService/apps/api/serializers.py:876
+#: meetService/apps/api/serializers.py:856
 #: meetService/apps/interactions/models.py:117
 #: meetService/apps/interactions/models.py:352
 msgid "Нельзя откликаться на собственный проект."
 msgstr "You cannot apply to your own project."
 
-#: meetService/apps/api/serializers.py:881
+#: meetService/apps/api/serializers.py:861
 #: meetService/apps/interactions/models.py:121
 #: meetService/apps/interactions/models.py:367
 msgid "Нельзя откликаться на неопубликованный проект."
 msgstr "You cannot apply to an unpublished project."
 
-#: meetService/apps/api/serializers.py:886
+#: meetService/apps/api/serializers.py:866
 #: meetService/apps/interactions/models.py:125
 #: meetService/apps/interactions/models.py:371
 msgid "Нельзя откликаться на закрытую или заполненную роль."
 msgstr "You cannot apply to a closed or filled role."
 
-#: meetService/apps/api/serializers.py:897
+#: meetService/apps/api/serializers.py:877
 #: meetService/apps/interactions/views.py:483
 #: meetService/apps/projects/models.py:457
 msgid "Специалист уже состоит в команде проекта."
 msgstr "The specialist is already on the project team."
 
-#: meetService/apps/api/serializers.py:909
+#: meetService/apps/api/serializers.py:889
 #: meetService/apps/interactions/models.py:141
 #: meetService/apps/interactions/models.py:387
 msgid "У специалиста уже есть активный отклик на эту роль."
 msgstr "The specialist already has an active application for this role."
 
-#: meetService/apps/api/serializers.py:984
+#: meetService/apps/api/serializers.py:964
 msgid "Для приглашения специалиста нужно войти в систему."
 msgstr "You need to sign in to invite a specialist."
 
-#: meetService/apps/api/serializers.py:994
-#| msgid "Профиль специалиста"
+#: meetService/apps/api/serializers.py:974
 msgid "Выбери специалиста."
 msgstr "Select a specialist."
 
-#: meetService/apps/api/serializers.py:1000
+#: meetService/apps/api/serializers.py:980
 #: meetService/apps/interactions/forms.py:202
 #: meetService/apps/interactions/views.py:246
 msgid "Можно приглашать только в свои проекты."
 msgstr "You can invite only to your own projects."
 
-#: meetService/apps/api/serializers.py:1005
+#: meetService/apps/api/serializers.py:985
 #: meetService/apps/interactions/views.py:222
 msgid "Нельзя пригласить самого себя в свой проект."
 msgstr "You cannot invite yourself to your own project."
 
-#: meetService/apps/api/serializers.py:1010
+#: meetService/apps/api/serializers.py:990
 #: meetService/apps/interactions/views.py:260
 msgid "Приглашать можно только в опубликованный проект."
 msgstr "You can invite only to a published project."
 
-#: meetService/apps/api/serializers.py:1015
+#: meetService/apps/api/serializers.py:995
 #: meetService/apps/interactions/views.py:274
 msgid "Приглашать можно только на открытую роль."
 msgstr "You can invite only to an open role."
 
-#: meetService/apps/api/serializers.py:1026
+#: meetService/apps/api/serializers.py:1006
 #: meetService/apps/interactions/models.py:362
 #: meetService/apps/interactions/views.py:294
 msgid "Специалист уже состоит в команде этого проекта."
 msgstr "The specialist is already on this project team."
 
-#: meetService/apps/api/serializers.py:1038
+#: meetService/apps/api/serializers.py:1018
 msgid "Для этой роли уже есть активное приглашение специалисту."
-msgstr "There is already an active invitation for this specialist for this role."
+msgstr ""
+"There is already an active invitation for this specialist for this role."
 
-#: meetService/apps/api/serializers.py:1087 meetService/apps/api/views.py:407
+#: meetService/apps/api/serializers.py:1068 meetService/apps/api/views.py:416
 msgid "В избранное можно добавить только опубликованный или закрытый проект."
 msgstr "Only published or closed projects can be added to favorites."
 
-#: meetService/apps/api/serializers.py:1097
+#: meetService/apps/api/serializers.py:1079
 msgid "Проект уже есть в избранном."
 msgstr "The project is already in favorites."
 
-#: meetService/apps/api/serializers.py:1166
-msgid "Текст отзыва обязателен."
-msgstr "Review text is required."
+#: meetService/apps/api/views.py:241 meetService/apps/projects/views.py:621
+msgid ""
+"Владелец может удалить только черновик. Опубликованный или закрытый проект "
+"нужно архивировать."
+msgstr ""
+"The owner can delete only a draft. A published or closed project must be "
+"archived."
 
-#: meetService/apps/api/serializers.py:1179
-msgid "Для создания отзыва нужно войти."
-msgstr "You need to sign in to create a review."
-
-#: meetService/apps/api/serializers.py:1189
-msgid "Оставить отзыв может владелец проекта или администратор."
-msgstr "Only the project owner or an administrator can leave a review."
-
-#: meetService/apps/api/serializers.py:1194
-#: meetService/apps/reviews/models.py:106
-msgid "Нельзя оставить отзыв самому себе."
-msgstr "You cannot leave a review for yourself."
-
-#: meetService/apps/api/serializers.py:1204
-#: meetService/apps/reviews/models.py:116
-msgid "Отзыв можно оставить только специалисту, который участвовал в проекте."
-msgstr "A review can be left only for a specialist who participated in the project."
-
-#: meetService/apps/api/views.py:236 meetService/apps/projects/views.py:621
-msgid "Владелец может удалить только черновик. Опубликованный или закрытый проект нужно архивировать."
-msgstr "The owner can delete only a draft. A published or closed project must be archived."
-
-#: meetService/apps/api/views.py:272 meetService/apps/api/views.py:486
+#: meetService/apps/api/views.py:278 meetService/apps/api/views.py:495
 #: meetService/apps/projects/views.py:654
 msgid "Добавлять роли может только владелец проекта или администратор."
 msgstr "Only the project owner or an administrator can add roles."
 
-#: meetService/apps/api/views.py:297 meetService/apps/projects/views.py:702
+#: meetService/apps/api/views.py:305 meetService/apps/projects/views.py:702
 msgid "На модерацию можно отправить только черновик."
 msgstr "Only a draft can be submitted for moderation."
 
-#: meetService/apps/api/views.py:306 meetService/apps/projects/views.py:714
+#: meetService/apps/api/views.py:314 meetService/apps/projects/views.py:714
 msgid "Перед отправкой на модерацию добавь хотя бы одну открытую роль."
-msgstr "Add at least one open role before submitting the project for moderation."
+msgstr ""
+"Add at least one open role before submitting the project for moderation."
 
-#: meetService/apps/api/views.py:327 meetService/apps/projects/views.py:746
+#: meetService/apps/api/views.py:335 meetService/apps/projects/views.py:746
 msgid "Закрыть можно только опубликованный проект."
 msgstr "Only a published project can be closed."
 
-#: meetService/apps/api/views.py:347 meetService/apps/projects/views.py:777
+#: meetService/apps/api/views.py:355 meetService/apps/projects/views.py:777
 msgid "Повторно открыть можно только закрытый проект."
 msgstr "Only a closed project can be reopened."
 
-#: meetService/apps/api/views.py:368 meetService/apps/projects/views.py:806
+#: meetService/apps/api/views.py:376 meetService/apps/projects/views.py:806
 msgid "Архивировать можно только опубликованный или закрытый проект."
 msgstr "Only a published or closed project can be archived."
 
-#: meetService/apps/api/views.py:377 meetService/apps/projects/views.py:816
+#: meetService/apps/api/views.py:385 meetService/apps/projects/views.py:816
 msgid "Название проекта введено неверно. Архивация отменена."
 msgstr "The project title was entered incorrectly. Archiving was canceled."
 
-#: meetService/apps/api/views.py:570
-#| msgid "Профиль специалиста"
+#: meetService/apps/api/views.py:573
 msgid "У пользователя уже есть профиль специалиста."
 msgstr "This user already has a specialist profile."
 
-#: meetService/apps/api/views.py:677
+#: meetService/apps/api/views.py:683
 msgid "Отменить можно только свой отклик."
 msgstr "You can cancel only your own application."
 
-#: meetService/apps/api/views.py:680
+#: meetService/apps/api/views.py:686
 msgid "Отменить можно только отклик на рассмотрении."
 msgstr "Only a pending application can be canceled."
 
-#: meetService/apps/api/views.py:790
+#: meetService/apps/api/views.py:796
 msgid "Отменить можно только своё приглашение."
 msgstr "You can cancel only your own invitation."
 
-#: meetService/apps/api/views.py:793
+#: meetService/apps/api/views.py:799
 msgid "Отменить можно только приглашение без ответа."
 msgstr "Only an unanswered invitation can be canceled."
 
@@ -347,8 +337,8 @@ msgstr "Usage statistics"
 #: meetService/apps/directories/admin.py:252
 #: meetService/apps/interactions/admin.py:90
 #: meetService/apps/projects/admin.py:264
-#: meetService/apps/projects/admin.py:634 meetService/apps/reviews/admin.py:101
-#: meetService/apps/specialists/admin.py:301
+#: meetService/apps/projects/admin.py:634
+#: meetService/apps/specialists/admin.py:255
 msgid "Служебная информация"
 msgstr "Service information"
 
@@ -359,12 +349,10 @@ msgid "Открытых ролей"
 msgstr "Open roles"
 
 #: meetService/apps/directories/admin.py:125
-#| msgid "Профиль специалиста"
 msgid "Основная у специалистов"
 msgstr "Primary for specialists"
 
 #: meetService/apps/directories/admin.py:134
-#| msgid "Профиль специалиста"
 msgid "Интересует специалистов"
 msgstr "Interested specialists"
 
@@ -404,7 +392,6 @@ msgid "Отключено ролей: %(count)s"
 msgstr "Disabled roles: %(count)s"
 
 #: meetService/apps/directories/admin.py:285
-#| msgid "Проекты"
 msgid "Проектов"
 msgstr "Projects"
 
@@ -413,7 +400,6 @@ msgid "Опубликованных проектов"
 msgstr "Published projects"
 
 #: meetService/apps/directories/admin.py:303
-#| msgid "Специалисты"
 msgid "Специалистов"
 msgstr "Specialists"
 
@@ -479,7 +465,6 @@ msgstr "If disabled, the role is not used in new records."
 #: meetService/apps/directories/models.py:101
 #: meetService/apps/projects/models.py:184
 #: meetService/apps/projects/models.py:385
-#: meetService/apps/reviews/models.py:68
 #: meetService/apps/specialists/models.py:145
 msgid "дата создания"
 msgstr "creation date"
@@ -488,7 +473,6 @@ msgstr "creation date"
 #: meetService/apps/directories/models.py:105
 #: meetService/apps/projects/models.py:188
 #: meetService/apps/projects/models.py:389
-#: meetService/apps/reviews/models.py:72
 #: meetService/apps/specialists/models.py:149
 msgid "дата изменения"
 msgstr "modification date"
@@ -606,7 +590,6 @@ msgid "Ожидает ответа"
 msgstr "Waiting for response"
 
 #: meetService/apps/interactions/admin.py:283
-#| msgid "Мои приглашения"
 msgid "Принять выбранные приглашения"
 msgstr "Accept selected invitations"
 
@@ -617,23 +600,19 @@ msgstr "Invitation “%(invitation)s” was not accepted: %(error)s"
 
 #: meetService/apps/interactions/admin.py:307
 #, python-format
-#| msgid "Мои приглашения"
 msgid "Принято приглашений: %(count)s"
 msgstr "Accepted invitations: %(count)s"
 
 #: meetService/apps/interactions/admin.py:311
-#| msgid "Мои приглашения"
 msgid "Отклонить выбранные приглашения"
 msgstr "Reject selected invitations"
 
 #: meetService/apps/interactions/admin.py:327
 #, python-format
-#| msgid "Мои приглашения"
 msgid "Отклонено приглашений: %(count)s"
 msgstr "Rejected invitations: %(count)s"
 
 #: meetService/apps/interactions/admin.py:378
-#| msgid "Мои проекты"
 msgid "Статус проекта"
 msgstr "Project status"
 
@@ -675,7 +654,6 @@ msgid "Проект и открытая роль"
 msgstr "Project and open role"
 
 #: meetService/apps/interactions/forms.py:140
-#| msgid "Профиль специалиста"
 msgid "Сообщение специалисту"
 msgstr "Message to the specialist"
 
@@ -704,7 +682,6 @@ msgid "Принят"
 msgstr "Accepted"
 
 #: meetService/apps/interactions/models.py:25
-#: meetService/apps/reviews/models.py:26
 msgid "Отклонён"
 msgstr "Rejected"
 
@@ -720,7 +697,6 @@ msgstr "Canceled"
 #: meetService/apps/projects/models.py:339
 #: meetService/apps/projects/models.py:503
 #: meetService/apps/projects/models.py:582
-#: meetService/apps/reviews/models.py:32
 #: meetService/templates/projects/project_form.html:6
 msgid "проект"
 msgstr "project"
@@ -734,7 +710,6 @@ msgstr "open role"
 #: meetService/apps/interactions/models.py:49
 #: meetService/apps/interactions/models.py:286
 #: meetService/apps/projects/models.py:509
-#: meetService/apps/reviews/models.py:46
 #: meetService/apps/specialists/models.py:226
 msgid "специалист"
 msgstr "specialist"
@@ -843,7 +818,8 @@ msgstr "invitations"
 
 #: meetService/apps/interactions/models.py:423
 msgid "Можно принять только приглашение со статусом «Ожидает ответа»."
-msgstr "Only an invitation with the “Waiting for response” status can be accepted."
+msgstr ""
+"Only an invitation with the “Waiting for response” status can be accepted."
 
 #: meetService/apps/interactions/models.py:449
 msgid "Открытая роль уже закрыта или заполнена."
@@ -851,7 +827,8 @@ msgstr "The open role is already closed or filled."
 
 #: meetService/apps/interactions/models.py:477
 msgid "Можно отклонить только приглашение со статусом «Ожидает ответа»."
-msgstr "Only an invitation with the “Waiting for response” status can be rejected."
+msgstr ""
+"Only an invitation with the “Waiting for response” status can be rejected."
 
 #: meetService/apps/interactions/models.py:511
 #: meetService/apps/projects/models.py:306
@@ -874,7 +851,8 @@ msgstr "Welcome to New-Makers"
 
 #: meetService/apps/interactions/tasks.py:40
 msgid "Аккаунт создан, можно искать команду и проекты."
-msgstr "The account has been created; you can now search for teams and projects."
+msgstr ""
+"The account has been created; you can now search for teams and projects."
 
 #: meetService/apps/interactions/tasks.py:41
 #: meetService/apps/interactions/tasks.py:89
@@ -886,8 +864,12 @@ msgid "Здравствуйте, %(name)s."
 msgstr "Hello, %(name)s."
 
 #: meetService/apps/interactions/tasks.py:43
-msgid "Ваш аккаунт создан. Теперь можно оформить профиль специалиста, откликаться на проекты или собрать команду для своей идеи."
-msgstr "Your account has been created. Now you can create a specialist profile, apply to projects, or build a team for your idea."
+msgid ""
+"Ваш аккаунт создан. Теперь можно оформить профиль специалиста, откликаться "
+"на проекты или собрать команду для своей идеи."
+msgstr ""
+"Your account has been created. Now you can create a specialist profile, "
+"apply to projects, or build a team for your idea."
 
 #: meetService/apps/interactions/tasks.py:47
 #: meetService/templates/accounts/profile.html:337
@@ -910,7 +892,6 @@ msgid "Новый отклик на проект «%(project)s»"
 msgstr "New application for “%(project)s”"
 
 #: meetService/apps/interactions/tasks.py:86
-#| msgid "Мои отклики"
 msgid "Новый отклик"
 msgstr "New application"
 
@@ -921,14 +902,17 @@ msgstr "%(specialist)s applied for the role."
 
 #: meetService/apps/interactions/tasks.py:92
 #, python-format
-msgid "Специалист %(specialist)s отправил отклик на роль «%(role)s» в проекте «%(project)s»."
-msgstr "Specialist %(specialist)s applied for the “%(role)s” role in the “%(project)s” project."
+msgid ""
+"Специалист %(specialist)s отправил отклик на роль «%(role)s» в проекте "
+"«%(project)s»."
+msgstr ""
+"Specialist %(specialist)s applied for the “%(role)s” role in the "
+"“%(project)s” project."
 
 #: meetService/apps/interactions/tasks.py:102
 #: meetService/apps/interactions/tasks.py:159
 #: meetService/apps/interactions/tasks.py:213
 #: meetService/apps/interactions/tasks.py:269
-#| msgid "Проекты"
 msgid "Проект"
 msgstr "Project"
 
@@ -943,7 +927,6 @@ msgid "Роль"
 msgstr "Role"
 
 #: meetService/apps/interactions/tasks.py:107
-#| msgid "Мои отклики"
 msgid "Посмотреть отклики"
 msgstr "View applications"
 
@@ -952,19 +935,24 @@ msgid "Отклик принят"
 msgstr "Application accepted"
 
 #: meetService/apps/interactions/tasks.py:135
-#| msgid "Мои отклики"
 msgid "Отклик отклонён"
 msgstr "Application rejected"
 
 #: meetService/apps/interactions/tasks.py:137
 #, python-format
-msgid "Ваш отклик на роль «%(role)s» в проекте «%(project)s» принят. Вы добавлены в команду проекта."
-msgstr "Your application for the “%(role)s” role in the “%(project)s” project has been accepted. You have been added to the project team."
+msgid ""
+"Ваш отклик на роль «%(role)s» в проекте «%(project)s» принят. Вы добавлены в "
+"команду проекта."
+msgstr ""
+"Your application for the “%(role)s” role in the “%(project)s” project has "
+"been accepted. You have been added to the project team."
 
 #: meetService/apps/interactions/tasks.py:142
 #, python-format
 msgid "Ваш отклик на роль «%(role)s» в проекте «%(project)s» отклонён."
-msgstr "Your application for the “%(role)s” role in the “%(project)s” project has been rejected."
+msgstr ""
+"Your application for the “%(role)s” role in the “%(project)s” project has "
+"been rejected."
 
 #: meetService/apps/interactions/tasks.py:148
 #: meetService/apps/interactions/tasks.py:250
@@ -978,7 +966,6 @@ msgid "Статус отклика: %(status)s."
 msgstr "Application status: %(status)s."
 
 #: meetService/apps/interactions/tasks.py:164
-#| msgid "Мои отклики"
 msgid "Открыть мои отклики"
 msgstr "Open my applications"
 
@@ -988,7 +975,6 @@ msgid "Вас пригласили в проект «%(project)s»"
 msgstr "You have been invited to “%(project)s”"
 
 #: meetService/apps/interactions/tasks.py:197
-#| msgid "Мои приглашения"
 msgid "Новое приглашение"
 msgstr "New invitation"
 
@@ -1000,19 +986,18 @@ msgstr "Invitation for the “%(role)s” role."
 #: meetService/apps/interactions/tasks.py:203
 #, python-format
 msgid "%(owner)s приглашает вас в проект «%(project)s» на роль «%(role)s»."
-msgstr "%(owner)s invites you to the “%(project)s” project for the “%(role)s” role."
+msgstr ""
+"%(owner)s invites you to the “%(project)s” project for the “%(role)s” role."
 
 #: meetService/apps/interactions/tasks.py:215
 msgid "Пригласил"
 msgstr "Invited by"
 
 #: meetService/apps/interactions/tasks.py:218
-#| msgid "Мои приглашения"
 msgid "Посмотреть приглашение"
 msgstr "View invitation"
 
 #: meetService/apps/interactions/tasks.py:246
-#| msgid "Мои приглашения"
 msgid "Приглашение принято"
 msgstr "Invitation accepted"
 
@@ -1027,21 +1012,22 @@ msgstr "%(specialist)s responded to the invitation."
 
 #: meetService/apps/interactions/tasks.py:260
 #, python-format
-msgid "Специалист %(specialist)s %(decision)s приглашение в проект «%(project)s»."
-msgstr "Specialist %(specialist)s %(decision)s the invitation to the “%(project)s” project."
+msgid ""
+"Специалист %(specialist)s %(decision)s приглашение в проект «%(project)s»."
+msgstr ""
+"Specialist %(specialist)s %(decision)s the invitation to the “%(project)s” "
+"project."
 
 #: meetService/apps/interactions/tasks.py:264
 msgid "принял"
 msgstr "accepted"
 
 #: meetService/apps/interactions/tasks.py:264
-#| msgid "Мои отклики"
 msgid "отклонил"
 msgstr "rejected"
 
 #: meetService/apps/interactions/tasks.py:275
 #: meetService/templates/accounts/profile.html:159
-#| msgid "Мои приглашения"
 msgid "Открыть приглашения"
 msgstr "Open invitations"
 
@@ -1052,8 +1038,12 @@ msgstr "New-Makers: new applications are waiting for review"
 #: meetService/apps/interactions/tasks.py:315
 #: meetService/apps/interactions/tasks.py:350
 #, python-format
-msgid "Здравствуйте, %(name)s.\n\n"
-msgstr "Hello, %(name)s.\n\n"
+msgid ""
+"Здравствуйте, %(name)s.\n"
+"\n"
+msgstr ""
+"Hello, %(name)s.\n"
+"\n"
 
 #: meetService/apps/interactions/tasks.py:318
 #, python-format
@@ -1120,10 +1110,10 @@ msgstr "Invitation rejected."
 
 #: meetService/apps/interactions/views.py:487
 msgid "Отклик принят. Специалист добавлен в команду проекта."
-msgstr "Application accepted. The specialist has been added to the project team."
+msgstr ""
+"Application accepted. The specialist has been added to the project team."
 
 #: meetService/apps/interactions/views.py:512
-#| msgid "Мои отклики"
 msgid "Отклик отклонён."
 msgstr "Application rejected."
 
@@ -1149,7 +1139,7 @@ msgid "Участников"
 msgstr "Participants"
 
 #: meetService/apps/projects/admin.py:332
-#: meetService/apps/specialists/admin.py:369
+#: meetService/apps/specialists/admin.py:322
 msgid "Технологий"
 msgstr "Technologies"
 
@@ -1166,7 +1156,6 @@ msgid "Сформировать PDF по выбранным проектам"
 msgstr "Generate a PDF for selected projects"
 
 #: meetService/apps/projects/admin.py:401
-#| msgid "Мои проекты"
 msgid "Отчёт по проектам"
 msgstr "Project report"
 
@@ -1223,15 +1212,18 @@ msgstr "Open roles:"
 
 #: meetService/apps/projects/admin.py:475
 #, python-format
-msgid "- %(title)s; роль: %(role)s; уровень: %(level)s; статус: %(status)s; набрано: %(current)s/%(required)s"
-msgstr "- %(title)s; role: %(role)s; level: %(level)s; status: %(status)s; filled: %(current)s/%(required)s"
+msgid ""
+"- %(title)s; роль: %(role)s; уровень: %(level)s; статус: %(status)s; "
+"набрано: %(current)s/%(required)s"
+msgstr ""
+"- %(title)s; role: %(role)s; level: %(level)s; status: %(status)s; filled: "
+"%(current)s/%(required)s"
 
 #: meetService/apps/projects/admin.py:494
 msgid "- Нет открытых ролей"
 msgstr "- No open roles"
 
 #: meetService/apps/projects/admin.py:499
-#| msgid "Мои проекты"
 msgid "Файлы проекта:"
 msgstr "Project files:"
 
@@ -1272,7 +1264,6 @@ msgstr "Select the technologies used in the project."
 
 #: meetService/apps/projects/forms.py:36
 #: meetService/templates/projects/project_archive_confirm.html:15
-#| msgid "Мои проекты"
 msgid "Название проекта"
 msgstr "Project title"
 
@@ -1282,12 +1273,10 @@ msgstr "Detailed description"
 
 #: meetService/apps/projects/forms.py:39
 #: meetService/templates/projects/project_detail.html:35
-#| msgid "Мои проекты"
 msgid "Цель проекта"
 msgstr "Project goal"
 
 #: meetService/apps/projects/forms.py:40
-#| msgid "Мои проекты"
 msgid "Обложка проекта"
 msgstr "Project cover"
 
@@ -1340,12 +1329,10 @@ msgid "Добавь подробное описание проекта."
 msgstr "Add a detailed project description."
 
 #: meetService/apps/projects/forms.py:66
-#| msgid "Мои проекты"
 msgid "Укажи цель проекта."
 msgstr "Enter the project goal."
 
 #: meetService/apps/projects/forms.py:73
-#| msgid "сервис поиска IT-команды"
 msgid "Например: сервис подбора IT-команды"
 msgstr "For example: IT team matching service"
 
@@ -1461,7 +1448,7 @@ msgstr "Mixed format"
 msgid "Учебный проект"
 msgstr "Educational project"
 
-#: meetService/apps/projects/models.py:98 meetService/apps/reviews/models.py:23
+#: meetService/apps/projects/models.py:98
 msgid "Черновик"
 msgstr "Draft"
 
@@ -1470,7 +1457,6 @@ msgid "На модерации"
 msgstr "Under moderation"
 
 #: meetService/apps/projects/models.py:100
-#: meetService/apps/reviews/admin.py:141 meetService/apps/reviews/models.py:24
 msgid "Опубликован"
 msgstr "Published"
 
@@ -1535,7 +1521,6 @@ msgstr "participation format"
 
 #: meetService/apps/projects/models.py:160
 #: meetService/apps/projects/models.py:381
-#: meetService/apps/reviews/models.py:64
 msgid "статус"
 msgstr "status"
 
@@ -1722,7 +1707,6 @@ msgstr "Project created as a draft. The first open role has been added."
 #: meetService/templates/projects/home.html:242
 #: meetService/templates/projects/my_projects.html:19
 #: meetService/templates/projects/my_projects.html:92
-#| msgid "Мои проекты"
 msgid "Создать проект"
 msgstr "Create project"
 
@@ -1772,7 +1756,8 @@ msgstr "Add role"
 
 #: meetService/apps/projects/views.py:695
 msgid "Отправить проект на модерацию может только владелец или администратор."
-msgstr "Only the owner or an administrator can submit the project for moderation."
+msgstr ""
+"Only the owner or an administrator can submit the project for moderation."
 
 #: meetService/apps/projects/views.py:722
 msgid "Проект отправлен на рассмотрение модератору."
@@ -1800,164 +1785,66 @@ msgstr "Only the owner or an administrator can archive the project."
 
 #: meetService/apps/projects/views.py:832
 msgid "Проект окончательно перенесён в архив и удалён из избранного."
-msgstr "The project has been permanently moved to the archive and removed from favorites."
+msgstr ""
+"The project has been permanently moved to the archive and removed from "
+"favorites."
 
-#: meetService/apps/reviews/admin.py:72
-msgid "Связи"
-msgstr "Relations"
-
-#: meetService/apps/reviews/admin.py:82
-msgid "Содержание отзыва"
-msgstr "Review content"
-
-#: meetService/apps/reviews/admin.py:92
-msgid "Предпросмотр"
-msgstr "Preview"
-
-#: meetService/apps/reviews/admin.py:139
-msgid "Краткий текст"
-msgstr "Short text"
-
-#: meetService/apps/reviews/admin.py:150
-msgid "Опубликовать выбранные отзывы"
-msgstr "Publish selected reviews"
-
-#: meetService/apps/reviews/admin.py:167
-#, python-format
-msgid "Отзыв «%(review)s» не опубликован: %(error)s"
-msgstr "Review “%(review)s” was not published: %(error)s"
-
-#: meetService/apps/reviews/admin.py:174
-#, python-format
-msgid "Опубликовано отзывов: %(count)s"
-msgstr "Published reviews: %(count)s"
-
-#: meetService/apps/reviews/admin.py:178
-msgid "Скрыть выбранные отзывы"
-msgstr "Hide selected reviews"
-
-#: meetService/apps/reviews/admin.py:194
-#, python-format
-msgid "Скрыто отзывов: %(count)s"
-msgstr "Hidden reviews: %(count)s"
-
-#: meetService/apps/reviews/admin.py:198
-msgid "Отклонить выбранные отзывы"
-msgstr "Reject selected reviews"
-
-#: meetService/apps/reviews/admin.py:214
-#, python-format
-msgid "Отклонено отзывов: %(count)s"
-msgstr "Rejected reviews: %(count)s"
-
-#: meetService/apps/reviews/models.py:25
-#: meetService/apps/specialists/models.py:29
-msgid "Скрыт"
-msgstr "Hidden"
-
-#: meetService/apps/reviews/models.py:33
-msgid "Проект, в рамках которого оставлен отзыв."
-msgstr "The project for which the review was left."
-
-#: meetService/apps/reviews/models.py:39
-msgid "автор отзыва"
-msgstr "review author"
-
-#: meetService/apps/reviews/models.py:40
-msgid "Пользователь, который оставил отзыв."
-msgstr "The user who left the review."
-
-#: meetService/apps/reviews/models.py:47
-msgid "Специалист, о котором оставлен отзыв."
-msgstr "The specialist this review is about."
-
-#: meetService/apps/reviews/models.py:54
-msgid "оценка"
-msgstr "rating"
-
-#: meetService/apps/reviews/models.py:55
-msgid "Оценка от 1 до 5."
-msgstr "Rating from 1 to 5."
-
-#: meetService/apps/reviews/models.py:58
-msgid "текст отзыва"
-msgstr "review text"
-
-#: meetService/apps/reviews/models.py:78
-msgid "отзыв"
-msgstr "review"
-
-#: meetService/apps/reviews/models.py:79
-msgid "отзывы"
-msgstr "reviews"
-
-#: meetService/apps/specialists/admin.py:250
+#: meetService/apps/specialists/admin.py:206
 msgid "Пользователь и роль"
 msgstr "User and role"
 
-#: meetService/apps/specialists/admin.py:263
+#: meetService/apps/specialists/admin.py:219
 msgid "Профиль"
 msgstr "Profile"
 
-#: meetService/apps/specialists/admin.py:277
+#: meetService/apps/specialists/admin.py:233
 msgid "Ссылки и контакты"
 msgstr "Links and contacts"
 
-#: meetService/apps/specialists/admin.py:288
+#: meetService/apps/specialists/admin.py:244
 msgid "Статистика специалиста"
 msgstr "Specialist statistics"
 
-#: meetService/apps/specialists/admin.py:378
-#| msgid "Мои проекты"
+#: meetService/apps/specialists/admin.py:331
 msgid "Активных проектов"
 msgstr "Active projects"
 
-#: meetService/apps/specialists/admin.py:387
-#| msgid "Мои отклики"
+#: meetService/apps/specialists/admin.py:340
 msgid "Откликов"
 msgstr "Applications"
 
-#: meetService/apps/specialists/admin.py:396
-#| msgid "Мои приглашения"
+#: meetService/apps/specialists/admin.py:349
 msgid "Приглашений"
 msgstr "Invitations"
 
-#: meetService/apps/specialists/admin.py:405
-msgid "Отзывов"
-msgstr "Reviews"
-
-#: meetService/apps/specialists/admin.py:414
-msgid "Средняя оценка"
-msgstr "Average rating"
-
-#: meetService/apps/specialists/admin.py:428
+#: meetService/apps/specialists/admin.py:358
 msgid "Доступен"
 msgstr "Available"
 
-#: meetService/apps/specialists/admin.py:437
+#: meetService/apps/specialists/admin.py:367
 msgid "Предпросмотр аватара"
 msgstr "Avatar preview"
 
-#: meetService/apps/specialists/admin.py:449
+#: meetService/apps/specialists/admin.py:379
 msgid "Аватар не загружен"
 msgstr "Avatar not uploaded"
 
-#: meetService/apps/specialists/admin.py:451
+#: meetService/apps/specialists/admin.py:381
 msgid "Установить статус «Ищу проект»"
 msgstr "Set status to “Looking for a project”"
 
-#: meetService/apps/specialists/admin.py:462
-#: meetService/apps/specialists/admin.py:476
-#: meetService/apps/specialists/admin.py:490
+#: meetService/apps/specialists/admin.py:394
+#: meetService/apps/specialists/admin.py:410
+#: meetService/apps/specialists/admin.py:426
 #, python-format
 msgid "Обновлено профилей: %(count)s"
 msgstr "Updated profiles: %(count)s"
 
-#: meetService/apps/specialists/admin.py:465
+#: meetService/apps/specialists/admin.py:397
 msgid "Установить статус «Открыт к предложениям»"
 msgstr "Set status to “Open to offers”"
 
-#: meetService/apps/specialists/admin.py:479
+#: meetService/apps/specialists/admin.py:413
 msgid "Установить статус «Занят»"
 msgstr "Set status to “Busy”"
 
@@ -1983,7 +1870,6 @@ msgid "Статус поиска"
 msgstr "Search status"
 
 #: meetService/apps/specialists/forms.py:102
-#| msgid "О сервисе"
 msgid "О себе"
 msgstr "About me"
 
@@ -2007,7 +1893,9 @@ msgstr "For example: looking for a project, open to offers, or busy."
 
 #: meetService/apps/specialists/forms.py:112
 msgid "Коротко опиши стек, опыт и тип проектов, которые тебе интересны."
-msgstr "Briefly describe your stack, experience, and the types of projects you are interested in."
+msgstr ""
+"Briefly describe your stack, experience, and the types of projects you are "
+"interested in."
 
 #: meetService/apps/specialists/forms.py:117
 msgid "Расскажи немного о себе."
@@ -2056,6 +1944,10 @@ msgstr "Open to offers"
 #: meetService/apps/specialists/models.py:28
 msgid "Занят"
 msgstr "Busy"
+
+#: meetService/apps/specialists/models.py:29
+msgid "Скрыт"
+msgstr "Hidden"
 
 #: meetService/apps/specialists/models.py:32
 msgid "Удалённо"
@@ -2115,7 +2007,8 @@ msgstr "about me"
 
 #: meetService/apps/specialists/models.py:95
 msgid "Краткое описание опыта, интересов и целей специалиста."
-msgstr "Brief description of the specialist's experience, interests, and goals."
+msgstr ""
+"Brief description of the specialist's experience, interests, and goals."
 
 #: meetService/apps/specialists/models.py:103
 #: meetService/apps/specialists/models.py:246
@@ -2208,12 +2101,10 @@ msgid "технологии специалистов"
 msgstr "specialist technologies"
 
 #: meetService/apps/specialists/views.py:104
-#| msgid "Профиль специалиста"
 msgid "Профиль специалиста не найден."
 msgstr "Specialist profile not found."
 
 #: meetService/apps/specialists/views.py:146
-#| msgid "Профиль специалиста"
 msgid "Профиль специалиста сохранён."
 msgstr "Specialist profile saved."
 
@@ -2222,7 +2113,6 @@ msgid "Профиль специалиста не сохранён. Провер
 msgstr "Specialist profile was not saved. Check the form errors."
 
 #: meetService/apps/specialists/views.py:160
-#| msgid "Профиль специалиста"
 msgid "Редактировать профиль специалиста"
 msgstr "Edit specialist profile"
 
@@ -2230,7 +2120,6 @@ msgstr "Edit specialist profile"
 #: meetService/templates/interactions/application_list.html:40
 #: meetService/templates/interactions/invitation_list.html:40
 #: meetService/templates/projects/my_teams.html:23
-#| msgid "Профиль специалиста"
 msgid "Заполнить профиль специалиста"
 msgstr "Complete specialist profile"
 
@@ -2238,11 +2127,11 @@ msgstr "Complete specialist profile"
 msgid "Сохранить профиль"
 msgstr "Save profile"
 
-#: meetService/config/settings.py:192
+#: meetService/config/settings.py:191
 msgid "Русский"
 msgstr "Russian"
 
-#: meetService/config/settings.py:193
+#: meetService/config/settings.py:192
 msgid "English"
 msgstr "English"
 
@@ -2251,7 +2140,6 @@ msgid "MeetService - администрирование"
 msgstr "MeetService - administration"
 
 #: meetService/config/urls.py:29
-#| msgid "сервис поиска IT-команды"
 msgid "Админка сервиса по поиску IT-команды"
 msgstr "Admin panel of the IT team matching service"
 
@@ -2264,12 +2152,12 @@ msgid "ошибка 403"
 msgstr "error 403"
 
 #: meetService/templates/403.html:9
-msgid "У тебя нет прав для выполнения этого действия или просмотра этой страницы."
+msgid ""
+"У тебя нет прав для выполнения этого действия или просмотра этой страницы."
 msgstr "You do not have permission to perform this action or view this page."
 
 #: meetService/templates/403.html:11 meetService/templates/403_csrf.html:11
 #: meetService/templates/404.html:11
-#| msgid "Главная"
 msgid "На главную"
 msgstr "To home"
 
@@ -2298,8 +2186,13 @@ msgid "Форма устарела или отправлена некоррек�
 msgstr "The form has expired or was submitted incorrectly"
 
 #: meetService/templates/403_csrf.html:9
-msgid "Django отклонил запрос для защиты аккаунта. Обычно это происходит, если страница была открыта слишком долго или форма отправлена без CSRF-токена."
-msgstr "Django rejected the request to protect the account. This usually happens if the page was open for too long or the form was submitted without a CSRF token."
+msgid ""
+"Django отклонил запрос для защиты аккаунта. Обычно это происходит, если "
+"страница была открыта слишком долго или форма отправлена без CSRF-токена."
+msgstr ""
+"Django rejected the request to protect the account. This usually happens if "
+"the page was open for too long or the form was submitted without a CSRF "
+"token."
 
 #: meetService/templates/404.html:3 meetService/templates/404.html:8
 msgid "Страница не найдена"
@@ -2310,18 +2203,19 @@ msgid "ошибка 404"
 msgstr "error 404"
 
 #: meetService/templates/404.html:9
-msgid "Такой страницы нет, она была удалена или у тебя нет доступа к этому объекту."
-msgstr "This page does not exist, has been deleted, or you do not have access to this object."
+msgid ""
+"Такой страницы нет, она была удалена или у тебя нет доступа к этому объекту."
+msgstr ""
+"This page does not exist, has been deleted, or you do not have access to "
+"this object."
 
 #: meetService/templates/404.html:12
 #: meetService/templates/projects/home.html:199
 #: meetService/templates/projects/project_list.html:4
-#| msgid "Мои проекты"
 msgid "Каталог проектов"
 msgstr "Project catalog"
 
 #: meetService/templates/500.html:9
-#| msgid "О сервисе"
 msgid "Ошибка сервера"
 msgstr "Server error"
 
@@ -2334,8 +2228,12 @@ msgid "Что-то пошло не так"
 msgstr "Something went wrong"
 
 #: meetService/templates/500.html:17
-msgid "На сервере произошла ошибка. Попробуй вернуться на главную или повторить действие позже."
-msgstr "A server error occurred. Try returning to the home page or repeat the action later."
+msgid ""
+"На сервере произошла ошибка. Попробуй вернуться на главную или повторить "
+"действие позже."
+msgstr ""
+"A server error occurred. Try returning to the home page or repeat the action "
+"later."
 
 #: meetService/templates/500.html:18
 msgid "Вернуться на главную"
@@ -2354,7 +2252,8 @@ msgstr "account"
 
 #: meetService/templates/accounts/login.html:9
 msgid "Войди, чтобы управлять профилем, проектами, откликами и приглашениями."
-msgstr "Sign in to manage your profile, projects, applications, and invitations."
+msgstr ""
+"Sign in to manage your profile, projects, applications, and invitations."
 
 #: meetService/templates/accounts/login.html:27
 msgid "Войти через Google"
@@ -2371,14 +2270,12 @@ msgstr "No account?"
 #: meetService/templates/accounts/login.html:35
 #: meetService/templates/accounts/register.html:23
 #: meetService/templates/projects/home.html:20
-#| msgid "Регистрация"
 msgid "Зарегистрироваться"
 msgstr "Register"
 
 #: meetService/templates/accounts/profile.html:4
 #: meetService/templates/base.html:100 meetService/templates/base.html:101
 #: meetService/templates/search/global_search.html:83
-#| msgid "Кабинет"
 msgid "Личный кабинет"
 msgstr "Dashboard"
 
@@ -2407,14 +2304,17 @@ msgstr "not specified"
 #: meetService/templates/interactions/application_list.html:6
 #: meetService/templates/interactions/favorite_project_list.html:9
 #: meetService/templates/interactions/invitation_list.html:6
-#| msgid "Кабинет"
 msgid "личный кабинет"
 msgstr "dashboard"
 
 #: meetService/templates/accounts/profile.html:14
 #, python-format
-msgid "%(applications)s откликов · %(invitations)s приглашений · роль на сервисе: %(role)s"
-msgstr "%(applications)s applications · %(invitations)s invitations · service role: %(role)s"
+msgid ""
+"%(applications)s откликов · %(invitations)s приглашений · роль на сервисе: "
+"%(role)s"
+msgstr ""
+"%(applications)s applications · %(invitations)s invitations · service role: "
+"%(role)s"
 
 #: meetService/templates/accounts/profile.html:17
 #: meetService/templates/specialists/specialist_detail.html:66
@@ -2426,8 +2326,12 @@ msgid "Укажите email для уведомлений"
 msgstr "Specify an email for notifications"
 
 #: meetService/templates/accounts/profile.html:25
-msgid "Сейчас email не указан, поэтому письма по откликам и приглашениям не смогут приходить на почту."
-msgstr "Email is currently not specified, so messages about applications and invitations cannot be sent by email."
+msgid ""
+"Сейчас email не указан, поэтому письма по откликам и приглашениям не смогут "
+"приходить на почту."
+msgstr ""
+"Email is currently not specified, so messages about applications and "
+"invitations cannot be sent by email."
 
 #: meetService/templates/accounts/profile.html:38
 msgid "Сохранить email"
@@ -2439,7 +2343,6 @@ msgstr "profile"
 
 #: meetService/templates/accounts/profile.html:49
 #: meetService/templates/accounts/profile.html:269
-#| msgid "Мои проекты"
 msgid "Мой профиль"
 msgstr "My profile"
 
@@ -2459,7 +2362,6 @@ msgid "Редактировать"
 msgstr "Edit"
 
 #: meetService/templates/accounts/profile.html:69
-#| msgid "Профиль специалиста"
 msgid "Профиль специалиста ещё не создан."
 msgstr "Specialist profile has not been created yet."
 
@@ -2478,23 +2380,19 @@ msgid "Активность"
 msgstr "Activity"
 
 #: meetService/templates/accounts/profile.html:85
-#| msgid "Мои проекты"
 msgid "моих проектов"
 msgstr "my projects"
 
 #: meetService/templates/accounts/profile.html:91
 #: meetService/templates/interactions/application_list.html:15
-#| msgid "Мои отклики"
 msgid "моих откликов"
 msgstr "my applications"
 
 #: meetService/templates/accounts/profile.html:97
-#| msgid "Мои приглашения"
 msgid "приглашений"
 msgstr "invitations"
 
 #: meetService/templates/accounts/profile.html:103
-#| msgid "Избранное"
 msgid "избранных проектов"
 msgstr "favorite projects"
 
@@ -2512,7 +2410,6 @@ msgid "Ты пока не отправлял отклики."
 msgstr "You have not sent any applications yet."
 
 #: meetService/templates/accounts/profile.html:133
-#| msgid "Мои отклики"
 msgid "Открыть отклики"
 msgstr "Open applications"
 
@@ -2521,7 +2418,6 @@ msgid "Мои приглашения"
 msgstr "My invitations"
 
 #: meetService/templates/accounts/profile.html:156
-#| msgid "Мои приглашения"
 msgid "Новых приглашений пока нет."
 msgstr "No new invitations yet."
 
@@ -2542,7 +2438,8 @@ msgid "Новых входящих откликов нет"
 msgstr "No new incoming applications"
 
 #: meetService/templates/accounts/profile.html:183
-msgid "Когда специалисты будут откликаться на твои проекты, они появятся здесь."
+msgid ""
+"Когда специалисты будут откликаться на твои проекты, они появятся здесь."
 msgstr "When specialists apply to your projects, they will appear here."
 
 #: meetService/templates/accounts/profile.html:194
@@ -2554,7 +2451,6 @@ msgid "Мои проекты"
 msgstr "My projects"
 
 #: meetService/templates/accounts/profile.html:197
-#| msgid "Мои проекты"
 msgid "Все мои проекты"
 msgstr "All my projects"
 
@@ -2567,7 +2463,6 @@ msgid "Создай проект, чтобы собрать команду."
 msgstr "Create a project to build a team."
 
 #: meetService/templates/accounts/profile.html:223
-#| msgid "Мои команды"
 msgid "команды"
 msgstr "teams"
 
@@ -2579,7 +2474,6 @@ msgid "Мои команды"
 msgstr "My teams"
 
 #: meetService/templates/accounts/profile.html:226
-#| msgid "Мои команды"
 msgid "Все команды"
 msgstr "All teams"
 
@@ -2596,21 +2490,20 @@ msgstr "Apply to a project or accept an invitation from the owner."
 #: meetService/templates/interactions/application_list.html:60
 #: meetService/templates/projects/home.html:15
 #: meetService/templates/projects/my_teams.html:76
-#| msgid "Мои проекты"
 msgid "Найти проект"
 msgstr "Find a project"
 
 #: meetService/templates/accounts/profile.html:247
-#| msgid "Профиль специалиста"
 msgid "Профиль специалиста не создан"
 msgstr "Specialist profile not created"
 
 #: meetService/templates/accounts/profile.html:248
-msgid "Чтобы откликаться на проекты и состоять в командах, заполни профиль специалиста."
+msgid ""
+"Чтобы откликаться на проекты и состоять в командах, заполни профиль "
+"специалиста."
 msgstr "Complete your specialist profile to apply to projects and join teams."
 
 #: meetService/templates/accounts/profile.html:277
-#| msgid "Мои приглашения"
 msgid "Предпочтения"
 msgstr "Preferences"
 
@@ -2632,7 +2525,6 @@ msgid "Часовой пояс:"
 msgstr "Time zone:"
 
 #: meetService/templates/accounts/profile.html:292
-#| msgid "Профиль специалиста"
 msgid "Профиль специалиста пока не заполнен."
 msgstr "Specialist profile is not filled in yet."
 
@@ -2660,7 +2552,6 @@ msgid "<strong>%(count)s</strong> сохранённых проектов."
 msgstr "<strong>%(count)s</strong> saved projects."
 
 #: meetService/templates/accounts/profile.html:326
-#| msgid "Избранное"
 msgid "Открыть избранное"
 msgstr "Open favorites"
 
@@ -2677,7 +2568,6 @@ msgstr "Find a project to join or a specialist for your team."
 
 #: meetService/templates/accounts/profile.html:333
 #: meetService/templates/interactions/invitation_list.html:112
-#| msgid "Профиль специалиста"
 msgid "Найти специалиста"
 msgstr "Find a specialist"
 
@@ -2704,8 +2594,12 @@ msgid "новый аккаунт"
 msgstr "new account"
 
 #: meetService/templates/accounts/register.html:9
-msgid "Создай аккаунт, чтобы откликаться на проекты, собирать команду и управлять своим профилем специалиста."
-msgstr "Create an account to apply to projects, build a team, and manage your specialist profile."
+msgid ""
+"Создай аккаунт, чтобы откликаться на проекты, собирать команду и управлять "
+"своим профилем специалиста."
+msgstr ""
+"Create an account to apply to projects, build a team, and manage your "
+"specialist profile."
 
 #: meetService/templates/accounts/register.html:26
 msgid "Уже есть аккаунт?"
@@ -2750,21 +2644,18 @@ msgid "Выбор языка"
 msgstr "Language selection"
 
 #: meetService/templates/base.html:80 meetService/templates/base.html:81
-#| msgid "Мои приглашения"
 msgid "Уведомления"
 msgstr "Notifications"
 
 #: meetService/templates/base.html:89
 #: meetService/templates/interactions/application_list.html:3
 #: meetService/templates/interactions/application_list.html:7
-#| msgid "Мои отклики"
 msgid "Отклики"
 msgstr "Applications"
 
 #: meetService/templates/base.html:93
 #: meetService/templates/interactions/invitation_list.html:3
 #: meetService/templates/interactions/invitation_list.html:7
-#| msgid "Мои приглашения"
 msgid "Приглашения"
 msgstr "Invitations"
 
@@ -2790,7 +2681,6 @@ msgstr "Enable black-and-white mode"
 
 #: meetService/templates/emails/base.html:19
 #: meetService/templates/emails/base.txt:18
-#| msgid "сервис поиска IT-команды"
 msgid "Сервис поиска IT-команды"
 msgstr "IT team matching service"
 
@@ -2803,27 +2693,28 @@ msgid "Сообщение:"
 msgstr "Message:"
 
 #: meetService/templates/interactions/application_list.html:8
-msgid "Здесь собраны твои отправленные отклики и входящие заявки на проекты, которыми ты владеешь."
-msgstr "Here you can find your sent applications and incoming applications for projects you own."
+msgid ""
+"Здесь собраны твои отправленные отклики и входящие заявки на проекты, "
+"которыми ты владеешь."
+msgstr ""
+"Here you can find your sent applications and incoming applications for "
+"projects you own."
 
 #: meetService/templates/interactions/application_list.html:21
 msgid "новых откликов на мои проекты"
 msgstr "new applications to my projects"
 
 #: meetService/templates/interactions/application_list.html:30
-#| msgid "Мои отклики"
 msgid "я откликнулся"
 msgstr "I applied"
 
 #: meetService/templates/interactions/application_list.html:31
-#| msgid "Мои отклики"
 msgid "Мои отправленные отклики"
 msgstr "My sent applications"
 
 #: meetService/templates/interactions/application_list.html:37
 #: meetService/templates/interactions/invitation_list.html:37
 #: meetService/templates/projects/my_teams.html:20
-#| msgid "Профиль специалиста"
 msgid "Профиль специалиста не найден"
 msgstr "Specialist profile not found"
 
@@ -2844,15 +2735,14 @@ msgstr "No applications yet"
 
 #: meetService/templates/interactions/application_list.html:59
 msgid "Открой каталог проектов и отправь первый отклик на подходящую роль."
-msgstr "Open the project catalog and send your first application to a suitable role."
+msgstr ""
+"Open the project catalog and send your first application to a suitable role."
 
 #: meetService/templates/interactions/application_list.html:69
-#| msgid "Мои проекты"
 msgid "мои проекты"
 msgstr "my projects"
 
 #: meetService/templates/interactions/application_list.html:70
-#| msgid "Мои отклики"
 msgid "Входящие отклики"
 msgstr "Incoming applications"
 
@@ -2879,7 +2769,6 @@ msgid "Когда специалисты откликнутся на твои п
 msgstr "When specialists apply to your projects, requests will appear here."
 
 #: meetService/templates/interactions/favorite_project_list.html:10
-#| msgid "Избранное"
 msgid "Избранные проекты"
 msgstr "Favorite projects"
 
@@ -2906,7 +2795,6 @@ msgstr "Stack not specified"
 #: meetService/templates/projects/includes/project_card.html:3
 #: meetService/templates/projects/my_teams.html:67
 #: meetService/templates/projects/project_list.html:7
-#| msgid "Мои проекты"
 msgid "Открыть проект"
 msgstr "Open project"
 
@@ -2927,8 +2815,12 @@ msgid "Перейти в каталог"
 msgstr "Go to catalog"
 
 #: meetService/templates/interactions/invitation_list.html:8
-msgid "Здесь собраны приглашения, которые ты получил как специалист, и приглашения, которые ты отправил как владелец проекта."
-msgstr "Here you can find invitations you received as a specialist and invitations you sent as a project owner."
+msgid ""
+"Здесь собраны приглашения, которые ты получил как специалист, и приглашения, "
+"которые ты отправил как владелец проекта."
+msgstr ""
+"Here you can find invitations you received as a specialist and invitations "
+"you sent as a project owner."
 
 #: meetService/templates/interactions/invitation_list.html:15
 msgid "получено"
@@ -2943,7 +2835,6 @@ msgid "мне отправили"
 msgstr "sent to me"
 
 #: meetService/templates/interactions/invitation_list.html:31
-#| msgid "Мои приглашения"
 msgid "Полученные приглашения"
 msgstr "Received invitations"
 
@@ -2956,20 +2847,20 @@ msgid "Приглашений пока нет"
 msgstr "No invitations yet"
 
 #: meetService/templates/interactions/invitation_list.html:75
-msgid "Когда владелец проекта пригласит тебя в команду, приглашение появится здесь."
-msgstr "When a project owner invites you to a team, the invitation will appear here."
+msgid ""
+"Когда владелец проекта пригласит тебя в команду, приглашение появится здесь."
+msgstr ""
+"When a project owner invites you to a team, the invitation will appear here."
 
 #: meetService/templates/interactions/invitation_list.html:84
 msgid "я отправил"
 msgstr "I sent"
 
 #: meetService/templates/interactions/invitation_list.html:85
-#| msgid "Мои приглашения"
 msgid "Отправленные приглашения"
 msgstr "Sent invitations"
 
 #: meetService/templates/interactions/invitation_list.html:95
-#| msgid "Специалисты"
 msgid "Специалист:"
 msgstr "Specialist:"
 
@@ -2982,16 +2873,18 @@ msgid "Открой каталог специалистов и пригласи 
 msgstr "Open the specialist catalog and invite a suitable participant."
 
 #: meetService/templates/interactions/invite_specialist.html:3
-#| msgid "Профиль специалиста"
 msgid "Приглашение специалиста"
 msgstr "Specialist invitation"
 
 #: meetService/templates/interactions/invite_specialist.html:8
-msgid "Выбери открытую роль в своём опубликованном проекте и отправь приглашение специалисту."
-msgstr "Select an open role in your published project and send an invitation to the specialist."
+msgid ""
+"Выбери открытую роль в своём опубликованном проекте и отправь приглашение "
+"специалисту."
+msgstr ""
+"Select an open role in your published project and send an invitation to the "
+"specialist."
 
 #: meetService/templates/interactions/invite_specialist.html:26
-#| msgid "Мои приглашения"
 msgid "Отправить приглашение"
 msgstr "Send invitation"
 
@@ -3000,7 +2893,6 @@ msgid "Вернуться к профилю"
 msgstr "Back to profile"
 
 #: meetService/templates/interactions/project_apply.html:3
-#| msgid "Мои проекты"
 msgid "Отклик на проект"
 msgstr "Application to project"
 
@@ -3009,7 +2901,6 @@ msgid "Выбери открытую роль и отправь короткое
 msgstr "Select an open role and send a short message to the project owner."
 
 #: meetService/templates/interactions/project_apply.html:26
-#| msgid "Мои отклики"
 msgid "Отправить отклик"
 msgstr "Send application"
 
@@ -3022,7 +2913,6 @@ msgid "Главная"
 msgstr "Home"
 
 #: meetService/templates/projects/home.html:11
-#| msgid "Мои команды"
 msgid "поиск IT-команды"
 msgstr "IT team search"
 
@@ -3031,11 +2921,14 @@ msgid "Найди свой проект или собери команду ме�
 msgstr "Find your project or build your dream team"
 
 #: meetService/templates/projects/home.html:13
-msgid "New-Makers помогает специалистам находить проекты, а владельцам идей — собирать команду под MVP, стартап, учебную или коммерческую разработку."
-msgstr "New-Makers helps specialists find projects, and idea owners build teams for an MVP, startup, educational or commercial development."
+msgid ""
+"New-Makers помогает специалистам находить проекты, а владельцам идей — "
+"собирать команду под MVP, стартап, учебную или коммерческую разработку."
+msgstr ""
+"New-Makers helps specialists find projects, and idea owners build teams for "
+"an MVP, startup, educational or commercial development."
 
 #: meetService/templates/projects/home.html:16
-#| msgid "Мои команды"
 msgid "Собрать команду"
 msgstr "Build a team"
 
@@ -3060,7 +2953,6 @@ msgid "Буду в конфе через 5 минут!"
 msgstr "I’ll be in the call in 5 minutes!"
 
 #: meetService/templates/projects/home.html:51
-#| msgid "сервис поиска IT-команды"
 msgid "Собери и свою команду!"
 msgstr "Build your own team too!"
 
@@ -3069,7 +2961,6 @@ msgid "4 открытые роли · 12 откликов"
 msgstr "4 open roles · 12 applications"
 
 #: meetService/templates/projects/home.html:61
-#| msgid "Проекты"
 msgid "проектов"
 msgstr "projects"
 
@@ -3078,12 +2969,10 @@ msgid "открытых ролей"
 msgstr "open roles"
 
 #: meetService/templates/projects/home.html:69
-#| msgid "Специалисты"
 msgid "специалистов"
 msgstr "specialists"
 
 #: meetService/templates/projects/home.html:73
-#| msgid "сервис поиска IT-команды"
 msgid "участников команд"
 msgstr "team members"
 
@@ -3093,12 +2982,10 @@ msgstr "Recently viewed projects"
 
 #: meetService/templates/projects/home.html:82
 #: meetService/templates/search/global_search.html:99
-#| msgid "Мои проекты"
 msgid "Все проекты"
 msgstr "All projects"
 
 #: meetService/templates/projects/home.html:106
-#| msgid "Мои проекты"
 msgid "активные проекты"
 msgstr "active projects"
 
@@ -3120,15 +3007,16 @@ msgid "Пока нет активных проектов"
 msgstr "No active projects yet"
 
 #: meetService/templates/projects/home.html:136
-msgid "Когда появятся опубликованные проекты с открытыми ролями, они будут здесь."
-msgstr "Published projects with open roles will appear here when they are available."
+msgid ""
+"Когда появятся опубликованные проекты с открытыми ролями, они будут здесь."
+msgstr ""
+"Published projects with open roles will appear here when they are available."
 
 #: meetService/templates/projects/home.html:145
 msgid "открытые роли"
 msgstr "open roles"
 
 #: meetService/templates/projects/home.html:146
-#| msgid "Мои команды"
 msgid "Кого ищут в команды"
 msgstr "Who teams are looking for"
 
@@ -3148,7 +3036,6 @@ msgstr "There are no open roles now."
 
 #: meetService/templates/projects/home.html:169
 #: meetService/templates/search/global_search.html:139
-#| msgid "Специалисты"
 msgid "специалисты"
 msgstr "specialists"
 
@@ -3158,7 +3045,6 @@ msgstr "Open to projects"
 
 #: meetService/templates/projects/home.html:172
 #: meetService/templates/search/global_search.html:143
-#| msgid "Специалисты"
 msgid "Все специалисты"
 msgstr "All specialists"
 
@@ -3176,7 +3062,6 @@ msgstr "Popular technologies"
 
 #: meetService/templates/projects/home.html:205
 #, python-format
-#| msgid "Проекты"
 msgid "%(count)s проект"
 msgid_plural "%(count)s проектов"
 msgstr[0] "%(count)s project"
@@ -3191,7 +3076,6 @@ msgid "как это работает"
 msgstr "how it works"
 
 #: meetService/templates/projects/home.html:216
-#| msgid "Мои команды"
 msgid "От идеи до команды"
 msgstr "From idea to team"
 
@@ -3204,13 +3088,14 @@ msgid "Описывает цель, стадию, стек и открытые �
 msgstr "Describes the goal, stage, stack, and open roles for the team."
 
 #: meetService/templates/projects/home.html:227
-#| msgid "Специалисты"
 msgid "Специалист находит роль"
 msgstr "The specialist finds a role"
 
 #: meetService/templates/projects/home.html:228
 msgid "Ищет проект по технологиям, роли, уровню и формату участия."
-msgstr "Searches for a project by technologies, role, level, and participation format."
+msgstr ""
+"Searches for a project by technologies, role, level, and participation "
+"format."
 
 #: meetService/templates/projects/home.html:232
 msgid "Команда собирается"
@@ -3229,8 +3114,12 @@ msgid "Соберите команду под свой проект"
 msgstr "Build a team for your project"
 
 #: meetService/templates/projects/home.html:241
-msgid "Создайте проект, добавьте первую открытую роль и покажите специалистам, зачем к вам присоединяться."
-msgstr "Create a project, add the first open role, and show specialists why they should join you."
+msgid ""
+"Создайте проект, добавьте первую открытую роль и покажите специалистам, "
+"зачем к вам присоединяться."
+msgstr ""
+"Create a project, add the first open role, and show specialists why they "
+"should join you."
 
 #: meetService/templates/projects/home.html:249
 msgid "Ответы на вопросы"
@@ -3241,7 +3130,8 @@ msgid "Нужна ли регистрация для просмотра прое
 msgstr "Is registration required to view projects?"
 
 #: meetService/templates/projects/home.html:255
-msgid "Нет. Гость может смотреть каталоги, карточки проектов и профили специалистов."
+msgid ""
+"Нет. Гость может смотреть каталоги, карточки проектов и профили специалистов."
 msgstr "No. A guest can view catalogs, project cards, and specialist profiles."
 
 #: meetService/templates/projects/home.html:258
@@ -3249,24 +3139,36 @@ msgid "Как откликнуться на роль?"
 msgstr "How do I apply for a role?"
 
 #: meetService/templates/projects/home.html:259
-msgid "Нужно войти в аккаунт специалиста, заполнить профиль и отправить отклик на открытой роли проекта."
-msgstr "You need to sign in to a specialist account, complete your profile, and apply to an open project role."
+msgid ""
+"Нужно войти в аккаунт специалиста, заполнить профиль и отправить отклик на "
+"открытой роли проекта."
+msgstr ""
+"You need to sign in to a specialist account, complete your profile, and "
+"apply to an open project role."
 
 #: meetService/templates/projects/home.html:262
 msgid "Можно ли создать проект без команды?"
 msgstr "Can I create a project without a team?"
 
 #: meetService/templates/projects/home.html:263
-msgid "Да. Владелец создаёт проект, добавляет открытые роли и постепенно собирает участников."
-msgstr "Yes. The owner creates a project, adds open roles, and gradually builds the team."
+msgid ""
+"Да. Владелец создаёт проект, добавляет открытые роли и постепенно собирает "
+"участников."
+msgstr ""
+"Yes. The owner creates a project, adds open roles, and gradually builds the "
+"team."
 
 #: meetService/templates/projects/home.html:266
 msgid "Это сайт вакансий?"
 msgstr "Is this a job website?"
 
 #: meetService/templates/projects/home.html:267
-msgid "Нет. Главный смысл сервиса — собрать команду вокруг проекта, идеи, MVP или разработки."
-msgstr "No. The main purpose of the service is to build a team around a project, idea, MVP, or development."
+msgid ""
+"Нет. Главный смысл сервиса — собрать команду вокруг проекта, идеи, MVP или "
+"разработки."
+msgstr ""
+"No. The main purpose of the service is to build a team around a project, "
+"idea, MVP, or development."
 
 #: meetService/templates/projects/my_projects.html:8
 msgid "Закрыть проект для новых участников?"
@@ -3278,8 +3180,11 @@ msgid "Снова открыть проект для набора участни
 msgstr "Reopen the project for recruitment?"
 
 #: meetService/templates/projects/my_projects.html:14
-msgid "Здесь собраны проекты, где в поле «владелец проекта» указан твой аккаунт."
-msgstr "Here are projects where your account is specified in the “project owner” field."
+msgid ""
+"Здесь собраны проекты, где в поле «владелец проекта» указан твой аккаунт."
+msgstr ""
+"Here are projects where your account is specified in the “project owner” "
+"field."
 
 #: meetService/templates/projects/my_projects.html:15
 #, python-format
@@ -3300,8 +3205,11 @@ msgid "активная работа"
 msgstr "active work"
 
 #: meetService/templates/projects/my_projects.html:28
-msgid "Показываются черновики, проекты на модерации, опубликованные и закрытые проекты."
-msgstr "Drafts, projects under moderation, published and closed projects are shown."
+msgid ""
+"Показываются черновики, проекты на модерации, опубликованные и закрытые "
+"проекты."
+msgstr ""
+"Drafts, projects under moderation, published and closed projects are shown."
 
 #: meetService/templates/projects/my_projects.html:60
 #: meetService/templates/search/global_search.html:122
@@ -3333,8 +3241,12 @@ msgid "У тебя пока нет активных проектов"
 msgstr "You have no active projects yet"
 
 #: meetService/templates/projects/my_projects.html:91
-msgid "Создай первый проект. Он сохранится как черновик, после чего ты сможешь добавить открытую роль."
-msgstr "Create your first project. It will be saved as a draft, and then you can add an open role."
+msgid ""
+"Создай первый проект. Он сохранится как черновик, после чего ты сможешь "
+"добавить открытую роль."
+msgstr ""
+"Create your first project. It will be saved as a draft, and then you can add "
+"an open role."
 
 #: meetService/templates/projects/my_projects.html:97
 msgid "Пагинация моих проектов"
@@ -3373,13 +3285,16 @@ msgid "история владельца"
 msgstr "owner history"
 
 #: meetService/templates/projects/my_projects.html:112
-#| msgid "Мои проекты"
 msgid "Архивные проекты"
 msgstr "Archived projects"
 
 #: meetService/templates/projects/my_projects.html:114
-msgid "Эти проекты окончательно закрыты. Их нельзя редактировать, открыть заново или пополнить ролями."
-msgstr "These projects are permanently closed. They cannot be edited, reopened, or filled with roles."
+msgid ""
+"Эти проекты окончательно закрыты. Их нельзя редактировать, открыть заново "
+"или пополнить ролями."
+msgstr ""
+"These projects are permanently closed. They cannot be edited, reopened, or "
+"filled with roles."
 
 #: meetService/templates/projects/my_projects.html:146
 #: meetService/templates/projects/my_teams.html:130
@@ -3399,13 +3314,16 @@ msgid "Пагинация архивных проектов"
 msgstr "Archived projects pagination"
 
 #: meetService/templates/projects/my_teams.html:9
-#| msgid "Мои проекты"
 msgid "участие в проектах"
 msgstr "project participation"
 
 #: meetService/templates/projects/my_teams.html:12
-msgid "Здесь отображаются проекты, где ты состоишь или состоял в команде как специалист."
-msgstr "Projects where you are or were a team member as a specialist are displayed here."
+msgid ""
+"Здесь отображаются проекты, где ты состоишь или состоял в команде как "
+"специалист."
+msgstr ""
+"Projects where you are or were a team member as a specialist are displayed "
+"here."
 
 #: meetService/templates/projects/my_teams.html:13
 #, python-format
@@ -3422,11 +3340,14 @@ msgstr[0] "Archived participation: %(counter)s."
 msgstr[1] "Archived participations: %(counter)s."
 
 #: meetService/templates/projects/my_teams.html:21
-msgid "Чтобы состоять в командах, откликаться на проекты и принимать приглашения, сначала нужно заполнить профиль специалиста."
-msgstr "To join teams, apply to projects, and accept invitations, you need to complete your specialist profile first."
+msgid ""
+"Чтобы состоять в командах, откликаться на проекты и принимать приглашения, "
+"сначала нужно заполнить профиль специалиста."
+msgstr ""
+"To join teams, apply to projects, and accept invitations, you need to "
+"complete your specialist profile first."
 
 #: meetService/templates/projects/my_teams.html:24
-#| msgid "Мои проекты"
 msgid "Смотреть проекты"
 msgstr "View projects"
 
@@ -3444,10 +3365,10 @@ msgstr "You are not on any active teams yet"
 
 #: meetService/templates/projects/my_teams.html:75
 msgid "Найди проект, отправь отклик или прими приглашение владельца."
-msgstr "Find a project, send an application, or accept an invitation from an owner."
+msgstr ""
+"Find a project, send an application, or accept an invitation from an owner."
 
 #: meetService/templates/projects/my_teams.html:81
-#| msgid "сервис поиска IT-команды"
 msgid "Пагинация моих команд"
 msgstr "My teams pagination"
 
@@ -3456,13 +3377,15 @@ msgid "история участия"
 msgstr "participation history"
 
 #: meetService/templates/projects/my_teams.html:96
-#| msgid "Мои команды"
 msgid "Архивные команды"
 msgstr "Archived teams"
 
 #: meetService/templates/projects/my_teams.html:98
-msgid "Здесь проекты, которые были окончательно архивированы, но где ты был участником команды."
-msgstr "Projects that were permanently archived, but where you were a team member."
+msgid ""
+"Здесь проекты, которые были окончательно архивированы, но где ты был "
+"участником команды."
+msgstr ""
+"Projects that were permanently archived, but where you were a team member."
 
 #: meetService/templates/projects/my_teams.html:137
 msgid "История участия пока пуста"
@@ -3477,7 +3400,6 @@ msgid "Пагинация архивных команд"
 msgstr "Archived teams pagination"
 
 #: meetService/templates/projects/project_archive_confirm.html:3
-#| msgid "Курсовой проект на Django"
 msgid "Архивация проекта"
 msgstr "Project archiving"
 
@@ -3491,8 +3413,14 @@ msgid "Архивировать проект «%(project_title)s»?"
 msgstr "Archive project “%(project_title)s”?"
 
 #: meetService/templates/projects/project_archive_confirm.html:9
-msgid "Это действие нельзя отменить. Проект исчезнет из публичного каталога, станет недоступен для новых откликов и будет удалён из избранного у всех пользователей."
-msgstr "This action cannot be undone. The project will disappear from the public catalog, become unavailable for new applications, and be removed from all users' favorites."
+msgid ""
+"Это действие нельзя отменить. Проект исчезнет из публичного каталога, станет "
+"недоступен для новых откликов и будет удалён из избранного у всех "
+"пользователей."
+msgstr ""
+"This action cannot be undone. The project will disappear from the public "
+"catalog, become unavailable for new applications, and be removed from all "
+"users' favorites."
 
 #: meetService/templates/projects/project_archive_confirm.html:10
 msgid "Для подтверждения введи полное название проекта."
@@ -3504,8 +3432,11 @@ msgid "Нужно ввести точно: %(project_title)s"
 msgstr "You need to enter exactly: %(project_title)s"
 
 #: meetService/templates/projects/project_archive_confirm.html:28
-msgid "Последнее подтверждение: окончательно архивировать проект? Восстановить его будет нельзя."
-msgstr "Final confirmation: permanently archive the project? It cannot be restored."
+msgid ""
+"Последнее подтверждение: окончательно архивировать проект? Восстановить его "
+"будет нельзя."
+msgstr ""
+"Final confirmation: permanently archive the project? It cannot be restored."
 
 #: meetService/templates/projects/project_archive_confirm.html:29
 msgid "Окончательно архивировать"
@@ -3533,12 +3464,20 @@ msgstr "Delete project draft?"
 
 #: meetService/templates/projects/project_confirm_delete.html:9
 #, python-format
-msgid "Ты собираешься удалить проект <strong>«%(project_title)s»</strong>. Это действие нельзя отменить."
-msgstr "You are about to delete the project <strong>“%(project_title)s”</strong>. This action cannot be undone."
+msgid ""
+"Ты собираешься удалить проект <strong>«%(project_title)s»</strong>. Это "
+"действие нельзя отменить."
+msgstr ""
+"You are about to delete the project <strong>“%(project_title)s”</strong>. "
+"This action cannot be undone."
 
 #: meetService/templates/projects/project_confirm_delete.html:10
-msgid "Удаление доступно только для черновиков. Опубликованные и закрытые проекты нужно переносить в архив."
-msgstr "Deletion is available only for drafts. Published and closed projects must be moved to the archive."
+msgid ""
+"Удаление доступно только для черновиков. Опубликованные и закрытые проекты "
+"нужно переносить в архив."
+msgstr ""
+"Deletion is available only for drafts. Published and closed projects must be "
+"moved to the archive."
 
 #: meetService/templates/projects/project_confirm_delete.html:13
 msgid "Да, удалить черновик"
@@ -3553,8 +3492,12 @@ msgid "Описание роли пока не заполнено."
 msgstr "The role description has not been filled in yet."
 
 #: meetService/templates/projects/project_detail.html:8
-msgid "Закрыть проект для новых участников? Проект останется видимым в каталоге, но новые отклики и вакансии будут недоступны."
-msgstr "Close the project for new participants? The project will remain visible in the catalog, but new applications and vacancies will be unavailable."
+msgid ""
+"Закрыть проект для новых участников? Проект останется видимым в каталоге, но "
+"новые отклики и вакансии будут недоступны."
+msgstr ""
+"Close the project for new participants? The project will remain visible in "
+"the catalog, but new applications and vacancies will be unavailable."
 
 #: meetService/templates/projects/project_detail.html:29
 msgid "Описание"
@@ -3580,7 +3523,6 @@ msgid "Открытых ролей сейчас нет."
 msgstr "There are no open roles now."
 
 #: meetService/templates/projects/project_detail.html:57
-#| msgid "Мои команды"
 msgid "Команда"
 msgstr "Team"
 
@@ -3601,7 +3543,6 @@ msgid "Файлы пока не прикреплены."
 msgstr "No files attached yet."
 
 #: meetService/templates/projects/project_detail.html:83
-#| msgid "Мои проекты"
 msgid "О проекте"
 msgstr "About the project"
 
@@ -3630,8 +3571,12 @@ msgid "Отправить на рассмотрение"
 msgstr "Submit for review"
 
 #: meetService/templates/projects/project_detail.html:125
-msgid "Проект уже отправлен на модерацию. После проверки администратор сможет опубликовать его через Django admin."
-msgstr "The project has already been sent for moderation. After review, an administrator can publish it through Django admin."
+msgid ""
+"Проект уже отправлен на модерацию. После проверки администратор сможет "
+"опубликовать его через Django admin."
+msgstr ""
+"The project has already been sent for moderation. After review, an "
+"administrator can publish it through Django admin."
 
 #: meetService/templates/projects/project_detail.html:131
 #: meetService/templates/projects/project_detail.html:137
@@ -3639,11 +3584,13 @@ msgid "Перенести в архив"
 msgstr "Move to archive"
 
 #: meetService/templates/projects/project_detail.html:139
-msgid "Проект находится в архиве. Его нельзя редактировать, открыть заново или пополнить ролями."
-msgstr "The project is archived. It cannot be edited, reopened, or filled with roles."
+msgid ""
+"Проект находится в архиве. Его нельзя редактировать, открыть заново или "
+"пополнить ролями."
+msgstr ""
+"The project is archived. It cannot be edited, reopened, or filled with roles."
 
 #: meetService/templates/projects/project_detail.html:143
-#| msgid "Мои проекты"
 msgid "Роли проекта"
 msgstr "Project roles"
 
@@ -3656,12 +3603,10 @@ msgid "Участие"
 msgstr "Participation"
 
 #: meetService/templates/projects/project_detail.html:166
-#| msgid "Мои команды"
 msgid "Ты уже в команде"
 msgstr "You are already on the team"
 
 #: meetService/templates/projects/project_detail.html:168
-#| msgid "Мои команды"
 msgid "Хочу в команду"
 msgstr "I want to join the team"
 
@@ -3672,17 +3617,20 @@ msgstr "Remove from favorites"
 
 #: meetService/templates/projects/project_detail.html:176
 #: meetService/templates/projects/project_detail.html:194
-#| msgid "Избранное"
 msgid "В избранное"
 msgstr "Add to favorites"
 
 #: meetService/templates/projects/project_detail.html:181
-msgid "Войди в аккаунт, чтобы откликнуться на проект или добавить его в избранное."
+msgid ""
+"Войди в аккаунт, чтобы откликнуться на проект или добавить его в избранное."
 msgstr "Sign in to apply to the project or add it to favorites."
 
 #: meetService/templates/projects/project_detail.html:185
-msgid "Проект закрыт для новых участников. Карточка доступна только для просмотра."
-msgstr "The project is closed for new participants. The card is available for viewing only."
+msgid ""
+"Проект закрыт для новых участников. Карточка доступна только для просмотра."
+msgstr ""
+"The project is closed for new participants. The card is available for "
+"viewing only."
 
 #: meetService/templates/projects/project_detail.html:186
 msgid "Набор закрыт"
@@ -3697,7 +3645,6 @@ msgid "Проект сейчас недоступен для публичных 
 msgstr "The project is currently unavailable for public actions."
 
 #: meetService/templates/projects/project_detail.html:207
-#| msgid "Мои проекты"
 msgid "Похожие проекты"
 msgstr "Similar projects"
 
@@ -3706,11 +3653,15 @@ msgid "Похожих проектов пока нет."
 msgstr "No similar projects yet."
 
 #: meetService/templates/projects/project_form.html:8
-msgid "Заполни основную информацию о проекте. При создании проекта сразу добавляется первая открытая роль, чтобы проект можно было отправить на рассмотрение."
-msgstr "Fill in the main project information. When creating a project, the first open role is added immediately so the project can be submitted for review."
+msgid ""
+"Заполни основную информацию о проекте. При создании проекта сразу "
+"добавляется первая открытая роль, чтобы проект можно было отправить на "
+"рассмотрение."
+msgstr ""
+"Fill in the main project information. When creating a project, the first "
+"open role is added immediately so the project can be submitted for review."
 
 #: meetService/templates/projects/project_form.html:16
-#| msgid "Мои проекты"
 msgid "Информация о проекте"
 msgstr "Project information"
 
@@ -3719,8 +3670,12 @@ msgid "Первая открытая роль"
 msgstr "First open role"
 
 #: meetService/templates/projects/project_form.html:51
-msgid "Эта роль появится на странице проекта, и специалисты смогут на неё откликаться после публикации проекта."
-msgstr "This role will appear on the project page, and specialists will be able to apply after the project is published."
+msgid ""
+"Эта роль появится на странице проекта, и специалисты смогут на неё "
+"откликаться после публикации проекта."
+msgstr ""
+"This role will appear on the project page, and specialists will be able to "
+"apply after the project is published."
 
 #: meetService/templates/projects/project_list.html:9
 #: meetService/templates/specialists/specialist_list.html:9
@@ -3729,7 +3684,8 @@ msgstr "catalog"
 
 #: meetService/templates/projects/project_list.html:11
 msgid "Ищи проект по названию, описанию, стеку технологий или открытой роли."
-msgstr "Search for a project by title, description, technology stack, or open role."
+msgstr ""
+"Search for a project by title, description, technology stack, or open role."
 
 #: meetService/templates/projects/project_list.html:21
 #: meetService/templates/specialists/specialist_list.html:30
@@ -3779,8 +3735,12 @@ msgid "Проекты не найдены"
 msgstr "No projects found"
 
 #: meetService/templates/projects/project_list.html:58
-msgid "По выбранным условиям пока нет опубликованных проектов. Попробуй изменить фильтры или сбросить поиск."
-msgstr "There are no published projects for the selected conditions yet. Try changing filters or resetting the search."
+msgid ""
+"По выбранным условиям пока нет опубликованных проектов. Попробуй изменить "
+"фильтры или сбросить поиск."
+msgstr ""
+"There are no published projects for the selected conditions yet. Try "
+"changing filters or resetting the search."
 
 #: meetService/templates/projects/project_list.html:59
 #: meetService/templates/specialists/specialist_list.html:103
@@ -3797,8 +3757,12 @@ msgstr "Technologies have not been added yet."
 
 #: meetService/templates/projects/vacancy_form.html:8
 #, python-format
-msgid "Проект: <strong>«%(project_title)s»</strong>. Добавь роль, на которую смогут откликаться специалисты."
-msgstr "Project: <strong>“%(project_title)s”</strong>. Add a role that specialists can apply for."
+msgid ""
+"Проект: <strong>«%(project_title)s»</strong>. Добавь роль, на которую смогут "
+"откликаться специалисты."
+msgstr ""
+"Project: <strong>“%(project_title)s”</strong>. Add a role that specialists "
+"can apply for."
 
 #: meetService/templates/search/global_search.html:7
 msgid "Описание пока не заполнено."
@@ -3817,35 +3781,39 @@ msgid "Результаты по запросу:"
 msgstr "Results for query:"
 
 #: meetService/templates/search/global_search.html:16
-msgid "Введите запрос в поисковую строку в шапке сайта. Поиск найдёт проекты, специалистов, роли и технологии."
-msgstr "Enter a query in the search field in the header. Search will find projects, specialists, roles, and technologies."
+msgid ""
+"Введите запрос в поисковую строку в шапке сайта. Поиск найдёт проекты, "
+"специалистов, роли и технологии."
+msgstr ""
+"Enter a query in the search field in the header. Search will find projects, "
+"specialists, roles, and technologies."
 
 #: meetService/templates/search/global_search.html:19
-#| msgid "сервис поиска IT-команды"
 msgid "Режим поиска: только проекты."
 msgstr "Search mode: projects only."
 
 #: meetService/templates/search/global_search.html:21
-#| msgid "Профиль специалиста"
 msgid "Режим поиска: только специалисты."
 msgstr "Search mode: specialists only."
 
 #: meetService/templates/search/global_search.html:25
 #, python-format
-msgid "Команда не распознана. Выполнен обычный поиск по запросу: <strong>%(query_text)s</strong>"
-msgstr "Search command was not recognized. A regular search was performed for: <strong>%(query_text)s</strong>"
+msgid ""
+"Команда не распознана. Выполнен обычный поиск по запросу: "
+"<strong>%(query_text)s</strong>"
+msgstr ""
+"Search command was not recognized. A regular search was performed for: "
+"<strong>%(query_text)s</strong>"
 
 #: meetService/templates/search/global_search.html:31
 msgid "Команды поиска"
 msgstr "Search commands"
 
 #: meetService/templates/search/global_search.html:35
-#| msgid "Мои проекты"
 msgid "искать только проекты"
 msgstr "search only projects"
 
 #: meetService/templates/search/global_search.html:39
-#| msgid "Профиль специалиста"
 msgid "искать только специалистов"
 msgstr "search only specialists"
 
@@ -3854,32 +3822,26 @@ msgid "перейти в личный кабинет"
 msgstr "go to dashboard"
 
 #: meetService/templates/search/global_search.html:47
-#| msgid "Мои отклики"
 msgid "открыть мои отклики"
 msgstr "open my applications"
 
 #: meetService/templates/search/global_search.html:51
-#| msgid "Мои приглашения"
 msgid "открыть приглашения"
 msgstr "open invitations"
 
 #: meetService/templates/search/global_search.html:55
-#| msgid "Избранное"
 msgid "открыть избранное"
 msgstr "open favorites"
 
 #: meetService/templates/search/global_search.html:59
-#| msgid "Мои команды"
 msgid "открыть мои команды"
 msgstr "open my teams"
 
 #: meetService/templates/search/global_search.html:63
-#| msgid "Мои проекты"
 msgid "открыть мои проекты"
 msgstr "open my projects"
 
 #: meetService/templates/search/global_search.html:72
-#| msgid "Мои проекты"
 msgid "Ищи проекты"
 msgstr "Search projects"
 
@@ -3892,7 +3854,6 @@ msgid "Открыть каталог проектов"
 msgstr "Open project catalog"
 
 #: meetService/templates/search/global_search.html:77
-#| msgid "Профиль специалиста"
 msgid "Ищи специалистов"
 msgstr "Search specialists"
 
@@ -3901,20 +3862,22 @@ msgid "Например: frontend, UI/UX, DevOps, Python, проектный м�
 msgstr "For example: frontend, UI/UX, DevOps, Python, project manager."
 
 #: meetService/templates/search/global_search.html:79
-#| msgid "Профиль специалиста"
 msgid "Открыть каталог специалистов"
 msgstr "Open specialist catalog"
 
 #: meetService/templates/search/global_search.html:84
-msgid "Профиль, проекты, команды, отклики, приглашения и избранное находятся в кабинете."
-msgstr "Profile, projects, teams, applications, invitations, and favorites are in the dashboard."
+msgid ""
+"Профиль, проекты, команды, отклики, приглашения и избранное находятся в "
+"кабинете."
+msgstr ""
+"Profile, projects, teams, applications, invitations, and favorites are in "
+"the dashboard."
 
 #: meetService/templates/search/global_search.html:85
 msgid "Перейти в кабинет"
 msgstr "Go to dashboard"
 
 #: meetService/templates/search/global_search.html:96
-#| msgid "Мои проекты"
 msgid "Найденные проекты"
 msgstr "Found projects"
 
@@ -3931,7 +3894,6 @@ msgid "Перейти в каталог проектов"
 msgstr "Go to project catalog"
 
 #: meetService/templates/search/global_search.html:140
-#| msgid "Профиль специалиста"
 msgid "Найденные специалисты"
 msgstr "Found specialists"
 
@@ -3941,7 +3903,6 @@ msgstr "Matches by name, role, profile description, and technologies."
 
 #: meetService/templates/search/global_search.html:173
 #: meetService/templates/specialists/specialist_list.html:101
-#| msgid "Специалисты"
 msgid "Специалисты не найдены"
 msgstr "No specialists found"
 
@@ -3950,7 +3911,6 @@ msgid "Попробуй другой запрос или перейди в ка�
 msgstr "Try another query or go to the specialist catalog with filters."
 
 #: meetService/templates/search/global_search.html:175
-#| msgid "Профиль специалиста"
 msgid "Перейти в каталог специалистов"
 msgstr "Go to specialist catalog"
 
@@ -3990,7 +3950,8 @@ msgstr "You are about to connect the external account %(provider_name)s."
 
 #: meetService/templates/socialaccount/login.html:13
 #, python-format
-msgid "Вы будете перенаправлены к провайдеру %(provider_name)s для авторизации."
+msgid ""
+"Вы будете перенаправлены к провайдеру %(provider_name)s для авторизации."
 msgstr "You will be redirected to %(provider_name)s for authorization."
 
 #: meetService/templates/socialaccount/login.html:17
@@ -4008,7 +3969,6 @@ msgid "Авторизация через внешний аккаунт была 
 msgstr "Authorization through the external account was canceled."
 
 #: meetService/templates/socialaccount/login_redirect.html:11
-#| msgid "Регистрация"
 msgid "Переадресация"
 msgstr "Redirect"
 
@@ -4032,7 +3992,6 @@ msgstr[0] "%(years)s year of experience"
 msgstr[1] "%(years)s years of experience"
 
 #: meetService/templates/specialists/specialist_detail.html:33
-#| msgid "Мои проекты"
 msgid "Участие в проектах"
 msgstr "Project participation"
 
@@ -4053,8 +4012,12 @@ msgid "Действия"
 msgstr "Actions"
 
 #: meetService/templates/specialists/specialist_detail.html:65
-msgid "Это твой профиль специалиста. Ты можешь обновить анкету, стек, ссылки и статус поиска проекта."
-msgstr "This is your specialist profile. You can update the form, stack, links, and project search status."
+msgid ""
+"Это твой профиль специалиста. Ты можешь обновить анкету, стек, ссылки и "
+"статус поиска проекта."
+msgstr ""
+"This is your specialist profile. You can update the form, stack, links, and "
+"project search status."
 
 #: meetService/templates/specialists/specialist_detail.html:68
 msgid "Пригласи специалиста в опубликованный проект с открытой ролью."
@@ -4069,7 +4032,6 @@ msgid "Войди в аккаунт, чтобы приглашать специ�
 msgstr "Sign in to invite specialists to projects."
 
 #: meetService/templates/specialists/specialist_list.html:4
-#| msgid "Профиль специалиста"
 msgid "Каталог специалистов"
 msgstr "Specialist catalog"
 
@@ -4087,17 +4049,22 @@ msgid "Любой"
 msgstr "Any"
 
 #: meetService/templates/specialists/specialist_list.html:102
-msgid "По выбранным условиям специалистов пока нет. Попробуй изменить фильтры или сбросить поиск."
-msgstr "There are no specialists for the selected conditions yet. Try changing filters or resetting the search."
+msgid ""
+"По выбранным условиям специалистов пока нет. Попробуй изменить фильтры или "
+"сбросить поиск."
+msgstr ""
+"There are no specialists for the selected conditions yet. Try changing "
+"filters or resetting the search."
 
 #: meetService/templates/specialists/specialist_list.html:108
-#| msgid "Профиль специалиста"
 msgid "Пагинация каталога специалистов"
 msgstr "Specialist catalog pagination"
 
 #: meetService/templates/specialists/specialist_profile_form.html:8
-msgid "Заполни анкету, чтобы откликаться на проекты, получать приглашения и отображаться в каталоге специалистов."
-msgstr "Complete the form to apply to projects, receive invitations, and be shown in the specialist catalog."
+msgid ""
+"Заполни анкету, чтобы откликаться на проекты, получать приглашения и "
+"отображаться в каталоге специалистов."
+msgstr ""
+"Complete the form to apply to projects, receive invitations, and be shown in "
+"the specialist catalog."
 
-#~ msgid "Выход"
-#~ msgstr "Logout"

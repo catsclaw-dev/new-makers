@@ -5,7 +5,6 @@ from django.db.models import F, QuerySet
 
 from apps.interactions.models import Application, Invitation
 from apps.projects.models import Project, ProjectVacancy
-from apps.reviews.models import Review
 from apps.specialists.models import SpecialistProfile
 
 
@@ -36,7 +35,9 @@ class ProjectFilter(django_filters.FilterSet):
             "has_open_vacancies",
         )
 
-    def filter_has_open_vacancies(self, queryset: QuerySet, name: str, value: object) -> object:
+    def filter_has_open_vacancies(
+        self, queryset: QuerySet, name: str, value: object
+    ) -> object:
         """
         Применяет пользовательскую фильтрацию queryset.
         Args:
@@ -115,7 +116,9 @@ class SpecialistProfileFilter(django_filters.FilterSet):
             "is_available",
         )
 
-    def filter_is_available(self, queryset: QuerySet, name: str, value: object) -> object:
+    def filter_is_available(
+        self, queryset: QuerySet, name: str, value: object
+    ) -> object:
         """
         Применяет пользовательскую фильтрацию queryset.
         Args:
@@ -160,24 +163,5 @@ class InvitationFilter(django_filters.FilterSet):
             "project_slug",
             "vacancy",
             "vacancy_role",
-            "status",
-        )
-
-
-class ReviewFilter(django_filters.FilterSet):
-    min_rating = django_filters.NumberFilter(field_name="rating", lookup_expr="gte")
-    max_rating = django_filters.NumberFilter(field_name="rating", lookup_expr="lte")
-    project_slug = django_filters.CharFilter(field_name="project__slug")
-
-    class Meta:
-        model = Review
-        fields = (
-            "project",
-            "project_slug",
-            "specialist",
-            "author",
-            "rating",
-            "min_rating",
-            "max_rating",
             "status",
         )

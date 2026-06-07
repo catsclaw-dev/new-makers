@@ -75,7 +75,6 @@ INSTALLED_APPS = [
     "apps.specialists.apps.SpecialistsConfig",
     "apps.projects.apps.ProjectsConfig",
     "apps.interactions.apps.InteractionsConfig",
-    "apps.reviews.apps.ReviewsConfig",
 ]
 
 if DEBUG:

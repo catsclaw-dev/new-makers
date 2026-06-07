@@ -2,12 +2,20 @@ from __future__ import annotations
 
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import IntegrityError
-from django.db.models import Avg, Count, Exists, F, OuterRef, Q, QuerySet
+from django.db.models import Count, Exists, F, OuterRef, Q, QuerySet
 from django.utils.translation import gettext_lazy as _
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
-from rest_framework.exceptions import NotAuthenticated, PermissionDenied, ValidationError
-from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly
+from rest_framework.exceptions import (
+    NotAuthenticated,
+    PermissionDenied,
+    ValidationError,
+)
+from rest_framework.permissions import (
+    AllowAny,
+    IsAuthenticated,
+    IsAuthenticatedOrReadOnly,
+)
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.serializers import BaseSerializer as Serializer
@@ -17,7 +25,6 @@ from apps.api.filters import (
     InvitationFilter,
     ProjectFilter,
     ProjectVacancyFilter,
-    ReviewFilter,
     SpecialistProfileFilter,
 )
 from apps.api.permissions import (
@@ -26,7 +33,6 @@ from apps.api.permissions import (
     IsFavoriteOwner,
     IsInvitationRecipientOrAdmin,
     IsProjectOwnerOrAdmin,
-    IsReviewAuthorOrAdmin,
     IsSpecialistOwnerOrAdmin,
     is_admin,
 )
@@ -36,7 +42,6 @@ from apps.api.serializers import (
     InvitationSerializer,
     ProjectSerializer,
     ProjectVacancySerializer,
-    ReviewSerializer,
     RoleSerializer,
     SpecialistProfileSerializer,
     TechnologySerializer,
@@ -45,7 +50,6 @@ from apps.api.serializers import (
 from apps.directories.models import Role, Technology
 from apps.interactions.models import Application, FavoriteProject, Invitation
 from apps.projects.models import Project, ProjectMembership, ProjectVacancy
-from apps.reviews.models import Review
 from apps.specialists.models import SpecialistProfile
 
 
@@ -233,8 +237,10 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
         if not is_admin(request.user) and project.status != Project.Status.DRAFT:
             raise ValidationError(
-                _("Владелец может удалить только черновик. "
-                "Опубликованный или закрытый проект нужно архивировать.")
+                _(
+                    "Владелец может удалить только черновик. "
+                    "Опубликованный или закрытый проект нужно архивировать."
+                )
             )
 
         project.delete()
@@ -284,7 +290,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @action(detail=True, methods=["post"])
-    def submit_for_moderation(self, request: Request, pk: int | None = None) -> Response:
+    def submit_for_moderation(
+        self, request: Request, pk: int | None = None
+    ) -> Response:
         """
         Выполняет API-действие `submit_for_moderation`.
         Args:
@@ -404,7 +412,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
         if project.status not in PUBLIC_PROJECT_STATUSES:
             raise ValidationError(
-                _("В избранное можно добавить только опубликованный или закрытый проект.")
+                _(
+                    "В избранное можно добавить только опубликованный или закрытый проект."
+                )
             )
 
         favorite = FavoriteProject.objects.filter(
@@ -467,8 +477,7 @@ class ProjectVacancyViewSet(viewsets.ModelViewSet):
 
         if user.is_authenticated:
             return queryset.filter(
-                Q(project__status__in=PUBLIC_PROJECT_STATUSES)
-                | Q(project__owner=user)
+                Q(project__status__in=PUBLIC_PROJECT_STATUSES) | Q(project__owner=user)
             ).distinct()
 
         return queryset.filter(project__status__in=PUBLIC_PROJECT_STATUSES)
@@ -507,7 +516,6 @@ class SpecialistProfileViewSet(viewsets.ModelViewSet):
         "experience_years",
         "weekly_hours",
         "active_projects_count",
-        "average_rating",
     )
     ordering = ("-created_at",)
 
@@ -540,11 +548,6 @@ class SpecialistProfileViewSet(viewsets.ModelViewSet):
                 ),
                 applications_count=Count("applications", distinct=True),
                 invitations_count=Count("invitations", distinct=True),
-                reviews_count=Count("received_reviews", distinct=True),
-                average_rating=Avg(
-                    "received_reviews__rating",
-                    filter=Q(received_reviews__status=Review.Status.PUBLISHED),
-                ),
             )
         )
 
@@ -673,7 +676,10 @@ class ApplicationViewSet(viewsets.ModelViewSet):
         """
         application = self.get_object()
 
-        if not is_admin(request.user) and application.specialist.user_id != request.user.id:
+        if (
+            not is_admin(request.user)
+            and application.specialist.user_id != request.user.id
+        ):
             raise PermissionDenied(_("Отменить можно только свой отклик."))
 
         if application.status != Application.Status.PENDING:
@@ -850,97 +856,3 @@ class FavoriteProjectViewSet(viewsets.ModelViewSet):
             .prefetch_related("project__technologies", "project__vacancies__role")
             .filter(user=self.request.user)
         )
-
-
-class ReviewViewSet(viewsets.ModelViewSet):
-    serializer_class = ReviewSerializer
-    filterset_class = ReviewFilter
-    search_fields = (
-        "text",
-        "project__title",
-        "author__username",
-        "specialist__user__username",
-    )
-    ordering_fields = ("created_at", "updated_at", "rating", "status")
-    ordering = ("-created_at",)
-
-    def get_permissions(self) -> list[object]:
-        """
-        Возвращает права доступа для текущего действия.
-        """
-        if self.action in ["list", "retrieve"]:
-            return [AllowAny()]
-
-        if self.action in ["publish", "hide", "reject"]:
-            return [IsAuthenticated(), IsAdminOrReadOnly()]
-
-        if self.action == "create":
-            return [IsAuthenticated()]
-
-        return [IsAuthenticated(), IsReviewAuthorOrAdmin()]
-
-    def get_queryset(self) -> QuerySet:
-        """
-        Возвращает queryset с нужными фильтрами и оптимизациями.
-        """
-        queryset = Review.objects.select_related(
-            "project",
-            "project__owner",
-            "author",
-            "specialist",
-            "specialist__user",
-            "specialist__main_role",
-        ).prefetch_related("specialist__technologies")
-
-        user = self.request.user
-
-        if is_admin(user):
-            return queryset
-
-        if user.is_authenticated:
-            return queryset.filter(
-                Q(status=Review.Status.PUBLISHED)
-                | Q(author=user)
-                | Q(project__owner=user)
-            ).distinct()
-
-        return queryset.filter(status=Review.Status.PUBLISHED)
-
-    @action(detail=True, methods=["post"])
-    def publish(self, request: Request, pk: int | None = None) -> Response:
-        """
-        Выполняет API-действие `publish`.
-        Args:
-            request: HTTP-запрос текущего пользователя
-            pk: Идентификатор объекта
-        """
-        review = self.get_object()
-        review.publish()
-        serializer = self.get_serializer(review)
-        return Response(serializer.data)
-
-    @action(detail=True, methods=["post"])
-    def hide(self, request: Request, pk: int | None = None) -> Response:
-        """
-        Выполняет API-действие `hide`.
-        Args:
-            request: HTTP-запрос текущего пользователя
-            pk: Идентификатор объекта
-        """
-        review = self.get_object()
-        review.hide()
-        serializer = self.get_serializer(review)
-        return Response(serializer.data)
-
-    @action(detail=True, methods=["post"])
-    def reject(self, request: Request, pk: int | None = None) -> Response:
-        """
-        Выполняет API-действие `reject`.
-        Args:
-            request: HTTP-запрос текущего пользователя
-            pk: Идентификатор объекта
-        """
-        review = self.get_object()
-        review.reject()
-        serializer = self.get_serializer(review)
-        return Response(serializer.data)

@@ -34,7 +34,9 @@ class IsAdminOrReadOnly(BasePermission):
 class IsProjectOwnerOrAdmin(BasePermission):
     """Allows object writes only to project owners and staff users."""
 
-    def has_object_permission(self, request: Request, view: object, obj: object) -> bool:
+    def has_object_permission(
+        self, request: Request, view: object, obj: object
+    ) -> bool:
         """
         Проверяет доступ к конкретному объекту.
         Args:
@@ -59,7 +61,9 @@ class IsProjectOwnerOrAdmin(BasePermission):
 class IsSpecialistOwnerOrAdmin(BasePermission):
     """Allows profile writes only to the profile owner and staff users."""
 
-    def has_object_permission(self, request: Request, view: object, obj: object) -> bool:
+    def has_object_permission(
+        self, request: Request, view: object, obj: object
+    ) -> bool:
         """
         Проверяет доступ к конкретному объекту.
         Args:
@@ -83,7 +87,9 @@ class IsSpecialistOwnerOrAdmin(BasePermission):
 class IsApplicationReviewer(BasePermission):
     """Allows accepting or rejecting an application by project owner or staff."""
 
-    def has_object_permission(self, request: Request, view: object, obj: object) -> bool:
+    def has_object_permission(
+        self, request: Request, view: object, obj: object
+    ) -> bool:
         """
         Проверяет доступ к конкретному объекту.
         Args:
@@ -104,7 +110,9 @@ class IsApplicationReviewer(BasePermission):
 class IsInvitationRecipientOrAdmin(BasePermission):
     """Allows invitation responses by the invited specialist or staff."""
 
-    def has_object_permission(self, request: Request, view: object, obj: object) -> bool:
+    def has_object_permission(
+        self, request: Request, view: object, obj: object
+    ) -> bool:
         """
         Проверяет доступ к конкретному объекту.
         Args:
@@ -125,7 +133,9 @@ class IsInvitationRecipientOrAdmin(BasePermission):
 class IsFavoriteOwner(BasePermission):
     """Allows users to manage only their own favorite projects."""
 
-    def has_object_permission(self, request: Request, view: object, obj: object) -> bool:
+    def has_object_permission(
+        self, request: Request, view: object, obj: object
+    ) -> bool:
         """
         Проверяет доступ к конкретному объекту.
         Args:
@@ -137,28 +147,4 @@ class IsFavoriteOwner(BasePermission):
             request.user
             and request.user.is_authenticated
             and obj.user_id == request.user.id
-        )
-
-
-class IsReviewAuthorOrAdmin(BasePermission):
-    """Allows review writes only to the review author or staff users."""
-
-    def has_object_permission(self, request: Request, view: object, obj: object) -> bool:
-        """
-        Проверяет доступ к конкретному отзыву.
-        Args:
-            request: HTTP-запрос текущего пользователя
-            view: Представление, которое обрабатывает запрос
-            obj: Объект отзыва
-        """
-        if request.method in SAFE_METHODS:
-            return True
-
-        return bool(
-            is_admin(request.user)
-            or (
-                request.user
-                and request.user.is_authenticated
-                and obj.author_id == request.user.id
-            )
         )

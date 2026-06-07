@@ -6,22 +6,66 @@
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
-    { "key": "base_url", "value": "http://127.0.0.1:8000/api" },
-    { "key": "owner_username", "value": "owner1" },
-    { "key": "owner_password", "value": "password" },
-    { "key": "specialist_username", "value": "specialist1" },
-    { "key": "specialist_password", "value": "password" },
-    { "key": "admin_username", "value": "admin" },
-    { "key": "admin_password", "value": "password" },
-    { "key": "project_id", "value": "1" },
-    { "key": "vacancy_id", "value": "1" },
-    { "key": "specialist_id", "value": "1" },
-    { "key": "application_id", "value": "1" },
-    { "key": "invitation_id", "value": "1" },
-    { "key": "favorite_id", "value": "1" },
-    { "key": "review_id", "value": "1" },
-    { "key": "role_id", "value": "1" },
-    { "key": "technology_id", "value": "1" }
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:8000/api"
+    },
+    {
+      "key": "owner_username",
+      "value": "owner1"
+    },
+    {
+      "key": "owner_password",
+      "value": "password"
+    },
+    {
+      "key": "specialist_username",
+      "value": "specialist1"
+    },
+    {
+      "key": "specialist_password",
+      "value": "password"
+    },
+    {
+      "key": "admin_username",
+      "value": "admin"
+    },
+    {
+      "key": "admin_password",
+      "value": "password"
+    },
+    {
+      "key": "project_id",
+      "value": "1"
+    },
+    {
+      "key": "vacancy_id",
+      "value": "1"
+    },
+    {
+      "key": "specialist_id",
+      "value": "1"
+    },
+    {
+      "key": "application_id",
+      "value": "1"
+    },
+    {
+      "key": "invitation_id",
+      "value": "1"
+    },
+    {
+      "key": "favorite_id",
+      "value": "1"
+    },
+    {
+      "key": "role_id",
+      "value": "1"
+    },
+    {
+      "key": "technology_id",
+      "value": "1"
+    }
   ],
   "item": [
     {
@@ -30,7 +74,9 @@
         {
           "name": "List published projects",
           "request": {
-            "auth": { "type": "noauth" },
+            "auth": {
+              "type": "noauth"
+            },
             "method": "GET",
             "url": "{{base_url}}/projects/"
           }
@@ -38,7 +84,9 @@
         {
           "name": "Filter projects by technology and open vacancies",
           "request": {
-            "auth": { "type": "noauth" },
+            "auth": {
+              "type": "noauth"
+            },
             "method": "GET",
             "url": "{{base_url}}/projects/?technology=django&has_open_vacancies=true"
           }
@@ -46,7 +94,9 @@
         {
           "name": "Retrieve project",
           "request": {
-            "auth": { "type": "noauth" },
+            "auth": {
+              "type": "noauth"
+            },
             "method": "GET",
             "url": "{{base_url}}/projects/{{project_id}}/"
           }
@@ -54,7 +104,9 @@
         {
           "name": "List specialists",
           "request": {
-            "auth": { "type": "noauth" },
+            "auth": {
+              "type": "noauth"
+            },
             "method": "GET",
             "url": "{{base_url}}/specialists/?technology=django&is_available=true"
           }
@@ -62,7 +114,9 @@
         {
           "name": "List open vacancies",
           "request": {
-            "auth": { "type": "noauth" },
+            "auth": {
+              "type": "noauth"
+            },
             "method": "GET",
             "url": "{{base_url}}/vacancies/?is_open=true"
           }
@@ -74,8 +128,16 @@
       "auth": {
         "type": "basic",
         "basic": [
-          { "key": "username", "value": "{{specialist_username}}", "type": "string" },
-          { "key": "password", "value": "{{specialist_password}}", "type": "string" }
+          {
+            "key": "username",
+            "value": "{{specialist_username}}",
+            "type": "string"
+          },
+          {
+            "key": "password",
+            "value": "{{specialist_password}}",
+            "type": "string"
+          }
         ]
       },
       "item": [
@@ -91,7 +153,10 @@
           "request": {
             "method": "PATCH",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
@@ -105,7 +170,10 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
@@ -156,8 +224,16 @@
       "auth": {
         "type": "basic",
         "basic": [
-          { "key": "username", "value": "{{owner_username}}", "type": "string" },
-          { "key": "password", "value": "{{owner_password}}", "type": "string" }
+          {
+            "key": "username",
+            "value": "{{owner_username}}",
+            "type": "string"
+          },
+          {
+            "key": "password",
+            "value": "{{owner_password}}",
+            "type": "string"
+          }
         ]
       },
       "item": [
@@ -166,7 +242,10 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
@@ -180,7 +259,10 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
@@ -201,7 +283,10 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
@@ -243,7 +328,10 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
@@ -259,8 +347,16 @@
       "auth": {
         "type": "basic",
         "basic": [
-          { "key": "username", "value": "{{admin_username}}", "type": "string" },
-          { "key": "password", "value": "{{admin_password}}", "type": "string" }
+          {
+            "key": "username",
+            "value": "{{admin_username}}",
+            "type": "string"
+          },
+          {
+            "key": "password",
+            "value": "{{admin_password}}",
+            "type": "string"
+          }
         ]
       },
       "item": [
@@ -269,7 +365,10 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
@@ -283,34 +382,16 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"Django REST Framework\",\n  \"slug\": \"django-rest-framework\",\n  \"category\": \"framework\",\n  \"description\": \"Framework for building Web APIs.\",\n  \"is_active\": true\n}"
             },
             "url": "{{base_url}}/technologies/"
-          }
-        },
-        {
-          "name": "List all reviews visible to admin",
-          "request": {
-            "method": "GET",
-            "url": "{{base_url}}/reviews/"
-          }
-        },
-        {
-          "name": "Publish review",
-          "request": {
-            "method": "POST",
-            "url": "{{base_url}}/reviews/{{review_id}}/publish/"
-          }
-        },
-        {
-          "name": "Hide review",
-          "request": {
-            "method": "POST",
-            "url": "{{base_url}}/reviews/{{review_id}}/hide/"
           }
         }
       ]
@@ -321,10 +402,15 @@
         {
           "name": "Anonymous cannot create project",
           "request": {
-            "auth": { "type": "noauth" },
+            "auth": {
+              "type": "noauth"
+            },
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
@@ -338,14 +424,25 @@
           "auth": {
             "type": "basic",
             "basic": [
-              { "key": "username", "value": "{{specialist_username}}", "type": "string" },
-              { "key": "password", "value": "{{specialist_password}}", "type": "string" }
+              {
+                "key": "username",
+                "value": "{{specialist_username}}",
+                "type": "string"
+              },
+              {
+                "key": "password",
+                "value": "{{specialist_password}}",
+                "type": "string"
+              }
             ]
           },
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
@@ -359,14 +456,25 @@
           "auth": {
             "type": "basic",
             "basic": [
-              { "key": "username", "value": "{{specialist_username}}", "type": "string" },
-              { "key": "password", "value": "{{specialist_password}}", "type": "string" }
+              {
+                "key": "username",
+                "value": "{{specialist_username}}",
+                "type": "string"
+              },
+              {
+                "key": "password",
+                "value": "{{specialist_password}}",
+                "type": "string"
+              }
             ]
           },
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",

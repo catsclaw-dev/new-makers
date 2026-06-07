@@ -26,7 +26,9 @@ class ApplicationForm(forms.ModelForm):
             attrs={
                 "class": "form-control",
                 "rows": 5,
-                "placeholder": _("Здравствуйте! Хочу присоединиться к проекту, потому что..."),
+                "placeholder": _(
+                    "Здравствуйте! Хочу присоединиться к проекту, потому что..."
+                ),
             }
         ),
         error_messages={
@@ -57,7 +59,13 @@ class ApplicationForm(forms.ModelForm):
             "all": ("css/site.css",),
         }
 
-    def __init__(self, *args: object, project: Project | None = None, specialist: SpecialistProfile | None = None, **kwargs: object) -> object:
+    def __init__(
+        self,
+        *args: object,
+        project: Project | None = None,
+        specialist: SpecialistProfile | None = None,
+        **kwargs: object,
+    ) -> object:
         """
         Ограничивает выбор ролей только открытыми ролями конкретного проекта.
         Args:
@@ -137,10 +145,12 @@ class InvitationForm(forms.ModelForm):
         }
         labels = {
             "vacancy": _("Проект и открытая роль"),
-            "message": _("Сообщение специалисту"),
+            "message": _("Текст приглашения"),
         }
         help_texts = {
-            "vacancy": _("Выбери открытую роль в одном из своих опубликованных проектов."),
+            "vacancy": _(
+                "Выбери открытую роль в одном из своих опубликованных проектов."
+            ),
             "message": _("Кратко объясни, почему хочешь пригласить этого специалиста."),
         }
         error_messages = {
@@ -164,7 +174,13 @@ class InvitationForm(forms.ModelForm):
             "all": ("css/site.css",),
         }
 
-    def __init__(self, *args: object, specialist: SpecialistProfile | None = None, invited_by: User | None = None, **kwargs: object) -> object:
+    def __init__(
+        self,
+        *args: object,
+        specialist: SpecialistProfile | None = None,
+        invited_by: User | None = None,
+        **kwargs: object,
+    ) -> object:
         """
         Показывает только открытые роли проектов текущего владельца.
         Args:
