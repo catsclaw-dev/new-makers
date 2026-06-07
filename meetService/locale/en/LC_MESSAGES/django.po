@@ -3,15 +3,14 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: New-Makers\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-11 11:25+0300\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: \n"
-"Language-Team: \n"
+"POT-Creation-Date: 2026-06-07 17:40+0300\n"
+"PO-Revision-Date: 2026-06-07 18:30+0300\n"
+"Last-Translator: CatsClaw <dev@example.local>\n"
+"Language-Team: English\n"
 "Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -20,2272 +19,4085 @@ msgstr ""
 
 #: meetService/apps/accounts/admin.py:45 meetService/apps/accounts/admin.py:54
 msgid "Роль в сервисе"
-msgstr ""
+msgstr "Service role"
+
+#: meetService/apps/accounts/admin.py:62
+msgid "ФИО"
+msgstr "Full name"
+
+#: meetService/apps/accounts/forms.py:16
+msgid "Укажи почту для входа и уведомлений."
+msgstr "Enter the email address for login and notifications."
+
+#: meetService/apps/accounts/forms.py:18
+msgid "Email обязателен для регистрации."
+msgstr "Email is required for registration."
+
+#: meetService/apps/accounts/forms.py:19 meetService/apps/accounts/forms.py:120
+msgid "Введите корректный email."
+msgstr "Enter a valid email address."
+
+#: meetService/apps/accounts/forms.py:40
+msgid "Логин"
+msgstr "Username"
+
+#: meetService/apps/accounts/forms.py:41
+msgid "Имя"
+msgstr "First name"
+
+#: meetService/apps/accounts/forms.py:42
+msgid "Фамилия"
+msgstr "Last name"
+
+#: meetService/apps/accounts/forms.py:45
+msgid "Будет отображаться в профиле и карточках."
+msgstr "It will be shown in the profile and cards."
+
+#: meetService/apps/accounts/forms.py:56
+msgid "Иван"
+msgstr "John"
+
+#: meetService/apps/accounts/forms.py:62
+msgid "Петров"
+msgstr "Smith"
+
+#: meetService/apps/accounts/forms.py:81
+msgid "Пользователь с таким email уже зарегистрирован. Войдите через обычную форму или через тот OAuth-провайдер, к которому привязана эта почта."
+msgstr "A user with this email is already registered. Sign in with the regular form or with the OAuth provider linked to this email."
+
+#: meetService/apps/accounts/forms.py:117
+msgid "На эту почту будут приходить уведомления по откликам и приглашениям."
+msgstr "Notifications about applications and invitations will be sent to this email."
+
+#: meetService/apps/accounts/forms.py:119
+msgid "Email обязателен для уведомлений."
+msgstr "Email is required for notifications."
+
+#: meetService/apps/accounts/forms.py:155
+msgid "Пользователь с таким email уже зарегистрирован. Используйте другую почту или войдите в аккаунт, к которому она уже привязана."
+msgstr "A user with this email is already registered. Use another email or sign in to the account linked to it."
 
 #: meetService/apps/accounts/models.py:11
+#: meetService/apps/accounts/views.py:103
+#: meetService/apps/interactions/tasks.py:104
+#: meetService/apps/interactions/tasks.py:271
+#: meetService/apps/specialists/admin.py:360
 msgid "Специалист"
-msgstr ""
+msgstr "Specialist"
 
 #: meetService/apps/accounts/models.py:12
+#: meetService/apps/accounts/views.py:101
+#: meetService/apps/interactions/admin.py:114
+#: meetService/apps/interactions/admin.py:387
 msgid "Владелец проекта"
-msgstr ""
+msgstr "Project owner"
 
-#: meetService/apps/accounts/models.py:13
+#: meetService/apps/accounts/models.py:13 meetService/apps/accounts/views.py:99
 msgid "Администратор"
-msgstr ""
+msgstr "Administrator"
 
 #: meetService/apps/accounts/models.py:19
 msgid "роль пользователя"
-msgstr ""
+msgstr "user role"
 
 #: meetService/apps/accounts/models.py:20
 msgid "Определяет основной сценарий работы пользователя на сайте."
-msgstr ""
+msgstr "Defines the user's main scenario on the website."
 
 #: meetService/apps/accounts/models.py:23
 #: meetService/apps/directories/models.py:42
-#: meetService/apps/directories/models.py:102
-#: meetService/apps/interactions/models.py:77
-#: meetService/apps/interactions/models.py:285
-#: meetService/apps/projects/models.py:186
-#: meetService/apps/projects/models.py:347
-#: meetService/apps/projects/models.py:476
-#: meetService/apps/reviews/models.py:73
-#: meetService/apps/specialists/models.py:166
+#: meetService/apps/directories/models.py:108
+#: meetService/apps/interactions/models.py:80
+#: meetService/apps/interactions/models.py:315
+#: meetService/apps/projects/models.py:207
+#: meetService/apps/projects/models.py:392
+#: meetService/apps/projects/models.py:541
+#: meetService/apps/reviews/models.py:75
+#: meetService/apps/specialists/models.py:168
 msgid "история изменений"
-msgstr ""
+msgstr "change history"
 
-#: meetService/apps/accounts/models.py:62
-#: meetService/apps/interactions/models.py:448
-#: meetService/apps/specialists/models.py:39
+#: meetService/apps/accounts/models.py:72
+#: meetService/apps/interactions/models.py:501
+#: meetService/apps/specialists/models.py:41
 msgid "пользователь"
-msgstr ""
+msgstr "user"
 
-#: meetService/apps/accounts/models.py:63
+#: meetService/apps/accounts/models.py:73
 msgid "пользователи"
-msgstr ""
+msgstr "users"
 
-#: meetService/apps/common_validators.py:27
+#: meetService/apps/accounts/views.py:41
+#| msgid "Регистрация"
+msgid "Регистрация завершена."
+msgstr "Registration completed."
+
+#: meetService/apps/accounts/views.py:210
+msgid "Email обновлён."
+msgstr "Email updated."
+
+#: meetService/apps/api/serializers.py:287
+msgid "Укажи проект для открытой роли."
+msgstr "Specify a project for the open role."
+
+#: meetService/apps/api/serializers.py:292
+#: meetService/apps/projects/views.py:658
+msgid "Нельзя добавлять роли в закрытый или архивный проект."
+msgstr "Roles cannot be added to a closed or archived project."
+
+#: meetService/apps/api/serializers.py:728
+#: meetService/apps/specialists/forms.py:149
+msgid "Если заполняешь описание, оно должно быть не короче 20 символов."
+msgstr "If you fill in the description, it must be at least 20 characters long."
+
+#: meetService/apps/api/serializers.py:845
+#: meetService/apps/interactions/forms.py:33
+msgid "Добавь сопроводительное сообщение."
+msgstr "Add a cover message."
+
+#: meetService/apps/api/serializers.py:858
+msgid "Для отклика нужно войти в систему."
+msgstr "You need to sign in to apply."
+
+#: meetService/apps/api/serializers.py:864
+#: meetService/apps/interactions/views.py:39
+msgid "Чтобы откликнуться на проект, сначала нужен профиль специалиста."
+msgstr "To apply to a project, you need a specialist profile first."
+
+#: meetService/apps/api/serializers.py:870
+#: meetService/apps/api/serializers.py:991
+msgid "Выбери открытую роль."
+msgstr "Select an open role."
+
+#: meetService/apps/api/serializers.py:876
+#: meetService/apps/interactions/models.py:117
+#: meetService/apps/interactions/models.py:352
+msgid "Нельзя откликаться на собственный проект."
+msgstr "You cannot apply to your own project."
+
+#: meetService/apps/api/serializers.py:881
+#: meetService/apps/interactions/models.py:121
+#: meetService/apps/interactions/models.py:367
+msgid "Нельзя откликаться на неопубликованный проект."
+msgstr "You cannot apply to an unpublished project."
+
+#: meetService/apps/api/serializers.py:886
+#: meetService/apps/interactions/models.py:125
+#: meetService/apps/interactions/models.py:371
+msgid "Нельзя откликаться на закрытую или заполненную роль."
+msgstr "You cannot apply to a closed or filled role."
+
+#: meetService/apps/api/serializers.py:897
+#: meetService/apps/interactions/views.py:483
+#: meetService/apps/projects/models.py:457
+msgid "Специалист уже состоит в команде проекта."
+msgstr "The specialist is already on the project team."
+
+#: meetService/apps/api/serializers.py:909
+#: meetService/apps/interactions/models.py:141
+#: meetService/apps/interactions/models.py:387
+msgid "У специалиста уже есть активный отклик на эту роль."
+msgstr "The specialist already has an active application for this role."
+
+#: meetService/apps/api/serializers.py:984
+msgid "Для приглашения специалиста нужно войти в систему."
+msgstr "You need to sign in to invite a specialist."
+
+#: meetService/apps/api/serializers.py:994
+#| msgid "Профиль специалиста"
+msgid "Выбери специалиста."
+msgstr "Select a specialist."
+
+#: meetService/apps/api/serializers.py:1000
+#: meetService/apps/interactions/forms.py:202
+#: meetService/apps/interactions/views.py:246
+msgid "Можно приглашать только в свои проекты."
+msgstr "You can invite only to your own projects."
+
+#: meetService/apps/api/serializers.py:1005
+#: meetService/apps/interactions/views.py:222
+msgid "Нельзя пригласить самого себя в свой проект."
+msgstr "You cannot invite yourself to your own project."
+
+#: meetService/apps/api/serializers.py:1010
+#: meetService/apps/interactions/views.py:260
+msgid "Приглашать можно только в опубликованный проект."
+msgstr "You can invite only to a published project."
+
+#: meetService/apps/api/serializers.py:1015
+#: meetService/apps/interactions/views.py:274
+msgid "Приглашать можно только на открытую роль."
+msgstr "You can invite only to an open role."
+
+#: meetService/apps/api/serializers.py:1026
+#: meetService/apps/interactions/models.py:362
+#: meetService/apps/interactions/views.py:294
+msgid "Специалист уже состоит в команде этого проекта."
+msgstr "The specialist is already on this project team."
+
+#: meetService/apps/api/serializers.py:1038
+msgid "Для этой роли уже есть активное приглашение специалисту."
+msgstr "There is already an active invitation for this specialist for this role."
+
+#: meetService/apps/api/serializers.py:1087 meetService/apps/api/views.py:407
+msgid "В избранное можно добавить только опубликованный или закрытый проект."
+msgstr "Only published or closed projects can be added to favorites."
+
+#: meetService/apps/api/serializers.py:1097
+msgid "Проект уже есть в избранном."
+msgstr "The project is already in favorites."
+
+#: meetService/apps/api/serializers.py:1166
+msgid "Текст отзыва обязателен."
+msgstr "Review text is required."
+
+#: meetService/apps/api/serializers.py:1179
+msgid "Для создания отзыва нужно войти."
+msgstr "You need to sign in to create a review."
+
+#: meetService/apps/api/serializers.py:1189
+msgid "Оставить отзыв может владелец проекта или администратор."
+msgstr "Only the project owner or an administrator can leave a review."
+
+#: meetService/apps/api/serializers.py:1194
+#: meetService/apps/reviews/models.py:106
+msgid "Нельзя оставить отзыв самому себе."
+msgstr "You cannot leave a review for yourself."
+
+#: meetService/apps/api/serializers.py:1204
+#: meetService/apps/reviews/models.py:116
+msgid "Отзыв можно оставить только специалисту, который участвовал в проекте."
+msgstr "A review can be left only for a specialist who participated in the project."
+
+#: meetService/apps/api/views.py:236 meetService/apps/projects/views.py:621
+msgid "Владелец может удалить только черновик. Опубликованный или закрытый проект нужно архивировать."
+msgstr "The owner can delete only a draft. A published or closed project must be archived."
+
+#: meetService/apps/api/views.py:272 meetService/apps/api/views.py:486
+#: meetService/apps/projects/views.py:654
+msgid "Добавлять роли может только владелец проекта или администратор."
+msgstr "Only the project owner or an administrator can add roles."
+
+#: meetService/apps/api/views.py:297 meetService/apps/projects/views.py:702
+msgid "На модерацию можно отправить только черновик."
+msgstr "Only a draft can be submitted for moderation."
+
+#: meetService/apps/api/views.py:306 meetService/apps/projects/views.py:714
+msgid "Перед отправкой на модерацию добавь хотя бы одну открытую роль."
+msgstr "Add at least one open role before submitting the project for moderation."
+
+#: meetService/apps/api/views.py:327 meetService/apps/projects/views.py:746
+msgid "Закрыть можно только опубликованный проект."
+msgstr "Only a published project can be closed."
+
+#: meetService/apps/api/views.py:347 meetService/apps/projects/views.py:777
+msgid "Повторно открыть можно только закрытый проект."
+msgstr "Only a closed project can be reopened."
+
+#: meetService/apps/api/views.py:368 meetService/apps/projects/views.py:806
+msgid "Архивировать можно только опубликованный или закрытый проект."
+msgstr "Only a published or closed project can be archived."
+
+#: meetService/apps/api/views.py:377 meetService/apps/projects/views.py:816
+msgid "Название проекта введено неверно. Архивация отменена."
+msgstr "The project title was entered incorrectly. Archiving was canceled."
+
+#: meetService/apps/api/views.py:570
+#| msgid "Профиль специалиста"
+msgid "У пользователя уже есть профиль специалиста."
+msgstr "This user already has a specialist profile."
+
+#: meetService/apps/api/views.py:677
+msgid "Отменить можно только свой отклик."
+msgstr "You can cancel only your own application."
+
+#: meetService/apps/api/views.py:680
+msgid "Отменить можно только отклик на рассмотрении."
+msgstr "Only a pending application can be canceled."
+
+#: meetService/apps/api/views.py:790
+msgid "Отменить можно только своё приглашение."
+msgstr "You can cancel only your own invitation."
+
+#: meetService/apps/api/views.py:793
+msgid "Отменить можно только приглашение без ответа."
+msgstr "Only an unanswered invitation can be canceled."
+
+#: meetService/apps/common_validators.py:35
 #, python-format
 msgid "Размер файла не должен превышать %(max_size_mb)s МБ."
-msgstr ""
+msgstr "The file size must not exceed %(max_size_mb)s MB."
 
-#: meetService/apps/common_validators.py:41
+#: meetService/apps/common_validators.py:54
 #, python-format
 msgid "Недопустимый формат файла. Разрешены: %(allowed)s."
-msgstr ""
+msgstr "Invalid file format. Allowed: %(allowed)s."
 
-#: meetService/apps/directories/admin.py:59
-#: meetService/apps/directories/admin.py:184
+#: meetService/apps/directories/admin.py:62
+#: meetService/apps/directories/admin.py:230
 msgid "Основная информация"
-msgstr ""
+msgstr "Main information"
 
-#: meetService/apps/directories/admin.py:70
-#: meetService/apps/directories/admin.py:196
+#: meetService/apps/directories/admin.py:73
+#: meetService/apps/directories/admin.py:242
 msgid "Статистика использования"
-msgstr ""
+msgstr "Usage statistics"
 
-#: meetService/apps/directories/admin.py:80
-#: meetService/apps/directories/admin.py:206
-#: meetService/apps/interactions/admin.py:88
-#: meetService/apps/projects/admin.py:249
-#: meetService/apps/projects/admin.py:564 meetService/apps/reviews/admin.py:97
-#: meetService/apps/specialists/admin.py:280
+#: meetService/apps/directories/admin.py:83
+#: meetService/apps/directories/admin.py:252
+#: meetService/apps/interactions/admin.py:90
+#: meetService/apps/projects/admin.py:264
+#: meetService/apps/projects/admin.py:634 meetService/apps/reviews/admin.py:101
+#: meetService/apps/specialists/admin.py:301
 msgid "Служебная информация"
-msgstr ""
+msgstr "Service information"
+
+#: meetService/apps/directories/admin.py:116
+#: meetService/apps/projects/admin.py:314
+#: meetService/apps/projects/resources.py:17
+msgid "Открытых ролей"
+msgstr "Open roles"
+
+#: meetService/apps/directories/admin.py:125
+#| msgid "Профиль специалиста"
+msgid "Основная у специалистов"
+msgstr "Primary for specialists"
+
+#: meetService/apps/directories/admin.py:134
+#| msgid "Профиль специалиста"
+msgid "Интересует специалистов"
+msgstr "Interested specialists"
+
+#: meetService/apps/directories/admin.py:143
+#: meetService/apps/interactions/tasks.py:161
+#: meetService/apps/interactions/tasks.py:272
+#: meetService/apps/projects/admin.py:432
+#: meetService/apps/projects/resources.py:13
+#: meetService/templates/specialists/specialist_list.html:48
+msgid "Статус"
+msgstr "Status"
+
+#: meetService/apps/directories/admin.py:150
+msgid "Активна"
+msgstr "Active"
+
+#: meetService/apps/directories/admin.py:150
+msgid "Отключена"
+msgstr "Disabled"
+
+#: meetService/apps/directories/admin.py:152
+msgid "Активировать выбранные роли"
+msgstr "Activate selected roles"
+
+#: meetService/apps/directories/admin.py:163
+#, python-format
+msgid "Активировано ролей: %(count)s"
+msgstr "Activated roles: %(count)s"
+
+#: meetService/apps/directories/admin.py:166
+msgid "Отключить выбранные роли"
+msgstr "Disable selected roles"
+
+#: meetService/apps/directories/admin.py:177
+#, python-format
+msgid "Отключено ролей: %(count)s"
+msgstr "Disabled roles: %(count)s"
+
+#: meetService/apps/directories/admin.py:285
+#| msgid "Проекты"
+msgid "Проектов"
+msgstr "Projects"
+
+#: meetService/apps/directories/admin.py:294
+msgid "Опубликованных проектов"
+msgstr "Published projects"
+
+#: meetService/apps/directories/admin.py:303
+#| msgid "Специалисты"
+msgid "Специалистов"
+msgstr "Specialists"
+
+#: meetService/apps/directories/admin.py:312
+msgid "Категория"
+msgstr "Category"
+
+#: meetService/apps/directories/admin.py:321
+msgid "Активировать выбранные технологии"
+msgstr "Activate selected technologies"
+
+#: meetService/apps/directories/admin.py:332
+#, python-format
+msgid "Активировано технологий: %(count)s"
+msgstr "Activated technologies: %(count)s"
+
+#: meetService/apps/directories/admin.py:335
+msgid "Отключить выбранные технологии"
+msgstr "Disable selected technologies"
+
+#: meetService/apps/directories/admin.py:346
+#, python-format
+msgid "Отключено технологий: %(count)s"
+msgstr "Disabled technologies: %(count)s"
 
 #: meetService/apps/directories/models.py:14
 msgid "название роли"
-msgstr ""
+msgstr "role name"
 
 #: meetService/apps/directories/models.py:15
 msgid "Например: Frontend-разработчик, Backend-разработчик, QA-инженер."
-msgstr ""
+msgstr "For example: Frontend developer, Backend developer, QA engineer."
 
 #: meetService/apps/directories/models.py:20
-#: meetService/apps/directories/models.py:77
-#: meetService/apps/projects/models.py:101
+#: meetService/apps/directories/models.py:83
+#: meetService/apps/projects/models.py:122
 msgid "URL-идентификатор"
-msgstr ""
+msgstr "URL identifier"
 
 #: meetService/apps/directories/models.py:21
 msgid "Короткое уникальное имя для URL и фильтрации."
-msgstr ""
+msgstr "A short unique name for URLs and filtering."
 
 #: meetService/apps/directories/models.py:25
-#: meetService/apps/directories/models.py:87
+#: meetService/apps/directories/models.py:93
 msgid "описание"
-msgstr ""
+msgstr "description"
 
 #: meetService/apps/directories/models.py:26
 msgid "Краткое описание обязанностей и смысла роли."
-msgstr ""
+msgstr "A brief description of the responsibilities and meaning of the role."
 
 #: meetService/apps/directories/models.py:30
-#: meetService/apps/directories/models.py:91
+#: meetService/apps/directories/models.py:97
 msgid "активна"
-msgstr ""
+msgstr "active"
 
 #: meetService/apps/directories/models.py:31
 msgid "Если выключено, роль не используется в новых записях."
-msgstr ""
+msgstr "If disabled, the role is not used in new records."
 
 #: meetService/apps/directories/models.py:35
-#: meetService/apps/directories/models.py:95
-#: meetService/apps/projects/models.py:163
-#: meetService/apps/projects/models.py:340
-#: meetService/apps/reviews/models.py:66
-#: meetService/apps/specialists/models.py:143
+#: meetService/apps/directories/models.py:101
+#: meetService/apps/projects/models.py:184
+#: meetService/apps/projects/models.py:385
+#: meetService/apps/reviews/models.py:68
+#: meetService/apps/specialists/models.py:145
 msgid "дата создания"
-msgstr ""
+msgstr "creation date"
 
 #: meetService/apps/directories/models.py:39
-#: meetService/apps/directories/models.py:99
-#: meetService/apps/projects/models.py:167
-#: meetService/apps/projects/models.py:344
-#: meetService/apps/reviews/models.py:70
-#: meetService/apps/specialists/models.py:147
+#: meetService/apps/directories/models.py:105
+#: meetService/apps/projects/models.py:188
+#: meetService/apps/projects/models.py:389
+#: meetService/apps/reviews/models.py:72
+#: meetService/apps/specialists/models.py:149
 msgid "дата изменения"
-msgstr ""
+msgstr "modification date"
 
 #: meetService/apps/directories/models.py:45
-#: meetService/apps/projects/models.py:300
+#: meetService/apps/projects/models.py:345
+#: meetService/apps/projects/templatetags/project_extras.py:45
 msgid "роль"
-msgstr ""
+msgstr "role"
 
 #: meetService/apps/directories/models.py:46
+#: meetService/apps/projects/templatetags/project_extras.py:48
 msgid "роли"
-msgstr ""
-
-#: meetService/apps/directories/models.py:60
-msgid "Язык программирования"
-msgstr ""
-
-#: meetService/apps/directories/models.py:61
-msgid "Фреймворк"
-msgstr ""
-
-#: meetService/apps/directories/models.py:62
-msgid "База данных"
-msgstr ""
-
-#: meetService/apps/directories/models.py:63
-msgid "DevOps"
-msgstr ""
-
-#: meetService/apps/directories/models.py:64
-msgid "Дизайн"
-msgstr ""
-
-#: meetService/apps/directories/models.py:65
-msgid "Тестирование"
-msgstr ""
+msgstr "roles"
 
 #: meetService/apps/directories/models.py:66
-#: meetService/apps/projects/models.py:505
-msgid "Другое"
-msgstr ""
+msgid "Язык программирования"
+msgstr "Programming language"
+
+#: meetService/apps/directories/models.py:67
+msgid "Фреймворк"
+msgstr "Framework"
+
+#: meetService/apps/directories/models.py:68
+msgid "База данных"
+msgstr "Database"
+
+#: meetService/apps/directories/models.py:69
+msgid "DevOps"
+msgstr "DevOps"
+
+#: meetService/apps/directories/models.py:70
+msgid "Дизайн"
+msgstr "Design"
 
 #: meetService/apps/directories/models.py:71
-msgid "название технологии"
-msgstr ""
+msgid "Тестирование"
+msgstr "Testing"
 
 #: meetService/apps/directories/models.py:72
+#: meetService/apps/projects/models.py:576
+msgid "Другое"
+msgstr "Other"
+
+#: meetService/apps/directories/models.py:77
+msgid "название технологии"
+msgstr "technology name"
+
+#: meetService/apps/directories/models.py:78
 msgid "Например: Python, Django, React, PostgreSQL."
-msgstr ""
+msgstr "For example: Python, Django, React, PostgreSQL."
 
-#: meetService/apps/directories/models.py:83
+#: meetService/apps/directories/models.py:89
 msgid "категория"
-msgstr ""
+msgstr "category"
 
-#: meetService/apps/directories/models.py:105
-#: meetService/apps/projects/models.py:256
-#: meetService/apps/specialists/models.py:215
+#: meetService/apps/directories/models.py:111
+#: meetService/apps/projects/models.py:298
+#: meetService/apps/specialists/models.py:232
 msgid "технология"
-msgstr ""
+msgstr "technology"
 
-#: meetService/apps/directories/models.py:106
-#: meetService/apps/projects/models.py:145
-#: meetService/apps/specialists/models.py:62
+#: meetService/apps/directories/models.py:112
+#: meetService/apps/projects/models.py:166
+#: meetService/apps/specialists/models.py:64
 msgid "технологии"
-msgstr ""
+msgstr "technologies"
 
-#: meetService/apps/interactions/admin.py:67
+#: meetService/apps/interactions/admin.py:69
 msgid "Отклик"
-msgstr ""
+msgstr "Application"
 
-#: meetService/apps/interactions/admin.py:79
+#: meetService/apps/interactions/admin.py:81
 msgid "Рассмотрение"
-msgstr ""
+msgstr "Review"
 
-#: meetService/apps/interactions/admin.py:205
+#: meetService/apps/interactions/admin.py:123
+msgid "Активный"
+msgstr "Active"
+
+#: meetService/apps/interactions/admin.py:132
+msgid "Принять выбранные отклики"
+msgstr "Accept selected applications"
+
+#: meetService/apps/interactions/admin.py:149
+#, python-format
+msgid "Отклик «%(application)s» не принят: %(error)s"
+msgstr "Application “%(application)s” was not accepted: %(error)s"
+
+#: meetService/apps/interactions/admin.py:156
+#, python-format
+msgid "Принято откликов: %(count)s"
+msgstr "Accepted applications: %(count)s"
+
+#: meetService/apps/interactions/admin.py:160
+msgid "Отклонить выбранные отклики"
+msgstr "Reject selected applications"
+
+#: meetService/apps/interactions/admin.py:176
+#, python-format
+msgid "Отклонено откликов: %(count)s"
+msgstr "Rejected applications: %(count)s"
+
+#: meetService/apps/interactions/admin.py:235
 msgid "Приглашение"
-msgstr ""
+msgstr "Invitation"
 
-#: meetService/apps/interactions/admin.py:218
+#: meetService/apps/interactions/admin.py:248
 msgid "Даты"
-msgstr ""
+msgstr "Dates"
 
-#: meetService/apps/interactions/models.py:20
-msgid "На рассмотрении"
-msgstr ""
+#: meetService/apps/interactions/admin.py:274
+#: meetService/apps/interactions/models.py:264
+msgid "Ожидает ответа"
+msgstr "Waiting for response"
 
-#: meetService/apps/interactions/models.py:21
-msgid "Принят"
-msgstr ""
+#: meetService/apps/interactions/admin.py:283
+#| msgid "Мои приглашения"
+msgid "Принять выбранные приглашения"
+msgstr "Accept selected invitations"
 
-#: meetService/apps/interactions/models.py:22
-#: meetService/apps/reviews/models.py:24
-msgid "Отклонён"
-msgstr ""
+#: meetService/apps/interactions/admin.py:300
+#, python-format
+msgid "Приглашение «%(invitation)s» не принято: %(error)s"
+msgstr "Invitation “%(invitation)s” was not accepted: %(error)s"
+
+#: meetService/apps/interactions/admin.py:307
+#, python-format
+#| msgid "Мои приглашения"
+msgid "Принято приглашений: %(count)s"
+msgstr "Accepted invitations: %(count)s"
+
+#: meetService/apps/interactions/admin.py:311
+#| msgid "Мои приглашения"
+msgid "Отклонить выбранные приглашения"
+msgstr "Reject selected invitations"
+
+#: meetService/apps/interactions/admin.py:327
+#, python-format
+#| msgid "Мои приглашения"
+msgid "Отклонено приглашений: %(count)s"
+msgstr "Rejected invitations: %(count)s"
+
+#: meetService/apps/interactions/admin.py:378
+#| msgid "Мои проекты"
+msgid "Статус проекта"
+msgstr "Project status"
+
+#: meetService/apps/interactions/forms.py:22
+msgid "Сопроводительное сообщение"
+msgstr "Cover message"
+
+#: meetService/apps/interactions/forms.py:24
+msgid "Кратко расскажи, почему ты подходишь команде."
+msgstr "Briefly explain why you are a good fit for the team."
+
+#: meetService/apps/interactions/forms.py:29
+msgid "Здравствуйте! Хочу присоединиться к проекту, потому что..."
+msgstr "Hello! I want to join the project because..."
+
+#: meetService/apps/interactions/forms.py:41
+msgid "Открытая роль"
+msgstr "Open role"
+
+#: meetService/apps/interactions/forms.py:44
+msgid "Выбери роль, на которую хочешь откликнуться."
+msgstr "Select the role you want to apply for."
+
+#: meetService/apps/interactions/forms.py:48
+msgid "Выбери открытую роль проекта."
+msgstr "Select an open project role."
+
+#: meetService/apps/interactions/forms.py:89
+msgid "Выбранная роль не относится к этому проекту."
+msgstr "The selected role does not belong to this project."
+
+#: meetService/apps/interactions/forms.py:92
+#: meetService/apps/interactions/forms.py:205
+msgid "Эта роль уже закрыта или заполнена."
+msgstr "This role is already closed or filled."
+
+#: meetService/apps/interactions/forms.py:139
+msgid "Проект и открытая роль"
+msgstr "Project and open role"
+
+#: meetService/apps/interactions/forms.py:140
+#| msgid "Профиль специалиста"
+msgid "Сообщение специалисту"
+msgstr "Message to the specialist"
+
+#: meetService/apps/interactions/forms.py:143
+msgid "Выбери открытую роль в одном из своих опубликованных проектов."
+msgstr "Select an open role in one of your published projects."
+
+#: meetService/apps/interactions/forms.py:144
+msgid "Кратко объясни, почему хочешь пригласить этого специалиста."
+msgstr "Briefly explain why you want to invite this specialist."
+
+#: meetService/apps/interactions/forms.py:148
+msgid "Выбери открытую роль для приглашения."
+msgstr "Select an open role for the invitation."
+
+#: meetService/apps/interactions/forms.py:157
+msgid "Здравствуйте! Хочу пригласить вас в проект..."
+msgstr "Hello! I would like to invite you to the project..."
 
 #: meetService/apps/interactions/models.py:23
+msgid "На рассмотрении"
+msgstr "Pending review"
+
+#: meetService/apps/interactions/models.py:24
+msgid "Принят"
+msgstr "Accepted"
+
+#: meetService/apps/interactions/models.py:25
+#: meetService/apps/reviews/models.py:26
+msgid "Отклонён"
+msgstr "Rejected"
+
+#: meetService/apps/interactions/models.py:26
 msgid "Отменён"
-msgstr ""
+msgstr "Canceled"
 
-#: meetService/apps/interactions/models.py:34
-#: meetService/apps/interactions/models.py:244
-#: meetService/apps/interactions/models.py:454
-#: meetService/apps/projects/models.py:189
-#: meetService/apps/projects/models.py:250
-#: meetService/apps/projects/models.py:294
-#: meetService/apps/projects/models.py:438
-#: meetService/apps/projects/models.py:511
-#: meetService/apps/reviews/models.py:30
+#: meetService/apps/interactions/models.py:37
+#: meetService/apps/interactions/models.py:274
+#: meetService/apps/interactions/models.py:507
+#: meetService/apps/projects/models.py:210
+#: meetService/apps/projects/models.py:292
+#: meetService/apps/projects/models.py:339
+#: meetService/apps/projects/models.py:503
+#: meetService/apps/projects/models.py:582
+#: meetService/apps/reviews/models.py:32
+#: meetService/templates/projects/project_form.html:6
 msgid "проект"
-msgstr ""
+msgstr "project"
 
-#: meetService/apps/interactions/models.py:40
-#: meetService/apps/interactions/models.py:250
+#: meetService/apps/interactions/models.py:43
+#: meetService/apps/interactions/models.py:280
+#: meetService/templates/projects/vacancy_form.html:6
 msgid "открытая роль"
-msgstr ""
+msgstr "open role"
 
-#: meetService/apps/interactions/models.py:46
-#: meetService/apps/interactions/models.py:256
-#: meetService/apps/projects/models.py:444
-#: meetService/apps/reviews/models.py:44
-#: meetService/apps/specialists/models.py:209
+#: meetService/apps/interactions/models.py:49
+#: meetService/apps/interactions/models.py:286
+#: meetService/apps/projects/models.py:509
+#: meetService/apps/reviews/models.py:46
+#: meetService/apps/specialists/models.py:226
 msgid "специалист"
-msgstr ""
+msgstr "specialist"
 
-#: meetService/apps/interactions/models.py:50
-#: meetService/apps/interactions/models.py:266
+#: meetService/apps/interactions/models.py:53
+#: meetService/apps/interactions/models.py:296
 msgid "сообщение"
-msgstr ""
+msgstr "message"
 
-#: meetService/apps/interactions/models.py:51
+#: meetService/apps/interactions/models.py:54
 msgid "Сопроводительное сообщение специалиста владельцу проекта."
-msgstr ""
+msgstr "Specialist's cover message to the project owner."
 
-#: meetService/apps/interactions/models.py:57
+#: meetService/apps/interactions/models.py:60
 msgid "статус отклика"
-msgstr ""
+msgstr "application status"
 
-#: meetService/apps/interactions/models.py:61
+#: meetService/apps/interactions/models.py:64
 msgid "дата отклика"
-msgstr ""
+msgstr "application date"
 
-#: meetService/apps/interactions/models.py:66
+#: meetService/apps/interactions/models.py:69
 msgid "дата рассмотрения"
-msgstr ""
+msgstr "review date"
 
-#: meetService/apps/interactions/models.py:74
+#: meetService/apps/interactions/models.py:77
 msgid "рассмотрел"
-msgstr ""
+msgstr "reviewed by"
 
-#: meetService/apps/interactions/models.py:80
+#: meetService/apps/interactions/models.py:83
+#: meetService/templates/interactions/project_apply.html:6
 msgid "отклик"
-msgstr ""
+msgstr "application"
 
-#: meetService/apps/interactions/models.py:81
+#: meetService/apps/interactions/models.py:84
+#: meetService/templates/accounts/profile.html:112
 msgid "отклики"
-msgstr ""
+msgstr "applications"
 
-#: meetService/apps/interactions/models.py:104
-#: meetService/apps/interactions/models.py:312
+#: meetService/apps/interactions/models.py:112
+#: meetService/apps/interactions/models.py:347
 msgid "Выбранная открытая роль не относится к указанному проекту."
-msgstr ""
+msgstr "The selected open role does not belong to the specified project."
 
-#: meetService/apps/interactions/models.py:109
-#: meetService/apps/interactions/models.py:317
-msgid "Нельзя откликаться на собственный проект."
-msgstr ""
+#: meetService/apps/interactions/models.py:172
+msgid "Можно принять только отклик на рассмотрении."
+msgstr "Only a pending application can be accepted."
 
-#: meetService/apps/interactions/models.py:113
-#: meetService/apps/interactions/models.py:332
-msgid "Нельзя откликаться на неопубликованный проект."
-msgstr ""
-
-#: meetService/apps/interactions/models.py:117
-#: meetService/apps/interactions/models.py:336
-msgid "Нельзя откликаться на закрытую или заполненную роль."
-msgstr ""
-
-#: meetService/apps/interactions/models.py:133
-#: meetService/apps/interactions/models.py:352
-msgid "У специалиста уже есть активный отклик на эту роль."
-msgstr ""
-
-#: meetService/apps/interactions/models.py:234
-msgid "Ожидает ответа"
-msgstr ""
-
-#: meetService/apps/interactions/models.py:235
-msgid "Принято"
-msgstr ""
-
-#: meetService/apps/interactions/models.py:236
-msgid "Отклонено"
-msgstr ""
+#: meetService/apps/interactions/models.py:176
+msgid "Принимать отклики может только владелец проекта или администратор."
+msgstr "Only the project owner or an administrator can accept applications."
 
 #: meetService/apps/interactions/models.py:237
-msgid "Отменено"
-msgstr ""
+msgid "Можно отклонить только отклик на рассмотрении."
+msgstr "Only a pending application can be rejected."
 
-#: meetService/apps/interactions/models.py:238
-msgid "Истекло"
-msgstr ""
+#: meetService/apps/interactions/models.py:241
+msgid "Отклонять отклики может только владелец проекта или администратор."
+msgstr "Only the project owner or an administrator can reject applications."
 
-#: meetService/apps/interactions/models.py:262
-msgid "пригласил"
-msgstr ""
+#: meetService/apps/interactions/models.py:265
+msgid "Принято"
+msgstr "Accepted"
+
+#: meetService/apps/interactions/models.py:266
+msgid "Отклонено"
+msgstr "Rejected"
 
 #: meetService/apps/interactions/models.py:267
+msgid "Отменено"
+msgstr "Canceled"
+
+#: meetService/apps/interactions/models.py:268
+msgid "Истекло"
+msgstr "Expired"
+
+#: meetService/apps/interactions/models.py:292
+msgid "пригласил"
+msgstr "invited by"
+
+#: meetService/apps/interactions/models.py:297
 msgid "Сообщение владельца проекта специалисту."
-msgstr ""
+msgstr "Project owner's message to the specialist."
 
-#: meetService/apps/interactions/models.py:273
+#: meetService/apps/interactions/models.py:303
 msgid "статус приглашения"
-msgstr ""
+msgstr "invitation status"
 
-#: meetService/apps/interactions/models.py:277
+#: meetService/apps/interactions/models.py:307
 msgid "дата приглашения"
-msgstr ""
+msgstr "invitation date"
 
-#: meetService/apps/interactions/models.py:282
+#: meetService/apps/interactions/models.py:312
 msgid "дата ответа"
-msgstr ""
+msgstr "response date"
 
-#: meetService/apps/interactions/models.py:288
+#: meetService/apps/interactions/models.py:318
+#: meetService/templates/interactions/invite_specialist.html:6
 msgid "приглашение"
-msgstr ""
+msgstr "invitation"
 
-#: meetService/apps/interactions/models.py:289
+#: meetService/apps/interactions/models.py:319
+#: meetService/templates/accounts/profile.html:138
 msgid "приглашения"
-msgstr ""
+msgstr "invitations"
 
-#: meetService/apps/interactions/models.py:327
-msgid "Специалист уже состоит в команде этого проекта."
-msgstr ""
-
-#: meetService/apps/interactions/models.py:381
+#: meetService/apps/interactions/models.py:423
 msgid "Можно принять только приглашение со статусом «Ожидает ответа»."
-msgstr ""
+msgstr "Only an invitation with the “Waiting for response” status can be accepted."
 
-#: meetService/apps/interactions/models.py:404
+#: meetService/apps/interactions/models.py:449
 msgid "Открытая роль уже закрыта или заполнена."
-msgstr ""
+msgstr "The open role is already closed or filled."
 
-#: meetService/apps/interactions/models.py:427
+#: meetService/apps/interactions/models.py:477
 msgid "Можно отклонить только приглашение со статусом «Ожидает ответа»."
-msgstr ""
+msgstr "Only an invitation with the “Waiting for response” status can be rejected."
 
-#: meetService/apps/interactions/models.py:458
-#: meetService/apps/projects/models.py:264
-#: meetService/apps/specialists/models.py:238
+#: meetService/apps/interactions/models.py:511
+#: meetService/apps/projects/models.py:306
+#: meetService/apps/specialists/models.py:255
 msgid "дата добавления"
-msgstr ""
+msgstr "date added"
 
-#: meetService/apps/interactions/models.py:462
+#: meetService/apps/interactions/models.py:515
 msgid "избранный проект"
-msgstr ""
+msgstr "favorite project"
 
-#: meetService/apps/interactions/models.py:463
+#: meetService/apps/interactions/models.py:516
 msgid "избранные проекты"
-msgstr ""
+msgstr "favorite projects"
 
-#: meetService/apps/projects/admin.py:205
+#: meetService/apps/interactions/tasks.py:36
+#: meetService/apps/interactions/tasks.py:39
+msgid "Добро пожаловать в New-Makers"
+msgstr "Welcome to New-Makers"
+
+#: meetService/apps/interactions/tasks.py:40
+msgid "Аккаунт создан, можно искать команду и проекты."
+msgstr "The account has been created; you can now search for teams and projects."
+
+#: meetService/apps/interactions/tasks.py:41
+#: meetService/apps/interactions/tasks.py:89
+#: meetService/apps/interactions/tasks.py:155
+#: meetService/apps/interactions/tasks.py:200
+#: meetService/apps/interactions/tasks.py:257
+#, python-format
+msgid "Здравствуйте, %(name)s."
+msgstr "Hello, %(name)s."
+
+#: meetService/apps/interactions/tasks.py:43
+msgid "Ваш аккаунт создан. Теперь можно оформить профиль специалиста, откликаться на проекты или собрать команду для своей идеи."
+msgstr "Your account has been created. Now you can create a specialist profile, apply to projects, or build a team for your idea."
+
+#: meetService/apps/interactions/tasks.py:47
+#: meetService/templates/accounts/profile.html:337
+msgid "Аккаунт"
+msgstr "Account"
+
+#: meetService/apps/interactions/tasks.py:48
+msgid "Роль по умолчанию"
+msgstr "Default role"
+
+#: meetService/apps/interactions/tasks.py:51
+#: meetService/templates/accounts/profile.html:65
+#: meetService/templates/specialists/specialist_list.html:95
+msgid "Открыть профиль"
+msgstr "Open profile"
+
+#: meetService/apps/interactions/tasks.py:82
+#, python-format
+msgid "Новый отклик на проект «%(project)s»"
+msgstr "New application for “%(project)s”"
+
+#: meetService/apps/interactions/tasks.py:86
+#| msgid "Мои отклики"
+msgid "Новый отклик"
+msgstr "New application"
+
+#: meetService/apps/interactions/tasks.py:87
+#, python-format
+msgid "%(specialist)s откликнулся на роль."
+msgstr "%(specialist)s applied for the role."
+
+#: meetService/apps/interactions/tasks.py:92
+#, python-format
+msgid "Специалист %(specialist)s отправил отклик на роль «%(role)s» в проекте «%(project)s»."
+msgstr "Specialist %(specialist)s applied for the “%(role)s” role in the “%(project)s” project."
+
+#: meetService/apps/interactions/tasks.py:102
+#: meetService/apps/interactions/tasks.py:159
+#: meetService/apps/interactions/tasks.py:213
+#: meetService/apps/interactions/tasks.py:269
+#| msgid "Проекты"
+msgid "Проект"
+msgstr "Project"
+
+#: meetService/apps/interactions/tasks.py:103
+#: meetService/apps/interactions/tasks.py:160
+#: meetService/apps/interactions/tasks.py:214
+#: meetService/apps/interactions/tasks.py:270
+#: meetService/apps/projects/forms.py:183
+#: meetService/templates/projects/project_list.html:30
+#: meetService/templates/specialists/specialist_list.html:21
+msgid "Роль"
+msgstr "Role"
+
+#: meetService/apps/interactions/tasks.py:107
+#| msgid "Мои отклики"
+msgid "Посмотреть отклики"
+msgstr "View applications"
+
+#: meetService/apps/interactions/tasks.py:135
+msgid "Отклик принят"
+msgstr "Application accepted"
+
+#: meetService/apps/interactions/tasks.py:135
+#| msgid "Мои отклики"
+msgid "Отклик отклонён"
+msgstr "Application rejected"
+
+#: meetService/apps/interactions/tasks.py:137
+#, python-format
+msgid "Ваш отклик на роль «%(role)s» в проекте «%(project)s» принят. Вы добавлены в команду проекта."
+msgstr "Your application for the “%(role)s” role in the “%(project)s” project has been accepted. You have been added to the project team."
+
+#: meetService/apps/interactions/tasks.py:142
+#, python-format
+msgid "Ваш отклик на роль «%(role)s» в проекте «%(project)s» отклонён."
+msgstr "Your application for the “%(role)s” role in the “%(project)s” project has been rejected."
+
+#: meetService/apps/interactions/tasks.py:148
+#: meetService/apps/interactions/tasks.py:250
+#, python-format
+msgid "%(status)s: «%(project)s»"
+msgstr "%(status)s: “%(project)s”"
+
+#: meetService/apps/interactions/tasks.py:153
+#, python-format
+msgid "Статус отклика: %(status)s."
+msgstr "Application status: %(status)s."
+
+#: meetService/apps/interactions/tasks.py:164
+#| msgid "Мои отклики"
+msgid "Открыть мои отклики"
+msgstr "Open my applications"
+
+#: meetService/apps/interactions/tasks.py:193
+#, python-format
+msgid "Вас пригласили в проект «%(project)s»"
+msgstr "You have been invited to “%(project)s”"
+
+#: meetService/apps/interactions/tasks.py:197
+#| msgid "Мои приглашения"
+msgid "Новое приглашение"
+msgstr "New invitation"
+
+#: meetService/apps/interactions/tasks.py:198
+#, python-format
+msgid "Приглашение на роль «%(role)s»."
+msgstr "Invitation for the “%(role)s” role."
+
+#: meetService/apps/interactions/tasks.py:203
+#, python-format
+msgid "%(owner)s приглашает вас в проект «%(project)s» на роль «%(role)s»."
+msgstr "%(owner)s invites you to the “%(project)s” project for the “%(role)s” role."
+
+#: meetService/apps/interactions/tasks.py:215
+msgid "Пригласил"
+msgstr "Invited by"
+
+#: meetService/apps/interactions/tasks.py:218
+#| msgid "Мои приглашения"
+msgid "Посмотреть приглашение"
+msgstr "View invitation"
+
+#: meetService/apps/interactions/tasks.py:246
+#| msgid "Мои приглашения"
+msgid "Приглашение принято"
+msgstr "Invitation accepted"
+
+#: meetService/apps/interactions/tasks.py:246
+msgid "Приглашение отклонено"
+msgstr "Invitation rejected"
+
+#: meetService/apps/interactions/tasks.py:255
+#, python-format
+msgid "%(specialist)s ответил на приглашение."
+msgstr "%(specialist)s responded to the invitation."
+
+#: meetService/apps/interactions/tasks.py:260
+#, python-format
+msgid "Специалист %(specialist)s %(decision)s приглашение в проект «%(project)s»."
+msgstr "Specialist %(specialist)s %(decision)s the invitation to the “%(project)s” project."
+
+#: meetService/apps/interactions/tasks.py:264
+msgid "принял"
+msgstr "accepted"
+
+#: meetService/apps/interactions/tasks.py:264
+#| msgid "Мои отклики"
+msgid "отклонил"
+msgstr "rejected"
+
+#: meetService/apps/interactions/tasks.py:275
+#: meetService/templates/accounts/profile.html:159
+#| msgid "Мои приглашения"
+msgid "Открыть приглашения"
+msgstr "Open invitations"
+
+#: meetService/apps/interactions/tasks.py:313
+msgid "New-Makers: новые отклики ждут рассмотрения"
+msgstr "New-Makers: new applications are waiting for review"
+
+#: meetService/apps/interactions/tasks.py:315
+#: meetService/apps/interactions/tasks.py:350
+#, python-format
+msgid "Здравствуйте, %(name)s.\n\n"
+msgstr "Hello, %(name)s.\n\n"
+
+#: meetService/apps/interactions/tasks.py:318
+#, python-format
+msgid "У ваших проектов есть %(count)s отклик на рассмотрении.\n"
+msgid_plural "У ваших проектов есть %(count)s откликов на рассмотрении.\n"
+msgstr[0] "Your projects have %(count)s application pending review.\n"
+msgstr[1] "Your projects have %(count)s applications pending review.\n"
+
+#: meetService/apps/interactions/tasks.py:323
+msgid "Откройте личный кабинет New-Makers, чтобы принять или отклонить их."
+msgstr "Open your New-Makers dashboard to accept or reject them."
+
+#: meetService/apps/interactions/tasks.py:348
+msgid "New-Makers: у вас есть приглашения в проекты"
+msgstr "New-Makers: you have project invitations"
+
+#: meetService/apps/interactions/tasks.py:353
+#, python-format
+msgid "Вас ждёт %(count)s приглашение в проект.\n"
+msgid_plural "Вас ждут %(count)s приглашений в проекты.\n"
+msgstr[0] "You have %(count)s project invitation waiting.\n"
+msgstr[1] "You have %(count)s project invitations waiting.\n"
+
+#: meetService/apps/interactions/tasks.py:358
+msgid "Откройте New-Makers, чтобы принять или отклонить приглашения."
+msgstr "Open New-Makers to accept or reject the invitations."
+
+#: meetService/apps/interactions/views.py:50
+#: meetService/apps/interactions/views.py:409
+msgid "Ты уже состоишь в команде этого проекта."
+msgstr "You are already on this project team."
+
+#: meetService/apps/interactions/views.py:66
+msgid "Отклик отправлен владельцу проекта."
+msgstr "The application has been sent to the project owner."
+
+#: meetService/apps/interactions/views.py:154
+msgid "Проект удалён из избранного."
+msgstr "The project has been removed from favorites."
+
+#: meetService/apps/interactions/views.py:160
+msgid "Проект добавлен в избранное."
+msgstr "The project has been added to favorites."
+
+#: meetService/apps/interactions/views.py:228
+msgid "Для приглашения нужен опубликованный проект с открытой ролью."
+msgstr "An invitation requires a published project with an open role."
+
+#: meetService/apps/interactions/views.py:312
+msgid "Такое активное приглашение уже существует."
+msgstr "Such an active invitation already exists."
+
+#: meetService/apps/interactions/views.py:315
+msgid "Приглашение отправлено специалисту."
+msgstr "The invitation has been sent to the specialist."
+
+#: meetService/apps/interactions/views.py:411
+msgid "Приглашение принято. Ты добавлен в команду проекта."
+msgstr "Invitation accepted. You have been added to the project team."
+
+#: meetService/apps/interactions/views.py:437
+msgid "Приглашение отклонено."
+msgstr "Invitation rejected."
+
+#: meetService/apps/interactions/views.py:487
+msgid "Отклик принят. Специалист добавлен в команду проекта."
+msgstr "Application accepted. The specialist has been added to the project team."
+
+#: meetService/apps/interactions/views.py:512
+#| msgid "Мои отклики"
+msgid "Отклик отклонён."
+msgstr "Application rejected."
+
+#: meetService/apps/projects/admin.py:220
 msgid "Владелец и статус"
-msgstr ""
+msgstr "Owner and status"
 
-#: meetService/apps/projects/admin.py:216
+#: meetService/apps/projects/admin.py:231
 msgid "Описание проекта"
-msgstr ""
+msgstr "Project description"
 
-#: meetService/apps/projects/admin.py:228
+#: meetService/apps/projects/admin.py:243
 msgid "Медиа и ссылки"
-msgstr ""
+msgstr "Media and links"
 
-#: meetService/apps/projects/admin.py:239
+#: meetService/apps/projects/admin.py:254
 msgid "Статистика"
-msgstr ""
+msgstr "Statistics"
 
-#: meetService/apps/projects/admin.py:541
+#: meetService/apps/projects/admin.py:323
+#: meetService/apps/projects/resources.py:18
+msgid "Участников"
+msgstr "Participants"
+
+#: meetService/apps/projects/admin.py:332
+#: meetService/apps/specialists/admin.py:369
+msgid "Технологий"
+msgstr "Technologies"
+
+#: meetService/apps/projects/admin.py:341
+msgid "Предпросмотр обложки"
+msgstr "Cover preview"
+
+#: meetService/apps/projects/admin.py:353
+msgid "Обложка не загружена"
+msgstr "Cover not uploaded"
+
+#: meetService/apps/projects/admin.py:355
+msgid "Сформировать PDF по выбранным проектам"
+msgstr "Generate a PDF for selected projects"
+
+#: meetService/apps/projects/admin.py:401
+#| msgid "Мои проекты"
+msgid "Отчёт по проектам"
+msgstr "Project report"
+
+#: meetService/apps/projects/admin.py:403
+msgid "Отчёт по выбранным проектам"
+msgstr "Report for selected projects"
+
+#: meetService/apps/projects/admin.py:410
+#, python-format
+msgid "Дата формирования: %(date)s"
+msgstr "Generated on: %(date)s"
+
+#: meetService/apps/projects/admin.py:431
+#: meetService/apps/projects/resources.py:12
+msgid "Владелец"
+msgstr "Owner"
+
+#: meetService/apps/projects/admin.py:433 meetService/apps/projects/forms.py:41
+#: meetService/apps/projects/resources.py:14
+msgid "Стадия"
+msgstr "Stage"
+
+#: meetService/apps/projects/admin.py:434 meetService/apps/projects/forms.py:42
+#: meetService/apps/projects/resources.py:15
+msgid "Формат участия"
+msgstr "Participation format"
+
+#: meetService/apps/projects/admin.py:435 meetService/apps/projects/forms.py:37
+msgid "Краткое описание"
+msgstr "Short description"
+
+#: meetService/apps/projects/admin.py:436
+msgid "Цель"
+msgstr "Goal"
+
+#: meetService/apps/projects/admin.py:437
+#: meetService/templates/projects/project_detail.html:98
+msgid "Репозиторий"
+msgstr "Repository"
+
+#: meetService/apps/projects/admin.py:438
+#: meetService/templates/projects/project_detail.html:101
+msgid "Демо"
+msgstr "Demo"
+
+#: meetService/apps/projects/admin.py:458
+#, python-format
+msgid "Технологии: %(technologies)s"
+msgstr "Technologies: %(technologies)s"
+
+#: meetService/apps/projects/admin.py:468
+msgid "Открытые роли:"
+msgstr "Open roles:"
+
+#: meetService/apps/projects/admin.py:475
+#, python-format
+msgid "- %(title)s; роль: %(role)s; уровень: %(level)s; статус: %(status)s; набрано: %(current)s/%(required)s"
+msgstr "- %(title)s; role: %(role)s; level: %(level)s; status: %(status)s; filled: %(current)s/%(required)s"
+
+#: meetService/apps/projects/admin.py:494
+msgid "- Нет открытых ролей"
+msgstr "- No open roles"
+
+#: meetService/apps/projects/admin.py:499
+#| msgid "Мои проекты"
+msgid "Файлы проекта:"
+msgstr "Project files:"
+
+#: meetService/apps/projects/admin.py:506
+#, python-format
+msgid "- %(title)s; тип: %(type)s; путь: %(path)s"
+msgstr "- %(title)s; type: %(type)s; path: %(path)s"
+
+#: meetService/apps/projects/admin.py:521
+msgid "- Нет прикреплённых файлов"
+msgstr "- No attached files"
+
+#: meetService/apps/projects/admin.py:611
 msgid "Проект и роль"
-msgstr ""
+msgstr "Project and role"
 
-#: meetService/apps/projects/admin.py:552
+#: meetService/apps/projects/admin.py:622
 msgid "Требования и набор"
-msgstr ""
+msgstr "Requirements and recruitment"
 
-#: meetService/apps/projects/models.py:60
-msgid "Идея"
-msgstr ""
+#: meetService/apps/projects/admin.py:644
+msgid "Свободных мест"
+msgstr "Free spots"
 
-#: meetService/apps/projects/models.py:61
-msgid "Прототип"
-msgstr ""
+#: meetService/apps/projects/admin.py:695
+#: meetService/apps/projects/models.py:495
+msgid "Активен"
+msgstr "Active"
 
-#: meetService/apps/projects/models.py:62
-msgid "MVP"
-msgstr ""
+#: meetService/apps/projects/forms.py:16
+#: meetService/apps/projects/resources.py:16
+msgid "Технологии"
+msgstr "Technologies"
 
-#: meetService/apps/projects/models.py:63
-msgid "Разработка"
-msgstr ""
+#: meetService/apps/projects/forms.py:17
+msgid "Выбери технологии, которые используются в проекте."
+msgstr "Select the technologies used in the project."
 
-#: meetService/apps/projects/models.py:64
-msgid "Запуск"
-msgstr ""
+#: meetService/apps/projects/forms.py:36
+#: meetService/templates/projects/project_archive_confirm.html:15
+#| msgid "Мои проекты"
+msgid "Название проекта"
+msgstr "Project title"
 
-#: meetService/apps/projects/models.py:65
-msgid "Развитие"
-msgstr ""
+#: meetService/apps/projects/forms.py:38
+msgid "Подробное описание"
+msgstr "Detailed description"
 
-#: meetService/apps/projects/models.py:66
-msgid "Пауза"
-msgstr ""
+#: meetService/apps/projects/forms.py:39
+#: meetService/templates/projects/project_detail.html:35
+#| msgid "Мои проекты"
+msgid "Цель проекта"
+msgstr "Project goal"
 
-#: meetService/apps/projects/models.py:67
-msgid "Завершён"
-msgstr ""
+#: meetService/apps/projects/forms.py:40
+#| msgid "Мои проекты"
+msgid "Обложка проекта"
+msgstr "Project cover"
 
-#: meetService/apps/projects/models.py:70
-msgid "Энтузиазм"
-msgstr ""
+#: meetService/apps/projects/forms.py:43
+msgid "Ссылка на репозиторий"
+msgstr "Repository link"
 
-#: meetService/apps/projects/models.py:71
-msgid "Оплачиваемо"
-msgstr ""
+#: meetService/apps/projects/forms.py:44
+msgid "Демо-ссылка"
+msgstr "Demo link"
 
-#: meetService/apps/projects/models.py:72
-msgid "Доля"
-msgstr ""
+#: meetService/apps/projects/forms.py:47
+msgid "Короткое и понятное название проекта."
+msgstr "A short and clear project title."
 
-#: meetService/apps/projects/models.py:73
-msgid "Смешанный формат"
-msgstr ""
+#: meetService/apps/projects/forms.py:48
+msgid "Текст для карточки проекта."
+msgstr "Text for the project card."
 
-#: meetService/apps/projects/models.py:74
-msgid "Учебный проект"
-msgstr ""
+#: meetService/apps/projects/forms.py:49
+msgid "Расскажи, что делает проект и кому он полезен."
+msgstr "Describe what the project does and who it is useful for."
 
-#: meetService/apps/projects/models.py:77 meetService/apps/reviews/models.py:21
-msgid "Черновик"
-msgstr ""
+#: meetService/apps/projects/forms.py:50
+msgid "Опиши, какого результата должна добиться команда."
+msgstr "Describe the result the team should achieve."
 
-#: meetService/apps/projects/models.py:78
-msgid "На модерации"
-msgstr ""
+#: meetService/apps/projects/forms.py:51
+msgid "Изображение будет показано в карточке и на странице проекта."
+msgstr "The image will be shown in the card and on the project page."
 
-#: meetService/apps/projects/models.py:79 meetService/apps/reviews/models.py:22
-msgid "Опубликован"
-msgstr ""
+#: meetService/apps/projects/forms.py:55
+msgid "Укажи название проекта."
+msgstr "Enter the project title."
 
-#: meetService/apps/projects/models.py:80
-msgid "Закрыт"
-msgstr ""
+#: meetService/apps/projects/forms.py:56
+msgid "Название слишком длинное."
+msgstr "The title is too long."
+
+#: meetService/apps/projects/forms.py:59
+msgid "Добавь краткое описание проекта."
+msgstr "Add a short project description."
+
+#: meetService/apps/projects/forms.py:60
+msgid "Краткое описание слишком длинное."
+msgstr "The short description is too long."
+
+#: meetService/apps/projects/forms.py:63
+msgid "Добавь подробное описание проекта."
+msgstr "Add a detailed project description."
+
+#: meetService/apps/projects/forms.py:66
+#| msgid "Мои проекты"
+msgid "Укажи цель проекта."
+msgstr "Enter the project goal."
+
+#: meetService/apps/projects/forms.py:73
+#| msgid "сервис поиска IT-команды"
+msgid "Например: сервис подбора IT-команды"
+msgstr "For example: IT team matching service"
+
+#: meetService/apps/projects/forms.py:79
+msgid "Короткое описание для карточки"
+msgstr "Short description for the card"
+
+#: meetService/apps/projects/forms.py:86
+msgid "Опиши идею, аудиторию и особенности проекта"
+msgstr "Describe the idea, audience, and project features"
+
+#: meetService/apps/projects/forms.py:93
+msgid "Какой результат должна получить команда?"
+msgstr "What result should the team achieve?"
+
+#: meetService/apps/projects/forms.py:184
+msgid "Название открытой роли"
+msgstr "Open role title"
+
+#: meetService/apps/projects/forms.py:185
+msgid "Описание роли"
+msgstr "Role description"
+
+#: meetService/apps/projects/forms.py:186
+msgid "Требуемый уровень"
+msgstr "Required level"
+
+#: meetService/apps/projects/forms.py:187
+msgid "Сколько человек нужно"
+msgstr "How many people are needed"
+
+#: meetService/apps/projects/forms.py:190
+msgid "Выбери роль из справочника."
+msgstr "Select a role from the directory."
+
+#: meetService/apps/projects/forms.py:191
+msgid "Например: Junior Backend-разработчик."
+msgstr "For example: Junior Backend developer."
+
+#: meetService/apps/projects/forms.py:192
+msgid "Опиши задачи, ожидания и стек для участника."
+msgstr "Describe the tasks, expectations, and stack for the participant."
+
+#: meetService/apps/projects/forms.py:193
+msgid "Сколько специалистов нужно на эту роль."
+msgstr "How many specialists are needed for this role."
+
+#: meetService/apps/projects/forms.py:197
+msgid "Укажи название открытой роли."
+msgstr "Enter the open role title."
+
+#: meetService/apps/projects/forms.py:200
+msgid "Добавь описание роли."
+msgstr "Add a role description."
+
+#: meetService/apps/projects/forms.py:208
+msgid "Например: Backend-разработчик"
+msgstr "For example: Backend developer"
+
+#: meetService/apps/projects/forms.py:215
+msgid "Опиши задачи и требования к участнику"
+msgstr "Describe the tasks and requirements for the participant"
 
 #: meetService/apps/projects/models.py:81
-#: meetService/apps/projects/models.py:504
-msgid "Архив"
-msgstr ""
+msgid "Идея"
+msgstr "Idea"
 
-#: meetService/apps/projects/models.py:89
-msgid "владелец проекта"
-msgstr ""
+#: meetService/apps/projects/models.py:82
+msgid "Прототип"
+msgstr "Prototype"
 
-#: meetService/apps/projects/models.py:90
-msgid "Пользователь, который создал и ведёт проект."
-msgstr ""
+#: meetService/apps/projects/models.py:83
+msgid "MVP"
+msgstr "MVP"
+
+#: meetService/apps/projects/models.py:84
+msgid "Разработка"
+msgstr "Development"
+
+#: meetService/apps/projects/models.py:85
+msgid "Запуск"
+msgstr "Launch"
+
+#: meetService/apps/projects/models.py:86
+msgid "Развитие"
+msgstr "Growth"
+
+#: meetService/apps/projects/models.py:87
+msgid "Пауза"
+msgstr "Paused"
+
+#: meetService/apps/projects/models.py:88
+msgid "Завершён"
+msgstr "Completed"
+
+#: meetService/apps/projects/models.py:91
+msgid "Энтузиазм"
+msgstr "Enthusiasm"
+
+#: meetService/apps/projects/models.py:92
+msgid "Оплачиваемо"
+msgstr "Paid"
+
+#: meetService/apps/projects/models.py:93
+msgid "Доля"
+msgstr "Equity"
 
 #: meetService/apps/projects/models.py:94
-msgid "название проекта"
-msgstr ""
+msgid "Смешанный формат"
+msgstr "Mixed format"
+
+#: meetService/apps/projects/models.py:95
+msgid "Учебный проект"
+msgstr "Educational project"
+
+#: meetService/apps/projects/models.py:98 meetService/apps/reviews/models.py:23
+msgid "Черновик"
+msgstr "Draft"
+
+#: meetService/apps/projects/models.py:99
+msgid "На модерации"
+msgstr "Under moderation"
+
+#: meetService/apps/projects/models.py:100
+#: meetService/apps/reviews/admin.py:141 meetService/apps/reviews/models.py:24
+msgid "Опубликован"
+msgstr "Published"
+
+#: meetService/apps/projects/models.py:101
+msgid "Закрыт"
+msgstr "Closed"
 
 #: meetService/apps/projects/models.py:102
-msgid "Используется для будущей детальной страницы проекта."
-msgstr ""
-
-#: meetService/apps/projects/models.py:106
-msgid "краткое описание"
-msgstr ""
-
-#: meetService/apps/projects/models.py:107
-msgid "Короткое описание для карточки проекта."
-msgstr ""
+#: meetService/apps/projects/models.py:575
+msgid "Архив"
+msgstr "Archive"
 
 #: meetService/apps/projects/models.py:110
-msgid "подробное описание"
-msgstr ""
+#: meetService/templates/projects/my_projects.html:11
+msgid "владелец проекта"
+msgstr "project owner"
 
-#: meetService/apps/projects/models.py:113
-msgid "цель проекта"
-msgstr ""
+#: meetService/apps/projects/models.py:111
+msgid "Пользователь, который создал и ведёт проект."
+msgstr "The user who created and maintains the project."
 
-#: meetService/apps/projects/models.py:114
-msgid "Что проект должен решить или какой результат должен получить."
-msgstr ""
+#: meetService/apps/projects/models.py:115
+msgid "название проекта"
+msgstr "project title"
 
-#: meetService/apps/projects/models.py:121
-msgid "обложка проекта"
-msgstr ""
+#: meetService/apps/projects/models.py:123
+msgid "Используется для будущей детальной страницы проекта."
+msgstr "Used for the future project detail page."
 
 #: meetService/apps/projects/models.py:127
+msgid "краткое описание"
+msgstr "short description"
+
+#: meetService/apps/projects/models.py:128
+msgid "Короткое описание для карточки проекта."
+msgstr "Short description for the project card."
+
+#: meetService/apps/projects/models.py:131
+msgid "подробное описание"
+msgstr "detailed description"
+
+#: meetService/apps/projects/models.py:134
+msgid "цель проекта"
+msgstr "project goal"
+
+#: meetService/apps/projects/models.py:135
+msgid "Что проект должен решить или какой результат должен получить."
+msgstr "What the project should solve or what result it should achieve."
+
+#: meetService/apps/projects/models.py:142
+msgid "обложка проекта"
+msgstr "project cover"
+
+#: meetService/apps/projects/models.py:148
 msgid "стадия"
-msgstr ""
+msgstr "stage"
 
-#: meetService/apps/projects/models.py:133
-#: meetService/apps/specialists/models.py:88
+#: meetService/apps/projects/models.py:154
+#: meetService/apps/specialists/models.py:90
 msgid "формат участия"
-msgstr ""
+msgstr "participation format"
 
-#: meetService/apps/projects/models.py:139
-#: meetService/apps/projects/models.py:336
-#: meetService/apps/reviews/models.py:62
+#: meetService/apps/projects/models.py:160
+#: meetService/apps/projects/models.py:381
+#: meetService/apps/reviews/models.py:64
 msgid "статус"
-msgstr ""
+msgstr "status"
 
-#: meetService/apps/projects/models.py:151
+#: meetService/apps/projects/models.py:172
 msgid "участники команды"
-msgstr ""
+msgstr "team members"
 
-#: meetService/apps/projects/models.py:155
+#: meetService/apps/projects/models.py:176
 msgid "ссылка на репозиторий"
-msgstr ""
+msgstr "repository link"
 
-#: meetService/apps/projects/models.py:159
+#: meetService/apps/projects/models.py:180
 msgid "демо-ссылка"
-msgstr ""
+msgstr "demo link"
 
-#: meetService/apps/projects/models.py:175
-#: meetService/apps/specialists/models.py:155
+#: meetService/apps/projects/models.py:196
+#: meetService/apps/specialists/models.py:157
 msgid "создал"
-msgstr ""
+msgstr "created by"
 
-#: meetService/apps/projects/models.py:183
-#: meetService/apps/specialists/models.py:163
+#: meetService/apps/projects/models.py:204
+#: meetService/apps/specialists/models.py:165
 msgid "изменил"
-msgstr ""
+msgstr "modified by"
 
-#: meetService/apps/projects/models.py:190
+#: meetService/apps/projects/models.py:211
+#: meetService/templates/accounts/profile.html:193
+#: meetService/templates/search/global_search.html:95
 msgid "проекты"
-msgstr ""
+msgstr "projects"
 
-#: meetService/apps/projects/models.py:260
+#: meetService/apps/projects/models.py:302
 msgid "обязательная технология"
-msgstr ""
+msgstr "required technology"
 
-#: meetService/apps/projects/models.py:268
+#: meetService/apps/projects/models.py:310
 msgid "технология проекта"
-msgstr ""
+msgstr "project technology"
 
-#: meetService/apps/projects/models.py:269
+#: meetService/apps/projects/models.py:311
 msgid "технологии проектов"
-msgstr ""
+msgstr "project technologies"
 
-#: meetService/apps/projects/models.py:286
+#: meetService/apps/projects/models.py:331
 msgid "Открыта"
-msgstr ""
+msgstr "Open"
 
-#: meetService/apps/projects/models.py:287
-#: meetService/apps/projects/models.py:431
+#: meetService/apps/projects/models.py:332
+#: meetService/apps/projects/models.py:496
 msgid "На паузе"
-msgstr ""
+msgstr "Paused"
 
-#: meetService/apps/projects/models.py:288
+#: meetService/apps/projects/models.py:333
 msgid "Закрыта"
-msgstr ""
+msgstr "Closed"
 
-#: meetService/apps/projects/models.py:304
+#: meetService/apps/projects/models.py:349
 msgid "название открытой роли"
-msgstr ""
-
-#: meetService/apps/projects/models.py:305
-msgid "Например: Junior Frontend-разработчик."
-msgstr ""
-
-#: meetService/apps/projects/models.py:308
-msgid "описание роли"
-msgstr ""
-
-#: meetService/apps/projects/models.py:314
-msgid "требуемый уровень"
-msgstr ""
-
-#: meetService/apps/projects/models.py:322
-msgid "требуется человек"
-msgstr ""
-
-#: meetService/apps/projects/models.py:330
-msgid "уже набрано"
-msgstr ""
+msgstr "open role title"
 
 #: meetService/apps/projects/models.py:350
+msgid "Например: Junior Frontend-разработчик."
+msgstr "For example: Junior Frontend developer."
+
+#: meetService/apps/projects/models.py:353
+msgid "описание роли"
+msgstr "role description"
+
+#: meetService/apps/projects/models.py:359
+msgid "требуемый уровень"
+msgstr "required level"
+
+#: meetService/apps/projects/models.py:367
+msgid "требуется человек"
+msgstr "required people"
+
+#: meetService/apps/projects/models.py:375
+msgid "уже набрано"
+msgstr "already filled"
+
+#: meetService/apps/projects/models.py:395
 msgid "открытая роль проекта"
-msgstr ""
+msgstr "project open role"
 
-#: meetService/apps/projects/models.py:351
+#: meetService/apps/projects/models.py:396
 msgid "открытые роли проектов"
-msgstr ""
+msgstr "project open roles"
 
-#: meetService/apps/projects/models.py:430
-msgid "Активен"
-msgstr ""
+#: meetService/apps/projects/models.py:448
+msgid "Вакансия уже закрыта или заполнена."
+msgstr "The vacancy is already closed or filled."
 
-#: meetService/apps/projects/models.py:432
+#: meetService/apps/projects/models.py:497
 msgid "Покинул проект"
-msgstr ""
+msgstr "Left the project"
 
-#: meetService/apps/projects/models.py:450
+#: meetService/apps/projects/models.py:515
 msgid "роль в команде"
-msgstr ""
+msgstr "team role"
 
-#: meetService/apps/projects/models.py:456
+#: meetService/apps/projects/models.py:521
 msgid "статус участия"
-msgstr ""
+msgstr "participation status"
 
-#: meetService/apps/projects/models.py:460
+#: meetService/apps/projects/models.py:525
 msgid "дата вступления"
-msgstr ""
-
-#: meetService/apps/projects/models.py:465
-msgid "дата выхода"
-msgstr ""
-
-#: meetService/apps/projects/models.py:473
-msgid "добавил"
-msgstr ""
-
-#: meetService/apps/projects/models.py:479
-msgid "участник команды"
-msgstr ""
-
-#: meetService/apps/projects/models.py:480
-msgid "участники команд"
-msgstr ""
-
-#: meetService/apps/projects/models.py:501
-msgid "Документ"
-msgstr ""
-
-#: meetService/apps/projects/models.py:502
-msgid "Изображение"
-msgstr ""
-
-#: meetService/apps/projects/models.py:503
-msgid "Презентация"
-msgstr ""
-
-#: meetService/apps/projects/models.py:519
-msgid "загрузил"
-msgstr ""
-
-#: meetService/apps/projects/models.py:524
-msgid "файл"
-msgstr ""
+msgstr "join date"
 
 #: meetService/apps/projects/models.py:530
-msgid "тип файла"
-msgstr ""
-
-#: meetService/apps/projects/models.py:534
-msgid "название файла"
-msgstr ""
+msgid "дата выхода"
+msgstr "leave date"
 
 #: meetService/apps/projects/models.py:538
+msgid "добавил"
+msgstr "added by"
+
+#: meetService/apps/projects/models.py:544
+msgid "участник команды"
+msgstr "team member"
+
+#: meetService/apps/projects/models.py:545
+msgid "участники команд"
+msgstr "team members"
+
+#: meetService/apps/projects/models.py:572
+msgid "Документ"
+msgstr "Document"
+
+#: meetService/apps/projects/models.py:573
+msgid "Изображение"
+msgstr "Image"
+
+#: meetService/apps/projects/models.py:574
+msgid "Презентация"
+msgstr "Presentation"
+
+#: meetService/apps/projects/models.py:590
+msgid "загрузил"
+msgstr "uploaded by"
+
+#: meetService/apps/projects/models.py:595
+msgid "файл"
+msgstr "file"
+
+#: meetService/apps/projects/models.py:601
+msgid "тип файла"
+msgstr "file type"
+
+#: meetService/apps/projects/models.py:605
+msgid "название файла"
+msgstr "file title"
+
+#: meetService/apps/projects/models.py:609
 msgid "дата загрузки"
-msgstr ""
+msgstr "upload date"
 
-#: meetService/apps/projects/models.py:542
+#: meetService/apps/projects/models.py:613
 msgid "файл проекта"
-msgstr ""
+msgstr "project file"
 
-#: meetService/apps/projects/models.py:543
+#: meetService/apps/projects/models.py:614
 msgid "файлы проектов"
-msgstr ""
+msgstr "project files"
 
-#: meetService/apps/reviews/admin.py:68
+#: meetService/apps/projects/templatetags/project_extras.py:42
+#: meetService/apps/projects/templatetags/project_extras.py:50
+msgid "ролей"
+msgstr "roles"
+
+#: meetService/apps/projects/views.py:312
+msgid "Проект не найден."
+msgstr "Project not found."
+
+#: meetService/apps/projects/views.py:545
+msgid "Проект создан как черновик. Первая открытая роль добавлена."
+msgstr "Project created as a draft. The first open role has been added."
+
+#: meetService/apps/projects/views.py:555
+#: meetService/apps/projects/views.py:556
+#: meetService/templates/accounts/profile.html:18
+#: meetService/templates/accounts/profile.html:198
+#: meetService/templates/accounts/profile.html:214
+#: meetService/templates/projects/home.html:18
+#: meetService/templates/projects/home.html:242
+#: meetService/templates/projects/my_projects.html:19
+#: meetService/templates/projects/my_projects.html:92
+#| msgid "Мои проекты"
+msgid "Создать проект"
+msgstr "Create project"
+
+#: meetService/apps/projects/views.py:573
+msgid "Редактировать проект может только владелец или администратор."
+msgstr "Only the owner or an administrator can edit the project."
+
+#: meetService/apps/projects/views.py:577
+msgid "Архивный проект нельзя редактировать."
+msgstr "An archived project cannot be edited."
+
+#: meetService/apps/projects/views.py:589
+msgid "Проект обновлён."
+msgstr "Project updated."
+
+#: meetService/apps/projects/views.py:597
+#: meetService/templates/projects/project_detail.html:109
+msgid "Редактировать проект"
+msgstr "Edit project"
+
+#: meetService/apps/projects/views.py:598
+msgid "Сохранить изменения"
+msgstr "Save changes"
+
+#: meetService/apps/projects/views.py:615
+msgid "Удалить проект может только владелец или администратор."
+msgstr "Only the owner or an administrator can delete the project."
+
+#: meetService/apps/projects/views.py:632
+#, python-format
+msgid "Проект «%(title)s» удалён."
+msgstr "Project “%(title)s” has been deleted."
+
+#: meetService/apps/projects/views.py:668
+msgid "Открытая роль добавлена к проекту."
+msgstr "Open role added to the project."
+
+#: meetService/apps/projects/views.py:676
+#: meetService/templates/projects/project_detail.html:114
+msgid "Добавить открытую роль"
+msgstr "Add open role"
+
+#: meetService/apps/projects/views.py:677
+#: meetService/templates/projects/my_projects.html:65
+msgid "Добавить роль"
+msgstr "Add role"
+
+#: meetService/apps/projects/views.py:695
+msgid "Отправить проект на модерацию может только владелец или администратор."
+msgstr "Only the owner or an administrator can submit the project for moderation."
+
+#: meetService/apps/projects/views.py:722
+msgid "Проект отправлен на рассмотрение модератору."
+msgstr "The project has been sent to a moderator for review."
+
+#: meetService/apps/projects/views.py:739
+msgid "Закрыть проект может только владелец или администратор."
+msgstr "Only the owner or an administrator can close the project."
+
+#: meetService/apps/projects/views.py:753
+msgid "Проект закрыт для новых участников."
+msgstr "The project has been closed for new participants."
+
+#: meetService/apps/projects/views.py:770
+msgid "Открыть проект заново может только владелец или администратор."
+msgstr "Only the owner or an administrator can reopen the project."
+
+#: meetService/apps/projects/views.py:784
+msgid "Проект снова открыт для набора участников."
+msgstr "The project is open for recruitment again."
+
+#: meetService/apps/projects/views.py:800
+msgid "Архивировать проект может только владелец или администратор."
+msgstr "Only the owner or an administrator can archive the project."
+
+#: meetService/apps/projects/views.py:832
+msgid "Проект окончательно перенесён в архив и удалён из избранного."
+msgstr "The project has been permanently moved to the archive and removed from favorites."
+
+#: meetService/apps/reviews/admin.py:72
 msgid "Связи"
-msgstr ""
+msgstr "Relations"
 
-#: meetService/apps/reviews/admin.py:78
+#: meetService/apps/reviews/admin.py:82
 msgid "Содержание отзыва"
-msgstr ""
+msgstr "Review content"
 
-#: meetService/apps/reviews/admin.py:88
+#: meetService/apps/reviews/admin.py:92
 msgid "Предпросмотр"
-msgstr ""
+msgstr "Preview"
 
-#: meetService/apps/reviews/models.py:23
-#: meetService/apps/specialists/models.py:27
+#: meetService/apps/reviews/admin.py:139
+msgid "Краткий текст"
+msgstr "Short text"
+
+#: meetService/apps/reviews/admin.py:150
+msgid "Опубликовать выбранные отзывы"
+msgstr "Publish selected reviews"
+
+#: meetService/apps/reviews/admin.py:167
+#, python-format
+msgid "Отзыв «%(review)s» не опубликован: %(error)s"
+msgstr "Review “%(review)s” was not published: %(error)s"
+
+#: meetService/apps/reviews/admin.py:174
+#, python-format
+msgid "Опубликовано отзывов: %(count)s"
+msgstr "Published reviews: %(count)s"
+
+#: meetService/apps/reviews/admin.py:178
+msgid "Скрыть выбранные отзывы"
+msgstr "Hide selected reviews"
+
+#: meetService/apps/reviews/admin.py:194
+#, python-format
+msgid "Скрыто отзывов: %(count)s"
+msgstr "Hidden reviews: %(count)s"
+
+#: meetService/apps/reviews/admin.py:198
+msgid "Отклонить выбранные отзывы"
+msgstr "Reject selected reviews"
+
+#: meetService/apps/reviews/admin.py:214
+#, python-format
+msgid "Отклонено отзывов: %(count)s"
+msgstr "Rejected reviews: %(count)s"
+
+#: meetService/apps/reviews/models.py:25
+#: meetService/apps/specialists/models.py:29
 msgid "Скрыт"
-msgstr ""
+msgstr "Hidden"
 
-#: meetService/apps/reviews/models.py:31
+#: meetService/apps/reviews/models.py:33
 msgid "Проект, в рамках которого оставлен отзыв."
-msgstr ""
+msgstr "The project for which the review was left."
 
-#: meetService/apps/reviews/models.py:37
+#: meetService/apps/reviews/models.py:39
 msgid "автор отзыва"
-msgstr ""
+msgstr "review author"
 
-#: meetService/apps/reviews/models.py:38
+#: meetService/apps/reviews/models.py:40
 msgid "Пользователь, который оставил отзыв."
-msgstr ""
+msgstr "The user who left the review."
 
-#: meetService/apps/reviews/models.py:45
+#: meetService/apps/reviews/models.py:47
 msgid "Специалист, о котором оставлен отзыв."
-msgstr ""
+msgstr "The specialist this review is about."
 
-#: meetService/apps/reviews/models.py:52
+#: meetService/apps/reviews/models.py:54
 msgid "оценка"
-msgstr ""
+msgstr "rating"
 
-#: meetService/apps/reviews/models.py:53
+#: meetService/apps/reviews/models.py:55
 msgid "Оценка от 1 до 5."
-msgstr ""
+msgstr "Rating from 1 to 5."
 
-#: meetService/apps/reviews/models.py:56
+#: meetService/apps/reviews/models.py:58
 msgid "текст отзыва"
-msgstr ""
+msgstr "review text"
 
-#: meetService/apps/reviews/models.py:76
+#: meetService/apps/reviews/models.py:78
 msgid "отзыв"
-msgstr ""
+msgstr "review"
 
-#: meetService/apps/reviews/models.py:77
+#: meetService/apps/reviews/models.py:79
 msgid "отзывы"
-msgstr ""
+msgstr "reviews"
 
-#: meetService/apps/reviews/models.py:99
-msgid "Нельзя оставить отзыв самому себе."
-msgstr ""
-
-#: meetService/apps/reviews/models.py:109
-msgid "Отзыв можно оставить только специалисту, который участвовал в проекте."
-msgstr ""
-
-#: meetService/apps/specialists/admin.py:229
+#: meetService/apps/specialists/admin.py:250
 msgid "Пользователь и роль"
-msgstr ""
+msgstr "User and role"
 
-#: meetService/apps/specialists/admin.py:242
+#: meetService/apps/specialists/admin.py:263
 msgid "Профиль"
-msgstr ""
+msgstr "Profile"
 
-#: meetService/apps/specialists/admin.py:256
+#: meetService/apps/specialists/admin.py:277
 msgid "Ссылки и контакты"
-msgstr ""
+msgstr "Links and contacts"
 
-#: meetService/apps/specialists/admin.py:267
+#: meetService/apps/specialists/admin.py:288
 msgid "Статистика специалиста"
-msgstr ""
+msgstr "Specialist statistics"
 
-#: meetService/apps/specialists/models.py:17
-msgid "Стажёр"
-msgstr ""
+#: meetService/apps/specialists/admin.py:378
+#| msgid "Мои проекты"
+msgid "Активных проектов"
+msgstr "Active projects"
 
-#: meetService/apps/specialists/models.py:18
-msgid "Junior"
-msgstr ""
+#: meetService/apps/specialists/admin.py:387
+#| msgid "Мои отклики"
+msgid "Откликов"
+msgstr "Applications"
+
+#: meetService/apps/specialists/admin.py:396
+#| msgid "Мои приглашения"
+msgid "Приглашений"
+msgstr "Invitations"
+
+#: meetService/apps/specialists/admin.py:405
+msgid "Отзывов"
+msgstr "Reviews"
+
+#: meetService/apps/specialists/admin.py:414
+msgid "Средняя оценка"
+msgstr "Average rating"
+
+#: meetService/apps/specialists/admin.py:428
+msgid "Доступен"
+msgstr "Available"
+
+#: meetService/apps/specialists/admin.py:437
+msgid "Предпросмотр аватара"
+msgstr "Avatar preview"
+
+#: meetService/apps/specialists/admin.py:449
+msgid "Аватар не загружен"
+msgstr "Avatar not uploaded"
+
+#: meetService/apps/specialists/admin.py:451
+msgid "Установить статус «Ищу проект»"
+msgstr "Set status to “Looking for a project”"
+
+#: meetService/apps/specialists/admin.py:462
+#: meetService/apps/specialists/admin.py:476
+#: meetService/apps/specialists/admin.py:490
+#, python-format
+msgid "Обновлено профилей: %(count)s"
+msgstr "Updated profiles: %(count)s"
+
+#: meetService/apps/specialists/admin.py:465
+msgid "Установить статус «Открыт к предложениям»"
+msgstr "Set status to “Open to offers”"
+
+#: meetService/apps/specialists/admin.py:479
+msgid "Установить статус «Занят»"
+msgstr "Set status to “Busy”"
+
+#: meetService/apps/specialists/forms.py:67
+msgid "Расскажи о своём опыте, интересах и проектах."
+msgstr "Tell us about your experience, interests, and projects."
+
+#: meetService/apps/specialists/forms.py:98
+msgid "Аватар"
+msgstr "Avatar"
+
+#: meetService/apps/specialists/forms.py:99
+msgid "Основная роль"
+msgstr "Main role"
+
+#: meetService/apps/specialists/forms.py:100
+#: meetService/templates/specialists/specialist_list.html:39
+msgid "Уровень"
+msgstr "Level"
+
+#: meetService/apps/specialists/forms.py:101
+msgid "Статус поиска"
+msgstr "Search status"
+
+#: meetService/apps/specialists/forms.py:102
+#| msgid "О сервисе"
+msgid "О себе"
+msgstr "About me"
+
+#: meetService/apps/specialists/forms.py:103
+msgid "Опыт, лет"
+msgstr "Experience, years"
+
+#: meetService/apps/specialists/forms.py:106
+#: meetService/templates/accounts/profile.html:311
+#: meetService/templates/specialists/specialist_detail.html:55
+msgid "Портфолио"
+msgstr "Portfolio"
+
+#: meetService/apps/specialists/forms.py:110
+msgid "Выбери роль, по которой тебя будут чаще всего искать."
+msgstr "Select the role by which people will most often find you."
+
+#: meetService/apps/specialists/forms.py:111
+msgid "Например: ищу проект, открыт к предложениям или занят."
+msgstr "For example: looking for a project, open to offers, or busy."
+
+#: meetService/apps/specialists/forms.py:112
+msgid "Коротко опиши стек, опыт и тип проектов, которые тебе интересны."
+msgstr "Briefly describe your stack, experience, and the types of projects you are interested in."
+
+#: meetService/apps/specialists/forms.py:117
+msgid "Расскажи немного о себе."
+msgstr "Tell us a little about yourself."
+
+#: meetService/apps/specialists/forms.py:120
+msgid "Опыт не может быть отрицательным."
+msgstr "Experience cannot be negative."
+
+#: meetService/apps/specialists/forms.py:121
+msgid "Проверь значение опыта."
+msgstr "Check the experience value."
+
+#: meetService/apps/specialists/forms.py:137
+msgid "Опыт не может быть больше 60 лет."
+msgstr "Experience cannot be more than 60 years."
 
 #: meetService/apps/specialists/models.py:19
-msgid "Middle"
-msgstr ""
+msgid "Стажёр"
+msgstr "Intern"
 
 #: meetService/apps/specialists/models.py:20
-msgid "Senior"
-msgstr ""
+msgid "Junior"
+msgstr "Junior"
 
 #: meetService/apps/specialists/models.py:21
+msgid "Middle"
+msgstr "Middle"
+
+#: meetService/apps/specialists/models.py:22
+msgid "Senior"
+msgstr "Senior"
+
+#: meetService/apps/specialists/models.py:23
 msgid "Lead"
-msgstr ""
-
-#: meetService/apps/specialists/models.py:24
-msgid "Ищу проект"
-msgstr ""
-
-#: meetService/apps/specialists/models.py:25
-msgid "Открыт к предложениям"
-msgstr ""
+msgstr "Lead"
 
 #: meetService/apps/specialists/models.py:26
+msgid "Ищу проект"
+msgstr "Looking for a project"
+
+#: meetService/apps/specialists/models.py:27
+msgid "Открыт к предложениям"
+msgstr "Open to offers"
+
+#: meetService/apps/specialists/models.py:28
 msgid "Занят"
-msgstr ""
-
-#: meetService/apps/specialists/models.py:30
-msgid "Удалённо"
-msgstr ""
-
-#: meetService/apps/specialists/models.py:31
-msgid "Гибрид"
-msgstr ""
+msgstr "Busy"
 
 #: meetService/apps/specialists/models.py:32
-msgid "Офис"
-msgstr ""
+msgid "Удалённо"
+msgstr "Remote"
 
 #: meetService/apps/specialists/models.py:33
+msgid "Гибрид"
+msgstr "Hybrid"
+
+#: meetService/apps/specialists/models.py:34
+msgid "Офис"
+msgstr "Office"
+
+#: meetService/apps/specialists/models.py:35
 msgid "Любой формат"
-msgstr ""
+msgstr "Any format"
 
-#: meetService/apps/specialists/models.py:40
+#: meetService/apps/specialists/models.py:42
 msgid "Пользователь, которому принадлежит профиль специалиста."
-msgstr ""
+msgstr "The user who owns the specialist profile."
 
-#: meetService/apps/specialists/models.py:48
+#: meetService/apps/specialists/models.py:50
 msgid "основная роль"
-msgstr ""
+msgstr "main role"
 
-#: meetService/apps/specialists/models.py:49
+#: meetService/apps/specialists/models.py:51
 msgid "Основная профессиональная роль специалиста."
-msgstr ""
+msgstr "The specialist's main professional role."
 
-#: meetService/apps/specialists/models.py:55
+#: meetService/apps/specialists/models.py:57
 msgid "интересующие роли"
-msgstr ""
+msgstr "interested roles"
 
-#: meetService/apps/specialists/models.py:56
+#: meetService/apps/specialists/models.py:58
 msgid "Роли, в которых специалист хотел бы участвовать в проектах."
-msgstr ""
+msgstr "Roles in which the specialist would like to participate in projects."
 
-#: meetService/apps/specialists/models.py:69
+#: meetService/apps/specialists/models.py:71
 msgid "аватар"
-msgstr ""
+msgstr "avatar"
 
-#: meetService/apps/specialists/models.py:70
+#: meetService/apps/specialists/models.py:72
 msgid "Фотография или изображение профиля специалиста."
-msgstr ""
+msgstr "Photo or image of the specialist profile."
 
-#: meetService/apps/specialists/models.py:76
+#: meetService/apps/specialists/models.py:78
 msgid "уровень"
-msgstr ""
+msgstr "level"
 
-#: meetService/apps/specialists/models.py:82
+#: meetService/apps/specialists/models.py:84
 msgid "статус доступности"
-msgstr ""
+msgstr "availability status"
 
-#: meetService/apps/specialists/models.py:92
+#: meetService/apps/specialists/models.py:94
 msgid "о себе"
-msgstr ""
+msgstr "about me"
 
-#: meetService/apps/specialists/models.py:93
+#: meetService/apps/specialists/models.py:95
 msgid "Краткое описание опыта, интересов и целей специалиста."
-msgstr ""
+msgstr "Brief description of the specialist's experience, interests, and goals."
 
-#: meetService/apps/specialists/models.py:101
-#: meetService/apps/specialists/models.py:229
+#: meetService/apps/specialists/models.py:103
+#: meetService/apps/specialists/models.py:246
 msgid "опыт в годах"
-msgstr ""
+msgstr "experience in years"
 
-#: meetService/apps/specialists/models.py:109
+#: meetService/apps/specialists/models.py:111
 msgid "часов в неделю"
-msgstr ""
+msgstr "hours per week"
 
-#: meetService/apps/specialists/models.py:110
+#: meetService/apps/specialists/models.py:112
 msgid "Сколько часов в неделю специалист готов уделять проектам."
-msgstr ""
+msgstr "How many hours per week the specialist is ready to spend on projects."
 
-#: meetService/apps/specialists/models.py:115
+#: meetService/apps/specialists/models.py:117
 msgid "город"
-msgstr ""
+msgstr "city"
 
-#: meetService/apps/specialists/models.py:120
+#: meetService/apps/specialists/models.py:122
 msgid "часовой пояс"
-msgstr ""
+msgstr "time zone"
 
-#: meetService/apps/specialists/models.py:121
+#: meetService/apps/specialists/models.py:123
 msgid "Например: Europe/Moscow."
-msgstr ""
+msgstr "For example: Europe/Moscow."
 
-#: meetService/apps/specialists/models.py:125
+#: meetService/apps/specialists/models.py:127
 msgid "GitHub"
-msgstr ""
+msgstr "GitHub"
 
-#: meetService/apps/specialists/models.py:129
+#: meetService/apps/specialists/models.py:131
 msgid "GitLab"
-msgstr ""
+msgstr "GitLab"
 
-#: meetService/apps/specialists/models.py:133
+#: meetService/apps/specialists/models.py:135
 msgid "портфолио"
-msgstr ""
+msgstr "portfolio"
 
-#: meetService/apps/specialists/models.py:138
+#: meetService/apps/specialists/models.py:140
 msgid "Telegram"
-msgstr ""
+msgstr "Telegram"
 
-#: meetService/apps/specialists/models.py:139
+#: meetService/apps/specialists/models.py:141
 msgid "Контакт для связи, например: @username."
-msgstr ""
+msgstr "Contact for communication, for example: @username."
 
-#: meetService/apps/specialists/models.py:169
+#: meetService/apps/specialists/models.py:171
+#: meetService/templates/specialists/specialist_profile_form.html:6
 msgid "профиль специалиста"
-msgstr ""
+msgstr "specialist profile"
 
-#: meetService/apps/specialists/models.py:170
+#: meetService/apps/specialists/models.py:172
 msgid "профили специалистов"
-msgstr ""
+msgstr "specialist profiles"
 
-#: meetService/apps/specialists/models.py:200
+#: meetService/apps/specialists/models.py:217
 msgid "Базовый"
-msgstr ""
+msgstr "Basic"
 
-#: meetService/apps/specialists/models.py:201
+#: meetService/apps/specialists/models.py:218
 msgid "Уверенный"
-msgstr ""
+msgstr "Confident"
 
-#: meetService/apps/specialists/models.py:202
+#: meetService/apps/specialists/models.py:219
 msgid "Продвинутый"
-msgstr ""
+msgstr "Advanced"
 
-#: meetService/apps/specialists/models.py:203
+#: meetService/apps/specialists/models.py:220
 msgid "Эксперт"
-msgstr ""
+msgstr "Expert"
 
-#: meetService/apps/specialists/models.py:221
+#: meetService/apps/specialists/models.py:238
 msgid "уровень владения"
-msgstr ""
+msgstr "proficiency level"
 
-#: meetService/apps/specialists/models.py:233
+#: meetService/apps/specialists/models.py:250
 msgid "ключевой навык"
-msgstr ""
+msgstr "key skill"
 
-#: meetService/apps/specialists/models.py:234
+#: meetService/apps/specialists/models.py:251
 msgid "Отметить, если технология является одной из основных."
-msgstr ""
+msgstr "Mark if the technology is one of the main ones."
 
-#: meetService/apps/specialists/models.py:242
+#: meetService/apps/specialists/models.py:259
 msgid "технология специалиста"
-msgstr ""
+msgstr "specialist technology"
 
-#: meetService/apps/specialists/models.py:243
+#: meetService/apps/specialists/models.py:260
 msgid "технологии специалистов"
-msgstr ""
+msgstr "specialist technologies"
 
-#: meetService/config/settings.py:139
+#: meetService/apps/specialists/views.py:104
+#| msgid "Профиль специалиста"
+msgid "Профиль специалиста не найден."
+msgstr "Specialist profile not found."
+
+#: meetService/apps/specialists/views.py:146
+#| msgid "Профиль специалиста"
+msgid "Профиль специалиста сохранён."
+msgstr "Specialist profile saved."
+
+#: meetService/apps/specialists/views.py:151
+msgid "Профиль специалиста не сохранён. Проверь ошибки в форме."
+msgstr "Specialist profile was not saved. Check the form errors."
+
+#: meetService/apps/specialists/views.py:160
+#| msgid "Профиль специалиста"
+msgid "Редактировать профиль специалиста"
+msgstr "Edit specialist profile"
+
+#: meetService/apps/specialists/views.py:162
+#: meetService/templates/interactions/application_list.html:40
+#: meetService/templates/interactions/invitation_list.html:40
+#: meetService/templates/projects/my_teams.html:23
+#| msgid "Профиль специалиста"
+msgid "Заполнить профиль специалиста"
+msgstr "Complete specialist profile"
+
+#: meetService/apps/specialists/views.py:164
+msgid "Сохранить профиль"
+msgstr "Save profile"
+
+#: meetService/config/settings.py:192
 msgid "Русский"
-msgstr ""
+msgstr "Russian"
 
-#: meetService/config/settings.py:140
+#: meetService/config/settings.py:193
 msgid "English"
-msgstr ""
+msgstr "English"
 
-#: meetService/templates/base.html:22
-msgid "Главная"
-msgstr "Home"
+#: meetService/config/urls.py:27
+msgid "MeetService - администрирование"
+msgstr "MeetService - administration"
 
-#: meetService/templates/base.html:23
-msgid "Проекты"
-msgstr "Projects"
+#: meetService/config/urls.py:29
+#| msgid "сервис поиска IT-команды"
+msgid "Админка сервиса по поиску IT-команды"
+msgstr "Admin panel of the IT team matching service"
 
-#: meetService/templates/base.html:24
-msgid "Специалисты"
-msgstr "Specialists"
+#: meetService/templates/403.html:3 meetService/templates/403.html:8
+msgid "Доступ запрещён"
+msgstr "Access denied"
 
-#: meetService/templates/base.html:25
-msgid "О сервисе"
-msgstr "About"
+#: meetService/templates/403.html:7
+msgid "ошибка 403"
+msgstr "error 403"
 
-#: meetService/templates/base.html:34
-msgid "Выход"
-msgstr "Logout"
+#: meetService/templates/403.html:9
+msgid "У тебя нет прав для выполнения этого действия или просмотра этой страницы."
+msgstr "You do not have permission to perform this action or view this page."
 
-#: meetService/templates/base.html:37
+#: meetService/templates/403.html:11 meetService/templates/403_csrf.html:11
+#: meetService/templates/404.html:11
+#| msgid "Главная"
+msgid "На главную"
+msgstr "To home"
+
+#: meetService/templates/403.html:13 meetService/templates/403_csrf.html:13
+msgid "В личный кабинет"
+msgstr "To dashboard"
+
+#: meetService/templates/403.html:15 meetService/templates/403_csrf.html:15
+#: meetService/templates/accounts/login.html:23
+#: meetService/templates/accounts/register.html:27
+#: meetService/templates/projects/project_detail.html:182
+#: meetService/templates/specialists/specialist_detail.html:73
+msgid "Войти"
+msgstr "Sign in"
+
+#: meetService/templates/403_csrf.html:3
+msgid "Ошибка безопасности"
+msgstr "Security error"
+
+#: meetService/templates/403_csrf.html:7
+msgid "ошибка CSRF"
+msgstr "CSRF error"
+
+#: meetService/templates/403_csrf.html:8
+msgid "Форма устарела или отправлена некорректно"
+msgstr "The form has expired or was submitted incorrectly"
+
+#: meetService/templates/403_csrf.html:9
+msgid "Django отклонил запрос для защиты аккаунта. Обычно это происходит, если страница была открыта слишком долго или форма отправлена без CSRF-токена."
+msgstr "Django rejected the request to protect the account. This usually happens if the page was open for too long or the form was submitted without a CSRF token."
+
+#: meetService/templates/404.html:3 meetService/templates/404.html:8
+msgid "Страница не найдена"
+msgstr "Page not found"
+
+#: meetService/templates/404.html:7
+msgid "ошибка 404"
+msgstr "error 404"
+
+#: meetService/templates/404.html:9
+msgid "Такой страницы нет, она была удалена или у тебя нет доступа к этому объекту."
+msgstr "This page does not exist, has been deleted, or you do not have access to this object."
+
+#: meetService/templates/404.html:12
+#: meetService/templates/projects/home.html:199
+#: meetService/templates/projects/project_list.html:4
+#| msgid "Мои проекты"
+msgid "Каталог проектов"
+msgstr "Project catalog"
+
+#: meetService/templates/500.html:9
+#| msgid "О сервисе"
+msgid "Ошибка сервера"
+msgstr "Server error"
+
+#: meetService/templates/500.html:15
+msgid "ошибка 500"
+msgstr "error 500"
+
+#: meetService/templates/500.html:16
+msgid "Что-то пошло не так"
+msgstr "Something went wrong"
+
+#: meetService/templates/500.html:17
+msgid "На сервере произошла ошибка. Попробуй вернуться на главную или повторить действие позже."
+msgstr "A server error occurred. Try returning to the home page or repeat the action later."
+
+#: meetService/templates/500.html:18
+msgid "Вернуться на главную"
+msgstr "Back to home"
+
+#: meetService/templates/accounts/login.html:3
+#: meetService/templates/accounts/login.html:8
+#: meetService/templates/base.html:103
+#: meetService/templates/socialaccount/login_redirect.html:3
 msgid "Вход"
 msgstr "Login"
 
-#: meetService/templates/base.html:39
-msgid "Регистрация"
-msgstr "Registration"
+#: meetService/templates/accounts/login.html:7
+msgid "аккаунт"
+msgstr "account"
 
-#: meetService/templates/base.html:45
-msgid "Кабинет"
+#: meetService/templates/accounts/login.html:9
+msgid "Войди, чтобы управлять профилем, проектами, откликами и приглашениями."
+msgstr "Sign in to manage your profile, projects, applications, and invitations."
+
+#: meetService/templates/accounts/login.html:27
+msgid "Войти через Google"
+msgstr "Sign in with Google"
+
+#: meetService/templates/accounts/login.html:31
+msgid "Войти через GitHub"
+msgstr "Sign in with GitHub"
+
+#: meetService/templates/accounts/login.html:34
+msgid "Нет аккаунта?"
+msgstr "No account?"
+
+#: meetService/templates/accounts/login.html:35
+#: meetService/templates/accounts/register.html:23
+#: meetService/templates/projects/home.html:20
+#| msgid "Регистрация"
+msgid "Зарегистрироваться"
+msgstr "Register"
+
+#: meetService/templates/accounts/profile.html:4
+#: meetService/templates/base.html:100 meetService/templates/base.html:101
+#: meetService/templates/search/global_search.html:83
+#| msgid "Кабинет"
+msgid "Личный кабинет"
 msgstr "Dashboard"
 
-#: meetService/templates/base.html:46
-msgid "Профиль специалиста"
-msgstr "Specialist profile"
+#: meetService/templates/accounts/profile.html:7
+#: meetService/templates/projects/home.html:7
+#: meetService/templates/specialists/specialist_detail.html:22
+#: meetService/templates/specialists/specialist_list.html:87
+msgid "Роль не указана"
+msgstr "Role not specified"
 
-#: meetService/templates/base.html:47
-msgid "Мои проекты"
-msgstr "My projects"
+#: meetService/templates/accounts/profile.html:8
+#: meetService/templates/interactions/favorite_project_list.html:7
+#: meetService/templates/projects/includes/project_card.html:2
+#: meetService/templates/projects/my_projects.html:7
+#: meetService/templates/projects/my_teams.html:7
+#: meetService/templates/projects/project_detail.html:6
+#: meetService/templates/projects/project_detail.html:33
+msgid "Описание проекта пока не заполнено."
+msgstr "Project description has not been filled in yet."
 
-#: meetService/templates/base.html:48
-msgid "Мои команды"
-msgstr "My teams"
+#: meetService/templates/accounts/profile.html:9
+msgid "не указан"
+msgstr "not specified"
 
-#: meetService/templates/base.html:49
+#: meetService/templates/accounts/profile.html:12
+#: meetService/templates/interactions/application_list.html:6
+#: meetService/templates/interactions/favorite_project_list.html:9
+#: meetService/templates/interactions/invitation_list.html:6
+#| msgid "Кабинет"
+msgid "личный кабинет"
+msgstr "dashboard"
+
+#: meetService/templates/accounts/profile.html:14
+#, python-format
+msgid "%(applications)s откликов · %(invitations)s приглашений · роль на сервисе: %(role)s"
+msgstr "%(applications)s applications · %(invitations)s invitations · service role: %(role)s"
+
+#: meetService/templates/accounts/profile.html:17
+#: meetService/templates/specialists/specialist_detail.html:66
+msgid "Редактировать профиль"
+msgstr "Edit profile"
+
+#: meetService/templates/accounts/profile.html:24
+msgid "Укажите email для уведомлений"
+msgstr "Specify an email for notifications"
+
+#: meetService/templates/accounts/profile.html:25
+msgid "Сейчас email не указан, поэтому письма по откликам и приглашениям не смогут приходить на почту."
+msgstr "Email is currently not specified, so messages about applications and invitations cannot be sent by email."
+
+#: meetService/templates/accounts/profile.html:38
+msgid "Сохранить email"
+msgstr "Save email"
+
+#: meetService/templates/accounts/profile.html:48
+msgid "профиль"
+msgstr "profile"
+
+#: meetService/templates/accounts/profile.html:49
+#: meetService/templates/accounts/profile.html:269
+#| msgid "Мои проекты"
+msgid "Мой профиль"
+msgstr "My profile"
+
+#: meetService/templates/accounts/profile.html:60
+msgid "Стек не заполнен"
+msgstr "Stack is not filled in"
+
+#: meetService/templates/accounts/profile.html:63
+#: meetService/templates/accounts/profile.html:280
+#: meetService/templates/projects/project_detail.html:89
+msgid "Статус:"
+msgstr "Status:"
+
+#: meetService/templates/accounts/profile.html:66
+#: meetService/templates/projects/my_projects.html:62
+msgid "Редактировать"
+msgstr "Edit"
+
+#: meetService/templates/accounts/profile.html:69
+#| msgid "Профиль специалиста"
+msgid "Профиль специалиста ещё не создан."
+msgstr "Specialist profile has not been created yet."
+
+#: meetService/templates/accounts/profile.html:70
+#: meetService/templates/accounts/profile.html:249
+#: meetService/templates/accounts/profile.html:271
+msgid "Заполнить профиль"
+msgstr "Complete profile"
+
+#: meetService/templates/accounts/profile.html:77
+msgid "статистика"
+msgstr "statistics"
+
+#: meetService/templates/accounts/profile.html:78
+msgid "Активность"
+msgstr "Activity"
+
+#: meetService/templates/accounts/profile.html:85
+#| msgid "Мои проекты"
+msgid "моих проектов"
+msgstr "my projects"
+
+#: meetService/templates/accounts/profile.html:91
+#: meetService/templates/interactions/application_list.html:15
+#| msgid "Мои отклики"
+msgid "моих откликов"
+msgstr "my applications"
+
+#: meetService/templates/accounts/profile.html:97
+#| msgid "Мои приглашения"
+msgid "приглашений"
+msgstr "invitations"
+
+#: meetService/templates/accounts/profile.html:103
+#| msgid "Избранное"
+msgid "избранных проектов"
+msgstr "favorite projects"
+
+#: meetService/templates/accounts/profile.html:113
 msgid "Мои отклики"
 msgstr "My applications"
 
-#: meetService/templates/base.html:50
+#: meetService/templates/accounts/profile.html:115
+#: meetService/templates/accounts/profile.html:141
+msgid "Все"
+msgstr "All"
+
+#: meetService/templates/accounts/profile.html:130
+msgid "Ты пока не отправлял отклики."
+msgstr "You have not sent any applications yet."
+
+#: meetService/templates/accounts/profile.html:133
+#| msgid "Мои отклики"
+msgid "Открыть отклики"
+msgstr "Open applications"
+
+#: meetService/templates/accounts/profile.html:139
 msgid "Мои приглашения"
-msgstr "My invites"
+msgstr "My invitations"
+
+#: meetService/templates/accounts/profile.html:156
+#| msgid "Мои приглашения"
+msgid "Новых приглашений пока нет."
+msgstr "No new invitations yet."
+
+#: meetService/templates/accounts/profile.html:166
+msgid "входящие"
+msgstr "incoming"
+
+#: meetService/templates/accounts/profile.html:167
+msgid "Новые отклики на мои проекты"
+msgstr "New applications to my projects"
+
+#: meetService/templates/accounts/profile.html:169
+msgid "Все входящие"
+msgstr "All incoming"
+
+#: meetService/templates/accounts/profile.html:182
+msgid "Новых входящих откликов нет"
+msgstr "No new incoming applications"
+
+#: meetService/templates/accounts/profile.html:183
+msgid "Когда специалисты будут откликаться на твои проекты, они появятся здесь."
+msgstr "When specialists apply to your projects, they will appear here."
+
+#: meetService/templates/accounts/profile.html:194
+#: meetService/templates/interactions/application_list.html:110
+#: meetService/templates/projects/my_projects.html:4
+#: meetService/templates/projects/my_projects.html:12
+#: meetService/templates/projects/my_projects.html:26
+msgid "Мои проекты"
+msgstr "My projects"
+
+#: meetService/templates/accounts/profile.html:197
+#| msgid "Мои проекты"
+msgid "Все мои проекты"
+msgstr "All my projects"
+
+#: meetService/templates/accounts/profile.html:212
+msgid "Активных проектов пока нет"
+msgstr "No active projects yet"
+
+#: meetService/templates/accounts/profile.html:213
+msgid "Создай проект, чтобы собрать команду."
+msgstr "Create a project to build a team."
+
+#: meetService/templates/accounts/profile.html:223
+#| msgid "Мои команды"
+msgid "команды"
+msgstr "teams"
+
+#: meetService/templates/accounts/profile.html:224
+#: meetService/templates/projects/my_teams.html:4
+#: meetService/templates/projects/my_teams.html:10
+#: meetService/templates/projects/my_teams.html:33
+msgid "Мои команды"
+msgstr "My teams"
+
+#: meetService/templates/accounts/profile.html:226
+#| msgid "Мои команды"
+msgid "Все команды"
+msgstr "All teams"
+
+#: meetService/templates/accounts/profile.html:240
+msgid "Ты пока не состоишь в командах"
+msgstr "You are not on any teams yet"
+
+#: meetService/templates/accounts/profile.html:241
+msgid "Откликнись на проект или прими приглашение владельца."
+msgstr "Apply to a project or accept an invitation from the owner."
+
+#: meetService/templates/accounts/profile.html:242
+#: meetService/templates/accounts/profile.html:332
+#: meetService/templates/interactions/application_list.html:60
+#: meetService/templates/projects/home.html:15
+#: meetService/templates/projects/my_teams.html:76
+#| msgid "Мои проекты"
+msgid "Найти проект"
+msgstr "Find a project"
+
+#: meetService/templates/accounts/profile.html:247
+#| msgid "Профиль специалиста"
+msgid "Профиль специалиста не создан"
+msgstr "Specialist profile not created"
+
+#: meetService/templates/accounts/profile.html:248
+msgid "Чтобы откликаться на проекты и состоять в командах, заполни профиль специалиста."
+msgstr "Complete your specialist profile to apply to projects and join teams."
+
+#: meetService/templates/accounts/profile.html:277
+#| msgid "Мои приглашения"
+msgid "Предпочтения"
+msgstr "Preferences"
+
+#: meetService/templates/accounts/profile.html:283
+msgid "Уровень:"
+msgstr "Level:"
+
+#: meetService/templates/accounts/profile.html:286
+msgid "В неделю:"
+msgstr "Per week:"
+
+#: meetService/templates/accounts/profile.html:286
+#, python-format
+msgid "%(hours)s ч."
+msgstr "%(hours)s h"
+
+#: meetService/templates/accounts/profile.html:289
+msgid "Часовой пояс:"
+msgstr "Time zone:"
+
+#: meetService/templates/accounts/profile.html:292
+#| msgid "Профиль специалиста"
+msgid "Профиль специалиста пока не заполнен."
+msgstr "Specialist profile is not filled in yet."
+
+#: meetService/templates/accounts/profile.html:296
+msgid "Контакты"
+msgstr "Contacts"
+
+#: meetService/templates/accounts/profile.html:315
+msgid "Контакты пока не указаны."
+msgstr "Contacts are not specified yet."
+
+#: meetService/templates/accounts/profile.html:318
+msgid "Контакты появятся после заполнения профиля."
+msgstr "Contacts will appear after the profile is filled in."
+
+#: meetService/templates/accounts/profile.html:322
+#: meetService/templates/base.html:76 meetService/templates/base.html:77
+#: meetService/templates/interactions/favorite_project_list.html:4
+msgid "Избранное"
+msgstr "Favorites"
+
+#: meetService/templates/accounts/profile.html:324
+#, python-format
+msgid "<strong>%(count)s</strong> сохранённых проектов."
+msgstr "<strong>%(count)s</strong> saved projects."
+
+#: meetService/templates/accounts/profile.html:326
+#| msgid "Избранное"
+msgid "Открыть избранное"
+msgstr "Open favorites"
+
+#: meetService/templates/accounts/profile.html:329
+#: meetService/templates/projects/project_list.html:17
+#: meetService/templates/search/global_search.html:4
+#: meetService/templates/specialists/specialist_list.html:17
+msgid "Поиск"
+msgstr "Search"
+
+#: meetService/templates/accounts/profile.html:330
+msgid "Найди проект для участия или специалиста в команду."
+msgstr "Find a project to join or a specialist for your team."
+
+#: meetService/templates/accounts/profile.html:333
+#: meetService/templates/interactions/invitation_list.html:112
+#| msgid "Профиль специалиста"
+msgid "Найти специалиста"
+msgstr "Find a specialist"
+
+#: meetService/templates/accounts/profile.html:339
+msgid "Логин:"
+msgstr "Username:"
+
+#: meetService/templates/accounts/profile.html:356
+msgid "Обновить email"
+msgstr "Update email"
+
+#: meetService/templates/accounts/profile.html:361
+msgid "Выйти из аккаунта"
+msgstr "Sign out"
+
+#: meetService/templates/accounts/register.html:3
+#: meetService/templates/accounts/register.html:8
+#: meetService/templates/base.html:105
+msgid "Регистрация"
+msgstr "Registration"
+
+#: meetService/templates/accounts/register.html:7
+msgid "новый аккаунт"
+msgstr "new account"
+
+#: meetService/templates/accounts/register.html:9
+msgid "Создай аккаунт, чтобы откликаться на проекты, собирать команду и управлять своим профилем специалиста."
+msgstr "Create an account to apply to projects, build a team, and manage your specialist profile."
+
+#: meetService/templates/accounts/register.html:26
+msgid "Уже есть аккаунт?"
+msgstr "Already have an account?"
+
+#: meetService/templates/base.html:31
+msgid "На главную страницу New-Makers"
+msgstr "To the New-Makers home page"
+
+#: meetService/templates/base.html:38
+msgid "Искать"
+msgstr "Search"
+
+#: meetService/templates/base.html:47
+msgid "Поисковая строка"
+msgstr "Search input"
+
+#: meetService/templates/base.html:48
+msgid "Глобальный поиск"
+msgstr "Global search"
 
 #: meetService/templates/base.html:51
-msgid "Избранное"
-msgstr "Favorite"
+msgid "Основная навигация"
+msgstr "Main navigation"
 
-#: meetService/templates/base.html:65
+#: meetService/templates/base.html:53
+#: meetService/templates/projects/project_list.html:10
+msgid "Проекты"
+msgstr "Projects"
+
+#: meetService/templates/base.html:55
+#: meetService/templates/specialists/specialist_list.html:10
+msgid "Специалисты"
+msgstr "Specialists"
+
+#: meetService/templates/base.html:62 meetService/templates/base.html:126
+msgid "Ч/Б"
+msgstr "B/W"
+
+#: meetService/templates/base.html:67
+msgid "Выбор языка"
+msgstr "Language selection"
+
+#: meetService/templates/base.html:80 meetService/templates/base.html:81
+#| msgid "Мои приглашения"
+msgid "Уведомления"
+msgstr "Notifications"
+
+#: meetService/templates/base.html:89
+#: meetService/templates/interactions/application_list.html:3
+#: meetService/templates/interactions/application_list.html:7
+#| msgid "Мои отклики"
+msgid "Отклики"
+msgstr "Applications"
+
+#: meetService/templates/base.html:93
+#: meetService/templates/interactions/invitation_list.html:3
+#: meetService/templates/interactions/invitation_list.html:7
+#| msgid "Мои приглашения"
+msgid "Приглашения"
+msgstr "Invitations"
+
+#: meetService/templates/base.html:120
 msgid "сервис поиска IT-команды"
-msgstr "web-service for searching IT-team"
+msgstr "IT team matching service"
 
-#: meetService/templates/base.html:66
+#: meetService/templates/base.html:121
 msgid "Курсовой проект на Django"
-msgstr "Coursework on Django"
-
-#: venv/lib/python3.13/site-packages/django/contrib/messages/apps.py:16
-msgid "Messages"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/contrib/sitemaps/apps.py:8
-msgid "Site Maps"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/contrib/staticfiles/apps.py:9
-msgid "Static Files"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/contrib/syndication/apps.py:7
-msgid "Syndication"
-msgstr ""
-
-#. Translators: String used to replace omitted page numbers in elided page
-#. range generated by paginators, e.g. [1, 2, '…', 5, 6, 7, '…', 9, 10].
-#: venv/lib/python3.13/site-packages/django/core/paginator.py:33
-msgid "…"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/core/paginator.py:35
-msgid "That page number is not an integer"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/core/paginator.py:36
-msgid "That page number is less than 1"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/core/paginator.py:37
-msgid "That page contains no results"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/core/validators.py:22
-msgid "Enter a valid value."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/core/validators.py:70
-msgid "Enter a valid domain name."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/core/validators.py:153
-#: venv/lib/python3.13/site-packages/django/forms/fields.py:773
-msgid "Enter a valid URL."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/core/validators.py:200
-msgid "Enter a valid integer."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/core/validators.py:211
-msgid "Enter a valid email address."
-msgstr ""
-
-#. Translators: "letters" means latin letters: a-z and A-Z.
-#: venv/lib/python3.13/site-packages/django/core/validators.py:289
-msgid ""
-"Enter a valid “slug” consisting of letters, numbers, underscores or hyphens."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/core/validators.py:297
-msgid ""
-"Enter a valid “slug” consisting of Unicode letters, numbers, underscores, or "
-"hyphens."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/core/validators.py:309
-#: venv/lib/python3.13/site-packages/django/core/validators.py:318
-#: venv/lib/python3.13/site-packages/django/core/validators.py:332
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2220
-#, python-format
-msgid "Enter a valid %(protocol)s address."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/core/validators.py:311
-msgid "IPv4"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/core/validators.py:320
-#: venv/lib/python3.13/site-packages/django/utils/ipv6.py:43
-msgid "IPv6"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/core/validators.py:334
-msgid "IPv4 or IPv6"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/core/validators.py:375
-msgid "Enter only digits separated by commas."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/core/validators.py:381
-#, python-format
-msgid "Ensure this value is %(limit_value)s (it is %(show_value)s)."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/core/validators.py:416
-#, python-format
-msgid "Ensure this value is less than or equal to %(limit_value)s."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/core/validators.py:425
-#, python-format
-msgid "Ensure this value is greater than or equal to %(limit_value)s."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/core/validators.py:434
-#, python-format
-msgid "Ensure this value is a multiple of step size %(limit_value)s."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/core/validators.py:441
-#, python-format
-msgid ""
-"Ensure this value is a multiple of step size %(limit_value)s, starting from "
-"%(offset)s, e.g. %(offset)s, %(valid_value1)s, %(valid_value2)s, and so on."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/core/validators.py:473
-#, python-format
-msgid ""
-"Ensure this value has at least %(limit_value)d character (it has "
-"%(show_value)d)."
-msgid_plural ""
-"Ensure this value has at least %(limit_value)d characters (it has "
-"%(show_value)d)."
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.13/site-packages/django/core/validators.py:491
-#, python-format
-msgid ""
-"Ensure this value has at most %(limit_value)d character (it has "
-"%(show_value)d)."
-msgid_plural ""
-"Ensure this value has at most %(limit_value)d characters (it has "
-"%(show_value)d)."
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.13/site-packages/django/core/validators.py:514
-#: venv/lib/python3.13/site-packages/django/forms/fields.py:364
-#: venv/lib/python3.13/site-packages/django/forms/fields.py:403
-msgid "Enter a number."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/core/validators.py:516
-#, python-format
-msgid "Ensure that there are no more than %(max)s digit in total."
-msgid_plural "Ensure that there are no more than %(max)s digits in total."
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.13/site-packages/django/core/validators.py:521
-#, python-format
-msgid "Ensure that there are no more than %(max)s decimal place."
-msgid_plural "Ensure that there are no more than %(max)s decimal places."
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.13/site-packages/django/core/validators.py:526
-#, python-format
-msgid ""
-"Ensure that there are no more than %(max)s digit before the decimal point."
-msgid_plural ""
-"Ensure that there are no more than %(max)s digits before the decimal point."
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.13/site-packages/django/core/validators.py:597
-#, python-format
-msgid ""
-"File extension “%(extension)s” is not allowed. Allowed extensions are: "
-"%(allowed_extensions)s."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/core/validators.py:659
-msgid "Null characters are not allowed."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/base.py:1633
-#: venv/lib/python3.13/site-packages/django/forms/models.py:932
-msgid "and"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/base.py:1635
-#, python-format
-msgid "%(model_name)s with this %(field_labels)s already exists."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/constraints.py:20
-#, python-format
-msgid "Constraint “%(name)s” is violated."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:134
-#, python-format
-msgid "Value %(value)r is not a valid choice."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:135
-msgid "This field cannot be null."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:136
-msgid "This field cannot be blank."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:137
-#, python-format
-msgid "%(model_name)s with this %(field_label)s already exists."
-msgstr ""
-
-#. Translators: The 'lookup_type' is one of 'date', 'year' or
-#. 'month'. Eg: "Title must be unique for pub_date year"
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:141
-#, python-format
-msgid ""
-"%(field_label)s must be unique for %(date_field_label)s %(lookup_type)s."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:180
-#, python-format
-msgid "Field of type: %(field_type)s"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1161
-#, python-format
-msgid "“%(value)s” value must be either True or False."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1162
-#, python-format
-msgid "“%(value)s” value must be either True, False, or None."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1164
-msgid "Boolean (Either True or False)"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1214
-#, python-format
-msgid "String (up to %(max_length)s)"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1216
-msgid "String (unlimited)"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1325
-msgid "Comma-separated integers"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1426
-#, python-format
-msgid ""
-"“%(value)s” value has an invalid date format. It must be in YYYY-MM-DD "
-"format."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1430
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1565
-#, python-format
-msgid ""
-"“%(value)s” value has the correct format (YYYY-MM-DD) but it is an invalid "
-"date."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1434
-msgid "Date (without time)"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1561
-#, python-format
-msgid ""
-"“%(value)s” value has an invalid format. It must be in YYYY-MM-DD "
-"HH:MM[:ss[.uuuuuu]][TZ] format."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1569
-#, python-format
-msgid ""
-"“%(value)s” value has the correct format (YYYY-MM-DD HH:MM[:ss[.uuuuuu]]"
-"[TZ]) but it is an invalid date/time."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1574
-msgid "Date (with time)"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1701
-#, python-format
-msgid "“%(value)s” value must be a decimal number."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1703
-msgid "Decimal number"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1864
-#, python-format
-msgid ""
-"“%(value)s” value has an invalid format. It must be in [DD] "
-"[[HH:]MM:]ss[.uuuuuu] format."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1868
-msgid "Duration"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1920
-msgid "Email address"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1945
-msgid "File path"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2023
-#, python-format
-msgid "“%(value)s” value must be a float."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2025
-msgid "Floating point number"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2065
-#, python-format
-msgid "“%(value)s” value must be an integer."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2067
-msgid "Integer"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2163
-msgid "Big (8 byte) integer"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2180
-msgid "Small integer"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2188
-msgid "IPv4 address"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2219
-msgid "IP address"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2310
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2311
-#, python-format
-msgid "“%(value)s” value must be either None, True or False."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2313
-msgid "Boolean (Either True, False or None)"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2364
-msgid "Positive big integer"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2379
-msgid "Positive integer"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2394
-msgid "Positive small integer"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2410
-#, python-format
-msgid "Slug (up to %(max_length)s)"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2446
-msgid "Text"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2526
-#, python-format
-msgid ""
-"“%(value)s” value has an invalid format. It must be in HH:MM[:ss[.uuuuuu]] "
-"format."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2530
-#, python-format
-msgid ""
-"“%(value)s” value has the correct format (HH:MM[:ss[.uuuuuu]]) but it is an "
-"invalid time."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2534
-msgid "Time"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2642
-msgid "URL"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2666
-msgid "Raw binary data"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2731
-#, python-format
-msgid "“%(value)s” is not a valid UUID."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2733
-msgid "Universally unique identifier"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/files.py:244
-msgid "File"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/files.py:420
-msgid "Image"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/json.py:24
-msgid "A JSON object"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/json.py:26
-msgid "Value must be valid JSON."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/related.py:974
-#, python-format
-msgid "%(model)s instance with %(field)s %(value)r is not a valid choice."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/related.py:977
-msgid "Foreign Key (type determined by related field)"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/related.py:1271
-msgid "One-to-one relationship"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/related.py:1328
-#, python-format
-msgid "%(from)s-%(to)s relationship"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/related.py:1330
-#, python-format
-msgid "%(from)s-%(to)s relationships"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/related.py:1378
-msgid "Many-to-many relationship"
-msgstr ""
-
-#. Translators: If found as last label character, these punctuation
-#. characters will prevent the default label_suffix to be appended to
-#. the label
-#: venv/lib/python3.13/site-packages/django/forms/boundfield.py:188
-msgid ":?.!"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/forms/fields.py:91
-msgid "This field is required."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/forms/fields.py:313
-msgid "Enter a whole number."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/forms/fields.py:484
-#: venv/lib/python3.13/site-packages/django/forms/fields.py:1241
-msgid "Enter a valid date."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/forms/fields.py:507
-#: venv/lib/python3.13/site-packages/django/forms/fields.py:1242
-msgid "Enter a valid time."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/forms/fields.py:534
-msgid "Enter a valid date/time."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/forms/fields.py:568
-msgid "Enter a valid duration."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/forms/fields.py:569
-#, python-brace-format
-msgid "The number of days must be between {min_days} and {max_days}."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/forms/fields.py:638
-msgid "No file was submitted. Check the encoding type on the form."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/forms/fields.py:639
-msgid "No file was submitted."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/forms/fields.py:640
-msgid "The submitted file is empty."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/forms/fields.py:642
-#, python-format
-msgid "Ensure this filename has at most %(max)d character (it has %(length)d)."
-msgid_plural ""
-"Ensure this filename has at most %(max)d characters (it has %(length)d)."
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.13/site-packages/django/forms/fields.py:647
-msgid "Please either submit a file or check the clear checkbox, not both."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/forms/fields.py:715
-msgid ""
-"Upload a valid image. The file you uploaded was either not an image or a "
-"corrupted image."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/forms/fields.py:862
-#: venv/lib/python3.13/site-packages/django/forms/fields.py:949
-#: venv/lib/python3.13/site-packages/django/forms/models.py:1621
-#, python-format
-msgid "Select a valid choice. %(value)s is not one of the available choices."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/forms/fields.py:951
-#: venv/lib/python3.13/site-packages/django/forms/fields.py:1070
-#: venv/lib/python3.13/site-packages/django/forms/models.py:1619
-msgid "Enter a list of values."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/forms/fields.py:1071
-msgid "Enter a complete value."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/forms/fields.py:1313
-msgid "Enter a valid UUID."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/forms/fields.py:1343
-msgid "Enter a valid JSON."
-msgstr ""
-
-#. Translators: This is the default suffix added to form field labels
-#: venv/lib/python3.13/site-packages/django/forms/forms.py:97
-msgid ":"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/forms/forms.py:239
-#, python-format
-msgid "(Hidden field %(name)s) %(error)s"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/forms/formsets.py:61
-#, python-format
-msgid ""
-"ManagementForm data is missing or has been tampered with. Missing fields: "
-"%(field_names)s. You may need to file a bug report if the issue persists."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/forms/formsets.py:65
-#, python-format
-msgid "Please submit at most %(num)d form."
-msgid_plural "Please submit at most %(num)d forms."
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.13/site-packages/django/forms/formsets.py:70
-#, python-format
-msgid "Please submit at least %(num)d form."
-msgid_plural "Please submit at least %(num)d forms."
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.13/site-packages/django/forms/formsets.py:484
-#: venv/lib/python3.13/site-packages/django/forms/formsets.py:491
-msgid "Order"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/forms/formsets.py:499
-msgid "Delete"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/forms/models.py:925
-#, python-format
-msgid "Please correct the duplicate data for %(field)s."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/forms/models.py:930
-#, python-format
-msgid "Please correct the duplicate data for %(field)s, which must be unique."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/forms/models.py:937
-#, python-format
-msgid ""
-"Please correct the duplicate data for %(field_name)s which must be unique "
-"for the %(lookup)s in %(date_field)s."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/forms/models.py:946
-msgid "Please correct the duplicate values below."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/forms/models.py:1383
-msgid "The inline value did not match the parent instance."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/forms/models.py:1474
-msgid "Select a valid choice. That choice is not one of the available choices."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/forms/models.py:1623
-#, python-format
-msgid "“%(pk)s” is not a valid value."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/forms/utils.py:229
-#, python-format
-msgid ""
-"%(datetime)s couldn’t be interpreted in time zone %(current_timezone)s; it "
-"may be ambiguous or it may not exist."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/forms/widgets.py:528
-msgid "Clear"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/forms/widgets.py:529
-msgid "Currently"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/forms/widgets.py:530
-msgid "Change"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/forms/widgets.py:869
-msgid "Unknown"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/forms/widgets.py:870
-msgid "Yes"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/forms/widgets.py:871
-msgid "No"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/tasks/base.py:34
-msgctxt "Task"
-msgid "Ready"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/tasks/base.py:36
-msgctxt "Task"
-msgid "Running"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/tasks/base.py:38
-msgctxt "Task"
-msgid "Failed"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/tasks/base.py:40
-msgctxt "Task"
-msgid "Successful"
-msgstr ""
-
-#. Translators: Please do not add spaces around commas.
-#: venv/lib/python3.13/site-packages/django/template/defaultfilters.py:878
-msgid "yes,no,maybe"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/template/defaultfilters.py:908
-#: venv/lib/python3.13/site-packages/django/template/defaultfilters.py:925
-#, python-format
-msgid "%(size)d byte"
-msgid_plural "%(size)d bytes"
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.13/site-packages/django/template/defaultfilters.py:927
-#, python-format
-msgid "%s KB"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/template/defaultfilters.py:929
-#, python-format
-msgid "%s MB"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/template/defaultfilters.py:931
-#, python-format
-msgid "%s GB"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/template/defaultfilters.py:933
-#, python-format
-msgid "%s TB"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/template/defaultfilters.py:935
-#, python-format
-msgid "%s PB"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dateformat.py:74
-msgid "p.m."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dateformat.py:75
-msgid "a.m."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dateformat.py:80
-msgid "PM"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dateformat.py:81
-msgid "AM"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dateformat.py:153
-msgid "midnight"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dateformat.py:155
-msgid "noon"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:7
-msgid "Monday"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:8
-msgid "Tuesday"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:9
-msgid "Wednesday"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:10
-msgid "Thursday"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:11
-msgid "Friday"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:12
-msgid "Saturday"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:13
-msgid "Sunday"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:16
-msgid "Mon"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:17
-msgid "Tue"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:18
-msgid "Wed"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:19
-msgid "Thu"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:20
-msgid "Fri"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:21
-msgid "Sat"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:22
-msgid "Sun"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:25
-msgid "January"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:26
-msgid "February"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:27
-msgid "March"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:28
-msgid "April"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:29
-msgid "May"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:30
-msgid "June"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:31
-msgid "July"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:32
-msgid "August"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:33
-msgid "September"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:34
-msgid "October"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:35
-msgid "November"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:36
-msgid "December"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:39
-msgid "jan"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:40
-msgid "feb"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:41
-msgid "mar"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:42
-msgid "apr"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:43
-msgid "may"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:44
-msgid "jun"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:45
-msgid "jul"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:46
-msgid "aug"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:47
-msgid "sep"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:48
-msgid "oct"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:49
-msgid "nov"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:50
-msgid "dec"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:53
-msgctxt "abbrev. month"
-msgid "Jan."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:54
-msgctxt "abbrev. month"
-msgid "Feb."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:55
-msgctxt "abbrev. month"
-msgid "March"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:56
-msgctxt "abbrev. month"
-msgid "April"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:57
-msgctxt "abbrev. month"
-msgid "May"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:58
-msgctxt "abbrev. month"
-msgid "June"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:59
-msgctxt "abbrev. month"
-msgid "July"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:60
-msgctxt "abbrev. month"
-msgid "Aug."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:61
-msgctxt "abbrev. month"
-msgid "Sept."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:62
-msgctxt "abbrev. month"
-msgid "Oct."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:63
-msgctxt "abbrev. month"
-msgid "Nov."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:64
-msgctxt "abbrev. month"
-msgid "Dec."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:67
-msgctxt "alt. month"
-msgid "January"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:68
-msgctxt "alt. month"
-msgid "February"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:69
-msgctxt "alt. month"
-msgid "March"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:70
-msgctxt "alt. month"
-msgid "April"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:71
-msgctxt "alt. month"
-msgid "May"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:72
-msgctxt "alt. month"
-msgid "June"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:73
-msgctxt "alt. month"
-msgid "July"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:74
-msgctxt "alt. month"
-msgid "August"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:75
-msgctxt "alt. month"
-msgid "September"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:76
-msgctxt "alt. month"
-msgid "October"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:77
-msgctxt "alt. month"
-msgid "November"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:78
-msgctxt "alt. month"
-msgid "December"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/ipv6.py:20
-msgid "This is not a valid IPv6 address."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/text.py:76
-#, python-format
-msgctxt "String to return when truncating text"
-msgid "%(truncated_text)s…"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/text.py:282
-msgid "or"
-msgstr ""
-
-#. Translators: This string is used as a separator between list elements
-#: venv/lib/python3.13/site-packages/django/utils/text.py:301
-#: venv/lib/python3.13/site-packages/django/utils/timesince.py:135
-msgid ", "
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/timesince.py:8
-#, python-format
-msgid "%(num)d year"
-msgid_plural "%(num)d years"
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.13/site-packages/django/utils/timesince.py:9
-#, python-format
-msgid "%(num)d month"
-msgid_plural "%(num)d months"
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.13/site-packages/django/utils/timesince.py:10
-#, python-format
-msgid "%(num)d week"
-msgid_plural "%(num)d weeks"
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.13/site-packages/django/utils/timesince.py:11
-#, python-format
-msgid "%(num)d day"
-msgid_plural "%(num)d days"
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.13/site-packages/django/utils/timesince.py:12
-#, python-format
-msgid "%(num)d hour"
-msgid_plural "%(num)d hours"
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.13/site-packages/django/utils/timesince.py:13
-#, python-format
-msgid "%(num)d minute"
-msgid_plural "%(num)d minutes"
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.13/site-packages/django/views/csrf.py:29
-msgid "Forbidden"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/views/csrf.py:30
-msgid "CSRF verification failed. Request aborted."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/views/csrf.py:34
-msgid ""
-"You are seeing this message because this HTTPS site requires a “Referer "
-"header” to be sent by your web browser, but none was sent. This header is "
-"required for security reasons, to ensure that your browser is not being "
-"hijacked by third parties."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/views/csrf.py:40
-msgid ""
-"If you have configured your browser to disable “Referer” headers, please re-"
-"enable them, at least for this site, or for HTTPS connections, or for “same-"
-"origin” requests."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/views/csrf.py:45
-msgid ""
-"If you are using the <meta name=\"referrer\" content=\"no-referrer\"> tag or "
-"including the “Referrer-Policy: no-referrer” header, please remove them. The "
-"CSRF protection requires the “Referer” header to do strict referer checking. "
-"If you’re concerned about privacy, use alternatives like <a "
-"rel=\"noreferrer\" …> for links to third-party sites."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/views/csrf.py:54
-msgid ""
-"You are seeing this message because this site requires a CSRF cookie when "
-"submitting forms. This cookie is required for security reasons, to ensure "
-"that your browser is not being hijacked by third parties."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/views/csrf.py:60
-msgid ""
-"If you have configured your browser to disable cookies, please re-enable "
-"them, at least for this site, or for “same-origin” requests."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/views/csrf.py:66
-msgid "More information is available with DEBUG=True."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/views/generic/dates.py:44
-msgid "No year specified"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/views/generic/dates.py:64
-#: venv/lib/python3.13/site-packages/django/views/generic/dates.py:115
-#: venv/lib/python3.13/site-packages/django/views/generic/dates.py:214
-msgid "Date out of range"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/views/generic/dates.py:94
-msgid "No month specified"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/views/generic/dates.py:147
-msgid "No day specified"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/views/generic/dates.py:194
-msgid "No week specified"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/views/generic/dates.py:353
-#: venv/lib/python3.13/site-packages/django/views/generic/dates.py:384
-#, python-format
-msgid "No %(verbose_name_plural)s available"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/views/generic/dates.py:680
-#, python-format
-msgid ""
-"Future %(verbose_name_plural)s not available because "
-"%(class_name)s.allow_future is False."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/views/generic/dates.py:720
-#, python-format
-msgid "Invalid date string “%(datestr)s” given format “%(format)s”"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/views/generic/detail.py:56
-#, python-format
-msgid "No %(verbose_name)s found matching the query"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/views/generic/list.py:70
-msgid "Page is not “last”, nor can it be converted to an int."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/views/generic/list.py:77
-#, python-format
-msgid "Invalid page (%(page_number)s): %(message)s"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/views/generic/list.py:173
-#, python-format
-msgid "Empty list and “%(class_name)s.allow_empty” is False."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/views/static.py:49
-msgid "Directory indexes are not allowed here."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/views/static.py:51
-#, python-format
-msgid "“%(path)s” does not exist"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/views/static.py:68
-#: venv/lib/python3.13/site-packages/django/views/templates/directory_index.html:8
-#: venv/lib/python3.13/site-packages/django/views/templates/directory_index.html:11
-#, python-format
-msgid "Index of %(directory)s"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/views/templates/default_urlconf.html:7
-#: venv/lib/python3.13/site-packages/django/views/templates/default_urlconf.html:204
-msgid "The install worked successfully! Congratulations!"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/views/templates/default_urlconf.html:206
-#, python-format
-msgid ""
-"View <a href=\"https://docs.djangoproject.com/en/%(version)s/releases/\" "
-"target=\"_blank\" rel=\"noopener\">release notes</a> for Django %(version)s"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/views/templates/default_urlconf.html:208
-#, python-format
-msgid ""
-"You are seeing this page because <a href=\"https://docs.djangoproject.com/en/"
-"%(version)s/ref/settings/#debug\" target=\"_blank\" "
-"rel=\"noopener\">DEBUG=True</a> is in your settings file and you have not "
-"configured any URLs."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/views/templates/default_urlconf.html:217
-msgid "Django Documentation"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/views/templates/default_urlconf.html:218
-msgid "Topics, references, &amp; how-to’s"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/views/templates/default_urlconf.html:226
-msgid "Tutorial: A Polling App"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/views/templates/default_urlconf.html:227
-msgid "Get started with Django"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/views/templates/default_urlconf.html:235
-msgid "Django Community"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/views/templates/default_urlconf.html:236
-msgid "Connect, get help, or contribute"
-msgstr ""
+msgstr "Django coursework project"
+
+#: meetService/templates/base.html:125
+msgid "Цвет"
+msgstr "Color"
+
+#: meetService/templates/base.html:127
+msgid "Вернуть цветную тему"
+msgstr "Return to the color theme"
+
+#: meetService/templates/base.html:128
+msgid "Включить чёрно-белый режим"
+msgstr "Enable black-and-white mode"
+
+#: meetService/templates/emails/base.html:19
+#: meetService/templates/emails/base.txt:18
+#| msgid "сервис поиска IT-команды"
+msgid "Сервис поиска IT-команды"
+msgstr "IT team matching service"
+
+#: meetService/templates/emails/base.html:50
+msgid "Если кнопка не открывается, скопируйте ссылку в браузер:"
+msgstr "If the button does not open, copy the link into your browser:"
+
+#: meetService/templates/emails/base.txt:8
+msgid "Сообщение:"
+msgstr "Message:"
+
+#: meetService/templates/interactions/application_list.html:8
+msgid "Здесь собраны твои отправленные отклики и входящие заявки на проекты, которыми ты владеешь."
+msgstr "Here you can find your sent applications and incoming applications for projects you own."
+
+#: meetService/templates/interactions/application_list.html:21
+msgid "новых откликов на мои проекты"
+msgstr "new applications to my projects"
+
+#: meetService/templates/interactions/application_list.html:30
+#| msgid "Мои отклики"
+msgid "я откликнулся"
+msgstr "I applied"
+
+#: meetService/templates/interactions/application_list.html:31
+#| msgid "Мои отклики"
+msgid "Мои отправленные отклики"
+msgstr "My sent applications"
+
+#: meetService/templates/interactions/application_list.html:37
+#: meetService/templates/interactions/invitation_list.html:37
+#: meetService/templates/projects/my_teams.html:20
+#| msgid "Профиль специалиста"
+msgid "Профиль специалиста не найден"
+msgstr "Specialist profile not found"
+
+#: meetService/templates/interactions/application_list.html:38
+msgid "Чтобы отправлять отклики, нужен профиль специалиста."
+msgstr "To send applications, you need a specialist profile."
+
+#: meetService/templates/interactions/application_list.html:49
+#: meetService/templates/interactions/application_list.html:86
+#: meetService/templates/interactions/invitation_list.html:49
+#: meetService/templates/interactions/invitation_list.html:101
+msgid "Роль:"
+msgstr "Role:"
+
+#: meetService/templates/interactions/application_list.html:58
+msgid "Откликов пока нет"
+msgstr "No applications yet"
+
+#: meetService/templates/interactions/application_list.html:59
+msgid "Открой каталог проектов и отправь первый отклик на подходящую роль."
+msgstr "Open the project catalog and send your first application to a suitable role."
+
+#: meetService/templates/interactions/application_list.html:69
+#| msgid "Мои проекты"
+msgid "мои проекты"
+msgstr "my projects"
+
+#: meetService/templates/interactions/application_list.html:70
+#| msgid "Мои отклики"
+msgid "Входящие отклики"
+msgstr "Incoming applications"
+
+#: meetService/templates/interactions/application_list.html:80
+msgid "Кандидат:"
+msgstr "Candidate:"
+
+#: meetService/templates/interactions/application_list.html:96
+#: meetService/templates/interactions/invitation_list.html:60
+msgid "Принять"
+msgstr "Accept"
+
+#: meetService/templates/interactions/application_list.html:102
+#: meetService/templates/interactions/invitation_list.html:66
+msgid "Отклонить"
+msgstr "Reject"
+
+#: meetService/templates/interactions/application_list.html:108
+msgid "Новых откликов пока нет"
+msgstr "No new applications yet"
+
+#: meetService/templates/interactions/application_list.html:109
+msgid "Когда специалисты откликнутся на твои проекты, заявки появятся здесь."
+msgstr "When specialists apply to your projects, requests will appear here."
+
+#: meetService/templates/interactions/favorite_project_list.html:10
+#| msgid "Избранное"
+msgid "Избранные проекты"
+msgstr "Favorite projects"
+
+#: meetService/templates/interactions/favorite_project_list.html:11
+msgid "Здесь хранятся проекты, к которым ты хочешь вернуться позже."
+msgstr "Projects you want to return to later are stored here."
+
+#: meetService/templates/interactions/favorite_project_list.html:41
+#: meetService/templates/projects/home.html:127
+#: meetService/templates/projects/includes/project_card.html:33
+#: meetService/templates/projects/my_projects.html:56
+#: meetService/templates/projects/my_projects.html:142
+#: meetService/templates/projects/my_teams.html:63
+#: meetService/templates/projects/my_teams.html:126
+#: meetService/templates/projects/project_detail.html:26
+#: meetService/templates/search/global_search.html:118
+#: meetService/templates/search/global_search.html:163
+#: meetService/templates/specialists/specialist_detail.html:28
+#: meetService/templates/specialists/specialist_list.html:92
+msgid "Стек не указан"
+msgstr "Stack not specified"
+
+#: meetService/templates/interactions/favorite_project_list.html:45
+#: meetService/templates/projects/includes/project_card.html:3
+#: meetService/templates/projects/my_teams.html:67
+#: meetService/templates/projects/project_list.html:7
+#| msgid "Мои проекты"
+msgid "Открыть проект"
+msgstr "Open project"
+
+#: meetService/templates/interactions/favorite_project_list.html:48
+msgid "Удалить"
+msgstr "Remove"
+
+#: meetService/templates/interactions/favorite_project_list.html:56
+msgid "Избранных проектов пока нет"
+msgstr "No favorite projects yet"
+
+#: meetService/templates/interactions/favorite_project_list.html:57
+msgid "Открой каталог проектов и сохрани интересные варианты."
+msgstr "Open the project catalog and save interesting options."
+
+#: meetService/templates/interactions/favorite_project_list.html:58
+msgid "Перейти в каталог"
+msgstr "Go to catalog"
+
+#: meetService/templates/interactions/invitation_list.html:8
+msgid "Здесь собраны приглашения, которые ты получил как специалист, и приглашения, которые ты отправил как владелец проекта."
+msgstr "Here you can find invitations you received as a specialist and invitations you sent as a project owner."
+
+#: meetService/templates/interactions/invitation_list.html:15
+msgid "получено"
+msgstr "received"
+
+#: meetService/templates/interactions/invitation_list.html:21
+msgid "отправлено"
+msgstr "sent"
+
+#: meetService/templates/interactions/invitation_list.html:30
+msgid "мне отправили"
+msgstr "sent to me"
+
+#: meetService/templates/interactions/invitation_list.html:31
+#| msgid "Мои приглашения"
+msgid "Полученные приглашения"
+msgstr "Received invitations"
+
+#: meetService/templates/interactions/invitation_list.html:38
+msgid "Получать приглашения можно только с профилем специалиста."
+msgstr "You can receive invitations only with a specialist profile."
+
+#: meetService/templates/interactions/invitation_list.html:74
+msgid "Приглашений пока нет"
+msgstr "No invitations yet"
+
+#: meetService/templates/interactions/invitation_list.html:75
+msgid "Когда владелец проекта пригласит тебя в команду, приглашение появится здесь."
+msgstr "When a project owner invites you to a team, the invitation will appear here."
+
+#: meetService/templates/interactions/invitation_list.html:84
+msgid "я отправил"
+msgstr "I sent"
+
+#: meetService/templates/interactions/invitation_list.html:85
+#| msgid "Мои приглашения"
+msgid "Отправленные приглашения"
+msgstr "Sent invitations"
+
+#: meetService/templates/interactions/invitation_list.html:95
+#| msgid "Специалисты"
+msgid "Специалист:"
+msgstr "Specialist:"
+
+#: meetService/templates/interactions/invitation_list.html:109
+msgid "Ты ещё никого не приглашал"
+msgstr "You have not invited anyone yet"
+
+#: meetService/templates/interactions/invitation_list.html:110
+msgid "Открой каталог специалистов и пригласи подходящего участника."
+msgstr "Open the specialist catalog and invite a suitable participant."
+
+#: meetService/templates/interactions/invite_specialist.html:3
+#| msgid "Профиль специалиста"
+msgid "Приглашение специалиста"
+msgstr "Specialist invitation"
+
+#: meetService/templates/interactions/invite_specialist.html:8
+msgid "Выбери открытую роль в своём опубликованном проекте и отправь приглашение специалисту."
+msgstr "Select an open role in your published project and send an invitation to the specialist."
+
+#: meetService/templates/interactions/invite_specialist.html:26
+#| msgid "Мои приглашения"
+msgid "Отправить приглашение"
+msgstr "Send invitation"
+
+#: meetService/templates/interactions/invite_specialist.html:28
+msgid "Вернуться к профилю"
+msgstr "Back to profile"
+
+#: meetService/templates/interactions/project_apply.html:3
+#| msgid "Мои проекты"
+msgid "Отклик на проект"
+msgstr "Application to project"
+
+#: meetService/templates/interactions/project_apply.html:8
+msgid "Выбери открытую роль и отправь короткое сообщение владельцу проекта."
+msgstr "Select an open role and send a short message to the project owner."
+
+#: meetService/templates/interactions/project_apply.html:26
+#| msgid "Мои отклики"
+msgid "Отправить отклик"
+msgstr "Send application"
+
+#: meetService/templates/interactions/project_apply.html:27
+msgid "Вернуться к проекту"
+msgstr "Back to project"
+
+#: meetService/templates/projects/home.html:4
+msgid "Главная"
+msgstr "Home"
+
+#: meetService/templates/projects/home.html:11
+#| msgid "Мои команды"
+msgid "поиск IT-команды"
+msgstr "IT team search"
+
+#: meetService/templates/projects/home.html:12
+msgid "Найди свой проект или собери команду мечты"
+msgstr "Find your project or build your dream team"
+
+#: meetService/templates/projects/home.html:13
+msgid "New-Makers помогает специалистам находить проекты, а владельцам идей — собирать команду под MVP, стартап, учебную или коммерческую разработку."
+msgstr "New-Makers helps specialists find projects, and idea owners build teams for an MVP, startup, educational or commercial development."
+
+#: meetService/templates/projects/home.html:16
+#| msgid "Мои команды"
+msgid "Собрать команду"
+msgstr "Build a team"
+
+#: meetService/templates/projects/home.html:24
+msgid "Кого ищем? Django, React, backend, UX, MVP"
+msgstr "Who are we looking for? Django, React, backend, UX, MVP"
+
+#: meetService/templates/projects/home.html:25
+msgid "Найти"
+msgstr "Find"
+
+#: meetService/templates/projects/home.html:46
+msgid "Привет! Хочу в ваш проект!"
+msgstr "Hi! I want to join your project!"
+
+#: meetService/templates/projects/home.html:47
+msgid "Отлично! Присоединяйся!"
+msgstr "Great! Join us!"
+
+#: meetService/templates/projects/home.html:48
+msgid "Буду в конфе через 5 минут!"
+msgstr "I’ll be in the call in 5 minutes!"
+
+#: meetService/templates/projects/home.html:51
+#| msgid "сервис поиска IT-команды"
+msgid "Собери и свою команду!"
+msgstr "Build your own team too!"
+
+#: meetService/templates/projects/home.html:52
+msgid "4 открытые роли · 12 откликов"
+msgstr "4 open roles · 12 applications"
+
+#: meetService/templates/projects/home.html:61
+#| msgid "Проекты"
+msgid "проектов"
+msgstr "projects"
+
+#: meetService/templates/projects/home.html:65
+msgid "открытых ролей"
+msgstr "open roles"
+
+#: meetService/templates/projects/home.html:69
+#| msgid "Специалисты"
+msgid "специалистов"
+msgstr "specialists"
+
+#: meetService/templates/projects/home.html:73
+#| msgid "сервис поиска IT-команды"
+msgid "участников команд"
+msgstr "team members"
+
+#: meetService/templates/projects/home.html:80
+msgid "Недавно просмотренные проекты"
+msgstr "Recently viewed projects"
+
+#: meetService/templates/projects/home.html:82
+#: meetService/templates/search/global_search.html:99
+#| msgid "Мои проекты"
+msgid "Все проекты"
+msgstr "All projects"
+
+#: meetService/templates/projects/home.html:106
+#| msgid "Мои проекты"
+msgid "активные проекты"
+msgstr "active projects"
+
+#: meetService/templates/projects/home.html:107
+msgid "Проекты, где сейчас ищут команду"
+msgstr "Projects that are looking for a team right now"
+
+#: meetService/templates/projects/home.html:109
+msgid "Показать все"
+msgstr "Show all"
+
+#: meetService/templates/projects/home.html:130
+#, python-format
+msgid "открытых ролей: %(count)s"
+msgstr "open roles: %(count)s"
+
+#: meetService/templates/projects/home.html:135
+msgid "Пока нет активных проектов"
+msgstr "No active projects yet"
+
+#: meetService/templates/projects/home.html:136
+msgid "Когда появятся опубликованные проекты с открытыми ролями, они будут здесь."
+msgstr "Published projects with open roles will appear here when they are available."
+
+#: meetService/templates/projects/home.html:145
+msgid "открытые роли"
+msgstr "open roles"
+
+#: meetService/templates/projects/home.html:146
+#| msgid "Мои команды"
+msgid "Кого ищут в команды"
+msgstr "Who teams are looking for"
+
+#: meetService/templates/projects/home.html:148
+msgid "Все роли"
+msgstr "All roles"
+
+#: meetService/templates/projects/home.html:159
+#: meetService/templates/projects/project_detail.html:50
+#: meetService/templates/projects/project_detail.html:152
+msgid "мест:"
+msgstr "spots:"
+
+#: meetService/templates/projects/home.html:162
+msgid "Сейчас нет открытых ролей."
+msgstr "There are no open roles now."
+
+#: meetService/templates/projects/home.html:169
+#: meetService/templates/search/global_search.html:139
+#| msgid "Специалисты"
+msgid "специалисты"
+msgstr "specialists"
+
+#: meetService/templates/projects/home.html:170
+msgid "Открыты к проектам"
+msgstr "Open to projects"
+
+#: meetService/templates/projects/home.html:172
+#: meetService/templates/search/global_search.html:143
+#| msgid "Специалисты"
+msgid "Все специалисты"
+msgstr "All specialists"
+
+#: meetService/templates/projects/home.html:188
+msgid "Пока нет специалистов, открытых к проектам."
+msgstr "There are no specialists open to projects yet."
+
+#: meetService/templates/projects/home.html:196
+msgid "стек"
+msgstr "stack"
+
+#: meetService/templates/projects/home.html:197
+msgid "Популярные технологии"
+msgstr "Popular technologies"
+
+#: meetService/templates/projects/home.html:205
+#, python-format
+#| msgid "Проекты"
+msgid "%(count)s проект"
+msgid_plural "%(count)s проектов"
+msgstr[0] "%(count)s project"
+msgstr[1] "%(count)s projects"
+
+#: meetService/templates/projects/home.html:208
+msgid "Технологии появятся после добавления проектов."
+msgstr "Technologies will appear after projects are added."
+
+#: meetService/templates/projects/home.html:215
+msgid "как это работает"
+msgstr "how it works"
+
+#: meetService/templates/projects/home.html:216
+#| msgid "Мои команды"
+msgid "От идеи до команды"
+msgstr "From idea to team"
+
+#: meetService/templates/projects/home.html:222
+msgid "Владелец создаёт проект"
+msgstr "The owner creates a project"
+
+#: meetService/templates/projects/home.html:223
+msgid "Описывает цель, стадию, стек и открытые роли для команды."
+msgstr "Describes the goal, stage, stack, and open roles for the team."
+
+#: meetService/templates/projects/home.html:227
+#| msgid "Специалисты"
+msgid "Специалист находит роль"
+msgstr "The specialist finds a role"
+
+#: meetService/templates/projects/home.html:228
+msgid "Ищет проект по технологиям, роли, уровню и формату участия."
+msgstr "Searches for a project by technologies, role, level, and participation format."
+
+#: meetService/templates/projects/home.html:232
+msgid "Команда собирается"
+msgstr "The team comes together"
+
+#: meetService/templates/projects/home.html:233
+msgid "Отклик или приглашение превращаются в участника команды."
+msgstr "An application or invitation turns into a team member."
+
+#: meetService/templates/projects/home.html:239
+msgid "есть идея?"
+msgstr "have an idea?"
+
+#: meetService/templates/projects/home.html:240
+msgid "Соберите команду под свой проект"
+msgstr "Build a team for your project"
+
+#: meetService/templates/projects/home.html:241
+msgid "Создайте проект, добавьте первую открытую роль и покажите специалистам, зачем к вам присоединяться."
+msgstr "Create a project, add the first open role, and show specialists why they should join you."
+
+#: meetService/templates/projects/home.html:249
+msgid "Ответы на вопросы"
+msgstr "Questions and answers"
+
+#: meetService/templates/projects/home.html:254
+msgid "Нужна ли регистрация для просмотра проектов?"
+msgstr "Is registration required to view projects?"
+
+#: meetService/templates/projects/home.html:255
+msgid "Нет. Гость может смотреть каталоги, карточки проектов и профили специалистов."
+msgstr "No. A guest can view catalogs, project cards, and specialist profiles."
+
+#: meetService/templates/projects/home.html:258
+msgid "Как откликнуться на роль?"
+msgstr "How do I apply for a role?"
+
+#: meetService/templates/projects/home.html:259
+msgid "Нужно войти в аккаунт специалиста, заполнить профиль и отправить отклик на открытой роли проекта."
+msgstr "You need to sign in to a specialist account, complete your profile, and apply to an open project role."
+
+#: meetService/templates/projects/home.html:262
+msgid "Можно ли создать проект без команды?"
+msgstr "Can I create a project without a team?"
+
+#: meetService/templates/projects/home.html:263
+msgid "Да. Владелец создаёт проект, добавляет открытые роли и постепенно собирает участников."
+msgstr "Yes. The owner creates a project, adds open roles, and gradually builds the team."
+
+#: meetService/templates/projects/home.html:266
+msgid "Это сайт вакансий?"
+msgstr "Is this a job website?"
+
+#: meetService/templates/projects/home.html:267
+msgid "Нет. Главный смысл сервиса — собрать команду вокруг проекта, идеи, MVP или разработки."
+msgstr "No. The main purpose of the service is to build a team around a project, idea, MVP, or development."
+
+#: meetService/templates/projects/my_projects.html:8
+msgid "Закрыть проект для новых участников?"
+msgstr "Close the project for new participants?"
+
+#: meetService/templates/projects/my_projects.html:9
+#: meetService/templates/projects/project_detail.html:9
+msgid "Снова открыть проект для набора участников?"
+msgstr "Reopen the project for recruitment?"
+
+#: meetService/templates/projects/my_projects.html:14
+msgid "Здесь собраны проекты, где в поле «владелец проекта» указан твой аккаунт."
+msgstr "Here are projects where your account is specified in the “project owner” field."
+
+#: meetService/templates/projects/my_projects.html:15
+#, python-format
+msgid "Активный проект: %(counter)s."
+msgid_plural "Активных проектов: %(counter)s."
+msgstr[0] "Active project: %(counter)s."
+msgstr[1] "Active projects: %(counter)s."
+
+#: meetService/templates/projects/my_projects.html:16
+#, python-format
+msgid "Архивный проект: %(counter)s."
+msgid_plural "Архивных проектов: %(counter)s."
+msgstr[0] "Archived project: %(counter)s."
+msgstr[1] "Archived projects: %(counter)s."
+
+#: meetService/templates/projects/my_projects.html:25
+msgid "активная работа"
+msgstr "active work"
+
+#: meetService/templates/projects/my_projects.html:28
+msgid "Показываются черновики, проекты на модерации, опубликованные и закрытые проекты."
+msgstr "Drafts, projects under moderation, published and closed projects are shown."
+
+#: meetService/templates/projects/my_projects.html:60
+#: meetService/templates/search/global_search.html:122
+#: meetService/templates/search/global_search.html:167
+msgid "Открыть"
+msgstr "Open"
+
+#: meetService/templates/projects/my_projects.html:70
+#: meetService/templates/projects/project_detail.html:129
+msgid "Закрыть набор"
+msgstr "Close recruitment"
+
+#: meetService/templates/projects/my_projects.html:75
+#: meetService/templates/projects/project_detail.html:135
+msgid "Открыть набор"
+msgstr "Open recruitment"
+
+#: meetService/templates/projects/my_projects.html:79
+msgid "В архив"
+msgstr "To archive"
+
+#: meetService/templates/projects/my_projects.html:82
+#: meetService/templates/projects/project_detail.html:123
+msgid "Удалить черновик"
+msgstr "Delete draft"
+
+#: meetService/templates/projects/my_projects.html:90
+msgid "У тебя пока нет активных проектов"
+msgstr "You have no active projects yet"
+
+#: meetService/templates/projects/my_projects.html:91
+msgid "Создай первый проект. Он сохранится как черновик, после чего ты сможешь добавить открытую роль."
+msgstr "Create your first project. It will be saved as a draft, and then you can add an open role."
+
+#: meetService/templates/projects/my_projects.html:97
+msgid "Пагинация моих проектов"
+msgstr "My projects pagination"
+
+#: meetService/templates/projects/my_projects.html:99
+#: meetService/templates/projects/my_projects.html:161
+#: meetService/templates/projects/my_teams.html:83
+#: meetService/templates/projects/my_teams.html:145
+#: meetService/templates/projects/project_list.html:66
+#: meetService/templates/specialists/specialist_list.html:110
+msgid "Назад"
+msgstr "Back"
+
+#: meetService/templates/projects/my_projects.html:101
+#: meetService/templates/projects/my_projects.html:163
+#: meetService/templates/projects/my_teams.html:85
+#: meetService/templates/projects/my_teams.html:147
+#: meetService/templates/projects/project_list.html:68
+#: meetService/templates/specialists/specialist_list.html:112
+#, python-format
+msgid "Страница %(current)s из %(total)s"
+msgstr "Page %(current)s of %(total)s"
+
+#: meetService/templates/projects/my_projects.html:103
+#: meetService/templates/projects/my_projects.html:165
+#: meetService/templates/projects/my_teams.html:87
+#: meetService/templates/projects/my_teams.html:149
+#: meetService/templates/projects/project_list.html:70
+#: meetService/templates/specialists/specialist_list.html:114
+msgid "Вперёд"
+msgstr "Next"
+
+#: meetService/templates/projects/my_projects.html:111
+msgid "история владельца"
+msgstr "owner history"
+
+#: meetService/templates/projects/my_projects.html:112
+#| msgid "Мои проекты"
+msgid "Архивные проекты"
+msgstr "Archived projects"
+
+#: meetService/templates/projects/my_projects.html:114
+msgid "Эти проекты окончательно закрыты. Их нельзя редактировать, открыть заново или пополнить ролями."
+msgstr "These projects are permanently closed. They cannot be edited, reopened, or filled with roles."
+
+#: meetService/templates/projects/my_projects.html:146
+#: meetService/templates/projects/my_teams.html:130
+msgid "Открыть историю"
+msgstr "Open history"
+
+#: meetService/templates/projects/my_projects.html:153
+msgid "Архив пока пуст"
+msgstr "The archive is empty"
+
+#: meetService/templates/projects/my_projects.html:154
+msgid "Здесь появятся проекты, которые ты окончательно закроешь."
+msgstr "Projects that you permanently close will appear here."
+
+#: meetService/templates/projects/my_projects.html:159
+msgid "Пагинация архивных проектов"
+msgstr "Archived projects pagination"
+
+#: meetService/templates/projects/my_teams.html:9
+#| msgid "Мои проекты"
+msgid "участие в проектах"
+msgstr "project participation"
+
+#: meetService/templates/projects/my_teams.html:12
+msgid "Здесь отображаются проекты, где ты состоишь или состоял в команде как специалист."
+msgstr "Projects where you are or were a team member as a specialist are displayed here."
+
+#: meetService/templates/projects/my_teams.html:13
+#, python-format
+msgid "Активное участие: %(counter)s."
+msgid_plural "Активных участий: %(counter)s."
+msgstr[0] "Active participation: %(counter)s."
+msgstr[1] "Active participations: %(counter)s."
+
+#: meetService/templates/projects/my_teams.html:14
+#, python-format
+msgid "Архивное участие: %(counter)s."
+msgid_plural "Архивных участий: %(counter)s."
+msgstr[0] "Archived participation: %(counter)s."
+msgstr[1] "Archived participations: %(counter)s."
+
+#: meetService/templates/projects/my_teams.html:21
+msgid "Чтобы состоять в командах, откликаться на проекты и принимать приглашения, сначала нужно заполнить профиль специалиста."
+msgstr "To join teams, apply to projects, and accept invitations, you need to complete your specialist profile first."
+
+#: meetService/templates/projects/my_teams.html:24
+#| msgid "Мои проекты"
+msgid "Смотреть проекты"
+msgstr "View projects"
+
+#: meetService/templates/projects/my_teams.html:32
+msgid "текущая работа"
+msgstr "current work"
+
+#: meetService/templates/projects/my_teams.html:35
+msgid "Здесь проекты, где ты сейчас состоишь в активной команде."
+msgstr "Projects where you are currently an active team member."
+
+#: meetService/templates/projects/my_teams.html:74
+msgid "Ты пока не состоишь в активных командах"
+msgstr "You are not on any active teams yet"
+
+#: meetService/templates/projects/my_teams.html:75
+msgid "Найди проект, отправь отклик или прими приглашение владельца."
+msgstr "Find a project, send an application, or accept an invitation from an owner."
+
+#: meetService/templates/projects/my_teams.html:81
+#| msgid "сервис поиска IT-команды"
+msgid "Пагинация моих команд"
+msgstr "My teams pagination"
+
+#: meetService/templates/projects/my_teams.html:95
+msgid "история участия"
+msgstr "participation history"
+
+#: meetService/templates/projects/my_teams.html:96
+#| msgid "Мои команды"
+msgid "Архивные команды"
+msgstr "Archived teams"
+
+#: meetService/templates/projects/my_teams.html:98
+msgid "Здесь проекты, которые были окончательно архивированы, но где ты был участником команды."
+msgstr "Projects that were permanently archived, but where you were a team member."
+
+#: meetService/templates/projects/my_teams.html:137
+msgid "История участия пока пуста"
+msgstr "Participation history is empty"
+
+#: meetService/templates/projects/my_teams.html:138
+msgid "Здесь появятся архивные проекты, где ты был участником команды."
+msgstr "Archived projects where you were a team member will appear here."
+
+#: meetService/templates/projects/my_teams.html:143
+msgid "Пагинация архивных команд"
+msgstr "Archived teams pagination"
+
+#: meetService/templates/projects/project_archive_confirm.html:3
+#| msgid "Курсовой проект на Django"
+msgid "Архивация проекта"
+msgstr "Project archiving"
+
+#: meetService/templates/projects/project_archive_confirm.html:7
+msgid "окончательная архивация"
+msgstr "permanent archiving"
+
+#: meetService/templates/projects/project_archive_confirm.html:8
+#, python-format
+msgid "Архивировать проект «%(project_title)s»?"
+msgstr "Archive project “%(project_title)s”?"
+
+#: meetService/templates/projects/project_archive_confirm.html:9
+msgid "Это действие нельзя отменить. Проект исчезнет из публичного каталога, станет недоступен для новых откликов и будет удалён из избранного у всех пользователей."
+msgstr "This action cannot be undone. The project will disappear from the public catalog, become unavailable for new applications, and be removed from all users' favorites."
+
+#: meetService/templates/projects/project_archive_confirm.html:10
+msgid "Для подтверждения введи полное название проекта."
+msgstr "To confirm, enter the full project title."
+
+#: meetService/templates/projects/project_archive_confirm.html:16
+#, python-format
+msgid "Нужно ввести точно: %(project_title)s"
+msgstr "You need to enter exactly: %(project_title)s"
+
+#: meetService/templates/projects/project_archive_confirm.html:28
+msgid "Последнее подтверждение: окончательно архивировать проект? Восстановить его будет нельзя."
+msgstr "Final confirmation: permanently archive the project? It cannot be restored."
+
+#: meetService/templates/projects/project_archive_confirm.html:29
+msgid "Окончательно архивировать"
+msgstr "Permanently archive"
+
+#: meetService/templates/projects/project_archive_confirm.html:32
+#: meetService/templates/projects/project_confirm_delete.html:15
+#: meetService/templates/projects/project_form.html:80
+#: meetService/templates/projects/vacancy_form.html:27
+#: meetService/templates/specialists/specialist_profile_form.html:31
+msgid "Отмена"
+msgstr "Cancel"
+
+#: meetService/templates/projects/project_confirm_delete.html:3
+msgid "Удалить черновик проекта"
+msgstr "Delete project draft"
+
+#: meetService/templates/projects/project_confirm_delete.html:7
+msgid "опасное действие"
+msgstr "dangerous action"
+
+#: meetService/templates/projects/project_confirm_delete.html:8
+msgid "Удалить черновик проекта?"
+msgstr "Delete project draft?"
+
+#: meetService/templates/projects/project_confirm_delete.html:9
+#, python-format
+msgid "Ты собираешься удалить проект <strong>«%(project_title)s»</strong>. Это действие нельзя отменить."
+msgstr "You are about to delete the project <strong>“%(project_title)s”</strong>. This action cannot be undone."
+
+#: meetService/templates/projects/project_confirm_delete.html:10
+msgid "Удаление доступно только для черновиков. Опубликованные и закрытые проекты нужно переносить в архив."
+msgstr "Deletion is available only for drafts. Published and closed projects must be moved to the archive."
+
+#: meetService/templates/projects/project_confirm_delete.html:13
+msgid "Да, удалить черновик"
+msgstr "Yes, delete draft"
+
+#: meetService/templates/projects/project_detail.html:5
+msgid "Краткое описание проекта пока не заполнено."
+msgstr "The short project description has not been filled in yet."
+
+#: meetService/templates/projects/project_detail.html:7
+msgid "Описание роли пока не заполнено."
+msgstr "The role description has not been filled in yet."
+
+#: meetService/templates/projects/project_detail.html:8
+msgid "Закрыть проект для новых участников? Проект останется видимым в каталоге, но новые отклики и вакансии будут недоступны."
+msgstr "Close the project for new participants? The project will remain visible in the catalog, but new applications and vacancies will be unavailable."
+
+#: meetService/templates/projects/project_detail.html:29
+msgid "Описание"
+msgstr "Description"
+
+#: meetService/templates/projects/project_detail.html:39
+msgid "Цель проекта пока не указана."
+msgstr "Project goal is not specified yet."
+
+#: meetService/templates/projects/project_detail.html:41
+msgid "Открытые роли"
+msgstr "Open roles"
+
+#: meetService/templates/projects/project_detail.html:42
+#, python-format
+msgid "Сейчас открыта %(counter)s роль."
+msgid_plural "Сейчас открыто %(counter)s ролей."
+msgstr[0] "There is currently %(counter)s open role."
+msgstr[1] "There are currently %(counter)s open roles."
+
+#: meetService/templates/projects/project_detail.html:54
+msgid "Открытых ролей сейчас нет."
+msgstr "There are no open roles now."
+
+#: meetService/templates/projects/project_detail.html:57
+#| msgid "Мои команды"
+msgid "Команда"
+msgstr "Team"
+
+#: meetService/templates/projects/project_detail.html:66
+msgid "Команда пока не сформирована."
+msgstr "The team has not been formed yet."
+
+#: meetService/templates/projects/project_detail.html:69
+msgid "Файлы"
+msgstr "Files"
+
+#: meetService/templates/projects/project_detail.html:74
+msgid "Скачать файл"
+msgstr "Download file"
+
+#: meetService/templates/projects/project_detail.html:77
+msgid "Файлы пока не прикреплены."
+msgstr "No files attached yet."
+
+#: meetService/templates/projects/project_detail.html:83
+#| msgid "Мои проекты"
+msgid "О проекте"
+msgstr "About the project"
+
+#: meetService/templates/projects/project_detail.html:85
+msgid "Формат:"
+msgstr "Format:"
+
+#: meetService/templates/projects/project_detail.html:93
+msgid "Владелец:"
+msgstr "Owner:"
+
+#: meetService/templates/projects/project_detail.html:107
+msgid "Управление проектом"
+msgstr "Project management"
+
+#: meetService/templates/projects/project_detail.html:111
+msgid "Редактирование архива недоступно"
+msgstr "Archive editing is unavailable"
+
+#: meetService/templates/projects/project_detail.html:116
+msgid "Добавление ролей недоступно"
+msgstr "Adding roles is unavailable"
+
+#: meetService/templates/projects/project_detail.html:121
+msgid "Отправить на рассмотрение"
+msgstr "Submit for review"
+
+#: meetService/templates/projects/project_detail.html:125
+msgid "Проект уже отправлен на модерацию. После проверки администратор сможет опубликовать его через Django admin."
+msgstr "The project has already been sent for moderation. After review, an administrator can publish it through Django admin."
+
+#: meetService/templates/projects/project_detail.html:131
+#: meetService/templates/projects/project_detail.html:137
+msgid "Перенести в архив"
+msgstr "Move to archive"
+
+#: meetService/templates/projects/project_detail.html:139
+msgid "Проект находится в архиве. Его нельзя редактировать, открыть заново или пополнить ролями."
+msgstr "The project is archived. It cannot be edited, reopened, or filled with roles."
+
+#: meetService/templates/projects/project_detail.html:143
+#| msgid "Мои проекты"
+msgid "Роли проекта"
+msgstr "Project roles"
+
+#: meetService/templates/projects/project_detail.html:156
+msgid "Роли ещё не добавлены."
+msgstr "No roles have been added yet."
+
+#: meetService/templates/projects/project_detail.html:162
+msgid "Участие"
+msgstr "Participation"
+
+#: meetService/templates/projects/project_detail.html:166
+#| msgid "Мои команды"
+msgid "Ты уже в команде"
+msgstr "You are already on the team"
+
+#: meetService/templates/projects/project_detail.html:168
+#| msgid "Мои команды"
+msgid "Хочу в команду"
+msgstr "I want to join the team"
+
+#: meetService/templates/projects/project_detail.html:174
+#: meetService/templates/projects/project_detail.html:192
+msgid "Удалить из избранного"
+msgstr "Remove from favorites"
+
+#: meetService/templates/projects/project_detail.html:176
+#: meetService/templates/projects/project_detail.html:194
+#| msgid "Избранное"
+msgid "В избранное"
+msgstr "Add to favorites"
+
+#: meetService/templates/projects/project_detail.html:181
+msgid "Войди в аккаунт, чтобы откликнуться на проект или добавить его в избранное."
+msgstr "Sign in to apply to the project or add it to favorites."
+
+#: meetService/templates/projects/project_detail.html:185
+msgid "Проект закрыт для новых участников. Карточка доступна только для просмотра."
+msgstr "The project is closed for new participants. The card is available for viewing only."
+
+#: meetService/templates/projects/project_detail.html:186
+msgid "Набор закрыт"
+msgstr "Recruitment closed"
+
+#: meetService/templates/projects/project_detail.html:200
+msgid "Проект находится в архиве и доступен только как история."
+msgstr "The project is archived and available only as history."
+
+#: meetService/templates/projects/project_detail.html:202
+msgid "Проект сейчас недоступен для публичных действий."
+msgstr "The project is currently unavailable for public actions."
+
+#: meetService/templates/projects/project_detail.html:207
+#| msgid "Мои проекты"
+msgid "Похожие проекты"
+msgstr "Similar projects"
+
+#: meetService/templates/projects/project_detail.html:217
+msgid "Похожих проектов пока нет."
+msgstr "No similar projects yet."
+
+#: meetService/templates/projects/project_form.html:8
+msgid "Заполни основную информацию о проекте. При создании проекта сразу добавляется первая открытая роль, чтобы проект можно было отправить на рассмотрение."
+msgstr "Fill in the main project information. When creating a project, the first open role is added immediately so the project can be submitted for review."
+
+#: meetService/templates/projects/project_form.html:16
+#| msgid "Мои проекты"
+msgid "Информация о проекте"
+msgstr "Project information"
+
+#: meetService/templates/projects/project_form.html:50
+msgid "Первая открытая роль"
+msgstr "First open role"
+
+#: meetService/templates/projects/project_form.html:51
+msgid "Эта роль появится на странице проекта, и специалисты смогут на неё откликаться после публикации проекта."
+msgstr "This role will appear on the project page, and specialists will be able to apply after the project is published."
+
+#: meetService/templates/projects/project_list.html:9
+#: meetService/templates/specialists/specialist_list.html:9
+msgid "каталог"
+msgstr "catalog"
+
+#: meetService/templates/projects/project_list.html:11
+msgid "Ищи проект по названию, описанию, стеку технологий или открытой роли."
+msgstr "Search for a project by title, description, technology stack, or open role."
+
+#: meetService/templates/projects/project_list.html:21
+#: meetService/templates/specialists/specialist_list.html:30
+msgid "Технология"
+msgstr "Technology"
+
+#: meetService/templates/projects/project_list.html:23
+#: meetService/templates/projects/project_list.html:32
+#: meetService/templates/specialists/specialist_list.html:23
+#: meetService/templates/specialists/specialist_list.html:32
+msgid "Любая"
+msgstr "Any"
+
+#: meetService/templates/projects/project_list.html:39
+msgid "Сортировка"
+msgstr "Sorting"
+
+#: meetService/templates/projects/project_list.html:41
+msgid "Сначала новые"
+msgstr "Newest first"
+
+#: meetService/templates/projects/project_list.html:42
+msgid "Сначала старые"
+msgstr "Oldest first"
+
+#: meetService/templates/projects/project_list.html:43
+msgid "Название А–Я"
+msgstr "Title A–Z"
+
+#: meetService/templates/projects/project_list.html:44
+msgid "Название Я–А"
+msgstr "Title Z–A"
+
+#: meetService/templates/projects/project_list.html:47
+#: meetService/templates/specialists/specialist_list.html:56
+msgid "Применить"
+msgstr "Apply"
+
+#: meetService/templates/projects/project_list.html:48
+#: meetService/templates/specialists/specialist_list.html:57
+msgid "Сбросить"
+msgstr "Reset"
+
+#: meetService/templates/projects/project_list.html:57
+#: meetService/templates/search/global_search.html:128
+msgid "Проекты не найдены"
+msgstr "No projects found"
+
+#: meetService/templates/projects/project_list.html:58
+msgid "По выбранным условиям пока нет опубликованных проектов. Попробуй изменить фильтры или сбросить поиск."
+msgstr "There are no published projects for the selected conditions yet. Try changing filters or resetting the search."
+
+#: meetService/templates/projects/project_list.html:59
+#: meetService/templates/specialists/specialist_list.html:103
+msgid "Сбросить фильтры"
+msgstr "Reset filters"
+
+#: meetService/templates/projects/project_list.html:64
+msgid "Пагинация каталога проектов"
+msgstr "Project catalog pagination"
+
+#: meetService/templates/projects/tags/popular_technologies.html:12
+msgid "Технологии пока не добавлены."
+msgstr "Technologies have not been added yet."
+
+#: meetService/templates/projects/vacancy_form.html:8
+#, python-format
+msgid "Проект: <strong>«%(project_title)s»</strong>. Добавь роль, на которую смогут откликаться специалисты."
+msgstr "Project: <strong>“%(project_title)s”</strong>. Add a role that specialists can apply for."
+
+#: meetService/templates/search/global_search.html:7
+msgid "Описание пока не заполнено."
+msgstr "Description is not filled in yet."
+
+#: meetService/templates/search/global_search.html:9
+msgid "глобальный поиск"
+msgstr "global search"
+
+#: meetService/templates/search/global_search.html:10
+msgid "Поиск по сервису"
+msgstr "Service search"
+
+#: meetService/templates/search/global_search.html:13
+msgid "Результаты по запросу:"
+msgstr "Results for query:"
+
+#: meetService/templates/search/global_search.html:16
+msgid "Введите запрос в поисковую строку в шапке сайта. Поиск найдёт проекты, специалистов, роли и технологии."
+msgstr "Enter a query in the search field in the header. Search will find projects, specialists, roles, and technologies."
+
+#: meetService/templates/search/global_search.html:19
+#| msgid "сервис поиска IT-команды"
+msgid "Режим поиска: только проекты."
+msgstr "Search mode: projects only."
+
+#: meetService/templates/search/global_search.html:21
+#| msgid "Профиль специалиста"
+msgid "Режим поиска: только специалисты."
+msgstr "Search mode: specialists only."
+
+#: meetService/templates/search/global_search.html:25
+#, python-format
+msgid "Команда не распознана. Выполнен обычный поиск по запросу: <strong>%(query_text)s</strong>"
+msgstr "Search command was not recognized. A regular search was performed for: <strong>%(query_text)s</strong>"
+
+#: meetService/templates/search/global_search.html:31
+msgid "Команды поиска"
+msgstr "Search commands"
+
+#: meetService/templates/search/global_search.html:35
+#| msgid "Мои проекты"
+msgid "искать только проекты"
+msgstr "search only projects"
+
+#: meetService/templates/search/global_search.html:39
+#| msgid "Профиль специалиста"
+msgid "искать только специалистов"
+msgstr "search only specialists"
+
+#: meetService/templates/search/global_search.html:43
+msgid "перейти в личный кабинет"
+msgstr "go to dashboard"
+
+#: meetService/templates/search/global_search.html:47
+#| msgid "Мои отклики"
+msgid "открыть мои отклики"
+msgstr "open my applications"
+
+#: meetService/templates/search/global_search.html:51
+#| msgid "Мои приглашения"
+msgid "открыть приглашения"
+msgstr "open invitations"
+
+#: meetService/templates/search/global_search.html:55
+#| msgid "Избранное"
+msgid "открыть избранное"
+msgstr "open favorites"
+
+#: meetService/templates/search/global_search.html:59
+#| msgid "Мои команды"
+msgid "открыть мои команды"
+msgstr "open my teams"
+
+#: meetService/templates/search/global_search.html:63
+#| msgid "Мои проекты"
+msgid "открыть мои проекты"
+msgstr "open my projects"
+
+#: meetService/templates/search/global_search.html:72
+#| msgid "Мои проекты"
+msgid "Ищи проекты"
+msgstr "Search projects"
+
+#: meetService/templates/search/global_search.html:73
+msgid "Например: Django, React, backend, MVP, мобильная разработка."
+msgstr "For example: Django, React, backend, MVP, mobile development."
+
+#: meetService/templates/search/global_search.html:74
+msgid "Открыть каталог проектов"
+msgstr "Open project catalog"
+
+#: meetService/templates/search/global_search.html:77
+#| msgid "Профиль специалиста"
+msgid "Ищи специалистов"
+msgstr "Search specialists"
+
+#: meetService/templates/search/global_search.html:78
+msgid "Например: frontend, UI/UX, DevOps, Python, проектный менеджер."
+msgstr "For example: frontend, UI/UX, DevOps, Python, project manager."
+
+#: meetService/templates/search/global_search.html:79
+#| msgid "Профиль специалиста"
+msgid "Открыть каталог специалистов"
+msgstr "Open specialist catalog"
+
+#: meetService/templates/search/global_search.html:84
+msgid "Профиль, проекты, команды, отклики, приглашения и избранное находятся в кабинете."
+msgstr "Profile, projects, teams, applications, invitations, and favorites are in the dashboard."
+
+#: meetService/templates/search/global_search.html:85
+msgid "Перейти в кабинет"
+msgstr "Go to dashboard"
+
+#: meetService/templates/search/global_search.html:96
+#| msgid "Мои проекты"
+msgid "Найденные проекты"
+msgstr "Found projects"
+
+#: meetService/templates/search/global_search.html:97
+msgid "Совпадения по названию, описанию, цели, технологиям и открытым ролям."
+msgstr "Matches by title, description, goal, technologies, and open roles."
+
+#: meetService/templates/search/global_search.html:129
+msgid "Попробуй другой запрос или перейди в каталог проектов с фильтрами."
+msgstr "Try another query or go to the project catalog with filters."
+
+#: meetService/templates/search/global_search.html:130
+msgid "Перейти в каталог проектов"
+msgstr "Go to project catalog"
+
+#: meetService/templates/search/global_search.html:140
+#| msgid "Профиль специалиста"
+msgid "Найденные специалисты"
+msgstr "Found specialists"
+
+#: meetService/templates/search/global_search.html:141
+msgid "Совпадения по имени, роли, описанию профиля и технологиям."
+msgstr "Matches by name, role, profile description, and technologies."
+
+#: meetService/templates/search/global_search.html:173
+#: meetService/templates/specialists/specialist_list.html:101
+#| msgid "Специалисты"
+msgid "Специалисты не найдены"
+msgstr "No specialists found"
+
+#: meetService/templates/search/global_search.html:174
+msgid "Попробуй другой запрос или перейди в каталог специалистов с фильтрами."
+msgstr "Try another query or go to the specialist catalog with filters."
+
+#: meetService/templates/search/global_search.html:175
+#| msgid "Профиль специалиста"
+msgid "Перейти в каталог специалистов"
+msgstr "Go to specialist catalog"
+
+#: meetService/templates/socialaccount/authentication_error.html:3
+msgid "Ошибка OAuth"
+msgstr "OAuth error"
+
+#: meetService/templates/socialaccount/authentication_error.html:8
+msgid "Не удалось войти"
+msgstr "Could not sign in"
+
+#: meetService/templates/socialaccount/authentication_error.html:9
+msgid "Во время входа через внешний аккаунт произошла ошибка."
+msgstr "An error occurred while signing in through an external account."
+
+#: meetService/templates/socialaccount/authentication_error.html:10
+#: meetService/templates/socialaccount/login.html:20
+#: meetService/templates/socialaccount/login_cancelled.html:10
+msgid "Вернуться ко входу"
+msgstr "Back to login"
+
+#: meetService/templates/socialaccount/login.html:3
+#: meetService/templates/socialaccount/login.html:12
+#, python-format
+msgid "Вход через %(provider_name)s"
+msgstr "Sign in with %(provider_name)s"
+
+#: meetService/templates/socialaccount/login.html:9
+#, python-format
+msgid "Подключение %(provider_name)s"
+msgstr "Connect %(provider_name)s"
+
+#: meetService/templates/socialaccount/login.html:10
+#, python-format
+msgid "Вы собираетесь подключить внешний аккаунт %(provider_name)s."
+msgstr "You are about to connect the external account %(provider_name)s."
+
+#: meetService/templates/socialaccount/login.html:13
+#, python-format
+msgid "Вы будете перенаправлены к провайдеру %(provider_name)s для авторизации."
+msgstr "You will be redirected to %(provider_name)s for authorization."
+
+#: meetService/templates/socialaccount/login.html:17
+#: meetService/templates/socialaccount/login_redirect.html:13
+msgid "Продолжить"
+msgstr "Continue"
+
+#: meetService/templates/socialaccount/login_cancelled.html:3
+#: meetService/templates/socialaccount/login_cancelled.html:8
+msgid "Вход отменён"
+msgstr "Login canceled"
+
+#: meetService/templates/socialaccount/login_cancelled.html:9
+msgid "Авторизация через внешний аккаунт была отменена."
+msgstr "Authorization through the external account was canceled."
+
+#: meetService/templates/socialaccount/login_redirect.html:11
+#| msgid "Регистрация"
+msgid "Переадресация"
+msgstr "Redirect"
+
+#: meetService/templates/socialaccount/login_redirect.html:12
+msgid "Перенаправляем на страницу авторизации."
+msgstr "Redirecting to the authorization page."
+
+#: meetService/templates/specialists/specialist_detail.html:5
+msgid "Специалист пока не добавил описание."
+msgstr "The specialist has not added a description yet."
+
+#: meetService/templates/specialists/specialist_detail.html:31
+msgid "Опыт"
+msgstr "Experience"
+
+#: meetService/templates/specialists/specialist_detail.html:32
+#, python-format
+msgid "%(years)s год опыта"
+msgid_plural "%(years)s лет опыта"
+msgstr[0] "%(years)s year of experience"
+msgstr[1] "%(years)s years of experience"
+
+#: meetService/templates/specialists/specialist_detail.html:33
+#| msgid "Мои проекты"
+msgid "Участие в проектах"
+msgstr "Project participation"
+
+#: meetService/templates/specialists/specialist_detail.html:44
+msgid "Пока нет участия в проектах."
+msgstr "No project participation yet."
+
+#: meetService/templates/specialists/specialist_detail.html:50
+msgid "Контакты и ссылки"
+msgstr "Contacts and links"
+
+#: meetService/templates/specialists/specialist_detail.html:58
+msgid "Специалист пока не добавил внешние ссылки."
+msgstr "The specialist has not added external links yet."
+
+#: meetService/templates/specialists/specialist_detail.html:62
+msgid "Действия"
+msgstr "Actions"
+
+#: meetService/templates/specialists/specialist_detail.html:65
+msgid "Это твой профиль специалиста. Ты можешь обновить анкету, стек, ссылки и статус поиска проекта."
+msgstr "This is your specialist profile. You can update the form, stack, links, and project search status."
+
+#: meetService/templates/specialists/specialist_detail.html:68
+msgid "Пригласи специалиста в опубликованный проект с открытой ролью."
+msgstr "Invite the specialist to a published project with an open role."
+
+#: meetService/templates/specialists/specialist_detail.html:69
+msgid "Пригласить в проект"
+msgstr "Invite to project"
+
+#: meetService/templates/specialists/specialist_detail.html:72
+msgid "Войди в аккаунт, чтобы приглашать специалистов в проекты."
+msgstr "Sign in to invite specialists to projects."
+
+#: meetService/templates/specialists/specialist_list.html:4
+#| msgid "Профиль специалиста"
+msgid "Каталог специалистов"
+msgstr "Specialist catalog"
+
+#: meetService/templates/specialists/specialist_list.html:7
+msgid "Специалист пока не заполнил описание профиля."
+msgstr "The specialist has not filled in the profile description yet."
+
+#: meetService/templates/specialists/specialist_list.html:11
+msgid "Ищи участников по роли, стеку, уровню и статусу доступности."
+msgstr "Search participants by role, stack, level, and availability status."
+
+#: meetService/templates/specialists/specialist_list.html:41
+#: meetService/templates/specialists/specialist_list.html:50
+msgid "Любой"
+msgstr "Any"
+
+#: meetService/templates/specialists/specialist_list.html:102
+msgid "По выбранным условиям специалистов пока нет. Попробуй изменить фильтры или сбросить поиск."
+msgstr "There are no specialists for the selected conditions yet. Try changing filters or resetting the search."
+
+#: meetService/templates/specialists/specialist_list.html:108
+#| msgid "Профиль специалиста"
+msgid "Пагинация каталога специалистов"
+msgstr "Specialist catalog pagination"
+
+#: meetService/templates/specialists/specialist_profile_form.html:8
+msgid "Заполни анкету, чтобы откликаться на проекты, получать приглашения и отображаться в каталоге специалистов."
+msgstr "Complete the form to apply to projects, receive invitations, and be shown in the specialist catalog."
+
+#~ msgid "Выход"
+#~ msgstr "Logout"
