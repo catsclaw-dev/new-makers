@@ -1,8 +1,10 @@
 {% extends "base.html" %}
 {% load i18n project_extras %}
-{% trans "Специалист пока не заполнил описание профиля." as empty_bio %}
-{% block title %}{% trans "Каталог специалистов" %} — New-Makers{% endblock %}
+{% block title %}
+    {% trans "Каталог специалистов" %} — New-Makers
+{% endblock %}
 {% block content %}
+    {% trans "Специалист пока не заполнил описание профиля." as empty_bio %}
     <section class="container page-head">
         <p class="eyebrow">{% trans "каталог" %}</p>
         <h1>{% trans "Специалисты" %}</h1>
@@ -13,18 +15,14 @@
             <form method="get">
                 <label>
                     {% trans "Поиск" %}
-                    <input type="search"
-                           name="q"
-                           value="{{ query }}"
-                           placeholder="Frontend, Django, QA">
+                    <input type="search" name="q" value="{{ query }}" placeholder="Frontend, Django, QA">
                 </label>
                 <label>
                     {% trans "Роль" %}
                     <select name="role">
                         <option value="">{% trans "Любая" %}</option>
                         {% for role in roles %}
-                            <option value="{{ role.slug }}"
-                                    {% if role.slug == role_slug %}selected{% endif %}>{{ role.name }}</option>
+                            <option value="{{ role.slug }}" {% if role.slug == role_slug %}selected{% endif %}>{{ role.name }}</option>
                         {% endfor %}
                     </select>
                 </label>
@@ -33,10 +31,7 @@
                     <select name="technology">
                         <option value="">{% trans "Любая" %}</option>
                         {% for technology in technologies %}
-                            <option value="{{ technology.slug }}"
-                                    {% if technology.slug == technology_slug %}selected{% endif %}>
-                                {{ technology.name }}
-                            </option>
+                            <option value="{{ technology.slug }}" {% if technology.slug == technology_slug %}selected{% endif %}>{{ technology.name }}</option>
                         {% endfor %}
                     </select>
                 </label>
@@ -59,8 +54,7 @@
                     </select>
                 </label>
                 <button class="btn btn-primary full-width" type="submit">{% trans "Применить" %}</button>
-                <a class="btn btn-secondary full-width"
-                   href="{% url 'specialists:specialist_list' %}">{% trans "Сбросить" %}</a>
+                <a class="btn btn-secondary full-width" href="{% url 'specialists:specialist_list' %}">{% trans "Сбросить" %}</a>
             </form>
         </aside>
         <div>
@@ -68,9 +62,7 @@
                 {% for specialist in page_obj %}
                     <article class="project-card specialist-card">
                         {% if specialist.avatar %}
-                            <img class="project-cover specialist-avatar"
-                                 src="{{ specialist.avatar.url }}"
-                                 alt="{{ specialist.get_display_name }}">
+                            <img class="project-cover specialist-avatar" src="{{ specialist.avatar.url }}" alt="{{ specialist.get_display_name }}">
                         {% else %}
                             <div class="project-cover project-cover-placeholder">
                                 <span>DEV</span>
@@ -100,8 +92,7 @@
                                         <span class="tag">{% trans "Стек не указан" %}</span>
                                     {% endfor %}
                                 </div>
-                                <a class="card-link"
-                                   href="{% url 'specialists:specialist_detail' specialist.pk %}">{% trans "Открыть профиль" %}</a>
+                                <a class="card-link" href="{% url 'specialists:specialist_detail' specialist.pk %}">{% trans "Открыть профиль" %}</a>
                             </div>
                         </div>
                     </article>
@@ -109,8 +100,7 @@
                     <article class="action-card">
                         <h2>{% trans "Специалисты не найдены" %}</h2>
                         <p class="empty">{% trans "По выбранным условиям специалистов пока нет. Попробуй изменить фильтры или сбросить поиск." %}</p>
-                        <a class="btn btn-primary"
-                           href="{% url 'specialists:specialist_list' %}">{% trans "Сбросить фильтры" %}</a>
+                        <a class="btn btn-primary" href="{% url 'specialists:specialist_list' %}">{% trans "Сбросить фильтры" %}</a>
                     </article>
                 {% endfor %}
             </div>

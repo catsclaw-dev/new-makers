@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% trans "Описание пока не заполнено." as empty_description %}
 {% block title %}
     {% trans "Поиск" %} — New-Makers
 {% endblock %}
 {% block content %}
+    {% trans "Описание пока не заполнено." as empty_description %}
     <section class="container page-head">
         <p class="eyebrow">{% trans "глобальный поиск" %}</p>
         <h1>{% trans "Поиск по сервису" %}</h1>

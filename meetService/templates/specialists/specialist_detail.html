@@ -1,14 +1,12 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% trans "Специалист пока не добавил описание." as empty_bio %}
 {% block title %}{{ specialist.get_display_name }} — New-Makers{% endblock %}
 {% block content %}
+    {% trans "Специалист пока не добавил описание." as empty_bio %}
     <section class="container detail-layout">
         <article class="detail-main">
             {% if specialist.avatar %}
-                <img class="detail-cover specialist-detail-avatar"
-                     src="{{ specialist.avatar.url }}"
-                     alt="{{ specialist.get_display_name }}">
+                <img class="detail-cover specialist-detail-avatar" src="{{ specialist.avatar.url }}" alt="{{ specialist.get_display_name }}">
             {% else %}
                 <div class="detail-cover project-cover-placeholder">
                     <span>DEV</span>
@@ -51,23 +49,10 @@
             <div class="action-card">
                 <h2>{% trans "Контакты и ссылки" %}</h2>
                 {% if specialist.github_url or specialist.gitlab_url or specialist.portfolio_url %}
-                    {% if specialist.github_url %}
-                        <a class="btn btn-secondary full-width"
-                           href="{{ specialist.github_url }}"
-                           target="_blank"
-                           rel="noopener noreferrer">GitHub</a>
-                    {% endif %}
-                    {% if specialist.gitlab_url %}
-                        <a class="btn btn-secondary full-width"
-                           href="{{ specialist.gitlab_url }}"
-                           target="_blank"
-                           rel="noopener noreferrer">GitLab</a>
-                    {% endif %}
+                    {% if specialist.github_url %}<a class="btn btn-secondary full-width" href="{{ specialist.github_url }}" target="_blank" rel="noopener noreferrer">GitHub</a>{% endif %}
+                    {% if specialist.gitlab_url %}<a class="btn btn-secondary full-width" href="{{ specialist.gitlab_url }}" target="_blank" rel="noopener noreferrer">GitLab</a>{% endif %}
                     {% if specialist.portfolio_url %}
-                        <a class="btn btn-secondary full-width"
-                           href="{{ specialist.portfolio_url }}"
-                           target="_blank"
-                           rel="noopener noreferrer">{% trans "Портфолио" %}</a>
+                        <a class="btn btn-secondary full-width" href="{{ specialist.portfolio_url }}" target="_blank" rel="noopener noreferrer">{% trans "Портфолио" %}</a>
                     {% endif %}
                 {% else %}
                     <p class="empty">{% trans "Специалист пока не добавил внешние ссылки." %}</p>
@@ -78,12 +63,10 @@
                 {% if user.is_authenticated %}
                     {% if user == specialist.user %}
                         <p class="empty">{% trans "Это твой профиль специалиста. Ты можешь обновить анкету, стек, ссылки и статус поиска проекта." %}</p>
-                        <a class="btn btn-primary full-width"
-                           href="{% url 'specialists:specialist_profile_edit' %}">{% trans "Редактировать профиль" %}</a>
+                        <a class="btn btn-primary full-width" href="{% url 'specialists:specialist_profile_edit' %}">{% trans "Редактировать профиль" %}</a>
                     {% else %}
                         <p class="empty">{% trans "Пригласи специалиста в опубликованный проект с открытой ролью." %}</p>
-                        <a class="btn btn-primary full-width"
-                           href="{% url 'interactions:invite_specialist' specialist.pk %}">{% trans "Пригласить в проект" %}</a>
+                        <a class="btn btn-primary full-width" href="{% url 'interactions:invite_specialist' specialist.pk %}">{% trans "Пригласить в проект" %}</a>
                     {% endif %}
                 {% else %}
                     <p class="empty">{% trans "Войди в аккаунт, чтобы приглашать специалистов в проекты." %}</p>

@@ -1,8 +1,10 @@
 {% extends "base.html" %}
 {% load i18n project_extras %}
-{% trans "Роль не указана" as empty_role %}
-{% block title %}{% trans "Главная" %} — New-Makers{% endblock %}
+{% block title %}
+    {% trans "Главная" %} — New-Makers
+{% endblock %}
 {% block content %}
+    {% trans "Роль не указана" as empty_role %}
     <section class="home-hero">
         <div class="container home-hero-grid">
             <div class="home-hero-content">

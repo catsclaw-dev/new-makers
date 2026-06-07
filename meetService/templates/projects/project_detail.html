@@ -1,18 +1,16 @@
 {% extends "base.html" %}
 {% load i18n project_extras %}
-{% trans "Краткое описание проекта пока не заполнено." as short_description_fallback %}
-{% trans "Описание проекта пока не заполнено." as project_description_fallback %}
-{% trans "Описание роли пока не заполнено." as vacancy_description_fallback %}
-{% trans "Закрыть проект для новых участников? Проект останется видимым в каталоге, но новые отклики и вакансии будут недоступны." as close_project_confirm %}
-{% trans "Снова открыть проект для набора участников?" as reopen_project_confirm %}
 {% block title %}{{ project.title }} — New-Makers{% endblock %}
 {% block content %}
+    {% trans "Краткое описание проекта пока не заполнено." as short_description_fallback %}
+    {% trans "Описание проекта пока не заполнено." as project_description_fallback %}
+    {% trans "Описание роли пока не заполнено." as vacancy_description_fallback %}
+    {% trans "Закрыть проект для новых участников? Проект останется видимым в каталоге, но новые отклики и вакансии будут недоступны." as close_project_confirm %}
+    {% trans "Снова открыть проект для набора участников?" as reopen_project_confirm %}
     <section class="container detail-layout">
         <article class="detail-main">
             {% if project.cover_image %}
-                <img class="detail-cover"
-                     src="{{ project.cover_image.url }}"
-                     alt="{{ project.title }}">
+                <img class="detail-cover" src="{{ project.cover_image.url }}" alt="{{ project.title }}">
             {% else %}
                 <div class="detail-cover project-cover-placeholder">
                     <span>IT</span>
@@ -97,16 +95,10 @@
                 </p>
                 {% if project.repository_url or project.demo_url %}
                     {% if project.repository_url %}
-                        <a class="btn btn-secondary full-width"
-                           href="{{ project.repository_url }}"
-                           target="_blank"
-                           rel="noopener noreferrer">{% trans "Репозиторий" %}</a>
+                        <a class="btn btn-secondary full-width" href="{{ project.repository_url }}" target="_blank" rel="noopener noreferrer">{% trans "Репозиторий" %}</a>
                     {% endif %}
                     {% if project.demo_url %}
-                        <a class="btn btn-secondary full-width"
-                           href="{{ project.demo_url }}"
-                           target="_blank"
-                           rel="noopener noreferrer">{% trans "Демо" %}</a>
+                        <a class="btn btn-secondary full-width" href="{{ project.demo_url }}" target="_blank" rel="noopener noreferrer">{% trans "Демо" %}</a>
                     {% endif %}
                 {% endif %}
             </div>
@@ -114,51 +106,37 @@
                 <div class="action-card">
                     <h2>{% trans "Управление проектом" %}</h2>
                     {% if project.status != "archived" %}
-                        <a class="btn btn-secondary full-width"
-                           href="{% url 'projects:project_update' project.slug %}">{% trans "Редактировать проект" %}</a>
+                        <a class="btn btn-secondary full-width" href="{% url 'projects:project_update' project.slug %}">{% trans "Редактировать проект" %}</a>
                     {% else %}
                         <button class="btn btn-secondary full-width" type="button" disabled>{% trans "Редактирование архива недоступно" %}</button>
                     {% endif %}
                     {% if project.status != "closed" and project.status != "archived" %}
-                        <a class="btn btn-secondary full-width"
-                           href="{% url 'projects:project_vacancy_create' project.slug %}">{% trans "Добавить открытую роль" %}</a>
+                        <a class="btn btn-secondary full-width" href="{% url 'projects:project_vacancy_create' project.slug %}">{% trans "Добавить открытую роль" %}</a>
                     {% else %}
                         <button class="btn btn-secondary full-width" type="button" disabled>{% trans "Добавление ролей недоступно" %}</button>
                     {% endif %}
                     {% if project.status == "draft" %}
-                        <form method="post"
-                              action="{% url 'projects:project_submit_for_moderation' project.slug %}">
+                        <form method="post" action="{% url 'projects:project_submit_for_moderation' project.slug %}">
                             {% csrf_token %}
                             <button class="btn btn-primary full-width" type="submit">{% trans "Отправить на рассмотрение" %}</button>
                         </form>
-                        <a class="btn btn-danger full-width"
-                           href="{% url 'projects:project_delete' project.slug %}">{% trans "Удалить черновик" %}</a>
+                        <a class="btn btn-danger full-width" href="{% url 'projects:project_delete' project.slug %}">{% trans "Удалить черновик" %}</a>
                     {% elif project.status == "moderation" %}
-                        <p class="empty">
-                            {% blocktrans %}Проект уже отправлен на модерацию. После проверки администратор сможет опубликовать его через Django admin.{% endblocktrans %}
-                        </p>
+                        <p class="empty">{% blocktrans %}Проект уже отправлен на модерацию. После проверки администратор сможет опубликовать его через Django admin.{% endblocktrans %}</p>
                     {% elif project.status == "published" %}
-                        <form method="post"
-                              action="{% url 'projects:project_close' project.slug %}"
-                              onsubmit="return confirm('{{ close_project_confirm|escapejs }}');">
+                        <form method="post" action="{% url 'projects:project_close' project.slug %}" onsubmit="return confirm('{{ close_project_confirm|escapejs }}');">
                             {% csrf_token %}
                             <button class="btn btn-secondary full-width" type="submit">{% trans "Закрыть набор" %}</button>
                         </form>
-                        <a class="btn btn-secondary full-width"
-                           href="{% url 'projects:project_archive' project.slug %}">{% trans "Перенести в архив" %}</a>
+                        <a class="btn btn-secondary full-width" href="{% url 'projects:project_archive' project.slug %}">{% trans "Перенести в архив" %}</a>
                     {% elif project.status == "closed" %}
-                        <form method="post"
-                              action="{% url 'projects:project_reopen' project.slug %}"
-                              onsubmit="return confirm('{{ reopen_project_confirm|escapejs }}');">
+                        <form method="post" action="{% url 'projects:project_reopen' project.slug %}" onsubmit="return confirm('{{ reopen_project_confirm|escapejs }}');">
                             {% csrf_token %}
                             <button class="btn btn-primary full-width" type="submit">{% trans "Открыть набор" %}</button>
                         </form>
-                        <a class="btn btn-secondary full-width"
-                           href="{% url 'projects:project_archive' project.slug %}">{% trans "Перенести в архив" %}</a>
+                        <a class="btn btn-secondary full-width" href="{% url 'projects:project_archive' project.slug %}">{% trans "Перенести в архив" %}</a>
                     {% elif project.status == "archived" %}
-                        <p class="empty">
-                            {% blocktrans %}Проект находится в архиве. Его нельзя редактировать, открыть заново или пополнить ролями.{% endblocktrans %}
-                        </p>
+                        <p class="empty">{% blocktrans %}Проект находится в архиве. Его нельзя редактировать, открыть заново или пополнить ролями.{% endblocktrans %}</p>
                     {% endif %}
                 </div>
                 <div class="action-card">
@@ -187,11 +165,9 @@
                             {% if is_team_member %}
                                 <button class="btn btn-secondary full-width" type="button" disabled>{% trans "Ты уже в команде" %}</button>
                             {% else %}
-                                <a class="btn btn-primary full-width"
-                                   href="{% url 'interactions:project_apply' project.slug %}">{% trans "Хочу в команду" %}</a>
+                                <a class="btn btn-primary full-width" href="{% url 'interactions:project_apply' project.slug %}">{% trans "Хочу в команду" %}</a>
                             {% endif %}
-                            <form method="post"
-                                  action="{% url 'interactions:favorite_project_toggle' project.slug %}">
+                            <form method="post" action="{% url 'interactions:favorite_project_toggle' project.slug %}">
                                 {% csrf_token %}
                                 <button class="btn btn-secondary full-width" type="submit">
                                     {% if is_favorite %}
@@ -209,8 +185,7 @@
                         <p class="empty">{% trans "Проект закрыт для новых участников. Карточка доступна только для просмотра." %}</p>
                         <button class="btn btn-secondary full-width" type="button" disabled>{% trans "Набор закрыт" %}</button>
                         {% if user.is_authenticated %}
-                            <form method="post"
-                                  action="{% url 'interactions:favorite_project_toggle' project.slug %}">
+                            <form method="post" action="{% url 'interactions:favorite_project_toggle' project.slug %}">
                                 {% csrf_token %}
                                 <button class="btn btn-secondary full-width" type="submit">
                                     {% if is_favorite %}

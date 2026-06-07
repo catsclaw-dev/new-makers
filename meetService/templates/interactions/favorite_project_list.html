@@ -1,8 +1,10 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% trans "Описание проекта пока не заполнено." as empty_description %}
-{% block title %}{% trans "Избранное" %} — New-Makers{% endblock %}
+{% block title %}
+    {% trans "Избранное" %} — New-Makers
+{% endblock %}
 {% block content %}
+    {% trans "Описание проекта пока не заполнено." as empty_description %}
     <section class="container page-head">
         <p class="eyebrow">{% trans "личный кабинет" %}</p>
         <h1>{% trans "Избранные проекты" %}</h1>
@@ -13,9 +15,7 @@
             {% for favorite in favorites %}
                 <article class="project-card">
                     {% if favorite.project.cover_image %}
-                        <img class="project-cover"
-                             src="{{ favorite.project.cover_image.url }}"
-                             alt="{{ favorite.project.title }}">
+                        <img class="project-cover" src="{{ favorite.project.cover_image.url }}" alt="{{ favorite.project.title }}">
                     {% else %}
                         <div class="project-cover project-cover-placeholder">
                             <span>IT</span>
@@ -31,9 +31,7 @@
                             <h3>
                                 <a href="{{ favorite.project.get_absolute_url }}">{{ favorite.project.title }}</a>
                             </h3>
-                            <p class="project-description">
-                                {{ favorite.project.short_description|default:empty_description }}
-                            </p>
+                            <p class="project-description">{{ favorite.project.short_description|default:empty_description }}</p>
                         </div>
                         <div class="project-card-bottom">
                             <div class="tag-row">
@@ -44,11 +42,8 @@
                                 {% endfor %}
                             </div>
                             <div class="project-actions">
-                                <a class="btn btn-secondary"
-                                   href="{{ favorite.project.get_absolute_url }}">{% trans "Открыть проект" %}</a>
-                                <form class="inline-form"
-                                      method="post"
-                                      action="{% url 'interactions:favorite_project_toggle' favorite.project.slug %}">
+                                <a class="btn btn-secondary" href="{{ favorite.project.get_absolute_url }}">{% trans "Открыть проект" %}</a>
+                                <form class="inline-form" method="post" action="{% url 'interactions:favorite_project_toggle' favorite.project.slug %}">
                                     {% csrf_token %}
                                     <button class="btn btn-danger full-width" type="submit">{% trans "Удалить" %}</button>
                                 </form>

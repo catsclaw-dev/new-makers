@@ -1,10 +1,12 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% trans "Роль не указана" as empty_role %}
-{% trans "Описание проекта пока не заполнено." as empty_description %}
-{% trans "не указан" as not_specified %}
-{% block title %}{% trans "Личный кабинет" %} — New-Makers{% endblock %}
+{% block title %}
+    {% trans "Личный кабинет" %} — New-Makers
+{% endblock %}
 {% block content %}
+    {% trans "Роль не указана" as empty_role %}
+    {% trans "Описание проекта пока не заполнено." as empty_description %}
+    {% trans "не указан" as not_specified %}
     <section class="container page-head cabinet-head">
         <div>
             <p class="eyebrow">{% trans "личный кабинет" %}</p>
@@ -12,8 +14,7 @@
             <p class="lead">{% blocktrans with applications=sent_applications_count invitations=incoming_applications_count role=dynamic_role_display %}{{ applications }} откликов · {{ invitations }} приглашений · роль на сервисе: {{ role }}{% endblocktrans %}</p>
         </div>
         <div class="hero-actions">
-            <a class="btn btn-secondary"
-               href="{% url 'specialists:specialist_profile_edit' %}">{% trans "Редактировать профиль" %}</a>
+            <a class="btn btn-secondary" href="{% url 'specialists:specialist_profile_edit' %}">{% trans "Редактировать профиль" %}</a>
             <a class="btn btn-primary" href="{% url 'projects:project_create' %}">{% trans "Создать проект" %}</a>
         </div>
     </section>
@@ -61,15 +62,12 @@
                         </div>
                         <p>{% trans "Статус:" %} {{ specialist_profile.get_status_display }}</p>
                         <div class="hero-actions">
-                            <a class="btn btn-primary"
-                               href="{{ specialist_profile.get_absolute_url }}">{% trans "Открыть профиль" %}</a>
-                            <a class="btn btn-secondary"
-                               href="{% url 'specialists:specialist_profile_edit' %}">{% trans "Редактировать" %}</a>
+                            <a class="btn btn-primary" href="{{ specialist_profile.get_absolute_url }}">{% trans "Открыть профиль" %}</a>
+                            <a class="btn btn-secondary" href="{% url 'specialists:specialist_profile_edit' %}">{% trans "Редактировать" %}</a>
                         </div>
                     {% else %}
                         <p class="empty">{% trans "Профиль специалиста ещё не создан." %}</p>
-                        <a class="btn btn-primary"
-                           href="{% url 'specialists:specialist_profile_edit' %}">{% trans "Заполнить профиль" %}</a>
+                        <a class="btn btn-primary" href="{% url 'specialists:specialist_profile_edit' %}">{% trans "Заполнить профиль" %}</a>
                     {% endif %}
                 </article>
             </section>
@@ -132,8 +130,7 @@
                             <p class="empty">{% trans "Ты пока не отправлял отклики." %}</p>
                         {% endfor %}
                     </div>
-                    <a class="btn btn-primary"
-                       href="{% url 'interactions:application_list' %}">{% trans "Открыть отклики" %}</a>
+                    <a class="btn btn-primary" href="{% url 'interactions:application_list' %}">{% trans "Открыть отклики" %}</a>
                 </article>
                 <article class="action-card cabinet-feed-card">
                     <div class="section-heading">
@@ -159,8 +156,7 @@
                             <p class="empty">{% trans "Новых приглашений пока нет." %}</p>
                         {% endfor %}
                     </div>
-                    <a class="btn btn-primary"
-                       href="{% url 'interactions:invitation_list' %}">{% trans "Открыть приглашения" %}</a>
+                    <a class="btn btn-primary" href="{% url 'interactions:invitation_list' %}">{% trans "Открыть приглашения" %}</a>
                 </article>
             </section>
             {% if is_project_owner %}
@@ -250,8 +246,7 @@
                         <article class="action-card">
                             <h3>{% trans "Профиль специалиста не создан" %}</h3>
                             <p class="empty">{% trans "Чтобы откликаться на проекты и состоять в командах, заполни профиль специалиста." %}</p>
-                            <a class="btn btn-primary"
-                               href="{% url 'specialists:specialist_profile_edit' %}">{% trans "Заполнить профиль" %}</a>
+                            <a class="btn btn-primary" href="{% url 'specialists:specialist_profile_edit' %}">{% trans "Заполнить профиль" %}</a>
                         </article>
                     {% endif %}
                 </div>
@@ -260,9 +255,7 @@
         <aside class="cabinet-sidebar">
             <article class="project-card specialist-card cabinet-user-card">
                 {% if specialist_profile and specialist_profile.avatar %}
-                    <img class="project-cover specialist-avatar"
-                         src="{{ specialist_profile.avatar.url }}"
-                         alt="{{ user.get_full_name|default:user.username }}">
+                    <img class="project-cover specialist-avatar" src="{{ specialist_profile.avatar.url }}" alt="{{ user.get_full_name|default:user.username }}">
                 {% else %}
                     <div class="project-cover-placeholder">
                         <span>{{ user.username|first|upper }}</span>
@@ -273,11 +266,9 @@
                     <p>{{ dynamic_role_display }}</p>
                     <div class="hero-actions">
                         {% if specialist_profile %}
-                            <a class="btn btn-primary"
-                               href="{{ specialist_profile.get_absolute_url }}">{% trans "Мой профиль" %}</a>
+                            <a class="btn btn-primary" href="{{ specialist_profile.get_absolute_url }}">{% trans "Мой профиль" %}</a>
                         {% else %}
-                            <a class="btn btn-primary"
-                               href="{% url 'specialists:specialist_profile_edit' %}">{% trans "Заполнить профиль" %}</a>
+                            <a class="btn btn-primary" href="{% url 'specialists:specialist_profile_edit' %}">{% trans "Заполнить профиль" %}</a>
                         {% endif %}
                     </div>
                 </div>
@@ -332,16 +323,14 @@
                 <p>
                     {% blocktrans with count=favorites_count %}<strong>{{ count }}</strong> сохранённых проектов.{% endblocktrans %}
                 </p>
-                <a class="btn btn-secondary"
-                   href="{% url 'interactions:favorite_project_list' %}">{% trans "Открыть избранное" %}</a>
+                <a class="btn btn-secondary" href="{% url 'interactions:favorite_project_list' %}">{% trans "Открыть избранное" %}</a>
             </article>
             <article class="action-card">
                 <h2>{% trans "Поиск" %}</h2>
                 <p>{% trans "Найди проект для участия или специалиста в команду." %}</p>
                 <div class="hero-actions">
                     <a class="btn btn-secondary" href="{% url 'projects:project_list' %}">{% trans "Найти проект" %}</a>
-                    <a class="btn btn-secondary"
-                       href="{% url 'specialists:specialist_list' %}">{% trans "Найти специалиста" %}</a>
+                    <a class="btn btn-secondary" href="{% url 'specialists:specialist_list' %}">{% trans "Найти специалиста" %}</a>
                 </div>
             </article>
             <article class="action-card">
@@ -367,9 +356,7 @@
                         <button class="btn btn-secondary" type="submit">{% trans "Обновить email" %}</button>
                     </form>
                 {% endif %}
-                <form class="inline-form"
-                      method="post"
-                      action="{% url 'accounts:logout' %}">
+                <form class="inline-form" method="post" action="{% url 'accounts:logout' %}">
                     {% csrf_token %}
                     <button class="btn btn-danger" type="submit">{% trans "Выйти из аккаунта" %}</button>
                 </form>
