@@ -11,21 +11,116 @@
         <div class="form-shell">
             <form class="form-grid" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
-                {% if form.non_field_errors %}<div class="form-errors form-field-wide">{{ form.non_field_errors }}</div>{% endif %}
-                {% for field in form %}
-                    <div class="form-field {% if field.name == 'bio' or field.name == 'technologies' %}form-field-wide{% endif %}">
-                        <div class="form-label-row">
-                            <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-                            {% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}
-                        </div>
-                        {% if field.name == "technologies" %}
-                            <div class="checkbox-panel">{{ field }}</div>
-                        {% else %}
-                            {{ field }}
+                {% if form.errors %}
+                    <div class="form-error-summary">
+                        <strong>Проверь поля формы</strong>
+                        <p>Некоторые данные не заполнены или заполнены неправильно. Ошибки подсвечены ниже.</p>
+                        {% if form.non_field_errors %}
+                            {% for error in form.non_field_errors %}<div class="field-error">{{ error }}</div>{% endfor %}
                         {% endif %}
-                        {% for error in field.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
                     </div>
-                {% endfor %}
+                {% endif %}
+                <div class="form-grid specialist-profile-grid">
+                    <div class="form-field form-field-wide">
+                        <label class="form-label" for="{{ form.avatar.id_for_label }}">{{ form.avatar.label }}</label>
+                        {{ form.avatar }}
+                        {% if form.avatar.help_text %}<small>{{ form.avatar.help_text }}</small>{% endif %}
+                        {% for error in form.avatar.errors %}<div class="field-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label" for="{{ form.main_role.id_for_label }}">{{ form.main_role.label }}</label>
+                        {{ form.main_role }}
+                        {% if form.main_role.help_text %}<small>{{ form.main_role.help_text }}</small>{% endif %}
+                        {% for error in form.main_role.errors %}<div class="field-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label" for="{{ form.level.id_for_label }}">{{ form.level.label }}</label>
+                        {{ form.level }}
+                        {% if form.level.help_text %}<small>{{ form.level.help_text }}</small>{% endif %}
+                        {% for error in form.level.errors %}<div class="field-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="form-field form-field-wide choice-pair">
+                        <div class="choice-panel">
+                            <div class="choice-panel-head">
+                                <label class="form-label">{{ form.technologies.label }}</label>
+                                {% if form.technologies.help_text %}<small>{{ form.technologies.help_text }}</small>{% endif %}
+                            </div>
+                            {{ form.technologies }}
+                            {% for error in form.technologies.errors %}<div class="field-error">{{ error }}</div>{% endfor %}
+                        </div>
+                        <div class="choice-panel">
+                            <div class="choice-panel-head">
+                                <label class="form-label">{{ form.preferred_roles.label }}</label>
+                                {% if form.preferred_roles.help_text %}<small>{{ form.preferred_roles.help_text }}</small>{% endif %}
+                            </div>
+                            {{ form.preferred_roles }}
+                            {% for error in form.preferred_roles.errors %}<div class="field-error">{{ error }}</div>{% endfor %}
+                        </div>
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label" for="{{ form.status.id_for_label }}">{{ form.status.label }}</label>
+                        {{ form.status }}
+                        {% if form.status.help_text %}<small>{{ form.status.help_text }}</small>{% endif %}
+                        {% for error in form.status.errors %}<div class="field-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label" for="{{ form.participation_format.id_for_label }}">{{ form.participation_format.label }}</label>
+                        {{ form.participation_format }}
+                        {% if form.participation_format.help_text %}<small>{{ form.participation_format.help_text }}</small>{% endif %}
+                        {% for error in form.participation_format.errors %}<div class="field-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label" for="{{ form.experience_years.id_for_label }}">{{ form.experience_years.label }}</label>
+                        {{ form.experience_years }}
+                        {% if form.experience_years.help_text %}<small>{{ form.experience_years.help_text }}</small>{% endif %}
+                        {% for error in form.experience_years.errors %}<div class="field-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label" for="{{ form.weekly_hours.id_for_label }}">{{ form.weekly_hours.label }}</label>
+                        {{ form.weekly_hours }}
+                        {% if form.weekly_hours.help_text %}<small>{{ form.weekly_hours.help_text }}</small>{% endif %}
+                        {% for error in form.weekly_hours.errors %}<div class="field-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label" for="{{ form.city.id_for_label }}">{{ form.city.label }}</label>
+                        {{ form.city }}
+                        {% if form.city.help_text %}<small>{{ form.city.help_text }}</small>{% endif %}
+                        {% for error in form.city.errors %}<div class="field-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label" for="{{ form.timezone.id_for_label }}">{{ form.timezone.label }}</label>
+                        {{ form.timezone }}
+                        {% if form.timezone.help_text %}<small>{{ form.timezone.help_text }}</small>{% endif %}
+                        {% for error in form.timezone.errors %}<div class="field-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label" for="{{ form.github_url.id_for_label }}">{{ form.github_url.label }}</label>
+                        {{ form.github_url }}
+                        {% for error in form.github_url.errors %}<div class="field-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label" for="{{ form.gitlab_url.id_for_label }}">{{ form.gitlab_url.label }}</label>
+                        {{ form.gitlab_url }}
+                        {% for error in form.gitlab_url.errors %}<div class="field-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label" for="{{ form.portfolio_url.id_for_label }}">{{ form.portfolio_url.label }}</label>
+                        {{ form.portfolio_url }}
+                        {% for error in form.portfolio_url.errors %}<div class="field-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label" for="{{ form.telegram.id_for_label }}">{{ form.telegram.label }}</label>
+                        {{ form.telegram }}
+                        {% if form.telegram.help_text %}<small>{{ form.telegram.help_text }}</small>{% endif %}
+                        {% for error in form.telegram.errors %}<div class="field-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="form-field form-field-wide">
+                        <label class="form-label" for="{{ form.bio.id_for_label }}">{{ form.bio.label }}</label>
+                        {{ form.bio }}
+                        {% if form.bio.help_text %}<small>{{ form.bio.help_text }}</small>{% endif %}
+                        {% for error in form.bio.errors %}<div class="field-error">{{ error }}</div>{% endfor %}
+                    </div>
+                </div>
                 <div class="form-actions form-field-wide">
                     <button class="btn btn-primary" type="submit">{{ submit_text }}</button>
                     <a class="btn btn-secondary" href="{% url 'accounts:profile' %}">{% trans "Отмена" %}</a>
