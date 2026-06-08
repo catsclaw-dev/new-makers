@@ -1320,7 +1320,8 @@ option {
 }
 
 .filter-search input,
-.filter-field input {
+.filter-field input,
+.filter-field select {
   min-height: 34px;
   border-radius: var(--radius-md);
   padding: 7px 10px;
@@ -1455,6 +1456,40 @@ option {
   border: 1px solid var(--color-border);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-md);
+}
+
+.catalog-empty-state {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 24px;
+  min-height: 260px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-2xl);
+  padding: 32px;
+  background:
+    radial-gradient(circle at 12% 0%,
+      rgba(51, 204, 255, 0.16),
+      transparent 18rem),
+    linear-gradient(135deg, rgba(20, 22, 112, 0.72), rgba(0, 31, 68, 0.54));
+  box-shadow: var(--shadow-md);
+}
+
+.catalog-empty-state h2 {
+  max-width: 640px;
+  margin-bottom: 14px;
+  font-size: clamp(30px, 4vw, 48px);
+}
+
+.catalog-empty-state p:not(.eyebrow) {
+  max-width: 640px;
+  margin-bottom: 0;
+  color: var(--color-muted);
+}
+
+.catalog-empty-state .btn {
+  min-width: 220px;
 }
 
 /* ============================================================
@@ -2687,6 +2722,17 @@ html.bw-mode .header-notification-badge {
   .choice-list {
     max-height: 320px;
     padding: 10px;
+  }
+
+  .catalog-empty-state {
+    grid-template-columns: 1fr;
+    min-height: 0;
+    padding: 24px;
+  }
+
+  .catalog-empty-state .btn {
+    width: 100%;
+    min-width: 0;
   }
 }
 

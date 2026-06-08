@@ -163,9 +163,12 @@
                         </div>
                     </article>
                 {% empty %}
-                    <article class="action-card">
-                        <h2>{% trans "Специалисты не найдены" %}</h2>
-                        <p class="empty">{% trans "По выбранным условиям специалистов пока нет. Попробуй изменить фильтры или сбросить поиск." %}</p>
+                    <article class="catalog-empty-state">
+                        <div>
+                            <p class="eyebrow">{% trans "Ничего не найдено" %}</p>
+                            <h2>{% trans "Специалисты не найдены" %}</h2>
+                            <p>{% trans "По выбранным условиям специалистов пока нет. Попробуй изменить фильтры, расширить поиск или сбросить выбранные параметры." %}</p>
+                        </div>
                         <a class="btn btn-primary" href="{% url 'specialists:specialist_list' %}">{% trans "Сбросить фильтры" %}</a>
                     </article>
                 {% endfor %}

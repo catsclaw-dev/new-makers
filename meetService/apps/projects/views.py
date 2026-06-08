@@ -218,9 +218,16 @@ def project_list(request: HttpRequest) -> HttpResponse:
         request: HTTP-запрос текущего пользователя
     """
     query = request.GET.get("q", "").strip()
-    technology_slug = request.GET.get("technology", "").strip()
-    role_slug = request.GET.get("role", "").strip()
     ordering = request.GET.get("ordering", "-created_at").strip()
+
+    selected_roles = [value for value in request.GET.getlist("roles") if value]
+    selected_technologies = [
+        value for value in request.GET.getlist("technologies") if value
+    ]
+    selected_levels = [value for value in request.GET.getlist("levels") if value]
+    selected_stages = [value for value in request.GET.getlist("stages") if value]
+    selected_formats = [value for value in request.GET.getlist("formats") if value]
+    has_open_roles = request.GET.get("has_open_roles") == "1"
 
     allowed_ordering = {
         "-created_at": "-created_at",
@@ -239,24 +246,44 @@ def project_list(request: HttpRequest) -> HttpResponse:
         .select_related("owner")
         .prefetch_related("technologies", "vacancies__role")
     )
+
     if query:
         projects = projects.filter(
-            Q(title__contains=query)
-            | Q(title__icontains=query)
+            Q(title__icontains=query)
             | Q(short_description__icontains=query)
             | Q(description__icontains=query)
             | Q(goal__icontains=query)
             | Q(technologies__name__icontains=query)
+            | Q(vacancies__title__icontains=query)
             | Q(vacancies__role__name__icontains=query)
         ).distinct()
 
-    if technology_slug:
-        projects = projects.filter(technologies__slug=technology_slug)
+    if selected_roles:
+        projects = projects.filter(vacancies__role__slug__in=selected_roles).distinct()
 
-    if role_slug:
-        projects = projects.filter(vacancies__role__slug=role_slug)
+    if selected_technologies:
+        projects = projects.filter(
+            technologies__slug__in=selected_technologies
+        ).distinct()
 
-    projects = projects.exclude(status=Project.Status.ARCHIVED)
+    if selected_levels:
+        projects = projects.filter(
+            vacancies__required_level__in=selected_levels
+        ).distinct()
+
+    if selected_stages:
+        projects = projects.filter(stage__in=selected_stages)
+
+    if selected_formats:
+        projects = projects.filter(participation_format__in=selected_formats)
+
+    if has_open_roles:
+        projects = projects.filter(
+            status=Project.Status.PUBLISHED,
+            vacancies__status=ProjectVacancy.Status.OPEN,
+            vacancies__current_count__lt=models.F("vacancies__required_count"),
+        ).distinct()
+
     projects = projects.order_by(allowed_ordering.get(ordering, "-created_at"))
 
     paginator = Paginator(projects, 6)
@@ -269,18 +296,36 @@ def project_list(request: HttpRequest) -> HttpResponse:
     except EmptyPage:
         page_obj = paginator.page(paginator.num_pages)
 
-    technologies = Technology.objects.filter(is_active=True).order_by("name")
-    roles = Role.objects.filter(is_active=True).order_by("name")
+    level_labels = {
+        SpecialistProfile.Level.INTERN: "Intern (0–1 год)",
+        SpecialistProfile.Level.JUNIOR: "Junior (1–3 года)",
+        SpecialistProfile.Level.MIDDLE: "Middle (3–5 лет)",
+        SpecialistProfile.Level.SENIOR: "Senior (5+ лет)",
+        SpecialistProfile.Level.LEAD: "Lead (7+ лет)",
+    }
+
+    level_choices = [
+        (value, level_labels.get(value, label))
+        for value, label in SpecialistProfile._meta.get_field("level").choices
+    ]
 
     context = {
         "page_obj": page_obj,
         "query": query,
-        "technology_slug": technology_slug,
-        "role_slug": role_slug,
         "ordering": ordering,
-        "technologies": technologies,
-        "roles": roles,
+        "selected_roles": selected_roles,
+        "selected_technologies": selected_technologies,
+        "selected_levels": selected_levels,
+        "selected_stages": selected_stages,
+        "selected_formats": selected_formats,
+        "has_open_roles": has_open_roles,
+        "roles": Role.objects.filter(is_active=True).order_by("name"),
+        "technologies": Technology.objects.filter(is_active=True).order_by("name"),
+        "level_choices": level_choices,
+        "stage_choices": Project._meta.get_field("stage").choices,
+        "format_choices": Project._meta.get_field("participation_format").choices,
     }
+
     return render(request, "projects/project_list.html", context)
 
 
@@ -618,8 +663,10 @@ def project_delete(request: HttpRequest, slug: str) -> HttpResponse:
     if not request.user.is_staff and project.status != Project.Status.DRAFT:
         messages.error(
             request,
-            _("Владелец может удалить только черновик. "
-            "Опубликованный или закрытый проект нужно архивировать."),
+            _(
+                "Владелец может удалить только черновик. "
+                "Опубликованный или закрытый проект нужно архивировать."
+            ),
         )
         return redirect(project.get_absolute_url())
 
