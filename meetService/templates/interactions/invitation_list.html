@@ -1,118 +1,181 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% block title %}{% trans "Приглашения" %} — New-Makers{% endblock %}
+{% block title %}
+    {% trans "Приглашения" %} — New-Makers
+{% endblock %}
 {% block content %}
     <section class="container page-head">
         <p class="eyebrow">{% trans "личный кабинет" %}</p>
         <h1>{% trans "Приглашения" %}</h1>
-        <p class="lead">{% trans "Здесь собраны приглашения, которые ты получил как специалист, и приглашения, которые ты отправил как владелец проекта." %}</p>
-    </section>
-    <section class="container section">
+        <p class="lead">{% trans "Здесь собраны активные приглашения и история решений по проектам." %}</p>
         <dl class="stats-grid">
             <div>
                 <dt>{{ received_count }}</dt>
                 <dd>
-                    {% trans "получено" %}
+                    {% trans "получено активных" %}
                 </dd>
             </div>
             <div>
                 <dt>{{ sent_count }}</dt>
                 <dd>
-                    {% trans "отправлено" %}
+                    {% trans "отправлено всего" %}
+                </dd>
+            </div>
+            <div>
+                <dt>{{ received_history_count }}</dt>
+                <dd>
+                    {% trans "в истории полученных" %}
+                </dd>
+            </div>
+            <div>
+                <dt>{{ sent_history_count }}</dt>
+                <dd>
+                    {% trans "в истории отправленных" %}
                 </dd>
             </div>
         </dl>
     </section>
-    <section class="container section two-columns">
-        <div>
-            <div class="section-heading">
-                <div>
-                    <p class="eyebrow">{% trans "мне отправили" %}</p>
-                    <h2>{% trans "Полученные приглашения" %}</h2>
+    <section class="container section">
+        <div class="two-columns">
+            <section>
+                <div class="section-heading">
+                    <div>
+                        <p class="eyebrow">{% trans "мне отправили" %}</p>
+                        <h2>{% trans "Новые приглашения" %}</h2>
+                    </div>
                 </div>
-            </div>
-            <div class="mini-list">
-                {% if not specialist %}
-                    <article class="action-card">
-                        <h3>{% trans "Профиль специалиста не найден" %}</h3>
-                        <p class="empty">{% trans "Получать приглашения можно только с профилем специалиста." %}</p>
-                        <a class="btn btn-primary"
-                           href="{% url 'specialists:specialist_profile_edit' %}">{% trans "Заполнить профиль специалиста" %}</a>
-                    </article>
-                {% endif %}
-                {% for invitation in received_invitations %}
-                    <article class="mini-card">
-                        <h3>
-                            <a href="{{ invitation.project.get_absolute_url }}">{{ invitation.project.title }}</a>
-                        </h3>
-                        <p>
-                            {% trans "Роль:" %} {{ invitation.vacancy.title }}
-                            {% if invitation.vacancy.role %}· {{ invitation.vacancy.role.name }}{% endif %}
-                        </p>
-                        {% if invitation.message %}<p>{{ invitation.message }}</p>{% endif %}
-                        <span>{{ invitation.get_status_display }} · {{ invitation.invited_at|date:"d.m.Y H:i" }}</span>
-                        {% if invitation.status == "pending" %}
-                            <div class="hero-actions">
-                                <form class="inline-form"
-                                      method="post"
-                                      action="{% url 'interactions:invitation_accept' invitation.pk %}">
-                                    {% csrf_token %}
-                                    <button class="btn btn-primary" type="submit">{% trans "Принять" %}</button>
-                                </form>
-                                <form class="inline-form"
-                                      method="post"
-                                      action="{% url 'interactions:invitation_decline' invitation.pk %}">
-                                    {% csrf_token %}
-                                    <button class="btn btn-secondary" type="submit">{% trans "Отклонить" %}</button>
-                                </form>
-                            </div>
-                        {% endif %}
-                    </article>
-                {% empty %}
-                    {% if specialist %}
-                        <article class="action-card">
-                            <h3>{% trans "Приглашений пока нет" %}</h3>
-                            <p class="empty">{% trans "Когда владелец проекта пригласит тебя в команду, приглашение появится здесь." %}</p>
+                <div class="mini-list">
+                    {% if not specialist %}
+                        <article class="mini-card">
+                            <h3>{% trans "Профиль специалиста не найден" %}</h3>
+                            <p>{% trans "Получать приглашения можно только с профилем специалиста." %}</p>
+                            <a class="card-link" href="{% url 'specialists:specialist_profile_edit' %}">{% trans "Заполнить профиль специалиста" %}</a>
                         </article>
+                    {% else %}
+                        {% for invitation in received_active_invitations %}
+                            <article class="mini-card">
+                                <h3>
+                                    <a href="{{ invitation.project.get_absolute_url }}">{{ invitation.project.title }}</a>
+                                </h3>
+                                <p>
+                                    {% trans "Роль:" %} {{ invitation.vacancy.title }}
+                                    {% if invitation.vacancy.role %}· {{ invitation.vacancy.role.name }}{% endif %}
+                                </p>
+                                {% if invitation.message %}<p>{{ invitation.message }}</p>{% endif %}
+                                <span>{{ invitation.get_status_display }} · {{ invitation.invited_at|date:"d.m.Y H:i" }}</span>
+                                <div class="hero-actions">
+                                    <form method="post" action="{% url 'interactions:invitation_accept' invitation.pk %}">
+                                        {% csrf_token %}
+                                        <button class="btn btn-primary" type="submit">{% trans "Принять" %}</button>
+                                    </form>
+                                    <form method="post" action="{% url 'interactions:invitation_decline' invitation.pk %}">
+                                        {% csrf_token %}
+                                        <button class="btn btn-secondary" type="submit">{% trans "Отклонить" %}</button>
+                                    </form>
+                                </div>
+                            </article>
+                        {% empty %}
+                            <article class="mini-card">
+                                <h3>{% trans "Новых приглашений пока нет" %}</h3>
+                                <p>{% trans "Когда владелец проекта пригласит тебя в команду, приглашение появится здесь." %}</p>
+                            </article>
+                        {% endfor %}
                     {% endif %}
-                {% endfor %}
-            </div>
-        </div>
-        <div>
-            <div class="section-heading">
-                <div>
-                    <p class="eyebrow">{% trans "я отправил" %}</p>
-                    <h2>{% trans "Отправленные приглашения" %}</h2>
                 </div>
-            </div>
-            <div class="mini-list">
-                {% for invitation in sent_invitations %}
-                    <article class="mini-card">
-                        <h3>
-                            <a href="{{ invitation.project.get_absolute_url }}">{{ invitation.project.title }}</a>
-                        </h3>
-                        <p>
-                            {% trans "Специалист:" %}
-                            <a href="{% url 'specialists:specialist_detail' invitation.specialist.pk %}">
-                                {{ invitation.specialist.get_display_name }}
-                            </a>
-                        </p>
-                        <p>
-                            {% trans "Роль:" %} {{ invitation.vacancy.title }}
-                            {% if invitation.vacancy.role %}· {{ invitation.vacancy.role.name }}{% endif %}
-                        </p>
-                        {% if invitation.message %}<p>{{ invitation.message }}</p>{% endif %}
-                        <span>{{ invitation.get_status_display }} · {{ invitation.invited_at|date:"d.m.Y H:i" }}</span>
-                    </article>
-                {% empty %}
-                    <article class="action-card">
-                        <h3>{% trans "Ты ещё никого не приглашал" %}</h3>
-                        <p class="empty">{% trans "Открой каталог специалистов и пригласи подходящего участника." %}</p>
-                        <a class="btn btn-primary"
-                           href="{% url 'specialists:specialist_list' %}">{% trans "Найти специалиста" %}</a>
-                    </article>
-                {% endfor %}
-            </div>
+            </section>
+            <section>
+                <div class="section-heading">
+                    <div>
+                        <p class="eyebrow">{% trans "я отправил" %}</p>
+                        <h2>{% trans "Активные отправленные приглашения" %}</h2>
+                    </div>
+                </div>
+                <div class="mini-list">
+                    {% for invitation in sent_active_invitations %}
+                        <article class="mini-card">
+                            <h3>
+                                <a href="{{ invitation.project.get_absolute_url }}">{{ invitation.project.title }}</a>
+                            </h3>
+                            <p>
+                                {% trans "Специалист:" %}
+                                <a href="{{ invitation.specialist.get_absolute_url }}">{{ invitation.specialist.get_display_name }}</a>
+                            </p>
+                            <p>
+                                {% trans "Роль:" %} {{ invitation.vacancy.title }}
+                                {% if invitation.vacancy.role %}· {{ invitation.vacancy.role.name }}{% endif %}
+                            </p>
+                            {% if invitation.message %}<p>{{ invitation.message }}</p>{% endif %}
+                            <span>{{ invitation.get_status_display }} · {{ invitation.invited_at|date:"d.m.Y H:i" }}</span>
+                        </article>
+                    {% empty %}
+                        <article class="mini-card">
+                            <h3>{% trans "Активных отправленных приглашений нет" %}</h3>
+                            <p>{% trans "Открой каталог специалистов и пригласи подходящего участника в проект." %}</p>
+                            <a class="card-link" href="{% url 'specialists:specialist_list' %}">{% trans "Найти специалиста" %}</a>
+                        </article>
+                    {% endfor %}
+                </div>
+            </section>
+        </div>
+    </section>
+    <section class="container section">
+        <div class="two-columns">
+            <section>
+                <div class="section-heading">
+                    <div>
+                        <p class="eyebrow">{% trans "история" %}</p>
+                        <h2>{% trans "История полученных приглашений" %}</h2>
+                    </div>
+                </div>
+                <div class="mini-list">
+                    {% if not specialist %}
+                        <p class="empty">{% trans "История полученных приглашений недоступна без профиля специалиста." %}</p>
+                    {% else %}
+                        {% for invitation in received_history_invitations %}
+                            <article class="mini-card">
+                                <h3>
+                                    <a href="{{ invitation.project.get_absolute_url }}">{{ invitation.project.title }}</a>
+                                </h3>
+                                <p>
+                                    {% trans "Роль:" %} {{ invitation.vacancy.title }}
+                                    {% if invitation.vacancy.role %}· {{ invitation.vacancy.role.name }}{% endif %}
+                                </p>
+                                <span>{{ invitation.get_status_display }} · {{ invitation.invited_at|date:"d.m.Y H:i" }}</span>
+                            </article>
+                        {% empty %}
+                            <p class="empty">{% trans "История полученных приглашений пока пуста." %}</p>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </section>
+            <section>
+                <div class="section-heading">
+                    <div>
+                        <p class="eyebrow">{% trans "история" %}</p>
+                        <h2>{% trans "История отправленных приглашений" %}</h2>
+                    </div>
+                </div>
+                <div class="mini-list">
+                    {% for invitation in sent_history_invitations %}
+                        <article class="mini-card">
+                            <h3>
+                                <a href="{{ invitation.project.get_absolute_url }}">{{ invitation.project.title }}</a>
+                            </h3>
+                            <p>
+                                {% trans "Специалист:" %}
+                                <a href="{{ invitation.specialist.get_absolute_url }}">{{ invitation.specialist.get_display_name }}</a>
+                            </p>
+                            <p>
+                                {% trans "Роль:" %} {{ invitation.vacancy.title }}
+                                {% if invitation.vacancy.role %}· {{ invitation.vacancy.role.name }}{% endif %}
+                            </p>
+                            <span>{{ invitation.get_status_display }} · {{ invitation.invited_at|date:"d.m.Y H:i" }}</span>
+                        </article>
+                    {% empty %}
+                        <p class="empty">{% trans "История отправленных приглашений пока пуста." %}</p>
+                    {% endfor %}
+                </div>
+            </section>
         </div>
     </section>
 {% endblock %}

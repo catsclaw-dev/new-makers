@@ -78,7 +78,7 @@ def project_apply(request: HttpRequest, slug: str) -> HttpResponse:
 @login_required
 def application_list(request: HttpRequest) -> HttpResponse:
     """
-    Страница откликов: отправленные отклики и входящие отклики владельца.
+    Страница откликов: активные отклики и история откликов.
     Args:
         request: HTTP-запрос текущего пользователя
     """
@@ -87,10 +87,11 @@ def application_list(request: HttpRequest) -> HttpResponse:
     except SpecialistProfile.DoesNotExist:
         specialist = None
 
-    sent_applications = Application.objects.none()
+    sent_active_applications = Application.objects.none()
+    sent_history_applications = Application.objects.none()
 
     if specialist is not None:
-        sent_applications = (
+        sent_base_applications = (
             Application.objects.select_related(
                 "project",
                 "vacancy",
@@ -100,7 +101,15 @@ def application_list(request: HttpRequest) -> HttpResponse:
             .order_by("-applied_at")
         )
 
-    incoming_applications = (
+        sent_active_applications = sent_base_applications.filter(
+            status=Application.Status.PENDING,
+        )
+
+        sent_history_applications = sent_base_applications.exclude(
+            status=Application.Status.PENDING,
+        )
+
+    incoming_base_applications = (
         Application.objects.select_related(
             "project",
             "vacancy",
@@ -108,20 +117,31 @@ def application_list(request: HttpRequest) -> HttpResponse:
             "specialist",
             "specialist__user",
         )
-        .filter(
-            project__owner=request.user,
-            status=Application.Status.PENDING,
-        )
+        .filter(project__owner=request.user)
         .order_by("-applied_at")
+    )
+
+    incoming_active_applications = incoming_base_applications.filter(
+        status=Application.Status.PENDING,
+    )
+
+    incoming_history_applications = incoming_base_applications.exclude(
+        status=Application.Status.PENDING,
     )
 
     context = {
         "specialist": specialist,
-        "sent_applications": sent_applications,
-        "incoming_applications": incoming_applications,
-        "sent_count": sent_applications.count(),
-        "incoming_count": incoming_applications.count(),
+        "sent_active_applications": sent_active_applications,
+        "sent_history_applications": sent_history_applications,
+        "incoming_active_applications": incoming_active_applications,
+        "incoming_history_applications": incoming_history_applications,
+        "sent_count": sent_active_applications.count()
+        + sent_history_applications.count(),
+        "incoming_count": incoming_active_applications.count(),
+        "sent_history_count": sent_history_applications.count(),
+        "incoming_history_count": incoming_history_applications.count(),
     }
+
     return render(request, "interactions/application_list.html", context)
 
 
@@ -330,7 +350,7 @@ def invite_specialist(request: HttpRequest, pk: int | None) -> HttpResponse:
 @login_required
 def invitation_list(request: HttpRequest) -> HttpResponse:
     """
-    Список приглашений: активные полученные и все отправленные.
+    Страница приглашений: активные приглашения и история приглашений.
     Args:
         request: HTTP-запрос текущего пользователя
     """
@@ -339,24 +359,30 @@ def invitation_list(request: HttpRequest) -> HttpResponse:
     except SpecialistProfile.DoesNotExist:
         specialist = None
 
-    received_invitations = Invitation.objects.none()
+    received_active_invitations = Invitation.objects.none()
+    received_history_invitations = Invitation.objects.none()
 
     if specialist is not None:
-        received_invitations = (
+        received_base_invitations = (
             Invitation.objects.select_related(
                 "project",
                 "vacancy",
                 "vacancy__role",
                 "invited_by",
             )
-            .filter(
-                specialist=specialist,
-                status=Invitation.Status.PENDING,
-            )
+            .filter(specialist=specialist)
             .order_by("-invited_at")
         )
 
-    sent_invitations = (
+        received_active_invitations = received_base_invitations.filter(
+            status=Invitation.Status.PENDING,
+        )
+
+        received_history_invitations = received_base_invitations.exclude(
+            status=Invitation.Status.PENDING,
+        )
+
+    sent_base_invitations = (
         Invitation.objects.select_related(
             "project",
             "vacancy",
@@ -368,13 +394,27 @@ def invitation_list(request: HttpRequest) -> HttpResponse:
         .order_by("-invited_at")
     )
 
+    sent_active_invitations = sent_base_invitations.filter(
+        status=Invitation.Status.PENDING,
+    )
+
+    sent_history_invitations = sent_base_invitations.exclude(
+        status=Invitation.Status.PENDING,
+    )
+
     context = {
         "specialist": specialist,
-        "received_invitations": received_invitations,
-        "sent_invitations": sent_invitations,
-        "received_count": received_invitations.count(),
-        "sent_count": sent_invitations.count(),
+        "received_active_invitations": received_active_invitations,
+        "received_history_invitations": received_history_invitations,
+        "sent_active_invitations": sent_active_invitations,
+        "sent_history_invitations": sent_history_invitations,
+        "received_count": received_active_invitations.count(),
+        "sent_count": sent_active_invitations.count()
+        + sent_history_invitations.count(),
+        "received_history_count": received_history_invitations.count(),
+        "sent_history_count": sent_history_invitations.count(),
     }
+
     return render(request, "interactions/invitation_list.html", context)
 
 
@@ -408,7 +448,9 @@ def invitation_accept(request: HttpRequest, pk: int | None) -> HttpResponse:
     except IntegrityError:
         messages.error(request, _("Ты уже состоишь в команде этого проекта."))
     else:
-        messages.success(request, _("Приглашение принято. Ты добавлен в команду проекта."))
+        messages.success(
+            request, _("Приглашение принято. Ты добавлен в команду проекта.")
+        )
 
     return redirect("interactions:invitation_list")
 
