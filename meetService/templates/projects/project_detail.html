@@ -49,9 +49,10 @@
                             {{ vacancy.role.name }} · {{ vacancy.get_required_level_display }} ·
                             {% trans "мест:" %} {{ vacancy.current_count }}/{{ vacancy.required_count }}
                         </span>
+                        {% if can_manage_project and project.status != "archived" %}
+                            <a class="card-link" href="{% url 'projects:project_vacancy_update' project.slug vacancy.id %}">{% trans "Редактировать роль" %}</a>
+                        {% endif %}
                     </article>
-                {% empty %}
-                    <p class="empty">{% trans "Открытых ролей сейчас нет." %}</p>
                 {% endfor %}
             </div>
             <h2>{% trans "Команда" %}</h2>

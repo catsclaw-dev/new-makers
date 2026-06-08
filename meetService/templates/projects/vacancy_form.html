@@ -5,7 +5,17 @@
     <section class="container page-head">
         <p class="eyebrow">{% trans "открытая роль" %}</p>
         <h1>{{ page_title }}</h1>
-        <p class="lead">{% blocktrans with project_title=project.title %}Проект: <strong>«{{ project_title }}»</strong>. Добавь роль, на которую смогут откликаться специалисты.{% endblocktrans %}</p>
+        <p class="lead">
+            {% if vacancy %}
+                {% blocktrans with project_title=project.title vacancy_title=vacancy.title %}
+            Проект: <strong>«{{ project_title }}»</strong>. Редактирование открытой роли <strong>«{{ vacancy_title }}»</strong>.
+        {% endblocktrans %}
+            {% else %}
+                {% blocktrans with project_title=project.title %}
+            Проект: <strong>«{{ project_title }}»</strong>. Добавь роль, на которую смогут откликаться специалисты.
+        {% endblocktrans %}
+            {% endif %}
+        </p>
     </section>
     <section class="container section">
         <div class="form-shell">

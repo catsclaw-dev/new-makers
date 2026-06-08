@@ -31,6 +31,11 @@ urlpatterns = [
         views.project_vacancy_create,
         name="project_vacancy_create",
     ),
+    path(
+        "projects/<slug:slug>/vacancies/<int:vacancy_id>/edit/",
+        views.project_vacancy_update,
+        name="project_vacancy_update",
+    ),
     path("teams/my/", views.my_teams, name="my_teams"),
     path("projects/<str:slug>/", views.project_detail, name="project_detail"),
     path(

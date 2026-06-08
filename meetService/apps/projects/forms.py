@@ -48,7 +48,9 @@ class ProjectForm(forms.ModelForm):
             "short_description": _("Текст для карточки проекта."),
             "description": _("Расскажи, что делает проект и кому он полезен."),
             "goal": _("Опиши, какого результата должна добиться команда."),
-            "cover_image": _("Изображение будет показано в карточке и на странице проекта."),
+            "cover_image": _(
+                "Изображение будет показано в карточке и на странице проекта."
+            ),
         }
         error_messages = {
             "title": {
@@ -247,3 +249,119 @@ class ProjectVacancyForm(forms.ModelForm):
         Очищает название роли.
         """
         return self.cleaned_data["title"].strip()
+
+
+class ProjectVacancyUpdateForm(forms.ModelForm):
+    """Форма редактирования открытой роли проекта."""
+
+    class Meta:
+        model = ProjectVacancy
+        fields = (
+            "role",
+            "title",
+            "description",
+            "required_level",
+            "required_count",
+            "status",
+        )
+
+        labels = {
+            "role": _("Роль"),
+            "title": _("Название открытой роли"),
+            "description": _("Описание роли"),
+            "required_level": _("Требуемый уровень"),
+            "required_count": _("Сколько человек нужно"),
+            "status": _("Статус роли"),
+        }
+
+        help_texts = {
+            "role": _("Выбери роль из справочника."),
+            "title": _("Например: Junior Backend-разработчик."),
+            "description": _("Опиши задачи, ожидания и стек для участника."),
+            "required_count": _(
+                "Количество мест не может быть меньше уже набранных участников."
+            ),
+            "status": _(
+                "Открытая роль доступна для откликов. Роль на паузе или закрытая недоступна для новых откликов."
+            ),
+        }
+
+        error_messages = {
+            "title": {
+                "required": _("Укажи название открытой роли."),
+            },
+            "description": {
+                "required": _("Добавь описание роли."),
+            },
+        }
+
+        widgets = {
+            "role": forms.Select(attrs={"class": "form-control"}),
+            "title": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": _("Например: Backend-разработчик"),
+                }
+            ),
+            "description": forms.Textarea(
+                attrs={
+                    "class": "form-control",
+                    "rows": 5,
+                    "placeholder": _("Опиши задачи и требования к участнику"),
+                }
+            ),
+            "required_level": forms.Select(attrs={"class": "form-control"}),
+            "required_count": forms.NumberInput(
+                attrs={
+                    "class": "form-control",
+                    "min": 1,
+                    "max": 20,
+                }
+            ),
+            "status": forms.Select(attrs={"class": "form-control"}),
+        }
+
+    class Media:
+        css = {
+            "all": ("css/site.css",),
+        }
+
+    def __init__(self, *args: object, **kwargs: object) -> None:
+        """Показывает только активные роли."""
+        super().__init__(*args, **kwargs)
+
+        self.fields["role"].queryset = Role.objects.filter(is_active=True).order_by(
+            "name"
+        )
+
+    def clean_title(self) -> str:
+        """Очищает название роли."""
+        return self.cleaned_data["title"].strip()
+
+    def clean(self) -> dict[str, object]:
+        """Проверяет бизнес-правила редактирования роли."""
+        cleaned_data = super().clean()
+
+        required_count = cleaned_data.get("required_count")
+        status = cleaned_data.get("status")
+
+        if self.instance and self.instance.pk and required_count is not None:
+            if required_count < self.instance.current_count:
+                raise forms.ValidationError(
+                    _(
+                        "Количество мест не может быть меньше уже набранных участников: %(count)s."
+                    )
+                    % {"count": self.instance.current_count}
+                )
+
+            if (
+                required_count == self.instance.current_count
+                and status == ProjectVacancy.Status.OPEN
+            ):
+                raise forms.ValidationError(
+                    _(
+                        "Роль уже заполнена. Увеличь количество мест или выбери статус «Закрыта»."
+                    )
+                )
+
+        return cleaned_data

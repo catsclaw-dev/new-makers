@@ -632,7 +632,7 @@ class ApplicationViewSet(viewsets.ModelViewSet):
     )
     ordering_fields = ("applied_at", "reviewed_at", "status")
     ordering = ("-applied_at",)
-    http_method_names = ["get", "post", "delete", "head", "options"]
+    http_method_names = ["get", "post",  "head", "options"]
 
     def get_permissions(self) -> list[object]:
         """
@@ -666,30 +666,6 @@ class ApplicationViewSet(viewsets.ModelViewSet):
             Q(specialist__user=user) | Q(project__owner=user)
         ).distinct()
 
-    def destroy(self, request: Request, *args: object, **kwargs: object) -> Response:
-        """
-        Удаляет объект или отменяет действие через API.
-        Args:
-            request: HTTP-запрос текущего пользователя
-            *args: Позиционные аргументы
-            **kwargs: Именованные аргументы
-        """
-        application = self.get_object()
-
-        if (
-            not is_admin(request.user)
-            and application.specialist.user_id != request.user.id
-        ):
-            raise PermissionDenied(_("Отменить можно только свой отклик."))
-
-        if application.status != Application.Status.PENDING:
-            raise ValidationError(_("Отменить можно только отклик на рассмотрении."))
-
-        application.status = Application.Status.CANCELLED
-        application.save(update_fields=["status"])
-
-        serializer = self.get_serializer(application)
-        return Response(serializer.data)
 
     @action(detail=True, methods=["post"])
     def accept(self, request: Request, pk: int | None = None) -> Response:
@@ -741,7 +717,7 @@ class InvitationViewSet(viewsets.ModelViewSet):
     )
     ordering_fields = ("invited_at", "responded_at", "status")
     ordering = ("-invited_at",)
-    http_method_names = ["get", "post", "delete", "head", "options"]
+    http_method_names = ["get", "post",  "head", "options"]
 
     def get_permissions(self) -> list[object]:
         """
@@ -776,33 +752,6 @@ class InvitationViewSet(viewsets.ModelViewSet):
             Q(specialist__user=user) | Q(invited_by=user) | Q(project__owner=user)
         ).distinct()
 
-    def destroy(self, request: Request, *args: object, **kwargs: object) -> Response:
-        """
-        Удаляет объект или отменяет действие через API.
-        Args:
-            request: HTTP-запрос текущего пользователя
-            *args: Позиционные аргументы
-            **kwargs: Именованные аргументы
-        """
-        invitation = self.get_object()
-
-        can_cancel = (
-            is_admin(request.user)
-            or invitation.invited_by_id == request.user.id
-            or invitation.project.owner_id == request.user.id
-        )
-
-        if not can_cancel:
-            raise PermissionDenied(_("Отменить можно только своё приглашение."))
-
-        if invitation.status != Invitation.Status.PENDING:
-            raise ValidationError(_("Отменить можно только приглашение без ответа."))
-
-        invitation.status = Invitation.Status.CANCELLED
-        invitation.save(update_fields=["status"])
-
-        serializer = self.get_serializer(invitation)
-        return Response(serializer.data)
 
     @action(detail=True, methods=["post"])
     def accept(self, request: Request, pk: int | None = None) -> Response:

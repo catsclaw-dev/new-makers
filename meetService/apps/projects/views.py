@@ -18,7 +18,11 @@ from apps.directories.models import Role, Technology
 from apps.interactions.models import FavoriteProject
 from apps.projects.models import Project, ProjectMembership, ProjectVacancy
 from apps.specialists.models import SpecialistProfile
-from apps.projects.forms import ProjectForm, ProjectVacancyForm
+from apps.projects.forms import (
+    ProjectForm,
+    ProjectVacancyForm,
+    ProjectVacancyUpdateForm,
+)
 
 
 def home(request: HttpRequest) -> HttpResponse:
@@ -723,6 +727,56 @@ def project_vacancy_create(request: HttpRequest, slug: str) -> HttpResponse:
         "page_title": _("Добавить открытую роль"),
         "submit_text": _("Добавить роль"),
     }
+    return render(request, "projects/vacancy_form.html", context)
+
+
+@login_required
+def project_vacancy_update(
+    request: HttpRequest,
+    slug: str,
+    vacancy_id: int,
+) -> HttpResponse:
+    """
+    Редактирование открытой роли проекта владельцем или администратором.
+    Args:
+        request: HTTP-запрос текущего пользователя
+        slug: URL-идентификатор проекта
+        vacancy_id: ID открытой роли
+    """
+    project = get_object_or_404(Project, slug=slug)
+
+    if not project.can_be_edited_by(request.user):
+        raise PermissionDenied(
+            _("Редактировать роли может только владелец проекта или администратор.")
+        )
+
+    if project.status == Project.Status.ARCHIVED:
+        raise Http404(_("Нельзя редактировать роли архивного проекта."))
+
+    vacancy = get_object_or_404(
+        ProjectVacancy,
+        pk=vacancy_id,
+        project=project,
+    )
+
+    if request.method == "POST":
+        form = ProjectVacancyUpdateForm(request.POST, instance=vacancy)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, _("Открытая роль обновлена."))
+            return redirect(project.get_absolute_url())
+    else:
+        form = ProjectVacancyUpdateForm(instance=vacancy)
+
+    context = {
+        "form": form,
+        "project": project,
+        "vacancy": vacancy,
+        "page_title": _("Редактировать открытую роль"),
+        "submit_text": _("Сохранить роль"),
+    }
+
     return render(request, "projects/vacancy_form.html", context)
 
 
