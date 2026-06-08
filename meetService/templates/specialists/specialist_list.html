@@ -11,50 +11,116 @@
         <p class="lead">{% trans "Ищи участников по роли, стеку, уровню и статусу доступности." %}</p>
     </section>
     <section class="container catalog-layout">
-        <aside class="filters-panel">
-            <form method="get">
-                <label>
-                    {% trans "Поиск" %}
-                    <input type="search" name="q" value="{{ query }}" placeholder="Frontend, Django, QA">
+        <aside class="filters-panel filters-panel-compact">
+            <form class="filter-form" method="get">
+                <label class="filter-search">
+                    <span class="filter-search-icon">⌕</span>
+                    <input type="search" name="q" value="{{ query }}" placeholder="{% trans 'Фильтры' %}">
                 </label>
-                <label>
-                    {% trans "Роль" %}
-                    <select name="role">
-                        <option value="">{% trans "Любая" %}</option>
-                        {% for role in roles %}
-                            <option value="{{ role.slug }}" {% if role.slug == role_slug %}selected{% endif %}>{{ role.name }}</option>
+                <a class="filter-reset-link" href="{% url 'specialists:specialist_list' %}">{% trans "Сбросить всё" %}</a>
+                <section class="filter-card">
+                    <h2 class="filter-card-title">{% trans "Роль в команде" %}</h2>
+                    <div class="filter-options">
+                        {% for role in roles|slice:":5" %}
+                            <label class="filter-option">
+                                <input type="checkbox" name="roles" value="{{ role.slug }}" {% if role.slug in selected_roles %}checked{% endif %}>
+                                <span>{{ role.name }}</span>
+                            </label>
                         {% endfor %}
-                    </select>
-                </label>
-                <label>
-                    {% trans "Технология" %}
-                    <select name="technology">
-                        <option value="">{% trans "Любая" %}</option>
-                        {% for technology in technologies %}
-                            <option value="{{ technology.slug }}" {% if technology.slug == technology_slug %}selected{% endif %}>{{ technology.name }}</option>
+                    </div>
+                    {% with extra_roles=roles|slice:"5:" %}
+                        {% if extra_roles %}
+                            <details class="filter-more">
+                                <summary>{% trans "Показать ещё" %}</summary>
+                                <div class="filter-options">
+                                    {% for role in extra_roles %}
+                                        <label class="filter-option">
+                                            <input type="checkbox" name="roles" value="{{ role.slug }}" {% if role.slug in selected_roles %}checked{% endif %}>
+                                            <span>{{ role.name }}</span>
+                                        </label>
+                                    {% endfor %}
+                                </div>
+                            </details>
+                        {% endif %}
+                    {% endwith %}
+                </section>
+                <section class="filter-card">
+                    <h2 class="filter-card-title">{% trans "Стек" %}</h2>
+                    <div class="filter-options">
+                        {% for technology in technologies|slice:":5" %}
+                            <label class="filter-option">
+                                <input type="checkbox" name="technologies" value="{{ technology.slug }}" {% if technology.slug in selected_technologies %}checked{% endif %}>
+                                <span>{{ technology.name }}</span>
+                            </label>
                         {% endfor %}
-                    </select>
-                </label>
-                <label>
-                    {% trans "Уровень" %}
-                    <select name="level">
-                        <option value="">{% trans "Любой" %}</option>
+                    </div>
+                    {% with extra_technologies=technologies|slice:"5:" %}
+                        {% if extra_technologies %}
+                            <details class="filter-more">
+                                <summary>{% trans "Показать ещё" %}</summary>
+                                <div class="filter-options">
+                                    {% for technology in extra_technologies %}
+                                        <label class="filter-option">
+                                            <input type="checkbox" name="technologies" value="{{ technology.slug }}" {% if technology.slug in selected_technologies %}checked{% endif %}>
+                                            <span>{{ technology.name }}</span>
+                                        </label>
+                                    {% endfor %}
+                                </div>
+                            </details>
+                        {% endif %}
+                    {% endwith %}
+                </section>
+                <section class="filter-card">
+                    <h2 class="filter-card-title">{% trans "Опыт" %}</h2>
+                    <div class="filter-options">
                         {% for value, label in level_choices %}
-                            <option value="{{ value }}" {% if value == level %}selected{% endif %}>{{ label }}</option>
+                            <label class="filter-option">
+                                <input type="checkbox" name="levels" value="{{ value }}" {% if value in selected_levels %}checked{% endif %}>
+                                <span>{{ label }}</span>
+                            </label>
                         {% endfor %}
-                    </select>
-                </label>
-                <label>
-                    {% trans "Статус" %}
-                    <select name="status">
-                        <option value="">{% trans "Любой" %}</option>
+                    </div>
+                </section>
+                <section class="filter-card">
+                    <h2 class="filter-card-title">{% trans "Время по UTC" %}</h2>
+                    <div class="filter-options">
+                        {% for group in timezone_groups %}
+                            <label class="filter-option">
+                                <input type="checkbox" name="timezones" value="{{ group.value }}" {% if group.value in selected_timezones %}checked{% endif %}>
+                                <span>{{ group.label }}</span>
+                            </label>
+                        {% endfor %}
+                    </div>
+                </section>
+                <section class="filter-card">
+                    <h2 class="filter-card-title">{% trans "Доступность" %}</h2>
+                    <div class="filter-options">
                         {% for value, label in status_choices %}
-                            <option value="{{ value }}" {% if value == status %}selected{% endif %}>{{ label }}</option>
+                            <label class="filter-option">
+                                <input type="checkbox" name="statuses" value="{{ value }}" {% if value in selected_statuses %}checked{% endif %}>
+                                <span>{{ label }}</span>
+                            </label>
                         {% endfor %}
-                    </select>
-                </label>
-                <button class="btn btn-primary full-width" type="submit">{% trans "Применить" %}</button>
-                <a class="btn btn-secondary full-width" href="{% url 'specialists:specialist_list' %}">{% trans "Сбросить" %}</a>
+                    </div>
+                </section>
+                <section class="filter-card">
+                    <h2 class="filter-card-title">{% trans "Формат участия" %}</h2>
+                    <div class="filter-options">
+                        {% for value, label in format_choices %}
+                            <label class="filter-option">
+                                <input type="checkbox" name="formats" value="{{ value }}" {% if value in selected_formats %}checked{% endif %}>
+                                <span>{{ label }}</span>
+                            </label>
+                        {% endfor %}
+                    </div>
+                </section>
+                <section class="filter-card">
+                    <h2 class="filter-card-title">{% trans "Город" %}</h2>
+                    <label class="filter-field">
+                        <input type="text" name="city" value="{{ city }}" placeholder="{% trans 'Например: Москва' %}">
+                    </label>
+                </section>
+                <button class="btn btn-primary full-width filter-submit" type="submit">{% trans "Применить" %}</button>
             </form>
         </aside>
         <div>
