@@ -3,8 +3,11 @@ from rest_framework.routers import DefaultRouter
 
 from apps.api.views import (
     ApplicationViewSet,
+    CurrentUserAPIView,
+    CustomAuthToken,
     FavoriteProjectViewSet,
     InvitationViewSet,
+    LogoutAPIView,
     ProjectVacancyViewSet,
     ProjectViewSet,
     RoleViewSet,
@@ -25,5 +28,8 @@ router.register("invitations", InvitationViewSet, basename="invitation")
 router.register("favorites", FavoriteProjectViewSet, basename="favorite")
 
 urlpatterns = [
+    path("auth/token/", CustomAuthToken.as_view(), name="auth_token"),
+    path("auth/me/", CurrentUserAPIView.as_view(), name="auth_me"),
+    path("auth/logout/", LogoutAPIView.as_view(), name="auth_logout"),
     path("", include(router.urls)),
 ]

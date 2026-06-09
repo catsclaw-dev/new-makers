@@ -5,6 +5,8 @@ from django.db import IntegrityError
 from django.db.models import Count, Exists, F, OuterRef, Q, QuerySet
 from django.utils.translation import gettext_lazy as _
 from rest_framework import status, viewsets
+from rest_framework.authtoken.models import Token
+from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework.decorators import action
 from rest_framework.exceptions import (
     NotAuthenticated,
@@ -18,6 +20,7 @@ from rest_framework.permissions import (
 )
 from rest_framework.request import Request
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework.serializers import BaseSerializer as Serializer
 
 from apps.api.filters import (
@@ -57,6 +60,87 @@ PUBLIC_PROJECT_STATUSES = [
     Project.Status.PUBLISHED,
     Project.Status.CLOSED,
 ]
+
+
+class CustomAuthToken(APIView):
+    """Выдаёт API-токен по логину и паролю."""
+
+    permission_classes = [AllowAny]
+    serializer_class = AuthTokenSerializer
+
+    def post(self, request: Request) -> Response:
+        """
+        Возвращает токен для авторизации в API.
+        Args:
+            request: HTTP-запрос с username и password
+        """
+        serializer = self.serializer_class(
+            data=request.data,
+            context={"request": request},
+        )
+        serializer.is_valid(raise_exception=True)
+
+        user = serializer.validated_data["user"]
+        token, _ = Token.objects.get_or_create(user=user)
+
+        return Response(
+            {
+                "token": token.key,
+                "user": {
+                    "id": user.pk,
+                    "username": user.get_username(),
+                    "email": user.email,
+                    "first_name": user.first_name,
+                    "last_name": user.last_name,
+                },
+            }
+        )
+
+
+class CurrentUserAPIView(APIView):
+    """Возвращает данные текущего пользователя по токену."""
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request: Request) -> Response:
+        """
+        Возвращает текущего авторизованного пользователя.
+        Args:
+            request: HTTP-запрос текущего пользователя
+        """
+        user = request.user
+
+        return Response(
+            {
+                "id": user.pk,
+                "username": user.get_username(),
+                "email": user.email,
+                "first_name": user.first_name,
+                "last_name": user.last_name,
+                "is_staff": user.is_staff,
+                "is_superuser": user.is_superuser,
+            }
+        )
+
+
+class LogoutAPIView(APIView):
+    """Удаляет API-токен текущего пользователя."""
+
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request: Request) -> Response:
+        """
+        Удаляет токен текущего пользователя.
+        Args:
+            request: HTTP-запрос текущего пользователя
+        """
+        Token.objects.filter(user=request.user).delete()
+
+        return Response(
+            {
+                "detail": _("API-токен удалён."),
+            }
+        )
 
 
 class RoleViewSet(viewsets.ModelViewSet):
@@ -632,7 +716,7 @@ class ApplicationViewSet(viewsets.ModelViewSet):
     )
     ordering_fields = ("applied_at", "reviewed_at", "status")
     ordering = ("-applied_at",)
-    http_method_names = ["get", "post",  "head", "options"]
+    http_method_names = ["get", "post", "head", "options"]
 
     def get_permissions(self) -> list[object]:
         """
@@ -665,7 +749,6 @@ class ApplicationViewSet(viewsets.ModelViewSet):
         return queryset.filter(
             Q(specialist__user=user) | Q(project__owner=user)
         ).distinct()
-
 
     @action(detail=True, methods=["post"])
     def accept(self, request: Request, pk: int | None = None) -> Response:
@@ -717,7 +800,7 @@ class InvitationViewSet(viewsets.ModelViewSet):
     )
     ordering_fields = ("invited_at", "responded_at", "status")
     ordering = ("-invited_at",)
-    http_method_names = ["get", "post",  "head", "options"]
+    http_method_names = ["get", "post", "head", "options"]
 
     def get_permissions(self) -> list[object]:
         """
@@ -751,7 +834,6 @@ class InvitationViewSet(viewsets.ModelViewSet):
         return queryset.filter(
             Q(specialist__user=user) | Q(invited_by=user) | Q(project__owner=user)
         ).distinct()
-
 
     @action(detail=True, methods=["post"])
     def accept(self, request: Request, pk: int | None = None) -> Response:
