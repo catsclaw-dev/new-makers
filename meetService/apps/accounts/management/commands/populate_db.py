@@ -518,6 +518,7 @@ class Command(BaseCommand):
                 membership = ProjectMembership.objects.create(
                     project=project,
                     specialist=specialist,
+                    vacancy=vacancy,
                     role=vacancy.role,
                     status=random.choice(
                         [
@@ -528,7 +529,6 @@ class Command(BaseCommand):
                     ),
                     added_by=random.choice(owners),
                 )
-
                 used_pairs.add((project.id, specialist.id, vacancy.role_id))
                 memberships.append(membership)
 
@@ -789,25 +789,12 @@ class Command(BaseCommand):
 
     def sync_vacancy_counts(self, vacancies: list[ProjectVacancy]) -> None:
         """
-        Синхронизирует current_count у вакансий после генерации участников.
+        Синхронизирует current_count у ролей проекта после генерации участников.
         Args:
-            vacancies: Список открытых ролей
+            vacancies: Список ролей проекта
         """
         for vacancy in vacancies:
-            active_count = ProjectMembership.objects.filter(
-                project=vacancy.project,
-                role=vacancy.role,
-                status=ProjectMembership.Status.ACTIVE,
-            ).count()
-
-            vacancy.current_count = active_count
-
-            if vacancy.current_count >= vacancy.required_count:
-                vacancy.status = ProjectVacancy.Status.CLOSED
-            else:
-                vacancy.status = ProjectVacancy.Status.OPEN
-
-            vacancy.save(update_fields=["current_count", "status", "updated_at"])
+            vacancy.sync_current_count()
 
     def generate_image_file(
         self, text: str, filename: str, size: tuple[int, int]

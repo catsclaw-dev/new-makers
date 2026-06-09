@@ -11,6 +11,7 @@ from django.contrib import messages
 from django.http import Http404, HttpRequest, HttpResponse, HttpResponseRedirect
 from django.conf import settings
 from django.core.cache import cache
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 
@@ -22,6 +23,7 @@ from apps.projects.forms import (
     ProjectForm,
     ProjectVacancyForm,
     ProjectVacancyUpdateForm,
+    ProjectMembershipUpdateForm,
 )
 
 
@@ -346,6 +348,7 @@ def project_detail(request: HttpRequest, slug: str) -> HttpResponse:
             "vacancies__role",
             "memberships__specialist__user",
             "memberships__role",
+            "memberships__vacancy__role",
             "files",
         ),
         slug=slug,
@@ -389,7 +392,26 @@ def project_detail(request: HttpRequest, slug: str) -> HttpResponse:
         "title",
     )
 
-    memberships = project.memberships.select_related("specialist__user", "role")
+    all_memberships = project.memberships.select_related(
+        "specialist__user",
+        "role",
+        "vacancy",
+        "vacancy__role",
+    ).order_by(
+        "status",
+        "specialist__user__last_name",
+        "specialist__user__first_name",
+        "id",
+    )
+
+    memberships = all_memberships.exclude(
+        status=ProjectMembership.Status.LEFT,
+    )
+
+    left_memberships = all_memberships.filter(
+        status=ProjectMembership.Status.LEFT,
+    )
+
     files = project.files.all()
 
     is_favorite = False
@@ -408,13 +430,17 @@ def project_detail(request: HttpRequest, slug: str) -> HttpResponse:
             is_team_member = ProjectMembership.objects.filter(
                 project=project,
                 specialist=specialist_profile,
-                status=ProjectMembership.Status.ACTIVE,
+                status__in=[
+                    ProjectMembership.Status.ACTIVE,
+                    ProjectMembership.Status.PAUSED,
+                ],
             ).exists()
 
     context = {
         "project": project,
         "open_vacancies": open_vacancies,
         "memberships": memberships,
+        "left_memberships": left_memberships,
         "files": files,
         "similar_projects": similar_projects,
         "is_favorite": is_favorite,
@@ -422,6 +448,7 @@ def project_detail(request: HttpRequest, slug: str) -> HttpResponse:
         "can_manage_project": can_manage_project,
         "all_vacancies": all_vacancies,
     }
+
     return render(request, "projects/project_detail.html", context)
 
 
@@ -778,6 +805,90 @@ def project_vacancy_update(
     }
 
     return render(request, "projects/vacancy_form.html", context)
+
+
+@login_required
+def project_membership_update(
+    request: HttpRequest,
+    slug: str,
+    membership_id: int,
+) -> HttpResponse:
+    """
+    Редактирование участника команды проекта владельцем или администратором.
+    Args:
+        request: HTTP-запрос текущего пользователя
+        slug: URL-идентификатор проекта
+        membership_id: ID участника команды
+    """
+    project = get_object_or_404(Project, slug=slug)
+
+    if not project.can_be_edited_by(request.user):
+        raise PermissionDenied(
+            _("Редактировать команду может только владелец проекта или администратор.")
+        )
+
+    if project.status == Project.Status.ARCHIVED:
+        raise Http404(_("Нельзя редактировать команду архивного проекта."))
+
+    membership = get_object_or_404(
+        ProjectMembership.objects.select_related(
+            "project",
+            "specialist",
+            "specialist__user",
+            "role",
+            "vacancy",
+            "vacancy__role",
+        ),
+        pk=membership_id,
+        project=project,
+    )
+
+    if membership.status == ProjectMembership.Status.LEFT:
+        messages.error(
+            request,
+            _(
+                "Участник уже покинул проект. Эту историческую запись нельзя "
+                "редактировать. При необходимости пригласи специалиста заново."
+            ),
+        )
+        return redirect(project.get_absolute_url())
+
+    if request.method == "POST":
+        old_vacancy = membership.vacancy
+
+        form = ProjectMembershipUpdateForm(request.POST, instance=membership)
+
+        if form.is_valid():
+            membership = form.save(commit=False)
+
+            membership.role = membership.vacancy.role
+
+            if membership.status == ProjectMembership.Status.LEFT:
+                membership.left_at = timezone.now()
+            else:
+                membership.left_at = None
+
+            membership.save()
+
+            if old_vacancy is not None:
+                old_vacancy.sync_current_count()
+
+            membership.vacancy.sync_current_count()
+
+            messages.success(request, _("Участник команды обновлён."))
+            return redirect(project.get_absolute_url())
+    else:
+        form = ProjectMembershipUpdateForm(instance=membership)
+
+    context = {
+        "form": form,
+        "project": project,
+        "membership": membership,
+        "page_title": _("Редактировать участника команды"),
+        "submit_text": _("Сохранить участника"),
+    }
+
+    return render(request, "projects/membership_form.html", context)
 
 
 @require_POST

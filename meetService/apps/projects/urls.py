@@ -32,9 +32,14 @@ urlpatterns = [
         name="project_vacancy_create",
     ),
     path(
-        "projects/<slug:slug>/vacancies/<int:vacancy_id>/edit/",
+        "projects/<str:slug>/vacancies/<int:vacancy_id>/edit/",
         views.project_vacancy_update,
         name="project_vacancy_update",
+    ),
+    path(
+        "projects/<str:slug>/memberships/<int:membership_id>/edit/",
+        views.project_membership_update,
+        name="project_membership_update",
     ),
     path("teams/my/", views.my_teams, name="my_teams"),
     path("projects/<str:slug>/", views.project_detail, name="project_detail"),

@@ -27,7 +27,6 @@ class Application(models.Model):
 
     ACTIVE_STATUSES = [
         Status.PENDING,
-        Status.ACCEPTED,
     ]
 
     project = models.ForeignKey(
@@ -86,7 +85,7 @@ class Application(models.Model):
         constraints = [
             models.UniqueConstraint(
                 fields=["project", "vacancy", "specialist"],
-                condition=Q(status__in=["pending", "accepted"]),
+                condition=Q(status="pending"),
                 name="unique_active_application_for_vacancy",
             ),
         ]
@@ -173,13 +172,18 @@ class Application(models.Model):
 
             if reviewed_by and not application.project.can_be_edited_by(reviewed_by):
                 raise ValidationError(
-                    _("Принимать отклики может только владелец проекта или администратор.")
+                    _(
+                        "Принимать отклики может только владелец проекта или администратор."
+                    )
                 )
 
             already_member = ProjectMembership.objects.filter(
                 project=application.project,
                 specialist=application.specialist,
-                status=ProjectMembership.Status.ACTIVE,
+                status__in=[
+                    ProjectMembership.Status.ACTIVE,
+                    ProjectMembership.Status.PAUSED,
+                ],
             ).first()
 
             reviewed_at = timezone.now()
@@ -234,11 +238,15 @@ class Application(models.Model):
             )
 
             if application.status != application.Status.PENDING:
-                raise ValidationError(_("Можно отклонить только отклик на рассмотрении."))
+                raise ValidationError(
+                    _("Можно отклонить только отклик на рассмотрении.")
+                )
 
             if reviewed_by and not application.project.can_be_edited_by(reviewed_by):
                 raise ValidationError(
-                    _("Отклонять отклики может только владелец проекта или администратор.")
+                    _(
+                        "Отклонять отклики может только владелец проекта или администратор."
+                    )
                 )
 
             reviewed_at = timezone.now()
@@ -354,7 +362,10 @@ class Invitation(models.Model):
             already_member = ProjectMembership.objects.filter(
                 project=self.project,
                 specialist=self.specialist,
-                status=ProjectMembership.Status.ACTIVE,
+                status__in=[
+                    ProjectMembership.Status.ACTIVE,
+                    ProjectMembership.Status.PAUSED,
+                ],
             ).exists()
 
             if already_member:
@@ -426,7 +437,10 @@ class Invitation(models.Model):
             already_member = ProjectMembership.objects.filter(
                 project=invitation.project,
                 specialist=invitation.specialist,
-                status=ProjectMembership.Status.ACTIVE,
+                status__in=[
+                    ProjectMembership.Status.ACTIVE,
+                    ProjectMembership.Status.PAUSED,
+                ],
             ).first()
 
             if already_member:

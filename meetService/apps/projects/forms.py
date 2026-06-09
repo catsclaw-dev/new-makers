@@ -4,7 +4,12 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 
 from apps.directories.models import Role, Technology
-from apps.projects.models import Project, ProjectTechnology, ProjectVacancy
+from apps.projects.models import (
+    Project,
+    ProjectTechnology,
+    ProjectVacancy,
+    ProjectMembership,
+)
 
 
 class ProjectForm(forms.ModelForm):
@@ -363,5 +368,116 @@ class ProjectVacancyUpdateForm(forms.ModelForm):
                         "Роль уже заполнена. Увеличь количество мест или выбери статус «Закрыта»."
                     )
                 )
+
+        return cleaned_data
+
+
+class ProjectMembershipUpdateForm(forms.ModelForm):
+    """Форма редактирования участника команды проекта."""
+
+    class Meta:
+        model = ProjectMembership
+        fields = (
+            "vacancy",
+            "status",
+        )
+
+        labels = {
+            "vacancy": _("Роль проекта"),
+            "status": _("Статус участия"),
+        }
+
+        help_texts = {
+            "vacancy": _(
+                "Выбери конкретную открытую роль проекта, которую занимает участник."
+            ),
+            "status": _(
+                "Активный участник и участник на паузе занимают место в роли. Статус «покинул проект» освобождает место."
+            ),
+        }
+
+        widgets = {
+            "vacancy": forms.Select(attrs={"class": "form-control"}),
+            "status": forms.Select(attrs={"class": "form-control"}),
+        }
+
+    class Media:
+        css = {
+            "all": ("css/site.css",),
+        }
+
+    def __init__(self, *args: object, **kwargs: object) -> None:
+        super().__init__(*args, **kwargs)
+
+        project = self.instance.project
+
+        vacancies = (
+            ProjectVacancy.objects.select_related("role")
+            .filter(project=project)
+            .order_by("role__name", "title")
+        )
+
+        self.fields["vacancy"].queryset = vacancies
+
+        def vacancy_label(vacancy: ProjectVacancy) -> str:
+            return (
+                f"{vacancy.title} — {vacancy.role.name} — "
+                f"{vacancy.get_required_level_display()} — "
+                f"мест: {vacancy.current_count}/{vacancy.required_count} — "
+                f"{vacancy.get_status_display()}"
+            )
+
+        self.fields["vacancy"].label_from_instance = vacancy_label
+
+    def clean(self) -> dict[str, object]:
+        cleaned_data = super().clean()
+
+        if self.instance.status == ProjectMembership.Status.LEFT:
+            raise forms.ValidationError(
+                _(
+                    "Участник уже покинул проект. Эту историческую запись нельзя редактировать."
+                )
+            )
+
+        vacancy = cleaned_data.get("vacancy")
+        status = cleaned_data.get("status")
+
+        if vacancy is None or status is None:
+            return cleaned_data
+
+        project = self.instance.project
+
+        if vacancy.project_id != project.id:
+            raise forms.ValidationError(
+                _("Выбранная роль не относится к этому проекту.")
+            )
+
+        active_statuses = [
+            ProjectMembership.Status.ACTIVE,
+            ProjectMembership.Status.PAUSED,
+        ]
+
+        will_occupy_place = status in active_statuses
+        currently_occupies_place = self.instance.status in active_statuses
+        same_vacancy = self.instance.vacancy_id == vacancy.id
+
+        if status == ProjectMembership.Status.LEFT and not same_vacancy:
+            raise forms.ValidationError(
+                _("При выходе участника из проекта оставь его текущую роль проекта.")
+            )
+
+        if will_occupy_place:
+            needs_free_slot = not same_vacancy or not currently_occupies_place
+
+            if needs_free_slot:
+                if vacancy.status != ProjectVacancy.Status.OPEN:
+                    raise forms.ValidationError(
+                        _("Перевести участника можно только на открытую роль проекта.")
+                    )
+
+                if vacancy.remaining_slots() <= 0:
+                    raise forms.ValidationError(
+                        _("В выбранной роли проекта нет свободных мест.")
+                    )
 
         return cleaned_data

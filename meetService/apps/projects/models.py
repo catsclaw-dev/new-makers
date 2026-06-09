@@ -430,9 +430,14 @@ class ProjectVacancy(models.Model):
             self.status = self.Status.CLOSED
             self.save(update_fields=["current_count", "status", "updated_at"])
 
-    def add_specialist(self, *, specialist: SpecialistProfile, added_by: User | None = None) -> ProjectMembership:
+    def add_specialist(
+        self,
+        *,
+        specialist: SpecialistProfile,
+        added_by: User | None = None,
+    ) -> ProjectMembership:
         """
-        Атомарное добавление специалиста на вакансию.
+        Атомарное добавление специалиста на конкретную роль проекта.
         Args:
             specialist: Профиль специалиста
             added_by: Пользователь, добавивший участника
@@ -445,13 +450,16 @@ class ProjectVacancy(models.Model):
             )
 
             if not vacancy.is_open():
-                raise ValidationError(_("Вакансия уже закрыта или заполнена."))
+                raise ValidationError(_("Роль уже закрыта или заполнена."))
 
             already_member = ProjectMembership.objects.filter(
                 project=vacancy.project,
                 specialist=specialist,
-                status=ProjectMembership.Status.ACTIVE,
-            ).exists()
+                status__in=[
+                    ProjectMembership.Status.ACTIVE,
+                    ProjectMembership.Status.PAUSED,
+                ],
+            ).first()
 
             if already_member:
                 raise ValidationError(_("Специалист уже состоит в команде проекта."))
@@ -459,16 +467,14 @@ class ProjectVacancy(models.Model):
             membership = ProjectMembership.objects.create(
                 project=vacancy.project,
                 specialist=specialist,
+                vacancy=vacancy,
                 role=vacancy.role,
+                status=ProjectMembership.Status.ACTIVE,
+                left_at=None,
                 added_by=added_by,
             )
 
-            vacancy.current_count += 1
-
-            if vacancy.current_count >= vacancy.required_count:
-                vacancy.status = ProjectVacancy.Status.CLOSED
-
-            vacancy.save(update_fields=["current_count", "status", "updated_at"])
+            vacancy.sync_current_count()
 
             return membership
 
@@ -486,6 +492,21 @@ class ProjectVacancy(models.Model):
             self.status = self.Status.CLOSED
 
         super().save(*args, **kwargs)
+
+    def sync_current_count(self) -> None:
+        """Пересчитывает количество занятых мест по фактическим участникам команды."""
+        active_statuses = [
+            ProjectMembership.Status.ACTIVE,
+            ProjectMembership.Status.PAUSED,
+        ]
+
+        actual_count = self.memberships.filter(status__in=active_statuses).count()
+
+        if self.current_count != actual_count:
+            self.current_count = actual_count
+            self.save(update_fields=["current_count", "updated_at"])
+
+        self.close_if_filled()
 
 
 class ProjectMembership(models.Model):
@@ -508,6 +529,19 @@ class ProjectMembership(models.Model):
         related_name="project_memberships",
         verbose_name=_("специалист"),
     )
+
+    vacancy = models.ForeignKey(
+        ProjectVacancy,
+        on_delete=models.PROTECT,
+        related_name="memberships",
+        null=True,
+        blank=True,
+        verbose_name=_("открытая роль проекта"),
+        help_text=_(
+            "Конкретная роль проекта, через которую специалист попал в команду."
+        ),
+    )
+
     role = models.ForeignKey(
         Role,
         on_delete=models.PROTECT,
