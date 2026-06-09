@@ -3,6 +3,8 @@ from __future__ import annotations
 import random
 from io import BytesIO
 
+from allauth.account.models import EmailAddress
+
 from django.contrib.auth import get_user_model
 from django.core.files.base import ContentFile
 from django.core.management.base import BaseCommand
@@ -269,6 +271,14 @@ class Command(BaseCommand):
                 role=User.UserRole.SPECIALIST,
                 is_active=True,
             )
+
+            EmailAddress.objects.create(
+                user=user,
+                email=email,
+                primary=True,
+                verified=True,
+            )
+
             users.append(user)
 
         return users

@@ -1,11 +1,56 @@
 from __future__ import annotations
 
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.utils.translation import gettext_lazy as _
+
+from allauth.account.models import EmailAddress
 
 from apps.accounts.models import User
 from apps.specialists.models import SpecialistProfile
+
+
+class VerifiedEmailAuthenticationForm(AuthenticationForm):
+    """Форма входа с проверкой подтверждения email."""
+
+    error_messages = {
+        **AuthenticationForm.error_messages,
+        "email_not_verified": _(
+            "Подтверди email перед входом. Проверь письмо со ссылкой подтверждения."
+        ),
+        "email_required": _(
+            "У аккаунта не указан email. Обратись к администратору или обнови профиль."
+        ),
+    }
+
+    def confirm_login_allowed(self, user: User) -> None:
+        """
+        Проверяет, может ли пользователь войти.
+        Args:
+            user: Пользователь, который пытается войти
+        """
+        super().confirm_login_allowed(user)
+
+        if user.is_staff or user.is_superuser:
+            return
+
+        if not user.email:
+            raise forms.ValidationError(
+                self.error_messages["email_required"],
+                code="email_required",
+            )
+
+        email_is_verified = EmailAddress.objects.filter(
+            user=user,
+            email__iexact=user.email,
+            verified=True,
+        ).exists()
+
+        if not email_is_verified:
+            raise forms.ValidationError(
+                self.error_messages["email_not_verified"],
+                code="email_not_verified",
+            )
 
 
 class RegisterForm(UserCreationForm):
@@ -78,9 +123,11 @@ class RegisterForm(UserCreationForm):
 
         if User.objects.filter(email__iexact=email).exists():
             raise forms.ValidationError(
-                _("Пользователь с таким email уже зарегистрирован. "
-                "Войдите через обычную форму или через тот OAuth-провайдер, "
-                "к которому привязана эта почта.")
+                _(
+                    "Пользователь с таким email уже зарегистрирован. "
+                    "Войдите через обычную форму или через тот OAuth-провайдер, "
+                    "к которому привязана эта почта."
+                )
             )
 
         return email
@@ -114,7 +161,9 @@ class AccountEmailForm(forms.ModelForm):
 
     email = forms.EmailField(
         label="Email",
-        help_text=_("На эту почту будут приходить уведомления по откликам и приглашениям."),
+        help_text=_(
+            "На эту почту будут приходить уведомления по откликам и приглашениям."
+        ),
         error_messages={
             "required": _("Email обязателен для уведомлений."),
             "invalid": _("Введите корректный email."),
@@ -152,9 +201,11 @@ class AccountEmailForm(forms.ModelForm):
 
         if queryset.exists():
             raise forms.ValidationError(
-                _("Пользователь с таким email уже зарегистрирован. "
-                "Используйте другую почту или войдите в аккаунт, "
-                "к которому она уже привязана.")
+                _(
+                    "Пользователь с таким email уже зарегистрирован. "
+                    "Используйте другую почту или войдите в аккаунт, "
+                    "к которому она уже привязана."
+                )
             )
 
         return email

@@ -12,8 +12,8 @@ email-уведомления, OAuth-аутентификацию, модерац
 
 ## Возможности
 
-- регистрация и вход по логину, email, Google или GitHub;
-- каталог опубликованных проектов и открытых ролей;
+- каталог опубликован- регистрация и вход по логину, email, Google или GitHub;
+- обязательное подтверждение email для обычных пользователей;ных проектов и открытых ролей;
 - поиск и фильтрация проектов и специалистов;
 - профиль специалиста с ролью, уровнем, технологиями и доступностью;
 - создание проекта, управление вакансиями и жизненным циклом публикации;
@@ -22,7 +22,7 @@ email-уведомления, OAuth-аутентификацию, модерац
 - избранные проекты;
 - административная модерация проектов, справочников;
 - email-уведомления и периодические фоновые задачи;
-- REST API с ролевыми ограничениями и Postman-коллекцией.
+- REST API с токен-аутентификацией, ролевыми ограничениями и Postman-коллекцией.
 
 ## Роли пользователей
 
@@ -90,16 +90,16 @@ flowchart LR
 
 ## Технологии
 
-| Область                     | Технологии                                            |
-| --------------------------- | ----------------------------------------------------- |
-| Backend                     | Python 3.13, Django 6, Django REST Framework          |
-| Данные                      | SQLite, Django ORM, django-filter                     |
-| Фоновые задачи              | Celery 5.6, RabbitMQ 4.2, Redis 7, django-celery-beat |
-| Аутентификация              | Django Allauth, Google OAuth2, GitHub OAuth           |
-| Email                       | Django Email Backend, MailHog                         |
-| Наблюдаемость               | Sentry, Django Silk, Django Debug Toolbar             |
-| История и администрирование | django-simple-history, django-import-export           |
-| Запуск                      | Docker Compose, Gunicorn, WhiteNoise                  |
+| Область                     | Технологии                                                           |
+| --------------------------- | -------------------------------------------------------------------- |
+| Backend                     | Python 3.13, Django 6, Django REST Framework                         |
+| Данные                      | SQLite, Django ORM, django-filter                                    |
+| Фоновые задачи              | Celery 5.6, RabbitMQ 4.2, Redis 7, django-celery-beat                |
+| Аутентификация              | Django Allauth, DRF TokenAuthentication, Google OAuth2, GitHub OAuth |
+| Email                       | Django Email Backend, MailHog                                        |
+| Наблюдаемость               | Sentry, Django Silk, Django Debug Toolbar                            |
+| История и администрирование | django-simple-history, django-import-export                          |
+| Запуск                      | Docker Compose, Gunicorn, WhiteNoise                                 |
 
 ## Быстрый запуск
 
@@ -168,9 +168,49 @@ Authentication. Списки разбиваются на страницы по 2
 | `/api/invitations/`  | Доступны получателю, отправителю, владельцу проекта и администратору         | Владелец приглашает специалиста; получатель принимает или отклоняет приглашение        |
 | `/api/favorites/`    | Только собственное избранное                                                 | Авторизованный пользователь управляет только своими записями                           |
 
+### API-аутентификация
+
+Получение токена по запросу:
+
+```http
+POST /api/auth/token/
+```
+
+Тело запроса должно содержать логин и пароль:
+
+```json
+{
+  "username": "username",
+  "password": "password"
+}
+```
+
+Пример ответа:
+
+```json
+{
+  "token": "token_value",
+  "user": {
+    "id": 1,
+    "username": "username",
+    "email": "user@example.com",
+    "first_name": "Имя",
+    "last_name": "Фамилия"
+  }
+}
+```
+
+Для последующих запросов нужно передавать заголовок:
+`Authorization: Token token_value`
+
+Обычные пользователи могут получать и использовать API-токен только после подтверждения email.
+
 ### Основные API-действия
 
 ```text
+POST      /api/auth/token/
+GET       /api/auth/me/
+POST      /api/auth/logout/
 GET|POST  /api/projects/{id}/vacancies/
 POST      /api/projects/{id}/submit_for_moderation/
 POST      /api/projects/{id}/close/
@@ -200,6 +240,14 @@ GET /api/specialists/?role=backend-developer&min_experience=2&is_available=true
 
 Готовые публичные, ролевые и негативные сценарии находятся в
 [`postman/meetservice_api.postman_collection.json`](postman/meetservice_api.postman_collection.json).
+
+## Подтверждение email
+
+В проекте включено обязательно подтверждение email для обычных пользователей.
+
+После регистрации пользователь получает письмо со ссылкой подтверждения. До подтверждения email пользователь не может войти через HTML-форму, получить API-токен.
+
+В локальном окружении письма можно смотреть через MailHog.
 
 ## Фоновые задачи
 

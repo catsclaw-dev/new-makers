@@ -55,6 +55,8 @@ from apps.interactions.models import Application, FavoriteProject, Invitation
 from apps.projects.models import Project, ProjectMembership, ProjectVacancy
 from apps.specialists.models import SpecialistProfile
 
+from allauth.account.models import EmailAddress
+
 
 PUBLIC_PROJECT_STATUSES = [
     Project.Status.PUBLISHED,
@@ -81,6 +83,32 @@ class CustomAuthToken(APIView):
         serializer.is_valid(raise_exception=True)
 
         user = serializer.validated_data["user"]
+
+        if not user.is_staff and not user.is_superuser:
+            if not user.email:
+                return Response(
+                    {
+                        "detail": _(
+                            "У аккаунта не указан email. Получить API-токен нельзя."
+                        ),
+                    },
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+
+            email_is_verified = EmailAddress.objects.filter(
+                user=user,
+                email__iexact=user.email,
+                verified=True,
+            ).exists()
+
+            if not email_is_verified:
+                return Response(
+                    {
+                        "detail": _("Подтверди email перед получением API-токена."),
+                    },
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+
         token, _ = Token.objects.get_or_create(user=user)
 
         return Response(

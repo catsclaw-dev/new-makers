@@ -4,7 +4,6 @@ from typing import Any
 
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView, LogoutView
 from django.http import HttpRequest, HttpResponse
@@ -12,7 +11,13 @@ from django.shortcuts import redirect, render
 from django.views.decorators.http import require_POST
 from django.utils.translation import gettext_lazy as _
 
-from apps.accounts.forms import AccountEmailForm, RegisterForm
+from allauth.account.models import EmailAddress
+
+from apps.accounts.forms import (
+    AccountEmailForm,
+    RegisterForm,
+    VerifiedEmailAuthenticationForm,
+)
 from apps.interactions.emails import enqueue_welcome_email
 from apps.interactions.models import Application, FavoriteProject, Invitation
 from apps.projects.models import Project, ProjectMembership
@@ -32,14 +37,38 @@ def register(request: HttpRequest) -> HttpResponse:
 
         if form.is_valid():
             user = form.save()
-            enqueue_welcome_email(user.pk)
-            login(
-                request,
-                user,
-                backend="django.contrib.auth.backends.ModelBackend",
+
+            email_address, _ = EmailAddress.objects.get_or_create(
+                user=user,
+                email=user.email,
+                defaults={
+                    "primary": True,
+                    "verified": False,
+                },
             )
-            messages.success(request, _("Регистрация завершена."))
-            return redirect("accounts:profile")
+
+            if not email_address.primary:
+                EmailAddress.objects.filter(
+                    user=user,
+                    primary=True,
+                ).update(primary=False)
+
+                email_address.primary = True
+                email_address.save(update_fields=["primary"])
+
+            email_address.send_confirmation(
+                request,
+                signup=True,
+            )
+
+            messages.success(
+                request,
+                _(
+                    "Регистрация почти завершена. "
+                    "Мы отправили письмо со ссылкой подтверждения email."
+                ),
+            )
+            return redirect("accounts:login")
     else:
         form = RegisterForm()
 
@@ -50,6 +79,7 @@ class AccountLoginView(LoginView):
     """Страница входа пользователя."""
 
     template_name = "accounts/login.html"
+    authentication_form = VerifiedEmailAuthenticationForm
     redirect_authenticated_user = True
 
     def get_context_data(self, **kwargs: object) -> dict[str, Any]:
