@@ -1045,6 +1045,36 @@ option {
   font-size: 14px;
 }
 
+.text-collapse {
+  display: grid;
+  gap: 8px;
+  max-width: 100%;
+}
+
+.text-collapse summary {
+  width: fit-content;
+  color: var(--color-cyan);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.text-collapse summary:hover {
+  color: var(--color-cream);
+}
+
+.text-collapse p {
+  margin: 0;
+}
+
+.message-text,
+.text-collapse p {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  white-space: normal;
+}
+
 .card-meta,
 .tag-row,
 .tag-cloud {

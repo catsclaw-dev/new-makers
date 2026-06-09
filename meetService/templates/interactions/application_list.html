@@ -61,7 +61,17 @@
                                     {% trans "Роль:" %} {{ application.vacancy.title }}
                                     {% if application.vacancy.role %}· {{ application.vacancy.role.name }}{% endif %}
                                 </p>
-                                {% if application.message %}<p>{{ application.message }}</p>{% endif %}
+                                {% if application.message %}
+                                    {% if application.message|length > 280 %}
+                                        <p class="message-text">{{ application.message|truncatechars:280 }}</p>
+                                        <details class="text-collapse">
+                                            <summary>{% trans "Показать полностью" %}</summary>
+                                            <p class="message-text">{{ application.message }}</p>
+                                        </details>
+                                    {% else %}
+                                        <p class="message-text">{{ application.message }}</p>
+                                    {% endif %}
+                                {% endif %}
                                 <span>{{ application.get_status_display }} · {{ application.applied_at|date:"d.m.Y H:i" }}</span>
                             </article>
                         {% empty %}
@@ -95,7 +105,17 @@
                                 {% trans "Роль:" %} {{ application.vacancy.title }}
                                 {% if application.vacancy.role %}· {{ application.vacancy.role.name }}{% endif %}
                             </p>
-                            {% if application.message %}<p>{{ application.message }}</p>{% endif %}
+                            {% if application.message %}
+                                {% if application.message|length > 280 %}
+                                    <p class="message-text">{{ application.message|truncatechars:280 }}</p>
+                                    <details class="text-collapse">
+                                        <summary>{% trans "Показать полностью" %}</summary>
+                                        <p class="message-text">{{ application.message }}</p>
+                                    </details>
+                                {% else %}
+                                    <p class="message-text">{{ application.message }}</p>
+                                {% endif %}
+                            {% endif %}
                             <span>{{ application.get_status_display }} · {{ application.applied_at|date:"d.m.Y H:i" }}</span>
                             <div class="hero-actions">
                                 <form method="post" action="{% url 'interactions:application_accept' application.pk %}">
@@ -141,7 +161,17 @@
                                     {% trans "Роль:" %} {{ application.vacancy.title }}
                                     {% if application.vacancy.role %}· {{ application.vacancy.role.name }}{% endif %}
                                 </p>
-                                {% if application.message %}<p>{{ application.message }}</p>{% endif %}
+                                {% if application.message %}
+                                    {% if application.message|length > 280 %}
+                                        <p class="message-text">{{ application.message|truncatechars:280 }}</p>
+                                        <details class="text-collapse">
+                                            <summary>{% trans "Показать полностью" %}</summary>
+                                            <p class="message-text">{{ application.message }}</p>
+                                        </details>
+                                    {% else %}
+                                        <p class="message-text">{{ application.message }}</p>
+                                    {% endif %}
+                                {% endif %}
                                 <span>{{ application.get_status_display }} · {{ application.applied_at|date:"d.m.Y H:i" }}</span>
                             </article>
                         {% empty %}
@@ -171,7 +201,17 @@
                                 {% trans "Роль:" %} {{ application.vacancy.title }}
                                 {% if application.vacancy.role %}· {{ application.vacancy.role.name }}{% endif %}
                             </p>
-                            {% if application.message %}<p>{{ application.message }}</p>{% endif %}
+                            {% if application.message %}
+                                {% if application.message|length > 280 %}
+                                    <p class="message-text">{{ application.message|truncatechars:280 }}</p>
+                                    <details class="text-collapse">
+                                        <summary>{% trans "Показать полностью" %}</summary>
+                                        <p class="message-text">{{ application.message }}</p>
+                                    </details>
+                                {% else %}
+                                    <p class="message-text">{{ application.message }}</p>
+                                {% endif %}
+                            {% endif %}
                             <span>{{ application.get_status_display }} · {{ application.applied_at|date:"d.m.Y H:i" }}</span>
                         </article>
                     {% empty %}

@@ -824,6 +824,11 @@ class ApplicationSerializer(serializers.ModelSerializer):
         if not value:
             raise serializers.ValidationError(_("Добавь сопроводительное сообщение."))
 
+        if len(value) > 1000:
+            raise serializers.ValidationError(
+                _("Сопроводительное сообщение не должно превышать 1000 символов.")
+            )
+
         return value
 
     def validate(self, attrs: dict[str, object]) -> dict[str, object]:
@@ -869,7 +874,10 @@ class ApplicationSerializer(serializers.ModelSerializer):
         already_member = ProjectMembership.objects.filter(
             project=project,
             specialist=specialist,
-            status=ProjectMembership.Status.ACTIVE,
+            status__in=[
+                ProjectMembership.Status.ACTIVE,
+                ProjectMembership.Status.PAUSED,
+            ],
         ).exists()
 
         if already_member:
@@ -949,7 +957,15 @@ class InvitationSerializer(serializers.ModelSerializer):
         Args:
             value: Проверяемое значение
         """
-        return value.strip()
+
+        value = value.strip()
+
+        if len(value) > 1000:
+            raise serializers.ValidationError(
+                _("Текст приглашения не должен превышать 1000 символов.")
+            )
+
+        return value
 
     def validate(self, attrs: dict[str, object]) -> dict[str, object]:
         """
@@ -998,7 +1014,10 @@ class InvitationSerializer(serializers.ModelSerializer):
         already_member = ProjectMembership.objects.filter(
             project=project,
             specialist=specialist,
-            status=ProjectMembership.Status.ACTIVE,
+            status__in=[
+                ProjectMembership.Status.ACTIVE,
+                ProjectMembership.Status.PAUSED,
+            ],
         ).exists()
 
         if already_member:

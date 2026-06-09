@@ -5,7 +5,7 @@ from django.db import models, transaction
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from django.db import models
+from django.core.validators import MaxLengthValidator
 from django.db.models import Q
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -48,9 +48,13 @@ class Application(models.Model):
         verbose_name=_("специалист"),
     )
     message = models.TextField(
+        max_length=1000,
         blank=True,
-        verbose_name=_("сообщение"),
-        help_text=_("Сопроводительное сообщение специалиста владельцу проекта."),
+        validators=[
+            MaxLengthValidator(1000),
+        ],
+        verbose_name=_("комментарий к отклику"),
+        help_text=_("Краткий комментарий специалиста к отклику. До 1000 символов."),
     )
     status = models.CharField(
         max_length=20,
@@ -300,9 +304,15 @@ class Invitation(models.Model):
         verbose_name=_("пригласил"),
     )
     message = models.TextField(
+        max_length=1000,
         blank=True,
-        verbose_name=_("сообщение"),
-        help_text=_("Сообщение владельца проекта специалисту."),
+        validators=[
+            MaxLengthValidator(1000),
+        ],
+        verbose_name=_("текст приглашения"),
+        help_text=_(
+            "Краткий текст приглашения специалиста в проект. До 1000 символов."
+        ),
     )
     status = models.CharField(
         max_length=20,

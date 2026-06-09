@@ -61,7 +61,17 @@
                                     {% trans "Роль:" %} {{ invitation.vacancy.title }}
                                     {% if invitation.vacancy.role %}· {{ invitation.vacancy.role.name }}{% endif %}
                                 </p>
-                                {% if invitation.message %}<p>{{ invitation.message }}</p>{% endif %}
+                                {% if invitation.message %}
+                                    {% if invitation.message|length > 280 %}
+                                        <p class="message-text">{{ invitation.message|truncatechars:280 }}</p>
+                                        <details class="text-collapse">
+                                            <summary>{% trans "Показать полностью" %}</summary>
+                                            <p class="message-text">{{ invitation.message }}</p>
+                                        </details>
+                                    {% else %}
+                                        <p class="message-text">{{ invitation.message }}</p>
+                                    {% endif %}
+                                {% endif %}
                                 <span>{{ invitation.get_status_display }} · {{ invitation.invited_at|date:"d.m.Y H:i" }}</span>
                                 <div class="hero-actions">
                                     <form method="post" action="{% url 'interactions:invitation_accept' invitation.pk %}">
@@ -104,7 +114,17 @@
                                 {% trans "Роль:" %} {{ invitation.vacancy.title }}
                                 {% if invitation.vacancy.role %}· {{ invitation.vacancy.role.name }}{% endif %}
                             </p>
-                            {% if invitation.message %}<p>{{ invitation.message }}</p>{% endif %}
+                            {% if invitation.message %}
+                                {% if invitation.message|length > 280 %}
+                                    <p class="message-text">{{ invitation.message|truncatechars:280 }}</p>
+                                    <details class="text-collapse">
+                                        <summary>{% trans "Показать полностью" %}</summary>
+                                        <p class="message-text">{{ invitation.message }}</p>
+                                    </details>
+                                {% else %}
+                                    <p class="message-text">{{ invitation.message }}</p>
+                                {% endif %}
+                            {% endif %}
                             <span>{{ invitation.get_status_display }} · {{ invitation.invited_at|date:"d.m.Y H:i" }}</span>
                         </article>
                     {% empty %}
@@ -140,6 +160,17 @@
                                     {% trans "Роль:" %} {{ invitation.vacancy.title }}
                                     {% if invitation.vacancy.role %}· {{ invitation.vacancy.role.name }}{% endif %}
                                 </p>
+                                {% if invitation.message %}
+                                    {% if invitation.message|length > 280 %}
+                                        <p class="message-text">{{ invitation.message|truncatechars:280 }}</p>
+                                        <details class="text-collapse">
+                                            <summary>{% trans "Показать полностью" %}</summary>
+                                            <p class="message-text">{{ invitation.message }}</p>
+                                        </details>
+                                    {% else %}
+                                        <p class="message-text">{{ invitation.message }}</p>
+                                    {% endif %}
+                                {% endif %}
                                 <span>{{ invitation.get_status_display }} · {{ invitation.invited_at|date:"d.m.Y H:i" }}</span>
                             </article>
                         {% empty %}
@@ -169,6 +200,17 @@
                                 {% trans "Роль:" %} {{ invitation.vacancy.title }}
                                 {% if invitation.vacancy.role %}· {{ invitation.vacancy.role.name }}{% endif %}
                             </p>
+                            {% if invitation.message %}
+                                {% if invitation.message|length > 280 %}
+                                    <p class="message-text">{{ invitation.message|truncatechars:280 }}</p>
+                                    <details class="text-collapse">
+                                        <summary>{% trans "Показать полностью" %}</summary>
+                                        <p class="message-text">{{ invitation.message }}</p>
+                                    </details>
+                                {% else %}
+                                    <p class="message-text">{{ invitation.message }}</p>
+                                {% endif %}
+                            {% endif %}
                             <span>{{ invitation.get_status_display }} · {{ invitation.invited_at|date:"d.m.Y H:i" }}</span>
                         </article>
                     {% empty %}
