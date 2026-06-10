@@ -1,0 +1,2145 @@
+{
+  "info": {
+    "_postman_id": "91033850-2a68-4b6a-9c65-bec6bddc7bc7",
+    "name": "New Makers API — clean collection",
+    "description": "Чистая Postman-коллекция под актуальный API new-makers.\n\nЧто исправлено:\n- у всех API URL стоит завершающий слэш;\n- убраны все тесты и post-response scripts;\n- убраны захардкоженные id=1 в телах основных запросов, вместо них используются переменные;\n- destructive-запросы вынесены отдельно;\n- опубликованные сценарии отделены от черновиков, потому что в API нет publish-action.\n\nКак пользоваться:\n1. Получи токен через Auth → Получить токен ...\n2. Вручную скопируй значение token из ответа в переменную owner_token / specialist_token / admin_token.\n3. При создании сущностей вручную копируй id из ответа в role_id, technology_id, project_id, vacancy_id и т.д.\n4. Для откликов, приглашений и избранного нужен опубликованный проект. Если проект создан через API, он будет draft/moderation; публикации через API сейчас нет.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:8000",
+      "type": "string"
+    },
+    {
+      "key": "api_prefix",
+      "value": "api",
+      "type": "string"
+    },
+    {
+      "key": "owner_username",
+      "value": "owner",
+      "type": "string"
+    },
+    {
+      "key": "owner_password",
+      "value": "password",
+      "type": "string"
+    },
+    {
+      "key": "owner_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "specialist_username",
+      "value": "specialist",
+      "type": "string"
+    },
+    {
+      "key": "specialist_password",
+      "value": "password",
+      "type": "string"
+    },
+    {
+      "key": "specialist_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "admin_username",
+      "value": "admin",
+      "type": "string"
+    },
+    {
+      "key": "admin_password",
+      "value": "password",
+      "type": "string"
+    },
+    {
+      "key": "admin_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "role_id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "technology_id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "project_id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "project_title",
+      "value": "API Test Project",
+      "type": "string"
+    },
+    {
+      "key": "vacancy_id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "published_project_id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "published_vacancy_id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "closed_project_id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "specialist_id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "application_id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "invitation_id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "favorite_id",
+      "value": "1",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "00 Auth",
+      "description": "Авторизация. Здесь нет тестов и автосохранения переменных — копируй token вручную.",
+      "item": [
+        {
+          "name": "Получить токен владельца",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/auth/token/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "auth",
+                "token"
+              ]
+            },
+            "description": "Токен выдаётся через DRF Token Auth. Для обычного пользователя email должен быть подтверждён; staff/superuser проходят без этой проверки. После ответа вручную скопируй поле token в соответствующую переменную коллекции.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{owner_username}}\",\n  \"password\": \"{{owner_password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Получить токен специалиста",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/auth/token/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "auth",
+                "token"
+              ]
+            },
+            "description": "Токен выдаётся через DRF Token Auth. Для обычного пользователя email должен быть подтверждён; staff/superuser проходят без этой проверки. После ответа вручную скопируй поле token в соответствующую переменную коллекции.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{specialist_username}}\",\n  \"password\": \"{{specialist_password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Получить токен администратора",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/auth/token/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "auth",
+                "token"
+              ]
+            },
+            "description": "Токен выдаётся через DRF Token Auth. Для обычного пользователя email должен быть подтверждён; staff/superuser проходят без этой проверки. После ответа вручную скопируй поле token в соответствующую переменную коллекции.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{admin_username}}\",\n  \"password\": \"{{admin_password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Текущий пользователь — владелец",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{owner_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/auth/me/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "auth",
+                "me"
+              ]
+            },
+            "description": "Проверка токена владельца."
+          }
+        },
+        {
+          "name": "Текущий пользователь — специалист",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{specialist_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/auth/me/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "auth",
+                "me"
+              ]
+            },
+            "description": "Проверка токена специалиста."
+          }
+        },
+        {
+          "name": "Текущий пользователь — администратор",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/auth/me/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "auth",
+                "me"
+              ]
+            },
+            "description": "Проверка токена администратора."
+          }
+        },
+        {
+          "name": "Удалить токен владельца / logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{owner_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/auth/logout/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "auth",
+                "logout"
+              ]
+            },
+            "description": "Удаляет текущий DRF-токен владельца. После этого owner_token станет недействительным."
+          }
+        }
+      ]
+    },
+    {
+      "name": "01 Public read",
+      "description": "Безопасные GET-запросы, которые можно выполнять без авторизации.",
+      "item": [
+        {
+          "name": "Роли — список",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/roles/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "roles"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "frontend",
+                  "disabled": true
+                },
+                {
+                  "key": "ordering",
+                  "value": "name",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Публичный список активных ролей."
+          }
+        },
+        {
+          "name": "Роль — детальная",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/roles/{{role_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "roles",
+                "{{role_id}}"
+              ]
+            },
+            "description": "Публичная детальная роль."
+          }
+        },
+        {
+          "name": "Технологии — список",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/technologies/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "technologies"
+              ],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "framework",
+                  "disabled": true
+                },
+                {
+                  "key": "search",
+                  "value": "django",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Публичный список активных технологий."
+          }
+        },
+        {
+          "name": "Технология — детальная",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/technologies/{{technology_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "technologies",
+                "{{technology_id}}"
+              ]
+            },
+            "description": "Публичная детальная технология."
+          }
+        },
+        {
+          "name": "Проекты — список",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/projects/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "projects"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "django",
+                  "disabled": true
+                },
+                {
+                  "key": "ordering",
+                  "value": "-created_at",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Для гостя возвращает опубликованные и закрытые проекты."
+          }
+        },
+        {
+          "name": "Проект — детальная",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/projects/{{published_project_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "projects",
+                "{{published_project_id}}"
+              ]
+            },
+            "description": "Детальная публичного/закрытого проекта."
+          }
+        },
+        {
+          "name": "Открытые роли — список",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/vacancies/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "vacancies"
+              ],
+              "query": [
+                {
+                  "key": "project",
+                  "value": "{{published_project_id}}",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "open",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Список ролей. Для гостя видны роли публичных/закрытых проектов."
+          }
+        },
+        {
+          "name": "Открытая роль — детальная",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/vacancies/{{published_vacancy_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "vacancies",
+                "{{published_vacancy_id}}"
+              ]
+            },
+            "description": "Детальная открытой роли."
+          }
+        },
+        {
+          "name": "Специалисты — список",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/specialists/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "specialists"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "frontend",
+                  "disabled": true
+                },
+                {
+                  "key": "ordering",
+                  "value": "-created_at",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Публичный список нескрытых специалистов."
+          }
+        },
+        {
+          "name": "Специалист — детальная",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/specialists/{{specialist_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "specialists",
+                "{{specialist_id}}"
+              ]
+            },
+            "description": "Детальная профиля специалиста."
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 Admin reference data",
+      "description": "Создание справочников. Удаление вынесено в папку Danger zone.",
+      "item": [
+        {
+          "name": "Создать роль — admin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/roles/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "roles"
+              ]
+            },
+            "description": "После создания скопируй id из ответа в role_id.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"API Frontend {{$timestamp}}\",\n  \"slug\": \"api-frontend-{{$timestamp}}\",\n  \"description\": \"Роль, созданная через API.\",\n  \"is_active\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Обновить роль — admin",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/roles/{{role_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "roles",
+                "{{role_id}}"
+              ]
+            },
+            "description": "Нужен role_id.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Описание роли обновлено через API.\",\n  \"is_active\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Создать технологию — admin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/technologies/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "technologies"
+              ]
+            },
+            "description": "После создания скопируй id из ответа в technology_id.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"API Django {{$timestamp}}\",\n  \"slug\": \"api-django-{{$timestamp}}\",\n  \"category\": \"framework\",\n  \"description\": \"Технология, созданная через API.\",\n  \"is_active\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Обновить технологию — admin",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/technologies/{{technology_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "technologies",
+                "{{technology_id}}"
+              ]
+            },
+            "description": "Нужен technology_id.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Описание технологии обновлено через API.\",\n  \"is_active\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 Owner flow — draft project",
+      "description": "Основной безопасный сценарий владельца до модерации. В текущем API нет publish-action, поэтому этот сценарий не может сам сделать проект published.",
+      "item": [
+        {
+          "name": "Создать проект-черновик — owner",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{owner_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/projects/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "projects"
+              ]
+            },
+            "description": "Создаёт проект со статусом draft. После создания скопируй id в project_id, а title — в project_title.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"{{project_title}} {{$timestamp}}\",\n  \"short_description\": \"Короткое описание проекта для проверки API.\",\n  \"description\": \"Подробное описание проекта. Здесь владелец объясняет идею, задачи и ожидаемый результат.\",\n  \"goal\": \"Собрать минимальную команду и довести MVP до демонстрации.\",\n  \"stage\": \"idea\",\n  \"participation_format\": \"free\",\n  \"technology_ids\": [{{technology_id}}],\n  \"repository_url\": \"https://github.com/example/project\",\n  \"demo_url\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Получить свой проект — owner",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{owner_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/projects/{{project_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "projects",
+                "{{project_id}}"
+              ]
+            },
+            "description": "Владелец видит свои draft/moderation проекты."
+          }
+        },
+        {
+          "name": "Обновить проект-черновик — owner",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{owner_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/projects/{{project_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "projects",
+                "{{project_id}}"
+              ]
+            },
+            "description": "Обновление проекта владельцем.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"short_description\": \"Обновлённое короткое описание через API.\",\n  \"stage\": \"prototype\",\n  \"technology_ids\": [{{technology_id}}]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Добавить роль в проект — owner",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{owner_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/projects/{{project_id}}/vacancies/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "projects",
+                "{{project_id}}",
+                "vacancies"
+              ]
+            },
+            "description": "Добавляет открытую роль через action проекта. После создания скопируй id в vacancy_id.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role\": {{role_id}},\n  \"title\": \"Junior Frontend-разработчик\",\n  \"description\": \"Нужен участник для верстки интерфейса и работы с frontend-частью.\",\n  \"required_level\": \"junior\",\n  \"required_count\": 1,\n  \"status\": \"open\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Получить роли проекта — owner",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{owner_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/projects/{{project_id}}/vacancies/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "projects",
+                "{{project_id}}",
+                "vacancies"
+              ]
+            },
+            "description": "Список ролей конкретного проекта."
+          }
+        },
+        {
+          "name": "Отправить проект на модерацию — owner",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{owner_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/projects/{{project_id}}/submit_for_moderation/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "projects",
+                "{{project_id}}",
+                "submit_for_moderation"
+              ]
+            },
+            "description": "Работает только для draft и только если есть открытая роль. После этого проект станет moderation."
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 Vacancies direct endpoint",
+      "description": "Прямой CRUD для открытых ролей. Удаление вынесено в Danger zone.",
+      "item": [
+        {
+          "name": "Открытые роли — список",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{owner_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/vacancies/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "vacancies"
+              ]
+            },
+            "description": "Авторизованный владелец увидит роли публичных проектов и своих проектов."
+          }
+        },
+        {
+          "name": "Открытая роль — детальная",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{owner_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/vacancies/{{vacancy_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "vacancies",
+                "{{vacancy_id}}"
+              ]
+            },
+            "description": "Нужен vacancy_id."
+          }
+        },
+        {
+          "name": "Создать открытую роль напрямую — owner",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{owner_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/vacancies/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "vacancies"
+              ]
+            },
+            "description": "Альтернатива POST /projects/{id}/vacancies/. После создания скопируй id в vacancy_id.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"project\": {{project_id}},\n  \"role\": {{role_id}},\n  \"title\": \"Backend-разработчик\",\n  \"description\": \"Нужен backend-разработчик для API, моделей и бизнес-логики.\",\n  \"required_level\": \"junior\",\n  \"required_count\": 1,\n  \"status\": \"open\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Обновить открытую роль — owner",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{owner_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/vacancies/{{vacancy_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "vacancies",
+                "{{vacancy_id}}"
+              ]
+            },
+            "description": "Работает для владельца проекта или администратора.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Описание роли обновлено через API.\",\n  \"required_count\": 2,\n  \"status\": \"open\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "05 Specialist profile",
+      "description": "Профиль специалиста. Для откликов профиль обязателен.",
+      "item": [
+        {
+          "name": "Создать профиль специалиста — specialist",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{specialist_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/specialists/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "specialists"
+              ]
+            },
+            "description": "У пользователя может быть только один профиль. После создания скопируй id в specialist_id.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"main_role\": {{role_id}},\n  \"preferred_role_ids\": [{{role_id}}],\n  \"technology_ids\": [{{technology_id}}],\n  \"level\": \"junior\",\n  \"status\": \"looking\",\n  \"participation_format\": \"remote\",\n  \"bio\": \"Frontend-разработчик, хочу участвовать в учебных и pet-проектах, развивать портфолио и работать в команде.\",\n  \"experience_years\": 1,\n  \"weekly_hours\": 10,\n  \"city\": \"Москва\",\n  \"timezone\": \"Europe/Moscow\",\n  \"github_url\": \"https://github.com/example\",\n  \"gitlab_url\": \"\",\n  \"portfolio_url\": \"\",\n  \"telegram\": \"@example\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Мой профиль специалиста — specialist",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{specialist_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/specialists/me/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "specialists",
+                "me"
+              ]
+            },
+            "description": "Возвращает профиль текущего пользователя."
+          }
+        },
+        {
+          "name": "Обновить мой профиль — specialist",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{specialist_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/specialists/me/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "specialists",
+                "me"
+              ]
+            },
+            "description": "PATCH текущего профиля специалиста.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"weekly_hours\": 12,\n  \"status\": \"open\",\n  \"technology_ids\": [{{technology_id}}]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Обновить специалиста по ID — self/admin",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{specialist_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/specialists/{{specialist_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "specialists",
+                "{{specialist_id}}"
+              ]
+            },
+            "description": "Работает для владельца профиля или администратора.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bio\": \"Обновлённое описание профиля специалиста через API. Текст длиннее двадцати символов.\",\n  \"status\": \"open\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "06 Published project actions",
+      "description": "Действия, которые НЕ работают для draft/moderation. Заполни published_project_id/closed_project_id вручную после публикации проекта.",
+      "item": [
+        {
+          "name": "Закрыть опубликованный проект — owner",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{owner_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/projects/{{published_project_id}}/close/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "projects",
+                "{{published_project_id}}",
+                "close"
+              ]
+            },
+            "description": "Работает только для проекта в статусе published. Если проект не published — будет 400."
+          }
+        },
+        {
+          "name": "Переоткрыть закрытый проект — owner",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{owner_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/projects/{{closed_project_id}}/reopen/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "projects",
+                "{{closed_project_id}}",
+                "reopen"
+              ]
+            },
+            "description": "Работает только для проекта в статусе closed."
+          }
+        },
+        {
+          "name": "Архивировать опубликованный/закрытый проект — owner",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{owner_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/projects/{{published_project_id}}/archive/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "projects",
+                "{{published_project_id}}",
+                "archive"
+              ]
+            },
+            "description": "Работает только для published/closed. confirmation_title должен точно совпадать с названием проекта.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"confirmation_title\": \"{{project_title}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "07 Applications",
+      "description": "Отклики. Создание работает только для опубликованного проекта и открытой роли.",
+      "item": [
+        {
+          "name": "Отклики — список",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{specialist_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/applications/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "applications"
+              ]
+            },
+            "description": "Специалист видит свои отклики; владелец видит отклики на свои проекты; админ видит всё."
+          }
+        },
+        {
+          "name": "Создать отклик — specialist",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{specialist_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/applications/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "applications"
+              ]
+            },
+            "description": "Нужен published_vacancy_id. Проект должен быть published, роль open, пользователь не должен быть владельцем проекта.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"vacancy\": {{published_vacancy_id}},\n  \"message\": \"Здравствуйте! Хочу присоединиться к проекту, потому что мой стек подходит под открытую роль.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Отклик — детальная",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{specialist_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/applications/{{application_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "applications",
+                "{{application_id}}"
+              ]
+            },
+            "description": "Нужен application_id."
+          }
+        },
+        {
+          "name": "Принять отклик — owner",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{owner_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/applications/{{application_id}}/accept/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "applications",
+                "{{application_id}}",
+                "accept"
+              ]
+            },
+            "description": "Работает для владельца проекта или администратора. При принятии специалист становится участником команды."
+          }
+        },
+        {
+          "name": "Отклонить отклик — owner",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{owner_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/applications/{{application_id}}/reject/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "applications",
+                "{{application_id}}",
+                "reject"
+              ]
+            },
+            "description": "Работает для владельца проекта или администратора."
+          }
+        }
+      ]
+    },
+    {
+      "name": "08 Invitations",
+      "description": "Приглашения. Создание требует опубликованный проект и открытую роль.",
+      "item": [
+        {
+          "name": "Приглашения — список",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{owner_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/invitations/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "invitations"
+              ]
+            },
+            "description": "Владелец видит отправленные/связанные приглашения; специалист — входящие; админ — всё."
+          }
+        },
+        {
+          "name": "Создать приглашение — owner",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{owner_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/invitations/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "invitations"
+              ]
+            },
+            "description": "Нужны published_vacancy_id и specialist_id. Проект должен быть published.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"vacancy\": {{published_vacancy_id}},\n  \"specialist\": {{specialist_id}},\n  \"message\": \"Здравствуйте! Приглашаю вас в проект на открытую роль.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Приглашение — детальная",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{specialist_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/invitations/{{invitation_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "invitations",
+                "{{invitation_id}}"
+              ]
+            },
+            "description": "Нужен invitation_id."
+          }
+        },
+        {
+          "name": "Принять приглашение — specialist",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{specialist_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/invitations/{{invitation_id}}/accept/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "invitations",
+                "{{invitation_id}}",
+                "accept"
+              ]
+            },
+            "description": "Работает для получателя приглашения или администратора."
+          }
+        },
+        {
+          "name": "Отклонить приглашение — specialist",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{specialist_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/invitations/{{invitation_id}}/decline/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "invitations",
+                "{{invitation_id}}",
+                "decline"
+              ]
+            },
+            "description": "Работает для получателя приглашения или администратора."
+          }
+        }
+      ]
+    },
+    {
+      "name": "09 Favorites",
+      "description": "Избранное. Для добавления нужен published/closed проект. DELETE вынесен в Danger zone.",
+      "item": [
+        {
+          "name": "Избранное — список",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{specialist_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/favorites/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "favorites"
+              ]
+            },
+            "description": "Список избранных проектов текущего пользователя."
+          }
+        },
+        {
+          "name": "Добавить проект в избранное через /favorites/",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{specialist_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/favorites/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "favorites"
+              ]
+            },
+            "description": "Создаёт запись избранного. При повторном добавлении того же проекта будет ошибка уникальности/валидации.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"project\": {{published_project_id}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Переключить избранное через action проекта",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{specialist_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/projects/{{published_project_id}}/favorite/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "projects",
+                "{{published_project_id}}",
+                "favorite"
+              ]
+            },
+            "description": "Toggle: если проекта нет в избранном — добавит; если есть — удалит. Возвращает is_favorite."
+          }
+        },
+        {
+          "name": "Избранное — детальная запись",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{specialist_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/favorites/{{favorite_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "favorites",
+                "{{favorite_id}}"
+              ]
+            },
+            "description": "Нужен favorite_id."
+          }
+        }
+      ]
+    },
+    {
+      "name": "10 Service OPTIONS",
+      "description": "Служебные OPTIONS-запросы.",
+      "item": [
+        {
+          "name": "OPTIONS /projects/",
+          "request": {
+            "method": "OPTIONS",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/projects/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "projects"
+              ]
+            },
+            "description": "Посмотреть метаданные DRF endpoint."
+          }
+        },
+        {
+          "name": "OPTIONS /specialists/",
+          "request": {
+            "method": "OPTIONS",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/specialists/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "specialists"
+              ]
+            },
+            "description": "Посмотреть метаданные DRF endpoint."
+          }
+        },
+        {
+          "name": "OPTIONS /applications/",
+          "request": {
+            "method": "OPTIONS",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{specialist_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/applications/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "applications"
+              ]
+            },
+            "description": "Посмотреть метаданные DRF endpoint."
+          }
+        }
+      ]
+    },
+    {
+      "name": "99 Danger zone — destructive",
+      "description": "Опасные запросы. Не запускай их в общем прогоне коллекции.",
+      "item": [
+        {
+          "name": "Удалить проект-черновик — owner",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{owner_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/projects/{{project_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "projects",
+                "{{project_id}}"
+              ]
+            },
+            "description": "Владелец может удалить только draft. Published/closed нужно архивировать."
+          }
+        },
+        {
+          "name": "Удалить открытую роль — owner",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{owner_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/vacancies/{{vacancy_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "vacancies",
+                "{{vacancy_id}}"
+              ]
+            },
+            "description": "Удаляет открытую роль. Используй осторожно."
+          }
+        },
+        {
+          "name": "Удалить профиль специалиста — self/admin",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{specialist_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/specialists/{{specialist_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "specialists",
+                "{{specialist_id}}"
+              ]
+            },
+            "description": "Удаляет профиль специалиста. Используй осторожно."
+          }
+        },
+        {
+          "name": "Удалить запись избранного",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{specialist_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/favorites/{{favorite_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "favorites",
+                "{{favorite_id}}"
+              ]
+            },
+            "description": "Удаляет конкретную запись избранного."
+          }
+        },
+        {
+          "name": "Удалить роль — admin",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/roles/{{role_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "roles",
+                "{{role_id}}"
+              ]
+            },
+            "description": "Удаляет справочную роль. Может сломать связанные тестовые данные."
+          }
+        },
+        {
+          "name": "Удалить технологию — admin",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/technologies/{{technology_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "technologies",
+                "{{technology_id}}"
+              ]
+            },
+            "description": "Удаляет справочную технологию. Может сломать связанные тестовые данные."
+          }
+        }
+      ]
+    }
+  ]
+}
