@@ -1,0 +1,13 @@
+{% load i18n %}
+{% trans "Подтвердите email в New-Makers" %}
+
+{% blocktrans with user_display=user_display %}Здравствуйте, {{ user_display }}.{% endblocktrans %}
+
+{% trans "Вы зарегистрировались в New-Makers. Подтвердите адрес электронной почты, чтобы завершить настройку аккаунта и пользоваться сервисом без ограничений." %}
+
+{% trans "Ссылка для подтверждения:" %}
+{{ activate_url }}
+
+—
+New-Makers
+{% trans "Сервис поиска IT-команды" %}

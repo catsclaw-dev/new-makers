@@ -8,7 +8,7 @@ from typing import Any
 from celery import shared_task
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.core.mail import EmailMultiAlternatives, send_mail
+from django.core.mail import EmailMultiAlternatives
 from django.db.models import Count, QuerySet
 from django.template.loader import render_to_string
 from django.urls import reverse
@@ -49,8 +49,10 @@ def send_welcome_email(user_id: int) -> int:
             "preheader": _("Аккаунт создан, можно искать команду и проекты."),
             "greeting": _("Здравствуйте, %(name)s.") % {"name": _display_user(user)},
             "intro": (
-                _("Ваш аккаунт создан. Теперь можно оформить профиль специалиста, "
-                "откликаться на проекты или собрать команду для своей идеи.")
+                _(
+                    "Ваш аккаунт создан. Теперь можно оформить профиль специалиста, "
+                    "откликаться на проекты или собрать команду для своей идеи."
+                )
             ),
             "details": [
                 (_("Аккаунт"), user.username),
@@ -98,8 +100,10 @@ def send_application_created_email(application_id: int) -> int:
             "greeting": _("Здравствуйте, %(name)s.")
             % {"name": _display_user(application.project.owner)},
             "intro": (
-                _("Специалист %(specialist)s отправил отклик на роль «%(role)s» "
-                "в проекте «%(project)s».")
+                _(
+                    "Специалист %(specialist)s отправил отклик на роль «%(role)s» "
+                    "в проекте «%(project)s»."
+                )
                 % {
                     "specialist": _display_user(specialist_user),
                     "role": application.vacancy.title,
@@ -143,8 +147,10 @@ def send_application_status_email(application_id: int) -> int:
     accepted = application.status == Application.Status.ACCEPTED
     title = _("Отклик принят") if accepted else _("Отклик отклонён")
     intro = (
-        _("Ваш отклик на роль «%(role)s» в проекте «%(project)s» принят. "
-        "Вы добавлены в команду проекта.")
+        _(
+            "Ваш отклик на роль «%(role)s» в проекте «%(project)s» принят. "
+            "Вы добавлены в команду проекта."
+        )
         % {"role": application.vacancy.title, "project": application.project.title}
         if accepted
         else (
@@ -154,7 +160,7 @@ def send_application_status_email(application_id: int) -> int:
     )
 
     return _send_theme_email(
-        subject=_('%(status)s: «%(project)s»')
+        subject=_("%(status)s: «%(project)s»")
         % {"status": title, "project": application.project.title},
         recipient=application.specialist.user.email,
         context={
@@ -209,8 +215,7 @@ def send_invitation_created_email(invitation_id: int) -> int:
             "greeting": _("Здравствуйте, %(name)s.")
             % {"name": _display_user(invitation.specialist.user)},
             "intro": (
-                _("%(owner)s приглашает вас в проект «%(project)s» "
-                "на роль «%(role)s».")
+                _("%(owner)s приглашает вас в проект «%(project)s» на роль «%(role)s».")
                 % {
                     "owner": _display_user(invitation.invited_by),
                     "project": invitation.project.title,
@@ -256,7 +261,7 @@ def send_invitation_status_email(invitation_id: int) -> int:
     specialist_user = invitation.specialist.user
 
     return _send_theme_email(
-        subject=_('%(status)s: «%(project)s»')
+        subject=_("%(status)s: «%(project)s»")
         % {"status": title, "project": invitation.project.title},
         recipient=invitation.invited_by.email,
         context={
@@ -266,8 +271,10 @@ def send_invitation_status_email(invitation_id: int) -> int:
             "greeting": _("Здравствуйте, %(name)s.")
             % {"name": _display_user(invitation.invited_by)},
             "intro": (
-                _("Специалист %(specialist)s %(decision)s приглашение "
-                "в проект «%(project)s».")
+                _(
+                    "Специалист %(specialist)s %(decision)s приглашение "
+                    "в проект «%(project)s»."
+                )
                 % {
                     "specialist": _display_user(specialist_user),
                     "decision": _("принял") if accepted else _("отклонил"),
@@ -360,51 +367,67 @@ def send_pending_invitation_digest() -> int:
 
 @shared_task(**EMAIL_TASK_OPTIONS)
 def send_pending_application_digest_email(owner_id: int, pending_count: int) -> int:
-    """Отправляет одному владельцу сводку с retry/backoff."""
+    """Отправляет одному владельцу HTML-сводку по ожидающим откликам."""
     owner = User.objects.filter(pk=owner_id).first()
+
     if not owner or not owner.email:
         return 0
-    return send_mail(
+
+    return _send_theme_email(
         subject=_("New-Makers: новые отклики ждут рассмотрения"),
-        message=(
-            _("Здравствуйте, %(name)s.\n\n")
-            % {"name": owner.get_full_name() or owner.username}
-            + ngettext(
-                "У ваших проектов есть %(count)s отклик на рассмотрении.\n",
-                "У ваших проектов есть %(count)s откликов на рассмотрении.\n",
+        recipient=owner.email,
+        context={
+            "title": _("Новые отклики ждут рассмотрения"),
+            "preheader": _("У ваших проектов есть отклики, которые нужно обработать."),
+            "greeting": _("Здравствуйте, %(name)s.")
+            % {"name": owner.get_full_name() or owner.username},
+            "intro": ngettext(
+                "У ваших проектов есть %(count)s отклик на рассмотрении.",
+                "У ваших проектов есть %(count)s откликов на рассмотрении.",
                 pending_count,
             )
-            % {"count": pending_count}
-            + _("Откройте личный кабинет New-Makers, чтобы принять или отклонить их.")
-        ),
-        from_email=settings.DEFAULT_FROM_EMAIL,
-        recipient_list=[owner.email],
-        fail_silently=False,
+            % {"count": pending_count},
+            "details": [
+                (_("Ожидающих откликов"), pending_count),
+                (_("Действие"), _("Принять или отклонить отклики")),
+            ],
+            "action_url": _absolute_url(reverse("interactions:application_list")),
+            "action_label": _("Открыть отклики"),
+        },
     )
 
 
 @shared_task(**EMAIL_TASK_OPTIONS)
 def send_pending_invitation_digest_email(user_id: int, pending_count: int) -> int:
-    """Отправляет одному специалисту сводку с retry/backoff."""
+    """Отправляет одному специалисту HTML-сводку по ожидающим приглашениям."""
     user = User.objects.filter(pk=user_id).first()
+
     if not user or not user.email:
         return 0
-    return send_mail(
+
+    return _send_theme_email(
         subject=_("New-Makers: у вас есть приглашения в проекты"),
-        message=(
-            _("Здравствуйте, %(name)s.\n\n")
-            % {"name": user.get_full_name() or user.username}
-            + ngettext(
-                "Вас ждёт %(count)s приглашение в проект.\n",
-                "Вас ждут %(count)s приглашений в проекты.\n",
+        recipient=user.email,
+        context={
+            "title": _("Приглашения ждут ответа"),
+            "preheader": _(
+                "У вас есть приглашения в проекты, которые нужно обработать."
+            ),
+            "greeting": _("Здравствуйте, %(name)s.")
+            % {"name": user.get_full_name() or user.username},
+            "intro": ngettext(
+                "Вас ждёт %(count)s приглашение в проект.",
+                "Вас ждут %(count)s приглашений в проекты.",
                 pending_count,
             )
-            % {"count": pending_count}
-            + _("Откройте New-Makers, чтобы принять или отклонить приглашения.")
-        ),
-        from_email=settings.DEFAULT_FROM_EMAIL,
-        recipient_list=[user.email],
-        fail_silently=False,
+            % {"count": pending_count},
+            "details": [
+                (_("Ожидающих приглашений"), pending_count),
+                (_("Действие"), _("Принять или отклонить приглашения")),
+            ],
+            "action_url": _absolute_url(reverse("interactions:invitation_list")),
+            "action_label": _("Открыть приглашения"),
+        },
     )
 
 

@@ -2,59 +2,81 @@
 {% get_current_language as LANGUAGE_CODE %}
 <!DOCTYPE html>
 <html lang="{{ LANGUAGE_CODE }}">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ title }}</title>
-  </head>
-  <body style="margin:0;padding:0;background:#f3f5f2;color:#1f2933;font-family:Arial,Helvetica,sans-serif;">
-    <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;">{{ preheader }}</div>
-    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f3f5f2;padding:32px 12px;">
-      <tr>
-        <td align="center">
-          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:640px;background:#ffffff;border:1px solid #d9e2d0;border-radius:8px;overflow:hidden;">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{{ title }}</title>
+    </head>
+    <body style="margin:0;padding:0;background:#003366;color:#f6f5fe;font-family:'JetBrains Mono','Segoe UI',Arial,Helvetica,sans-serif;">
+        <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;">{{ preheader }}</div>
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#003366;padding:32px 12px;">
             <tr>
-              <td style="background:#20382f;padding:22px 28px;">
-                <div style="font-size:20px;line-height:24px;font-weight:700;color:#ffffff;">New-Makers</div>
-                <div style="font-size:13px;line-height:20px;color:#cfe0d4;margin-top:4px;">{% trans "Сервис поиска IT-команды" %}</div>
-              </td>
-            </tr>
-            <tr>
-              <td style="padding:30px 28px 8px;">
-                <h1 style="margin:0 0 16px;font-size:26px;line-height:32px;color:#20382f;">{{ title }}</h1>
-                <p style="margin:0 0 16px;font-size:16px;line-height:24px;">{{ greeting }}</p>
-                <p style="margin:0 0 22px;font-size:16px;line-height:24px;color:#334155;">{{ intro }}</p>
-                {% if message %}
-                  <div style="margin:0 0 24px;padding:16px 18px;border-left:4px solid #547c5f;background:#f6faf5;color:#24352c;font-size:15px;line-height:23px;">
-                    {{ message|linebreaksbr }}
-                  </div>
-                {% endif %}
-                {% if details %}
-                  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin:0 0 26px;border-collapse:collapse;">
-                    {% for label, value in details %}
-                      <tr>
-                        <td style="padding:10px 0;border-bottom:1px solid #e5ece2;color:#667085;font-size:14px;line-height:20px;width:36%;">{{ label }}</td>
-                        <td style="padding:10px 0;border-bottom:1px solid #e5ece2;color:#1f2933;font-size:14px;line-height:20px;font-weight:600;">{{ value }}</td>
-                      </tr>
-                    {% endfor %}
-                  </table>
-                {% endif %}
-                {% if action_url %}
-                  <a href="{{ action_url }}" style="display:inline-block;background:#547c5f;color:#ffffff;text-decoration:none;padding:12px 18px;border-radius:6px;font-size:15px;line-height:20px;font-weight:700;">{{ action_label }}</a>
-                {% endif %}
-              </td>
-            </tr>
-            {% if action_url %}
-              <tr>
-                <td style="padding:24px 28px 28px;color:#667085;font-size:13px;line-height:20px;">
-                  {% trans "Если кнопка не открывается, скопируйте ссылку в браузер:" %}<br>
-                  <a href="{{ action_url }}" style="color:#38604a;word-break:break-all;">{{ action_url }}</a>
+                <td align="center">
+                    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:660px;border-collapse:separate;border-spacing:0;background:#001f44;border:1px solid rgba(51,204,255,0.34);border-radius:22px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,0.28);">
+                        <tr>
+                            <td style="padding:0;background:#001f44;">
+                                <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#001f44;">
+                                    <tr>
+                                        <td style="padding:26px 30px;border-bottom:1px solid rgba(51,204,255,0.28);background:#001f44;">
+                                            <div style="font-family:'Space Grotesk','Segoe UI',Arial,Helvetica,sans-serif;font-size:24px;line-height:28px;font-weight:800;letter-spacing:0.03em;color:#f6f5fe;">New-Makers</div>
+                                            <div style="margin-top:6px;font-size:13px;line-height:20px;color:#33ccff;">{% trans "Сервис поиска IT-команды" %}</div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:32px 30px 12px;background:#001f44;">
+                                <p style="margin:0 0 12px;font-size:12px;line-height:18px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#ffffcc;">{% trans "уведомление" %}</p>
+                                <h1 style="margin:0 0 18px;font-family:'Space Grotesk','Segoe UI',Arial,Helvetica,sans-serif;font-size:30px;line-height:36px;font-weight:800;color:#f6f5fe;">{{ title }}</h1>
+                                <p style="margin:0 0 16px;font-size:16px;line-height:25px;color:#f6f5fe;">{{ greeting }}</p>
+                                <p style="margin:0 0 24px;font-size:16px;line-height:25px;color:rgba(246,245,254,0.78);">{{ intro }}</p>
+                                {% if message %}
+                                    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin:0 0 24px;border-collapse:separate;border-spacing:0;">
+                                        <tr>
+                                            <td style="padding:16px 18px;border:1px solid rgba(51,204,255,0.32);border-left:4px solid #33ccff;border-radius:14px;background:rgba(51,0,153,0.34);color:#f6f5fe;font-size:15px;line-height:24px;">{{ message|linebreaksbr }}</td>
+                                        </tr>
+                                    </table>
+                                {% endif %}
+                                {% if details %}
+                                    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin:0 0 26px;border-collapse:collapse;">
+                                        {% for label, value in details %}
+                                            <tr>
+                                                <td style="padding:11px 0;border-bottom:1px solid rgba(51,204,255,0.18);color:rgba(246,245,254,0.62);font-size:14px;line-height:20px;width:38%;vertical-align:top;">{{ label }}</td>
+                                                <td style="padding:11px 0;border-bottom:1px solid rgba(51,204,255,0.18);color:#ffffcc;font-size:14px;line-height:20px;font-weight:700;vertical-align:top;">{{ value }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </table>
+                                {% endif %}
+                                {% if action_url %}
+                                    <table role="presentation" cellspacing="0" cellpadding="0" style="margin:0 0 8px;">
+                                        <tr>
+                                            <td style="border-radius:14px;background:#3333cc;">
+                                                <a href="{{ action_url }}" style="display:inline-block;padding:13px 20px;border:1px solid rgba(51,204,255,0.78);border-radius:14px;background:#3333cc;color:#f6f5fe;font-size:15px;line-height:20px;font-weight:800;text-decoration:none;">{{ action_label }}</a>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% if action_url %}
+                            <tr>
+                                <td style="padding:18px 30px 30px;background:#001f44;color:rgba(246,245,254,0.62);font-size:13px;line-height:21px;">
+                                    {% trans "Если кнопка не открывается, скопируйте ссылку в браузер:" %}
+                                    <br>
+                                    <a href="{{ action_url }}" style="color:#33ccff;text-decoration:none;word-break:break-all;">{{ action_url }}</a>
+                                </td>
+                            </tr>
+                        {% endif %}
+                        <tr>
+                            <td style="padding:18px 30px;border-top:1px solid rgba(51,204,255,0.18);background:#001f44;color:rgba(246,245,254,0.58);font-size:12px;line-height:18px;">
+                                <span style="color:#33ccff;font-weight:800;">New-Makers</span>
+                                · {% trans "платформа для поиска проектов, специалистов и IT-команд" %}
+                            </td>
+                        </tr>
+                    </table>
                 </td>
-              </tr>
-            {% endif %}
-          </table>
-        </td>
-      </tr>
-    </table>
-  </body>
+            </tr>
+        </table>
+    </body>
 </html>

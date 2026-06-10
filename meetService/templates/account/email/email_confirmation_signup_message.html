@@ -1,0 +1,53 @@
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8">
+        <title>{% trans "Подтвердите email в New-Makers" %}</title>
+    </head>
+    <body style="margin:0;padding:0;background:#003366;color:#f6f5fe;font-family:'JetBrains Mono','Segoe UI',Arial,Helvetica,sans-serif;">
+        <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;">{% trans "Подтвердите адрес электронной почты, чтобы пользоваться New-Makers без ограничений." %}</div>
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#003366;padding:32px 12px;">
+            <tr>
+                <td align="center">
+                    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:660px;border-collapse:separate;border-spacing:0;background:#001f44;border:1px solid rgba(51,204,255,0.34);border-radius:22px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,0.28);">
+                        <tr>
+                            <td style="padding:26px 30px;border-bottom:1px solid rgba(51,204,255,0.28);background:#001f44;">
+                                <div style="font-family:'Space Grotesk','Segoe UI',Arial,Helvetica,sans-serif;font-size:24px;line-height:28px;font-weight:800;letter-spacing:0.03em;color:#f6f5fe;">New-Makers</div>
+                                <div style="margin-top:6px;font-size:13px;line-height:20px;color:#33ccff;">{% trans "Сервис поиска IT-команды" %}</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:32px 30px 12px;background:#001f44;">
+                                <p style="margin:0 0 12px;font-size:12px;line-height:18px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#ffffcc;">{% trans "аккаунт" %}</p>
+                                <h1 style="margin:0 0 18px;font-family:'Space Grotesk','Segoe UI',Arial,Helvetica,sans-serif;font-size:30px;line-height:36px;font-weight:800;color:#f6f5fe;">{% trans "Подтвердите email" %}</h1>
+                                <p style="margin:0 0 16px;font-size:16px;line-height:25px;color:#f6f5fe;">{% blocktrans with user_display=user_display %}Здравствуйте, {{ user_display }}.{% endblocktrans %}</p>
+                                <p style="margin:0 0 24px;font-size:16px;line-height:25px;color:rgba(246,245,254,0.78);">{% trans "Вы зарегистрировались в New-Makers. Подтвердите адрес электронной почты, чтобы завершить настройку аккаунта и пользоваться сервисом без ограничений." %}</p>
+                                <table role="presentation" cellspacing="0" cellpadding="0" style="margin:0 0 8px;">
+                                    <tr>
+                                        <td style="border-radius:14px;background:#3333cc;">
+                                            <a href="{{ activate_url }}" style="display:inline-block;padding:13px 20px;border:1px solid rgba(51,204,255,0.78);border-radius:14px;background:#3333cc;color:#f6f5fe;font-size:15px;line-height:20px;font-weight:800;text-decoration:none;">{% trans "Подтвердить email" %}</a>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:18px 30px 30px;background:#001f44;color:rgba(246,245,254,0.62);font-size:13px;line-height:21px;">
+                                {% trans "Если кнопка не открывается, скопируйте ссылку в браузер:" %}
+                                <br>
+                                <a href="{{ activate_url }}" style="color:#33ccff;text-decoration:none;word-break:break-all;">{{ activate_url }}</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:18px 30px;border-top:1px solid rgba(51,204,255,0.18);background:#001f44;color:rgba(246,245,254,0.58);font-size:12px;line-height:18px;">
+                                <span style="color:#33ccff;font-weight:800;">New-Makers</span>
+                                · {% trans "платформа для поиска проектов, специалистов и IT-команд" %}
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </body>
+</html>

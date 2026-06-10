@@ -5,14 +5,23 @@
 
 {{ intro }}
 
-{% if plain_message %}{% trans "Сообщение:" %}
+{% if plain_message %}
+{% trans "Сообщение:" %}
 {{ plain_message }}
 
-{% endif %}{% if details %}{% for label, value in details %}{{ label }}: {{ value }}
-{% endfor %}
-{% endif %}{% if action_url %}{{ action_label }}:
-{{ action_url }}
 {% endif %}
+{% if details %}
+{% trans "Детали:" %}
+{% for label, value in details %}
+- {{ label }}: {{ value }}
+{% endfor %}
 
+{% endif %}
+{% if action_url %}
+{{ action_label }}:
+{{ action_url }}
+
+{% endif %}
+—
 New-Makers
 {% trans "Сервис поиска IT-команды" %}
