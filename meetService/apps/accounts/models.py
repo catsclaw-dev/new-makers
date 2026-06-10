@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.db.models.functions import Lower
 from django.utils.translation import gettext_lazy as _
 from simple_history.models import HistoricalRecords
 
@@ -72,6 +73,13 @@ class User(AbstractUser):
         verbose_name = _("пользователь")
         verbose_name_plural = _("пользователи")
         ordering = ["username"]
+        constraints = [
+            models.UniqueConstraint(
+                Lower("email"),
+                condition=~models.Q(email=""),
+                name="unique_user_email_ci",
+            ),
+        ]
 
     def __str__(self) -> str:
         """

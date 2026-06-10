@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from django.contrib import admin
-from django.db.models import Count, Q, QuerySet
+from django.db.models import Count, Q, F, QuerySet
 from django.http import HttpRequest
 from django.utils.translation import gettext_lazy as _
 from import_export.admin import ImportExportModelAdmin
@@ -100,7 +100,12 @@ class RoleAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
         return queryset.annotate(
             open_vacancies_count=Count(
                 "project_vacancies",
-                filter=Q(project_vacancies__status=ProjectVacancy.Status.OPEN),
+                filter=Q(
+                    project_vacancies__status=ProjectVacancy.Status.OPEN,
+                    project_vacancies__current_count__lt=F(
+                        "project_vacancies__required_count"
+                    ),
+                ),
                 distinct=True,
             ),
             main_specialists_count=Count(
@@ -333,7 +338,9 @@ class TechnologyAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
         )
 
     @admin.action(description=_("Отключить выбранные технологии"))
-    def deactivate_technologies(self, request: HttpRequest, queryset: QuerySet) -> object:
+    def deactivate_technologies(
+        self, request: HttpRequest, queryset: QuerySet
+    ) -> object:
         """
         Выполняет массовое действие в административном интерфейсе.
         Args:

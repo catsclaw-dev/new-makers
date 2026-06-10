@@ -161,6 +161,7 @@ class Command(BaseCommand):
         projects = self.create_projects(owners, technologies)
         vacancies = self.create_project_vacancies(projects, roles)
         memberships = self.create_memberships(projects, vacancies, specialists, owners)
+        self.sync_vacancy_counts(vacancies)
         applications = self.create_applications(
             projects, vacancies, specialists, memberships
         )
@@ -169,8 +170,6 @@ class Command(BaseCommand):
         )
         favorites = self.create_favorites(projects, users)
         files = self.create_project_files(projects)
-
-        self.sync_vacancy_counts(vacancies)
 
         self.stdout.write(self.style.SUCCESS("База данных успешно заполнена."))
         self.stdout.write(f"Ролей: {len(roles)}")
@@ -600,34 +599,29 @@ class Command(BaseCommand):
                     Application.Status.PENDING,
                     Application.Status.PENDING,
                     Application.Status.REJECTED,
-                    Application.Status.CANCELLED,
+                    Application.Status.REJECTED,
                 ]
             )
 
             if status in Application.ACTIVE_STATUSES and active_key in used_active:
                 status = Application.Status.REJECTED
 
-            try:
-                application = Application.objects.create(
-                    project=project,
-                    vacancy=vacancy,
-                    specialist=specialist,
-                    message=(
-                        f"Здравствуйте! Хочу присоединиться к проекту. "
-                        f"Мой опыт: {fake.sentence(nb_words=12)}"
-                    ),
-                    status=status,
-                    reviewed_at=timezone.now()
-                    if status
-                    in [Application.Status.REJECTED, Application.Status.CANCELLED]
-                    else None,
-                    reviewed_by=project.owner
-                    if status
-                    in [Application.Status.REJECTED, Application.Status.CANCELLED]
-                    else None,
-                )
-            except Exception:
-                continue
+            application = Application.objects.create(
+                project=project,
+                vacancy=vacancy,
+                specialist=specialist,
+                message=(
+                    f"Здравствуйте! Хочу присоединиться к проекту. "
+                    f"Мой опыт: {fake.sentence(nb_words=12)}"
+                ),
+                status=status,
+                reviewed_at=timezone.now()
+                if status == Application.Status.REJECTED
+                else None,
+                reviewed_by=project.owner
+                if status == Application.Status.REJECTED
+                else None,
+            )
 
             if status in Application.ACTIVE_STATUSES:
                 used_active.add(active_key)
@@ -694,31 +688,33 @@ class Command(BaseCommand):
                     Invitation.Status.PENDING,
                     Invitation.Status.PENDING,
                     Invitation.Status.DECLINED,
-                    Invitation.Status.CANCELLED,
+                    Invitation.Status.DECLINED,
                 ]
             )
 
             if status == Invitation.Status.PENDING and pending_key in used_pending:
                 status = Invitation.Status.DECLINED
 
-            try:
-                invitation = Invitation.objects.create(
-                    project=project,
-                    vacancy=vacancy,
-                    specialist=specialist,
-                    invited_by=project.owner,
-                    message=(
-                        f"Здравствуйте! Ваш профиль подходит для роли «{vacancy.title}». "
-                        f"Будем рады видеть вас в команде."
-                    ),
-                    status=status,
-                    responded_at=timezone.now()
-                    if status
-                    in [Invitation.Status.DECLINED, Invitation.Status.CANCELLED]
-                    else None,
-                )
-            except Exception:
-                continue
+            if (
+                status == Invitation.Status.PENDING
+                and not specialist.is_available_for_project()
+            ):
+                status = Invitation.Status.DECLINED
+
+            invitation = Invitation.objects.create(
+                project=project,
+                vacancy=vacancy,
+                specialist=specialist,
+                invited_by=project.owner,
+                message=(
+                    f"Здравствуйте! Ваш профиль подходит для роли «{vacancy.title}». "
+                    f"Будем рады видеть вас в команде."
+                ),
+                status=status,
+                responded_at=timezone.now()
+                if status == Invitation.Status.DECLINED
+                else None,
+            )
 
             if status == Invitation.Status.PENDING:
                 used_pending.add(pending_key)

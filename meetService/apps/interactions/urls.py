@@ -12,7 +12,7 @@ urlpatterns = [
         name="application_accept",
     ),
     path(
-        "applications/<int:pk>/reject",
+        "applications/<int:pk>/reject/",
         views.application_reject,
         name="application_reject",
     ),

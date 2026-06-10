@@ -23,7 +23,6 @@ class Application(models.Model):
         PENDING = "pending", _("На рассмотрении")
         ACCEPTED = "accepted", _("Принят")
         REJECTED = "rejected", _("Отклонён")
-        CANCELLED = "cancelled", _("Отменён")
 
     ACTIVE_STATUSES = [
         Status.PENDING,
@@ -120,6 +119,21 @@ class Application(models.Model):
                 errors["project"] = _("Нельзя откликаться на собственный проект.")
 
         if self.status == self.Status.PENDING:
+            if self.project_id and self.specialist_id:
+                already_member = ProjectMembership.objects.filter(
+                    project=self.project,
+                    specialist=self.specialist,
+                    status__in=[
+                        ProjectMembership.Status.ACTIVE,
+                        ProjectMembership.Status.PAUSED,
+                    ],
+                ).exists()
+
+                if already_member:
+                    errors["specialist"] = _(
+                        "Специалист уже состоит в команде этого проекта."
+                    )
+
             if self.project_id and self.project.status != Project.Status.PUBLISHED:
                 errors["project"] = _("Нельзя откликаться на неопубликованный проект.")
 
@@ -174,6 +188,14 @@ class Application(models.Model):
             if application.status != application.Status.PENDING:
                 raise ValidationError(_("Можно принять только отклик на рассмотрении."))
 
+            application.project = Project.objects.select_for_update().get(
+                pk=application.project_id
+            )
+            application.vacancy.project = application.project
+
+            if application.project.status != Project.Status.PUBLISHED:
+                raise ValidationError(_("Нельзя принять отклик в закрытый проект."))
+
             if reviewed_by and not application.project.can_be_edited_by(reviewed_by):
                 raise ValidationError(
                     _(
@@ -193,10 +215,11 @@ class Application(models.Model):
             reviewed_at = timezone.now()
 
             if already_member:
-                Application.objects.filter(pk=application.pk).update(
-                    status=Application.Status.ACCEPTED,
-                    reviewed_at=reviewed_at,
-                    reviewed_by_id=reviewed_by.pk if reviewed_by else None,
+                application.status = Application.Status.ACCEPTED
+                application.reviewed_at = reviewed_at
+                application.reviewed_by = reviewed_by
+                application.save(
+                    update_fields=["status", "reviewed_at", "reviewed_by"]
                 )
 
                 self.status = Application.Status.ACCEPTED
@@ -213,11 +236,10 @@ class Application(models.Model):
                 added_by=reviewed_by,
             )
 
-            Application.objects.filter(pk=application.pk).update(
-                status=Application.Status.ACCEPTED,
-                reviewed_at=reviewed_at,
-                reviewed_by_id=reviewed_by.pk if reviewed_by else None,
-            )
+            application.status = Application.Status.ACCEPTED
+            application.reviewed_at = reviewed_at
+            application.reviewed_by = reviewed_by
+            application.save(update_fields=["status", "reviewed_at", "reviewed_by"])
 
             self.status = Application.Status.ACCEPTED
             self.reviewed_at = reviewed_at
@@ -255,11 +277,10 @@ class Application(models.Model):
 
             reviewed_at = timezone.now()
 
-            Application.objects.filter(pk=application.pk).update(
-                status=Application.Status.REJECTED,
-                reviewed_at=reviewed_at,
-                reviewed_by_id=reviewed_by.pk if reviewed_by else None,
-            )
+            application.status = Application.Status.REJECTED
+            application.reviewed_at = reviewed_at
+            application.reviewed_by = reviewed_by
+            application.save(update_fields=["status", "reviewed_at", "reviewed_by"])
 
             self.status = Application.Status.REJECTED
             self.reviewed_at = reviewed_at
@@ -276,7 +297,6 @@ class Invitation(models.Model):
         PENDING = "pending", _("Ожидает ответа")
         ACCEPTED = "accepted", _("Принято")
         DECLINED = "declined", _("Отклонено")
-        CANCELLED = "cancelled", _("Отменено")
         EXPIRED = "expired", _("Истекло")
 
     project = models.ForeignKey(
@@ -369,21 +389,27 @@ class Invitation(models.Model):
             if self.project.owner_id == self.specialist.user_id:
                 errors["project"] = _("Нельзя откликаться на собственный проект.")
 
-            already_member = ProjectMembership.objects.filter(
-                project=self.project,
-                specialist=self.specialist,
-                status__in=[
-                    ProjectMembership.Status.ACTIVE,
-                    ProjectMembership.Status.PAUSED,
-                ],
-            ).exists()
+        if self.status == self.Status.PENDING:
+            if self.project_id and self.specialist_id:
+                already_member = ProjectMembership.objects.filter(
+                    project=self.project,
+                    specialist=self.specialist,
+                    status__in=[
+                        ProjectMembership.Status.ACTIVE,
+                        ProjectMembership.Status.PAUSED,
+                    ],
+                ).exists()
 
-            if already_member:
-                errors["specialist"] = _(
-                    "Специалист уже состоит в команде этого проекта."
+                if already_member:
+                    errors["specialist"] = _(
+                        "Специалист уже состоит в команде этого проекта."
+                    )
+
+            if self.specialist_id and not self.specialist.is_available_for_project():
+                errors["__all__"] = _(
+                    "Приглашать можно только специалиста, открытого к предложениям."
                 )
 
-        if self.status == self.Status.PENDING:
             if self.project_id and self.project.status != Project.Status.PUBLISHED:
                 errors["project"] = _("Нельзя откликаться на неопубликованный проект.")
 
@@ -444,6 +470,14 @@ class Invitation(models.Model):
                     _("Можно принять только приглашение со статусом «Ожидает ответа».")
                 )
 
+            invitation.project = Project.objects.select_for_update().get(
+                pk=invitation.project_id
+            )
+            invitation.vacancy.project = invitation.project
+
+            if invitation.project.status != Project.Status.PUBLISHED:
+                raise ValidationError(_("Нельзя принять приглашение в закрытый проект."))
+
             already_member = ProjectMembership.objects.filter(
                 project=invitation.project,
                 specialist=invitation.specialist,
@@ -456,10 +490,9 @@ class Invitation(models.Model):
             if already_member:
                 responded_at = timezone.now()
 
-                Invitation.objects.filter(pk=invitation.pk).update(
-                    status=Invitation.Status.ACCEPTED,
-                    responded_at=responded_at,
-                )
+                invitation.status = Invitation.Status.ACCEPTED
+                invitation.responded_at = responded_at
+                invitation.save(update_fields=["status", "responded_at"])
 
                 self.status = Invitation.Status.ACCEPTED
                 self.responded_at = responded_at
@@ -479,10 +512,9 @@ class Invitation(models.Model):
 
             responded_at = timezone.now()
 
-            Invitation.objects.filter(pk=invitation.pk).update(
-                status=Invitation.Status.ACCEPTED,
-                responded_at=responded_at,
-            )
+            invitation.status = Invitation.Status.ACCEPTED
+            invitation.responded_at = responded_at
+            invitation.save(update_fields=["status", "responded_at"])
 
             self.status = Invitation.Status.ACCEPTED
             self.responded_at = responded_at
@@ -496,20 +528,21 @@ class Invitation(models.Model):
         """
         Отклоняет приглашение.
         """
-        if self.status != self.Status.PENDING:
-            raise ValidationError(
-                _("Можно отклонить только приглашение со статусом «Ожидает ответа».")
-            )
+        with transaction.atomic():
+            invitation = Invitation.objects.select_for_update().get(pk=self.pk)
 
-        responded_at = timezone.now()
+            if invitation.status != self.Status.PENDING:
+                raise ValidationError(
+                    _("Можно отклонить только приглашение со статусом «Ожидает ответа».")
+                )
 
-        Invitation.objects.filter(pk=self.pk).update(
-            status=Invitation.Status.DECLINED,
-            responded_at=responded_at,
-        )
+            responded_at = timezone.now()
+            invitation.status = Invitation.Status.DECLINED
+            invitation.responded_at = responded_at
+            invitation.save(update_fields=["status", "responded_at"])
 
-        self.status = Invitation.Status.DECLINED
-        self.responded_at = responded_at
+        self.status = invitation.status
+        self.responded_at = invitation.responded_at
         from apps.interactions.emails import enqueue_invitation_status_email
 
         enqueue_invitation_status_email(self.pk)

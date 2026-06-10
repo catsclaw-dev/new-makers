@@ -4,6 +4,7 @@ from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.core.exceptions import ValidationError
 from django.db import models, transaction
+from django.db import IntegrityError
 from django.urls import reverse
 from django.db.models import F, Q, constraints, Count, QuerySet
 from django.utils import timezone
@@ -33,7 +34,10 @@ class ProjectQuerySet(models.QuerySet):
         return self.annotate(
             open_vacancy_count=Count(
                 "vacancies",
-                filter=Q(vacancies__status="open"),
+                filter=Q(
+                    vacancies__status="open",
+                    vacancies__current_count__lt=F("vacancies__required_count"),
+                ),
             )
         )
 
@@ -233,7 +237,10 @@ class Project(models.Model):
         """
         Проверяет, есть ли у проекта открытые роли.
         """
-        return self.vacancies.filter(status=ProjectVacancy.Status.OPEN).exists()
+        return self.vacancies.filter(
+            status=ProjectVacancy.Status.OPEN,
+            current_count__lt=F("required_count"),
+        ).exists()
 
     def can_publish(self) -> bool:
         """
@@ -249,6 +256,55 @@ class Project(models.Model):
         """
         return bool(user and (user.is_staff or self.owner_id == user.id))
 
+    def archive(self, *, archived_by: User) -> None:
+        """Атомарно архивирует проект и завершает связанные ожидания."""
+        from apps.interactions.emails import enqueue_application_status_email
+        from apps.interactions.models import Application, FavoriteProject, Invitation
+
+        with transaction.atomic():
+            project = Project.objects.select_for_update().get(pk=self.pk)
+            archived_at = timezone.now()
+
+            FavoriteProject.objects.filter(project=project).delete()
+
+            vacancies = ProjectVacancy.objects.select_for_update().filter(
+                project=project
+            )
+            for vacancy in vacancies:
+                if vacancy.status != ProjectVacancy.Status.CLOSED:
+                    vacancy.status = ProjectVacancy.Status.CLOSED
+                    vacancy.save(update_fields=["status", "updated_at"])
+
+            applications = Application.objects.select_for_update().filter(
+                project=project,
+                status=Application.Status.PENDING,
+            )
+            for application in applications:
+                application.status = Application.Status.REJECTED
+                application.reviewed_at = archived_at
+                application.reviewed_by = archived_by
+                application.save(
+                    update_fields=["status", "reviewed_at", "reviewed_by"]
+                )
+                enqueue_application_status_email(application.pk)
+
+            invitations = Invitation.objects.select_for_update().filter(
+                project=project,
+                status=Invitation.Status.PENDING,
+            )
+            for invitation in invitations:
+                invitation.status = Invitation.Status.EXPIRED
+                invitation.responded_at = archived_at
+                invitation.save(update_fields=["status", "responded_at"])
+
+            project.status = self.Status.ARCHIVED
+            project.updated_by = archived_by
+            project.save(update_fields=["status", "updated_by", "updated_at"])
+
+        self.status = project.status
+        self.updated_by = project.updated_by
+        self.updated_at = project.updated_at
+
     def save(self, *args: object, **kwargs: object) -> None:
         """
         Очищает текстовые поля и создаёт slug, если он не указан.
@@ -261,25 +317,25 @@ class Project(models.Model):
         self.description = self.description.strip()
         self.goal = self.goal.strip()
 
-        if not self.slug:
-            base_slug = slugify(self.title, allow_unicode=True)[:180] or "project"
-            slug = base_slug
-            counter = 1
+        if self.slug or self.pk:
+            super().save(*args, **kwargs)
+            return
 
-            queryset = Project.objects.filter(slug=slug)
-            if self.pk:
-                queryset = queryset.exclude(pk=self.pk)
+        base_slug = slugify(self.title, allow_unicode=True)[:180] or "project"
 
-            while queryset.exists():
-                counter += 1
-                slug = f"{base_slug}-{counter}"
-                queryset = Project.objects.filter(slug=slug)
-                if self.pk:
-                    queryset = queryset.exclude(pk=self.pk)
+        for counter in range(1, 1001):
+            self.slug = base_slug if counter == 1 else f"{base_slug}-{counter}"
+            try:
+                with transaction.atomic():
+                    super().save(*args, **kwargs)
+                return
+            except IntegrityError:
+                if not Project.objects.filter(slug=self.slug).exists():
+                    raise
+                self.pk = None
+                self._state.adding = True
 
-            self.slug = slug
-
-        super().save(*args, **kwargs)
+        raise ValidationError(_("Не удалось подобрать уникальный URL проекта."))
 
 
 class ProjectTechnology(models.Model):
@@ -413,7 +469,9 @@ class ProjectVacancy(models.Model):
         Проверяет, открыта ли роль для откликов.
         """
         return (
-            self.status == self.Status.OPEN and self.current_count < self.required_count
+            self.project.status == Project.Status.PUBLISHED
+            and self.status == self.Status.OPEN
+            and self.current_count < self.required_count
         )
 
     def remaining_slots(self) -> int:
@@ -447,6 +505,9 @@ class ProjectVacancy(models.Model):
                 ProjectVacancy.objects.select_for_update()
                 .select_related("project", "role")
                 .get(pk=self.pk)
+            )
+            vacancy.project = Project.objects.select_for_update().get(
+                pk=vacancy.project_id
             )
 
             if not vacancy.is_open():
@@ -584,6 +645,13 @@ class ProjectMembership(models.Model):
                 condition=Q(status__in=["active", "paused"]),
                 name="unique_active_project_specialist_role",
             ),
+            models.CheckConstraint(
+                condition=(
+                    Q(status="left", left_at__isnull=False)
+                    | (~Q(status="left") & Q(left_at__isnull=True))
+                ),
+                name="membership_left_at_matches_status",
+            ),
         ]
 
     def __str__(self) -> str:
@@ -597,6 +665,134 @@ class ProjectMembership(models.Model):
         Проверяет, является ли участник активным.
         """
         return self.status == self.Status.ACTIVE
+
+    def clean(self) -> None:
+        """Проверяет согласованность проекта, роли, вакансии и статуса."""
+        errors = {}
+        active_statuses = [self.Status.ACTIVE, self.Status.PAUSED]
+
+        if self.vacancy_id:
+            vacancy = self.vacancy
+
+            if self.project_id and vacancy.project_id != self.project_id:
+                errors["vacancy"] = _("Выбранная роль относится к другому проекту.")
+
+            if self.role_id and vacancy.role_id != self.role_id:
+                errors["role"] = _("Роль участника не совпадает с ролью вакансии.")
+
+            previous = None
+            if self.pk:
+                previous = ProjectMembership.objects.filter(pk=self.pk).values(
+                    "vacancy_id",
+                    "status",
+                ).first()
+
+            needs_free_slot = self.status in active_statuses and (
+                previous is None
+                or previous["vacancy_id"] != self.vacancy_id
+                or previous["status"] not in active_statuses
+            )
+
+            if needs_free_slot:
+                if not vacancy.is_open():
+                    errors["vacancy"] = _(
+                        "Занять место можно только в открытой роли опубликованного проекта."
+                    )
+                else:
+                    occupied_count = ProjectMembership.objects.filter(
+                        vacancy=vacancy,
+                        status__in=active_statuses,
+                    ).exclude(pk=self.pk).count()
+
+                    if occupied_count >= vacancy.required_count:
+                        errors["vacancy"] = _("В выбранной роли проекта нет свободных мест.")
+
+        if self.status == self.Status.LEFT and self.left_at is None:
+            errors["left_at"] = _("Для покинувшего проект участника нужна дата выхода.")
+
+        if self.status != self.Status.LEFT and self.left_at is not None:
+            errors["left_at"] = _(
+                "Дата выхода допустима только для покинувшего проект участника."
+            )
+
+        if errors:
+            raise ValidationError(errors)
+
+    def save(self, *args: object, **kwargs: object) -> None:
+        """Нормализует дату выхода и валидирует бизнес-инварианты."""
+        if self.status == self.Status.LEFT:
+            self.left_at = self.left_at or timezone.now()
+        else:
+            self.left_at = None
+
+        if kwargs.get("update_fields") is not None:
+            kwargs["update_fields"] = set(kwargs["update_fields"]) | {"left_at"}
+
+        self.full_clean()
+        super().save(*args, **kwargs)
+
+    def move_to(
+        self,
+        *,
+        vacancy: ProjectVacancy,
+        status: str,
+    ) -> ProjectMembership:
+        """Атомарно меняет вакансию или статус участия и пересчитывает места."""
+        with transaction.atomic():
+            membership = ProjectMembership.objects.select_for_update().get(pk=self.pk)
+
+            if membership.status == self.Status.LEFT:
+                raise ValidationError(
+                    _("Историческую запись покинувшего проект участника нельзя менять.")
+                )
+
+            vacancy_ids = sorted(
+                {
+                    vacancy.pk,
+                    *(
+                        [membership.vacancy_id]
+                        if membership.vacancy_id is not None
+                        else []
+                    ),
+                }
+            )
+            locked_vacancies = {
+                item.pk: item
+                for item in ProjectVacancy.objects.select_for_update()
+                .select_related("project", "role")
+                .filter(pk__in=vacancy_ids)
+                .order_by("pk")
+            }
+            target_vacancy = locked_vacancies[vacancy.pk]
+            old_vacancy = locked_vacancies.get(membership.vacancy_id)
+
+            if target_vacancy.project_id != membership.project_id:
+                raise ValidationError(_("Выбранная роль относится к другому проекту."))
+
+            if status == self.Status.LEFT and target_vacancy.pk != membership.vacancy_id:
+                raise ValidationError(
+                    _("При выходе участника оставь его текущую роль проекта.")
+                )
+
+            membership.vacancy = target_vacancy
+            membership.role = target_vacancy.role
+            membership.status = status
+            membership.save()
+
+            if old_vacancy is not None:
+                old_vacancy.sync_current_count()
+
+            if old_vacancy is None or old_vacancy.pk != target_vacancy.pk:
+                target_vacancy.sync_current_count()
+
+            self.project = membership.project
+            self.specialist = membership.specialist
+            self.vacancy = membership.vacancy
+            self.role = membership.role
+            self.status = membership.status
+            self.left_at = membership.left_at
+
+            return membership
 
 
 class ProjectFile(models.Model):

@@ -16,9 +16,11 @@ def sync_project_vacancy_counts() -> int:
 
     for vacancy in vacancies:
         active_count = ProjectMembership.objects.filter(
-            project=vacancy.project,
-            role=vacancy.role,
-            status=ProjectMembership.Status.ACTIVE,
+            vacancy=vacancy,
+            status__in=[
+                ProjectMembership.Status.ACTIVE,
+                ProjectMembership.Status.PAUSED,
+            ],
         ).count()
         new_status = vacancy.status
 

@@ -3,9 +3,10 @@ from __future__ import annotations
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.test import TestCase
+from django.urls import reverse
 
 from apps.directories.models import Role
-from apps.interactions.models import Application
+from apps.interactions.models import Application, Invitation
 from apps.projects.models import Project, ProjectMembership, ProjectVacancy
 from apps.specialists.models import SpecialistProfile
 
@@ -110,3 +111,69 @@ class ApplicationBusinessTests(TestCase):
         self.assertEqual(membership.status, ProjectMembership.Status.ACTIVE)
         self.assertEqual(self.vacancy.current_count, 1)
         self.assertEqual(self.vacancy.status, ProjectVacancy.Status.CLOSED)
+
+    def test_application_cannot_be_accepted_after_project_closed(self) -> None:
+        """Проверяет запрет принятия старого отклика в закрытый проект."""
+        application = Application.objects.create(
+            project=self.project,
+            vacancy=self.vacancy,
+            specialist=self.specialist,
+        )
+        self.project.status = Project.Status.CLOSED
+        self.project.save(update_fields=["status", "updated_at"])
+
+        with self.assertRaises(ValidationError):
+            application.accept(reviewed_by=self.owner)
+
+        self.assertFalse(
+            ProjectMembership.objects.filter(
+                project=self.project,
+                specialist=self.specialist,
+            ).exists()
+        )
+
+    def test_invitation_cannot_be_accepted_after_project_closed(self) -> None:
+        """Проверяет запрет принятия старого приглашения в закрытый проект."""
+        invitation = Invitation.objects.create(
+            project=self.project,
+            vacancy=self.vacancy,
+            specialist=self.specialist,
+            invited_by=self.owner,
+        )
+        self.project.status = Project.Status.CLOSED
+        self.project.save(update_fields=["status", "updated_at"])
+
+        with self.assertRaises(ValidationError):
+            invitation.accept()
+
+    def test_hidden_specialist_invitation_page_returns_not_found(self) -> None:
+        """Проверяет недоступность приглашения скрытого специалиста по ID."""
+        self.specialist.status = SpecialistProfile.AvailabilityStatus.HIDDEN
+        self.specialist.save(update_fields=["status", "updated_at"])
+        self.client.force_login(self.owner)
+
+        response = self.client.get(
+            reverse(
+                "interactions:invite_specialist",
+                kwargs={"pk": self.specialist.pk},
+            )
+        )
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_paused_member_cannot_apply_again_through_web(self) -> None:
+        ProjectMembership.objects.create(
+            project=self.project,
+            specialist=self.specialist,
+            vacancy=self.vacancy,
+            role=self.role,
+            status=ProjectMembership.Status.PAUSED,
+        )
+        self.client.force_login(self.specialist_user)
+
+        response = self.client.get(
+            reverse("interactions:project_apply", kwargs={"slug": self.project.slug})
+        )
+
+        self.assertRedirects(response, self.project.get_absolute_url())
+        self.assertFalse(Application.objects.exists())

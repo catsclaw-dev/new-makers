@@ -1,15 +1,19 @@
 from __future__ import annotations
 
+from datetime import timedelta
+from zoneinfo import ZoneInfo
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import Q
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from apps.directories.models import Role, Technology
-from apps.projects.models import ProjectMembership
+from apps.projects.models import Project, ProjectMembership
 from apps.specialists.models import SpecialistProfile
 from apps.specialists.forms import SpecialistProfileForm
 
@@ -30,28 +34,7 @@ def specialist_list(request: HttpRequest) -> HttpResponse:
     selected_formats = [value for value in request.GET.getlist("formats") if value]
     selected_timezones = [value for value in request.GET.getlist("timezones") if value]
 
-    timezone_groups = [
-        {
-            "value": "utc_0_2",
-            "label": "UTC +0...+2",
-            "values": ["UTC", "Etc/UTC", "Europe/London", "Europe/Kaliningrad"],
-        },
-        {
-            "value": "utc_3_5",
-            "label": "UTC +3...+5",
-            "values": ["Europe/Moscow", "Europe/Samara", "Asia/Yekaterinburg"],
-        },
-        {
-            "value": "utc_6_8",
-            "label": "UTC +6...+8",
-            "values": ["Asia/Omsk", "Asia/Novosibirsk", "Asia/Krasnoyarsk", "Asia/Irkutsk"],
-        },
-        {
-            "value": "utc_9_12",
-            "label": "UTC +9...+12",
-            "values": ["Asia/Yakutsk", "Asia/Vladivostok", "Asia/Magadan", "Asia/Kamchatka"],
-        },
-    ]
+    timezone_groups = _timezone_groups()
 
     specialists = (
         SpecialistProfile.objects.select_related("user", "main_role")
@@ -153,6 +136,39 @@ def specialist_list(request: HttpRequest) -> HttpResponse:
 
     return render(request, "specialists/specialist_list.html", context)
 
+
+def _timezone_groups() -> list[dict[str, object]]:
+    """Группирует используемые IANA-зоны по текущему UTC offset."""
+    definitions = [
+        ("utc_minus", "UTC -12...-1", -12, 0),
+        ("utc_0", "UTC", 0, 1),
+        ("utc_1_3", "UTC +1...+3", 1, 4),
+        ("utc_4_6", "UTC +4...+6", 4, 7),
+        ("utc_7_9", "UTC +7...+9", 7, 10),
+        ("utc_10_14", "UTC +10...+14", 10, 15),
+    ]
+    groups = [
+        {"value": value, "label": label, "values": []}
+        for value, label, _minimum, _maximum in definitions
+    ]
+    now = timezone.now()
+    zones = SpecialistProfile.objects.exclude(timezone="").values_list(
+        "timezone", flat=True
+    ).distinct()
+
+    for zone_name in zones:
+        try:
+            offset = now.astimezone(ZoneInfo(zone_name)).utcoffset() or timedelta(0)
+        except (ValueError, KeyError):
+            continue
+        offset_hours = offset.total_seconds() / 3600
+        for group, (_value, _label, minimum, maximum) in zip(groups, definitions):
+            if minimum <= offset_hours < maximum:
+                group["values"].append(zone_name)
+                break
+
+    return [group for group in groups if group["values"]]
+
 def specialist_detail(request: HttpRequest, pk: int | None) -> HttpResponse:
     """
     Детальная страница специалиста.
@@ -181,6 +197,22 @@ def specialist_detail(request: HttpRequest, pk: int | None) -> HttpResponse:
         .filter(specialist=specialist)
         .order_by("-joined_at")
     )
+
+    can_view_private_memberships = request.user.is_authenticated and (
+        request.user.is_staff or specialist.user_id == request.user.id
+    )
+
+    if not can_view_private_memberships:
+        memberships = memberships.filter(
+            project__status__in=[
+                Project.Status.PUBLISHED,
+                Project.Status.CLOSED,
+            ],
+            status__in=[
+                ProjectMembership.Status.ACTIVE,
+                ProjectMembership.Status.PAUSED,
+            ],
+        )
 
     context = {
         "specialist": specialist,

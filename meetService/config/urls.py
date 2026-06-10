@@ -16,19 +16,26 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.conf import settings
 from django.conf.urls.static import static
+from django.views.static import serve as static_serve
 from django.views.i18n import set_language
 from django.utils.translation import gettext_lazy as _
 
 from config import views
+from apps.projects.views import project_file_serve
 
-admin.site.site_header = _("MeetService - администрирование")
-admin.site.site_title = "MeetService Admin"
+admin.site.site_header = "New-Makers Admin"
+admin.site.site_title = "New-Makers Admin"
 admin.site.index_title = _("Админка сервиса по поиску IT-команды")
 
 urlpatterns = [
+    re_path(
+        r"^media/projects/files/(?P<path>.+)$",
+        project_file_serve,
+        name="project_file_serve",
+    ),
     path("admin/", admin.site.urls),
     path("api/", include("apps.api.urls")),
     path("oauth/", include("allauth.urls")),
@@ -56,4 +63,11 @@ if settings.DEBUG:
             path("silk/", include("silk.urls", namespace="silk")),
         ]
 
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+if settings.SERVE_MEDIA:
+    urlpatterns += [
+        re_path(
+            r"^media/(?!projects/files/)(?P<path>.*)$",
+            static_serve,
+            {"document_root": settings.MEDIA_ROOT},
+        ),
+    ]

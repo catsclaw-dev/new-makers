@@ -10,7 +10,7 @@ urlpatterns = [
     path("projects/my/", views.my_projects, name="my_projects"),
     path("projects/create/", views.project_create, name="project_create"),
     path(
-        "projects/<str:slug>/submit-for-moderation",
+        "projects/<str:slug>/submit-for-moderation/",
         views.project_submit_for_moderation,
         name="project_submit_for_moderation",
     ),
@@ -44,7 +44,7 @@ urlpatterns = [
     path("teams/my/", views.my_teams, name="my_teams"),
     path("projects/<str:slug>/", views.project_detail, name="project_detail"),
     path(
-        "projects/<str:slug>/archive",
+        "projects/<str:slug>/archive/",
         views.project_archive,
         name="project_archive",
     ),

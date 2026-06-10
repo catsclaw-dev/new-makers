@@ -60,6 +60,7 @@ class ProjectTaskTests(TestCase):
         ProjectMembership.objects.create(
             project=self.project,
             specialist=self.specialist,
+            vacancy=vacancy,
             role=self.role,
             added_by=self.owner,
         )
@@ -85,6 +86,7 @@ class ProjectTaskTests(TestCase):
         ProjectMembership.objects.create(
             project=self.project,
             specialist=self.specialist,
+            vacancy=vacancy,
             role=self.role,
             added_by=self.owner,
         )
@@ -125,13 +127,16 @@ class ProjectTaskTests(TestCase):
             title="Frontend",
             description="Нужен frontend-разработчик.",
             required_count=2,
-            status=ProjectVacancy.Status.PAUSED,
         )
         ProjectMembership.objects.create(
             project=self.project,
             specialist=self.specialist,
+            vacancy=vacancy,
             role=self.role,
             added_by=self.owner,
+        )
+        ProjectVacancy.objects.filter(pk=vacancy.pk).update(
+            status=ProjectVacancy.Status.PAUSED
         )
 
         changed_count = sync_project_vacancy_counts()
@@ -161,3 +166,40 @@ class ProjectTaskTests(TestCase):
         self.assertEqual(changed_count, 1)
         self.assertEqual(vacancy.current_count, 0)
         self.assertEqual(vacancy.status, ProjectVacancy.Status.CLOSED)
+
+    def test_sync_counts_memberships_by_vacancy_and_includes_paused(self) -> None:
+        """Проверяет раздельный подсчёт одинаковых ролей и статус PAUSED."""
+        second_user = User.objects.create_user(
+            username="paused-specialist",
+            email="paused@example.com",
+            password="password",
+        )
+        second_specialist = SpecialistProfile.objects.create(user=second_user)
+        first_vacancy = ProjectVacancy.objects.create(
+            project=self.project,
+            role=self.role,
+            title="Frontend A",
+            description="Первая роль.",
+            required_count=2,
+        )
+        second_vacancy = ProjectVacancy.objects.create(
+            project=self.project,
+            role=self.role,
+            title="Frontend B",
+            description="Вторая роль.",
+            required_count=2,
+        )
+        ProjectMembership.objects.create(
+            project=self.project,
+            specialist=second_specialist,
+            vacancy=first_vacancy,
+            role=self.role,
+            status=ProjectMembership.Status.PAUSED,
+        )
+
+        sync_project_vacancy_counts()
+        first_vacancy.refresh_from_db()
+        second_vacancy.refresh_from_db()
+
+        self.assertEqual(first_vacancy.current_count, 1)
+        self.assertEqual(second_vacancy.current_count, 0)

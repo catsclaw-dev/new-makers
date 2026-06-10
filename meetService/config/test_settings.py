@@ -1,41 +1,42 @@
 from __future__ import annotations
 
-import importlib
+import os
 
-from django.test import SimpleTestCase, override_settings
-from django.urls import NoReverseMatch, clear_url_caches, reverse
+os.environ.setdefault("DJANGO_DEBUG", "False")
+os.environ.setdefault("DJANGO_SILK_ENABLED", "False")
+os.environ.setdefault("SENTRY_DSN", "")
 
-import config.urls
+from .settings import *
 
+DEBUG = False
+SILK_ENABLED = False
 
-def reload_urlconf() -> None:
-    """
-    Reload project URLs after settings overrides change conditional routes.
-    """
-    importlib.reload(config.urls)
-    clear_url_caches()
+INSTALLED_APPS += [
+    "debug_toolbar",
+    "silk",
+]
 
+MIDDLEWARE = [
+    "silk.middleware.SilkyMiddleware",
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
+    *MIDDLEWARE,
+]
 
-class SilkConfigurationTests(SimpleTestCase):
-    """Tests for Django Silk URL exposure."""
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": ":memory:",
+    }
+}
 
-    @override_settings(DEBUG=True, SILK_ENABLED=True, ROOT_URLCONF="config.urls")
-    def test_silk_url_is_available_when_enabled(self) -> None:
-        """
-        Silk index route is mounted when debug profiling is enabled.
-        """
-        reload_urlconf()
-
-        self.assertEqual(reverse("silk:summary"), "/silk/")
-
-    @override_settings(DEBUG=True, SILK_ENABLED=False, ROOT_URLCONF="config.urls")
-    def test_silk_url_is_hidden_when_disabled(self) -> None:
-        """
-        Silk index route is not mounted when profiling flag is disabled.
-        """
-        reload_urlconf()
-
-        with self.assertRaises(NoReverseMatch):
-            reverse("silk:summary")
-
-        reload_urlconf()
+EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
+EMAIL_NOTIFICATIONS_ENABLED = True
+PASSWORD_HASHERS = [
+    "django.contrib.auth.hashers.MD5PasswordHasher",
+]
+CELERY_TASK_ALWAYS_EAGER = True
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}

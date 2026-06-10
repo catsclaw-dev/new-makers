@@ -1,8 +1,8 @@
 {
   "info": {
-    "name": "MeetService API",
+    "name": "New-Makers API",
     "_postman_id": "1f5f3ce0-8a43-4d98-9ec6-1b983c5cfd70",
-    "description": "Requests for testing MeetService DRF API by public, specialist, project owner, and admin roles.",
+    "description": "Requests for testing New-Makers DRF API by public, specialist, project owner, and admin roles.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [

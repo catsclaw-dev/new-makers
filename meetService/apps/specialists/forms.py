@@ -1,6 +1,7 @@
 from django import forms
 
 from apps.directories.models import Role, Technology
+from apps.common_validators import validate_iana_timezone
 from apps.specialists.models import SpecialistProfile, SpecialistTechnology
 
 
@@ -326,7 +327,7 @@ class SpecialistProfileForm(forms.ModelForm):
     def clean_timezone(self):
         """Очищает часовой пояс."""
         timezone = self.cleaned_data.get("timezone", "").strip()
-
+        validate_iana_timezone(timezone)
         return timezone
 
     def save(self, commit=True):

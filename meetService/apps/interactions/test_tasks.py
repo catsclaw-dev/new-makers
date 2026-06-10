@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import timedelta
+from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
 from django.core import mail
@@ -15,7 +16,9 @@ from apps.interactions.tasks import (
     send_application_status_email,
     send_invitation_created_email,
     send_pending_application_digest,
+    send_pending_application_digest_email,
     send_pending_invitation_digest,
+    send_pending_invitation_digest_email,
     send_welcome_email,
 )
 from apps.projects.models import Project, ProjectVacancy
@@ -27,7 +30,7 @@ User = get_user_model()
 
 @override_settings(
     EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend",
-    DEFAULT_FROM_EMAIL="MeetService <noreply@meetservice.local>",
+    DEFAULT_FROM_EMAIL="New-Makers <noreply@new-makers.local>",
     INVITATION_EXPIRE_DAYS=14,
     SITE_URL="http://127.0.0.1:8000",
 )
@@ -99,6 +102,7 @@ class InteractionTaskTests(TestCase):
         invitation = self.create_invitation(
             invited_at=timezone.now() - timedelta(days=20)
         )
+        history_count = invitation.history.count()
 
         updated_count = expire_stale_invitations(invitation_lifetime_days=14)
         invitation.refresh_from_db()
@@ -106,6 +110,7 @@ class InteractionTaskTests(TestCase):
         self.assertEqual(updated_count, 1)
         self.assertEqual(invitation.status, Invitation.Status.EXPIRED)
         self.assertIsNotNone(invitation.responded_at)
+        self.assertGreater(invitation.history.count(), history_count)
 
     def test_expire_stale_invitations_keeps_recent_pending_invitation(self) -> None:
         """
@@ -149,12 +154,19 @@ class InteractionTaskTests(TestCase):
             message="Хочу участвовать.",
         )
 
-        sent_count = send_pending_application_digest()
+        with patch(
+            "apps.interactions.tasks.send_pending_application_digest_email.delay"
+        ) as delay:
+            queued_count = send_pending_application_digest()
 
+        self.assertEqual(queued_count, 1)
+        delay.assert_called_once_with(self.owner.pk, 1)
+
+        sent_count = send_pending_application_digest_email(self.owner.pk, 1)
         self.assertEqual(sent_count, 1)
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].to, ["owner@example.com"])
-        self.assertIn("отклики на рассмотрении: 1", mail.outbox[0].body)
+        self.assertIn("1 отклик на рассмотрении", mail.outbox[0].body)
 
     def test_pending_application_digest_skips_owner_without_email(self) -> None:
         """
@@ -180,12 +192,22 @@ class InteractionTaskTests(TestCase):
         """
         self.create_invitation()
 
-        sent_count = send_pending_invitation_digest()
+        with patch(
+            "apps.interactions.tasks.send_pending_invitation_digest_email.delay"
+        ) as delay:
+            queued_count = send_pending_invitation_digest()
 
+        self.assertEqual(queued_count, 1)
+        delay.assert_called_once_with(self.specialist_user.pk, 1)
+
+        sent_count = send_pending_invitation_digest_email(
+            self.specialist_user.pk,
+            1,
+        )
         self.assertEqual(sent_count, 1)
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].to, ["specialist@example.com"])
-        self.assertIn("приглашения в проекты: 1", mail.outbox[0].body)
+        self.assertIn("1 приглашение в проект", mail.outbox[0].body)
 
     def test_welcome_email_uses_html_template(self) -> None:
         """
@@ -196,7 +218,7 @@ class InteractionTaskTests(TestCase):
         self.assertEqual(sent_count, 1)
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].to, ["specialist@example.com"])
-        self.assertIn("Добро пожаловать в MeetService", mail.outbox[0].subject)
+        self.assertIn("Добро пожаловать в New-Makers", mail.outbox[0].subject)
         self.assertIn("Открыть профиль", mail.outbox[0].alternatives[0].content)
 
     def test_application_created_email_uses_project_context(self) -> None:

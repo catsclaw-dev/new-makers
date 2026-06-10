@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.urls import reverse
 
 from apps.directories.models import Role
+from apps.projects.models import Project, ProjectMembership
 from apps.specialists.forms import SpecialistProfileForm
 from apps.specialists.models import SpecialistProfile
 
@@ -140,3 +142,51 @@ class SpecialistVisibilityTests(TestCase):
         )
 
         self.assertEqual(response.status_code, 200)
+
+    def test_public_detail_hides_private_projects_and_left_history(self) -> None:
+        """Проверяет публичную фильтрацию истории участия специалиста."""
+        owner = User.objects.create_user(username="project-owner", password="password")
+        public_project = Project.objects.create(
+            owner=owner,
+            title="Публичный проект",
+            short_description="Публичное описание.",
+            description="Подробное публичное описание.",
+            goal="Показать активное участие.",
+            status=Project.Status.PUBLISHED,
+        )
+        private_project = Project.objects.create(
+            owner=owner,
+            title="Секретный черновик",
+            short_description="Непубличное описание.",
+            description="Подробное непубличное описание.",
+            goal="Не раскрывать участие.",
+            status=Project.Status.DRAFT,
+        )
+        ProjectMembership.objects.create(
+            project=public_project,
+            specialist=self.visible_profile,
+            role=self.role,
+            status=ProjectMembership.Status.LEFT,
+        )
+        ProjectMembership.objects.create(
+            project=private_project,
+            specialist=self.visible_profile,
+            role=self.role,
+            status=ProjectMembership.Status.ACTIVE,
+        )
+
+        response = self.client.get(
+            reverse(
+                "specialists:specialist_detail",
+                kwargs={"pk": self.visible_profile.pk},
+            )
+        )
+
+        self.assertNotContains(response, public_project.title)
+        self.assertNotContains(response, private_project.title)
+
+    def test_profile_rejects_unknown_iana_timezone(self) -> None:
+        self.visible_profile.timezone = "Europe/Nowhere"
+
+        with self.assertRaises(ValidationError):
+            self.visible_profile.full_clean()

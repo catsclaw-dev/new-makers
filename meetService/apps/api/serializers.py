@@ -8,6 +8,7 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
 from apps.api.permissions import is_admin
+from apps.common_validators import validate_iana_timezone
 from apps.directories.models import Role, Technology
 from apps.interactions.emails import (
     enqueue_application_created_email,
@@ -88,11 +89,12 @@ class RoleSerializer(serializers.ModelSerializer):
         Args:
             obj: Объект модели
         """
-        return getattr(
-            obj,
-            "open_vacancies_count",
-            obj.project_vacancies.filter(status=ProjectVacancy.Status.OPEN).count(),
-        )
+        if hasattr(obj, "open_vacancies_count"):
+            return obj.open_vacancies_count
+        return obj.project_vacancies.filter(
+            status=ProjectVacancy.Status.OPEN,
+            current_count__lt=F("required_count"),
+        ).count()
 
     def get_main_specialists_count(self, obj: object) -> int:
         """
@@ -100,11 +102,9 @@ class RoleSerializer(serializers.ModelSerializer):
         Args:
             obj: Объект модели
         """
-        return getattr(
-            obj,
-            "main_specialists_count",
-            obj.main_specialists.count(),
-        )
+        if hasattr(obj, "main_specialists_count"):
+            return obj.main_specialists_count
+        return obj.main_specialists.count()
 
     def get_preferred_specialists_count(self, obj: object) -> int:
         """
@@ -112,11 +112,9 @@ class RoleSerializer(serializers.ModelSerializer):
         Args:
             obj: Объект модели
         """
-        return getattr(
-            obj,
-            "preferred_specialists_count",
-            obj.preferred_by_specialists.count(),
-        )
+        if hasattr(obj, "preferred_specialists_count"):
+            return obj.preferred_specialists_count
+        return obj.preferred_by_specialists.count()
 
 
 class TechnologySerializer(serializers.ModelSerializer):
@@ -151,7 +149,9 @@ class TechnologySerializer(serializers.ModelSerializer):
         Args:
             obj: Объект модели
         """
-        return getattr(obj, "projects_count", obj.projects.count())
+        if hasattr(obj, "projects_count"):
+            return obj.projects_count
+        return obj.projects.count()
 
     def get_published_projects_count(self, obj: object) -> int:
         """
@@ -159,11 +159,9 @@ class TechnologySerializer(serializers.ModelSerializer):
         Args:
             obj: Объект модели
         """
-        return getattr(
-            obj,
-            "published_projects_count",
-            obj.projects.filter(status=Project.Status.PUBLISHED).count(),
-        )
+        if hasattr(obj, "published_projects_count"):
+            return obj.published_projects_count
+        return obj.projects.filter(status=Project.Status.PUBLISHED).count()
 
     def get_specialists_count(self, obj: object) -> int:
         """
@@ -171,7 +169,9 @@ class TechnologySerializer(serializers.ModelSerializer):
         Args:
             obj: Объект модели
         """
-        return getattr(obj, "specialists_count", obj.specialists.count())
+        if hasattr(obj, "specialists_count"):
+            return obj.specialists_count
+        return obj.specialists.count()
 
 
 class ProjectBriefSerializer(serializers.ModelSerializer):
@@ -205,14 +205,12 @@ class ProjectBriefSerializer(serializers.ModelSerializer):
         Args:
             obj: Объект модели
         """
-        return getattr(
-            obj,
-            "open_vacancy_count",
-            obj.vacancies.filter(
-                status=ProjectVacancy.Status.OPEN,
-                current_count__lt=F("required_count"),
-            ).count(),
-        )
+        if hasattr(obj, "open_vacancy_count"):
+            return obj.open_vacancy_count
+        return obj.vacancies.filter(
+            status=ProjectVacancy.Status.OPEN,
+            current_count__lt=F("required_count"),
+        ).count()
 
 
 class ProjectVacancySerializer(serializers.ModelSerializer):
@@ -222,6 +220,9 @@ class ProjectVacancySerializer(serializers.ModelSerializer):
     )
     project_title = serializers.CharField(source="project.title", read_only=True)
     role_detail = RoleSerializer(source="role", read_only=True)
+    role = serializers.PrimaryKeyRelatedField(
+        queryset=Role.objects.filter(is_active=True),
+    )
     required_level_display = serializers.CharField(
         source="get_required_level_display",
         read_only=True,
@@ -251,7 +252,6 @@ class ProjectVacancySerializer(serializers.ModelSerializer):
         )
         read_only_fields = (
             "current_count",
-            "status",
             "created_at",
             "updated_at",
         )
@@ -278,10 +278,20 @@ class ProjectVacancySerializer(serializers.ModelSerializer):
         Args:
             attrs: Данные сериализатора
         """
-        project = self.context.get("project") or attrs.get("project")
+        requested_project = attrs.get("project")
 
-        if self.instance is not None and project is None:
+        if self.instance is not None:
+            if (
+                requested_project is not None
+                and requested_project.pk != self.instance.project_id
+            ):
+                raise serializers.ValidationError(
+                    {"project": _("Нельзя переносить открытую роль в другой проект.")}
+                )
+
             project = self.instance.project
+        else:
+            project = self.context.get("project") or requested_project
 
         if project is None:
             raise serializers.ValidationError(
@@ -291,6 +301,24 @@ class ProjectVacancySerializer(serializers.ModelSerializer):
         if project.status in [Project.Status.CLOSED, Project.Status.ARCHIVED]:
             raise serializers.ValidationError(
                 {"project": _("Нельзя добавлять роли в закрытый или архивный проект.")}
+            )
+
+        current_count = self.instance.current_count if self.instance else 0
+        required_count = attrs.get(
+            "required_count",
+            self.instance.required_count if self.instance else 1,
+        )
+        vacancy_status = attrs.get(
+            "status",
+            self.instance.status if self.instance else ProjectVacancy.Status.OPEN,
+        )
+
+        if (
+            vacancy_status == ProjectVacancy.Status.OPEN
+            and current_count >= required_count
+        ):
+            raise serializers.ValidationError(
+                {"status": _("Заполненную роль нельзя оставить открытой.")}
             )
 
         attrs["project"] = project
@@ -388,14 +416,12 @@ class ProjectSerializer(serializers.ModelSerializer):
         Args:
             obj: Объект модели
         """
-        return getattr(
-            obj,
-            "open_vacancy_count",
-            obj.vacancies.filter(
-                status=ProjectVacancy.Status.OPEN,
-                current_count__lt=F("required_count"),
-            ).count(),
-        )
+        if hasattr(obj, "open_vacancy_count"):
+            return obj.open_vacancy_count
+        return obj.vacancies.filter(
+            status=ProjectVacancy.Status.OPEN,
+            current_count__lt=F("required_count"),
+        ).count()
 
     def get_members_count(self, obj: object) -> int:
         """
@@ -403,7 +429,14 @@ class ProjectSerializer(serializers.ModelSerializer):
         Args:
             obj: Объект модели
         """
-        return getattr(obj, "members_count", obj.memberships.count())
+        if hasattr(obj, "members_count"):
+            return obj.members_count
+        return obj.memberships.filter(
+            status__in=[
+                ProjectMembership.Status.ACTIVE,
+                ProjectMembership.Status.PAUSED,
+            ]
+        ).count()
 
     def get_favorite_count(self, obj: object) -> int:
         """
@@ -411,7 +444,9 @@ class ProjectSerializer(serializers.ModelSerializer):
         Args:
             obj: Объект модели
         """
-        return getattr(obj, "favorite_count", obj.favorited_by.count())
+        if hasattr(obj, "favorite_count"):
+            return obj.favorite_count
+        return obj.favorited_by.count()
 
     def get_is_favorite(self, obj: object) -> bool:
         """
@@ -465,7 +500,10 @@ class ProjectSerializer(serializers.ModelSerializer):
         if ProjectMembership.objects.filter(
             project=obj,
             specialist=specialist,
-            status=ProjectMembership.Status.ACTIVE,
+            status__in=[
+                ProjectMembership.Status.ACTIVE,
+                ProjectMembership.Status.PAUSED,
+            ],
         ).exists():
             return False
 
@@ -566,6 +604,11 @@ class SpecialistProfileSerializer(serializers.ModelSerializer):
     user = UserBriefSerializer(read_only=True)
     display_name = serializers.SerializerMethodField()
     main_role_detail = RoleSerializer(source="main_role", read_only=True)
+    main_role = serializers.PrimaryKeyRelatedField(
+        queryset=Role.objects.filter(is_active=True),
+        allow_null=False,
+        required=False,
+    )
     preferred_roles = RoleSerializer(many=True, read_only=True)
     preferred_role_ids = serializers.PrimaryKeyRelatedField(
         queryset=Role.objects.filter(is_active=True),
@@ -656,13 +699,14 @@ class SpecialistProfileSerializer(serializers.ModelSerializer):
         Args:
             obj: Объект модели
         """
-        return getattr(
-            obj,
-            "active_projects_count",
-            obj.project_memberships.filter(
-                status=ProjectMembership.Status.ACTIVE,
-            ).count(),
-        )
+        if hasattr(obj, "active_projects_count"):
+            return obj.active_projects_count
+        return obj.project_memberships.filter(
+            status__in=[
+                ProjectMembership.Status.ACTIVE,
+                ProjectMembership.Status.PAUSED,
+            ],
+        ).count()
 
     def get_applications_count(self, obj: object) -> int:
         """
@@ -670,7 +714,9 @@ class SpecialistProfileSerializer(serializers.ModelSerializer):
         Args:
             obj: Объект модели
         """
-        return getattr(obj, "applications_count", obj.applications.count())
+        if hasattr(obj, "applications_count"):
+            return obj.applications_count
+        return obj.applications.count()
 
     def get_invitations_count(self, obj: object) -> int:
         """
@@ -678,7 +724,31 @@ class SpecialistProfileSerializer(serializers.ModelSerializer):
         Args:
             obj: Объект модели
         """
-        return getattr(obj, "invitations_count", obj.invitations.count())
+        if hasattr(obj, "invitations_count"):
+            return obj.invitations_count
+        return obj.invitations.count()
+
+    def validate(self, attrs: dict[str, object]) -> dict[str, object]:
+        """Не допускает публикацию неполного профиля через API."""
+        main_role = attrs.get("main_role") or (
+            self.instance.main_role if self.instance and self.instance.pk else None
+        )
+        technologies = attrs.get("technology_ids")
+
+        if technologies is None and self.instance and self.instance.pk:
+            has_technologies = self.instance.technologies.exists()
+        else:
+            has_technologies = bool(technologies)
+
+        errors = {}
+        if main_role is None:
+            errors["main_role"] = _("Укажи основную роль.")
+        if not has_technologies:
+            errors["technology_ids"] = _("Выбери хотя бы одну технологию.")
+        if errors:
+            raise serializers.ValidationError(errors)
+
+        return attrs
 
     def get_can_edit(self, obj: object) -> bool:
         """
@@ -706,6 +776,14 @@ class SpecialistProfileSerializer(serializers.ModelSerializer):
                 _("Если заполняешь описание, оно должно быть не короче 20 символов.")
             )
 
+        return value
+
+    def validate_timezone(self, value: str) -> str:
+        value = value.strip()
+        try:
+            validate_iana_timezone(value)
+        except DjangoValidationError as error:
+            raise_serializer_validation(error)
         return value
 
     def create(self, validated_data: dict[str, object]) -> object:
@@ -921,10 +999,18 @@ class ApplicationSerializer(serializers.ModelSerializer):
 
 
 class InvitationSerializer(serializers.ModelSerializer):
+    specialist = serializers.PrimaryKeyRelatedField(
+        queryset=SpecialistProfile.objects.filter(
+            status__in=[
+                SpecialistProfile.AvailabilityStatus.LOOKING,
+                SpecialistProfile.AvailabilityStatus.OPEN,
+            ]
+        )
+    )
     project = serializers.PrimaryKeyRelatedField(read_only=True)
     project_detail = ProjectBriefSerializer(source="project", read_only=True)
     vacancy_detail = ProjectVacancySerializer(source="vacancy", read_only=True)
-    specialist_detail = SpecialistProfileSerializer(source="specialist", read_only=True)
+    specialist_detail = serializers.SerializerMethodField()
     invited_by = UserBriefSerializer(read_only=True)
 
     class Meta:
@@ -967,6 +1053,17 @@ class InvitationSerializer(serializers.ModelSerializer):
 
         return value
 
+    def get_specialist_detail(self, obj: Invitation) -> dict[str, object]:
+        """Возвращает только публичные данные приглашённого специалиста."""
+        specialist = obj.specialist
+        return {
+            "id": specialist.pk,
+            "display_name": specialist.get_display_name(),
+            "main_role": specialist.main_role_id,
+            "level": specialist.level,
+            "status": specialist.status,
+        }
+
     def validate(self, attrs: dict[str, object]) -> dict[str, object]:
         """
         Проверяет данные сериализатора.
@@ -999,6 +1096,15 @@ class InvitationSerializer(serializers.ModelSerializer):
         if specialist.user_id == request.user.id:
             raise serializers.ValidationError(
                 {"specialist": _("Нельзя пригласить самого себя в свой проект.")}
+            )
+
+        if not specialist.is_available_for_project():
+            raise serializers.ValidationError(
+                {
+                    "specialist": _(
+                        "Приглашать можно только специалиста, открытого к предложениям."
+                    )
+                }
             )
 
         if project.status != Project.Status.PUBLISHED:

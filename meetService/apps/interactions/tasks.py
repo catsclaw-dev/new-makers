@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from datetime import timedelta
+import logging
+import smtplib
 from typing import Any
 
 from celery import shared_task
@@ -18,9 +20,16 @@ from apps.interactions.models import Application, Invitation
 
 
 User = get_user_model()
+logger = logging.getLogger(__name__)
+EMAIL_TASK_OPTIONS = {
+    "autoretry_for": (OSError, smtplib.SMTPException),
+    "retry_backoff": True,
+    "retry_jitter": True,
+    "retry_kwargs": {"max_retries": 5},
+}
 
 
-@shared_task
+@shared_task(**EMAIL_TASK_OPTIONS)
 def send_welcome_email(user_id: int) -> int:
     """
     Отправляет приветственное письмо новому пользователю.
@@ -53,7 +62,7 @@ def send_welcome_email(user_id: int) -> int:
     )
 
 
-@shared_task
+@shared_task(**EMAIL_TASK_OPTIONS)
 def send_application_created_email(application_id: int) -> int:
     """
     Отправляет письмо владельцу проекта о новом отклике.
@@ -109,7 +118,7 @@ def send_application_created_email(application_id: int) -> int:
     )
 
 
-@shared_task
+@shared_task(**EMAIL_TASK_OPTIONS)
 def send_application_status_email(application_id: int) -> int:
     """
     Отправляет письмо специалисту о решении по отклику.
@@ -166,7 +175,7 @@ def send_application_status_email(application_id: int) -> int:
     )
 
 
-@shared_task
+@shared_task(**EMAIL_TASK_OPTIONS)
 def send_invitation_created_email(invitation_id: int) -> int:
     """
     Отправляет письмо специалисту о новом приглашении.
@@ -220,7 +229,7 @@ def send_invitation_created_email(invitation_id: int) -> int:
     )
 
 
-@shared_task
+@shared_task(**EMAIL_TASK_OPTIONS)
 def send_invitation_status_email(invitation_id: int) -> int:
     """
     Отправляет владельцу проекта письмо об ответе на приглашение.
@@ -287,13 +296,20 @@ def expire_stale_invitations(invitation_lifetime_days: int | None = None) -> int
     lifetime_days = invitation_lifetime_days or settings.INVITATION_EXPIRE_DAYS
     expired_before = timezone.now() - timedelta(days=lifetime_days)
 
-    return Invitation.objects.filter(
+    invitations = Invitation.objects.filter(
         status=Invitation.Status.PENDING,
         invited_at__lt=expired_before,
-    ).update(
-        status=Invitation.Status.EXPIRED,
-        responded_at=timezone.now(),
-    )
+    ).order_by("pk")
+    responded_at = timezone.now()
+    updated_count = 0
+
+    for invitation in invitations.iterator():
+        invitation.status = Invitation.Status.EXPIRED
+        invitation.responded_at = responded_at
+        invitation.save(update_fields=["status", "responded_at"])
+        updated_count += 1
+
+    return updated_count
 
 
 @shared_task
@@ -309,24 +325,12 @@ def send_pending_application_digest() -> int:
             continue
 
         pending_count = getattr(owner, "pending_applications_count", 0)
-        send_mail(
-            subject=_("New-Makers: новые отклики ждут рассмотрения"),
-            message=(
-                _("Здравствуйте, %(name)s.\n\n")
-                % {"name": owner.get_full_name() or owner.username}
-                + ngettext(
-                    "У ваших проектов есть %(count)s отклик на рассмотрении.\n",
-                    "У ваших проектов есть %(count)s откликов на рассмотрении.\n",
-                    pending_count,
-                )
-                % {"count": pending_count}
-                + _("Откройте личный кабинет New-Makers, чтобы принять или отклонить их.")
-            ),
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[owner.email],
-            fail_silently=False,
-        )
-        sent_count += 1
+        try:
+            send_pending_application_digest_email.delay(owner.pk, pending_count)
+        except Exception:
+            logger.exception("Не удалось поставить application digest в очередь.")
+        else:
+            sent_count += 1
 
     return sent_count
 
@@ -344,26 +348,64 @@ def send_pending_invitation_digest() -> int:
             continue
 
         pending_count = getattr(user, "pending_invitations_count", 0)
-        send_mail(
-            subject=_("New-Makers: у вас есть приглашения в проекты"),
-            message=(
-                _("Здравствуйте, %(name)s.\n\n")
-                % {"name": user.get_full_name() or user.username}
-                + ngettext(
-                    "Вас ждёт %(count)s приглашение в проект.\n",
-                    "Вас ждут %(count)s приглашений в проекты.\n",
-                    pending_count,
-                )
-                % {"count": pending_count}
-                + _("Откройте New-Makers, чтобы принять или отклонить приглашения.")
-            ),
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[user.email],
-            fail_silently=False,
-        )
-        sent_count += 1
+        try:
+            send_pending_invitation_digest_email.delay(user.pk, pending_count)
+        except Exception:
+            logger.exception("Не удалось поставить invitation digest в очередь.")
+        else:
+            sent_count += 1
 
     return sent_count
+
+
+@shared_task(**EMAIL_TASK_OPTIONS)
+def send_pending_application_digest_email(owner_id: int, pending_count: int) -> int:
+    """Отправляет одному владельцу сводку с retry/backoff."""
+    owner = User.objects.filter(pk=owner_id).first()
+    if not owner or not owner.email:
+        return 0
+    return send_mail(
+        subject=_("New-Makers: новые отклики ждут рассмотрения"),
+        message=(
+            _("Здравствуйте, %(name)s.\n\n")
+            % {"name": owner.get_full_name() or owner.username}
+            + ngettext(
+                "У ваших проектов есть %(count)s отклик на рассмотрении.\n",
+                "У ваших проектов есть %(count)s откликов на рассмотрении.\n",
+                pending_count,
+            )
+            % {"count": pending_count}
+            + _("Откройте личный кабинет New-Makers, чтобы принять или отклонить их.")
+        ),
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        recipient_list=[owner.email],
+        fail_silently=False,
+    )
+
+
+@shared_task(**EMAIL_TASK_OPTIONS)
+def send_pending_invitation_digest_email(user_id: int, pending_count: int) -> int:
+    """Отправляет одному специалисту сводку с retry/backoff."""
+    user = User.objects.filter(pk=user_id).first()
+    if not user or not user.email:
+        return 0
+    return send_mail(
+        subject=_("New-Makers: у вас есть приглашения в проекты"),
+        message=(
+            _("Здравствуйте, %(name)s.\n\n")
+            % {"name": user.get_full_name() or user.username}
+            + ngettext(
+                "Вас ждёт %(count)s приглашение в проект.\n",
+                "Вас ждут %(count)s приглашений в проекты.\n",
+                pending_count,
+            )
+            % {"count": pending_count}
+            + _("Откройте New-Makers, чтобы принять или отклонить приглашения.")
+        ),
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        recipient_list=[user.email],
+        fail_silently=False,
+    )
 
 
 def _owners_with_pending_applications() -> QuerySet:

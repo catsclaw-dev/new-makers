@@ -208,6 +208,19 @@ class AccountEmailForm(forms.ModelForm):
                 )
             )
 
+        email_address_queryset = EmailAddress.objects.filter(email__iexact=email)
+
+        if self.instance.pk:
+            email_address_queryset = email_address_queryset.exclude(user=self.instance)
+
+        if email_address_queryset.exists():
+            raise forms.ValidationError(
+                _(
+                    "Этот email уже привязан к другому аккаунту. "
+                    "Используйте другую почту."
+                )
+            )
+
         return email
 
     def save(self, commit: bool = True) -> object:

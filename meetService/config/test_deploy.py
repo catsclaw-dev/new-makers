@@ -25,7 +25,7 @@ class DeployConfigurationTests(SimpleTestCase):
         )
         self.assertEqual(
             settings.SOCIALACCOUNT_ADAPTER,
-            "apps.accounts.adapters.MeetServiceSocialAccountAdapter",
+            "apps.accounts.adapters.NewMakersSocialAccountAdapter",
         )
 
     def test_github_oauth_provider_is_configured(self) -> None:

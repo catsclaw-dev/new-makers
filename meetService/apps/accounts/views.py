@@ -4,8 +4,10 @@ from typing import Any
 
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView, LogoutView
+from django.db import transaction
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
 from django.views.decorators.http import require_POST
@@ -19,10 +21,12 @@ from apps.accounts.forms import (
     VerifiedEmailAuthenticationForm,
 )
 from apps.interactions.emails import enqueue_welcome_email
+from apps.common_throttling import is_rate_limited, rate_limit
 from apps.interactions.models import Application, FavoriteProject, Invitation
 from apps.projects.models import Project, ProjectMembership
 
 
+@rate_limit(scope="register", limit=10, window=60 * 60)
 def register(request: HttpRequest) -> HttpResponse:
     """
     Регистрация нового пользователя.
@@ -36,30 +40,32 @@ def register(request: HttpRequest) -> HttpResponse:
         form = RegisterForm(request.POST)
 
         if form.is_valid():
-            user = form.save()
+            with transaction.atomic():
+                user = form.save()
 
-            email_address, _ = EmailAddress.objects.get_or_create(
-                user=user,
-                email=user.email,
-                defaults={
-                    "primary": True,
-                    "verified": False,
-                },
-            )
-
-            if not email_address.primary:
-                EmailAddress.objects.filter(
+                email_address, _created = EmailAddress.objects.get_or_create(
                     user=user,
-                    primary=True,
-                ).update(primary=False)
+                    email=user.email,
+                    defaults={
+                        "primary": True,
+                        "verified": False,
+                    },
+                )
 
-                email_address.primary = True
-                email_address.save(update_fields=["primary"])
+                if not email_address.primary:
+                    EmailAddress.objects.filter(
+                        user=user,
+                        primary=True,
+                    ).update(primary=False)
 
-            email_address.send_confirmation(
-                request,
-                signup=True,
-            )
+                    email_address.primary = True
+                    email_address.save(update_fields=["primary"])
+
+                email_address.send_confirmation(
+                    request,
+                    signup=True,
+                )
+                enqueue_welcome_email(user.pk)
 
             messages.success(
                 request,
@@ -81,6 +87,14 @@ class AccountLoginView(LoginView):
     template_name = "accounts/login.html"
     authentication_form = VerifiedEmailAuthenticationForm
     redirect_authenticated_user = True
+
+    def post(self, request: HttpRequest, *args: object, **kwargs: object) -> HttpResponse:
+        if is_rate_limited(request, scope="login", limit=5, window=60):
+            return HttpResponse(
+                _("Слишком много попыток входа. Повтори попытку через минуту."),
+                status=429,
+            )
+        return super().post(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs: object) -> dict[str, Any]:
         """
@@ -148,7 +162,10 @@ def profile(request: HttpRequest) -> HttpResponse:
             ProjectMembership.objects.select_related("project", "role")
             .filter(
                 specialist=specialist_profile,
-                status=ProjectMembership.Status.ACTIVE,
+                status__in=[
+                    ProjectMembership.Status.ACTIVE,
+                    ProjectMembership.Status.PAUSED,
+                ],
             )
             .exclude(project__status=Project.Status.ARCHIVED)
             .order_by("-joined_at")[:5]
@@ -236,8 +253,44 @@ def update_email(request: HttpRequest) -> HttpResponse:
     form = AccountEmailForm(request.POST, instance=request.user)
 
     if form.is_valid():
-        form.save()
-        messages.success(request, _("Email обновлён."))
+        new_email = form.cleaned_data["email"]
+
+        with transaction.atomic():
+            user = form.save()
+            email_address, _created = EmailAddress.objects.get_or_create(
+                user=user,
+                email=new_email,
+                defaults={
+                    "primary": True,
+                    "verified": False,
+                },
+            )
+
+            EmailAddress.objects.filter(user=user, primary=True).exclude(
+                pk=email_address.pk
+            ).update(primary=False)
+
+            if not email_address.primary:
+                email_address.primary = True
+                email_address.save(update_fields=["primary"])
+
+            if not email_address.verified:
+                email_address.send_confirmation(request)
+
+        if email_address.verified:
+            messages.success(request, _("Email обновлён."))
+            return redirect("accounts:profile")
+
+        if not request.user.is_staff and not request.user.is_superuser:
+            auth_logout(request)
+
+        messages.success(
+            request,
+            _("Email обновлён. Подтверди новый адрес по ссылке из письма."),
+        )
+
+        if not request.user.is_authenticated:
+            return redirect("accounts:login")
     else:
         for errors in form.errors.values():
             for error in errors:

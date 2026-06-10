@@ -13,7 +13,7 @@
         <script>
           (function () {
             try {
-              if (localStorage.getItem("meetservice_bw_mode") === "1") {
+              if (localStorage.getItem("new_makers_bw_mode") === "1") {
                 document.documentElement.classList.add("bw-mode");
               }
             } catch (error) {
@@ -151,7 +151,7 @@
 
               try {
                 localStorage.setItem(
-                  "meetservice_bw_mode",
+                  "new_makers_bw_mode",
                   root.classList.contains("bw-mode") ? "1" : "0"
                 );
               } catch (error) {

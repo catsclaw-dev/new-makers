@@ -12,7 +12,7 @@ from reportlab.pdfgen import canvas
 from django.http import HttpRequest, HttpResponse
 from django.utils import timezone
 from django.contrib import admin
-from django.db.models import Count, QuerySet
+from django.db.models import Count, F, Q, QuerySet
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 from import_export.admin import ImportExportModelAdmin
@@ -292,7 +292,16 @@ class ProjectAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
             )
             .annotate(
                 vacancies_count=Count("vacancies", distinct=True),
-                members_count=Count("memberships", distinct=True),
+                members_count=Count(
+                    "memberships",
+                    filter=Q(
+                        memberships__status__in=[
+                            ProjectMembership.Status.ACTIVE,
+                            ProjectMembership.Status.PAUSED,
+                        ]
+                    ),
+                    distinct=True,
+                ),
                 technologies_count=Count("technologies", distinct=True),
             )
         )
@@ -318,7 +327,10 @@ class ProjectAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
         Args:
             obj: Объект модели
         """
-        return obj.vacancies.filter(status=ProjectVacancy.Status.OPEN).count()
+        return obj.vacancies.filter(
+            status=ProjectVacancy.Status.OPEN,
+            current_count__lt=F("required_count"),
+        ).count()
 
     @admin.display(description=_("Участников"))
     def display_members_count(self, obj: Project) -> int:
@@ -327,7 +339,14 @@ class ProjectAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
         Args:
             obj: Объект модели
         """
-        return getattr(obj, "members_count", obj.memberships.count())
+        if hasattr(obj, "members_count"):
+            return obj.members_count
+        return obj.memberships.filter(
+            status__in=[
+                ProjectMembership.Status.ACTIVE,
+                ProjectMembership.Status.PAUSED,
+            ]
+        ).count()
 
     @admin.display(description=_("Технологий"))
     def display_technologies_count(self, obj: Project) -> int:
@@ -336,7 +355,9 @@ class ProjectAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
         Args:
             obj: Объект модели
         """
-        return getattr(obj, "technologies_count", obj.technologies.count())
+        if hasattr(obj, "technologies_count"):
+            return obj.technologies_count
+        return obj.technologies.count()
 
     @admin.display(description=_("Предпросмотр обложки"))
     def display_cover_preview(self, obj: Project) -> str:
@@ -602,6 +623,7 @@ class ProjectVacancyAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
     readonly_fields = (
         "created_at",
         "updated_at",
+        "current_count",
         "display_remaining_slots",
     )
     date_hierarchy = "created_at"

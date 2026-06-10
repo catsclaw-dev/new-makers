@@ -285,7 +285,10 @@ class SpecialistProfileAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
                 active_projects_count=Count(
                     "project_memberships",
                     filter=Q(
-                        project_memberships__status=ProjectMembership.Status.ACTIVE
+                        project_memberships__status__in=[
+                            ProjectMembership.Status.ACTIVE,
+                            ProjectMembership.Status.PAUSED,
+                        ]
                     ),
                     distinct=True,
                 ),
@@ -326,7 +329,9 @@ class SpecialistProfileAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
         Args:
             obj: Объект модели
         """
-        return getattr(obj, "technologies_count", obj.technologies.count())
+        if hasattr(obj, "technologies_count"):
+            return obj.technologies_count
+        return obj.technologies.count()
 
     @admin.display(description=_("Активных проектов"))
     def display_active_projects_count(self, obj: SpecialistProfile) -> int:
@@ -335,7 +340,14 @@ class SpecialistProfileAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
         Args:
             obj: Объект модели
         """
-        return getattr(obj, "active_projects_count", obj.project_memberships.count())
+        if hasattr(obj, "active_projects_count"):
+            return obj.active_projects_count
+        return obj.project_memberships.filter(
+            status__in=[
+                ProjectMembership.Status.ACTIVE,
+                ProjectMembership.Status.PAUSED,
+            ]
+        ).count()
 
     @admin.display(description=_("Откликов"))
     def display_applications_count(self, obj: SpecialistProfile) -> int:
@@ -344,7 +356,9 @@ class SpecialistProfileAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
         Args:
             obj: Объект модели
         """
-        return getattr(obj, "applications_count", obj.applications.count())
+        if hasattr(obj, "applications_count"):
+            return obj.applications_count
+        return obj.applications.count()
 
     @admin.display(description=_("Приглашений"))
     def display_invitations_count(self, obj: SpecialistProfile) -> int:
@@ -353,7 +367,9 @@ class SpecialistProfileAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
         Args:
             obj: Объект модели
         """
-        return getattr(obj, "invitations_count", obj.invitations.count())
+        if hasattr(obj, "invitations_count"):
+            return obj.invitations_count
+        return obj.invitations.count()
 
     @admin.display(boolean=True, description=_("Доступен"))
     def display_is_available(self, obj: SpecialistProfile) -> bool:

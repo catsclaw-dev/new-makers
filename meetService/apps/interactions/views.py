@@ -3,7 +3,7 @@ from __future__ import annotations
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
-from django.db import IntegrityError, models
+from django.db import IntegrityError, models, transaction
 from django.db.models import QuerySet
 from django.http import HttpRequest, HttpResponse
 from django.views.decorators.http import require_POST
@@ -12,6 +12,7 @@ from django.views.decorators.http import require_POST
 from django.utils.translation import gettext_lazy as _
 
 from apps.accounts.models import User
+from apps.common_throttling import rate_limit
 from apps.interactions.forms import ApplicationForm, InvitationForm
 from apps.interactions.models import Application, FavoriteProject, Invitation
 from apps.projects.models import Project, ProjectMembership, ProjectVacancy
@@ -19,6 +20,7 @@ from apps.specialists.models import SpecialistProfile
 
 
 @login_required
+@rate_limit(scope="project-apply", limit=20, window=60 * 60)
 def project_apply(request: HttpRequest, slug: str) -> HttpResponse:
     """
     Создание отклика специалиста на проект.
@@ -43,7 +45,10 @@ def project_apply(request: HttpRequest, slug: str) -> HttpResponse:
     already_member = ProjectMembership.objects.filter(
         project=project,
         specialist=specialist,
-        status=ProjectMembership.Status.ACTIVE,
+        status__in=[
+            ProjectMembership.Status.ACTIVE,
+            ProjectMembership.Status.PAUSED,
+        ],
     ).exists()
 
     if already_member:
@@ -164,20 +169,32 @@ def favorite_project_toggle(request: HttpRequest, slug: str) -> HttpResponse:
         slug=slug,
     )
 
-    favorite = FavoriteProject.objects.filter(
-        user=request.user,
-        project=project,
-    ).first()
-
-    if favorite:
-        favorite.delete()
-        messages.info(request, _("Проект удалён из избранного."))
-    else:
-        FavoriteProject.objects.create(
+    with transaction.atomic():
+        Project.objects.select_for_update().get(pk=project.pk)
+        favorite = FavoriteProject.objects.filter(
             user=request.user,
             project=project,
-        )
+        ).first()
+
+        if favorite:
+            favorite.delete()
+            is_favorite = False
+        else:
+            try:
+                with transaction.atomic():
+                    FavoriteProject.objects.create(
+                        user=request.user,
+                        project=project,
+                    )
+            except IntegrityError:
+                # Параллельный запрос уже добавил проект в избранное.
+                pass
+            is_favorite = True
+
+    if is_favorite:
         messages.success(request, _("Проект добавлен в избранное."))
+    else:
+        messages.info(request, _("Проект удалён из избранного."))
 
     return redirect(project.get_absolute_url())
 
@@ -224,6 +241,7 @@ def user_has_project_for_invitation(user: User | None) -> bool:
 
 
 @login_required
+@rate_limit(scope="invite-specialist", limit=20, window=60 * 60)
 def invite_specialist(request: HttpRequest, pk: int | None) -> HttpResponse:
     """
     Приглашение специалиста в опубликованный проект текущего пользователя.
@@ -234,6 +252,11 @@ def invite_specialist(request: HttpRequest, pk: int | None) -> HttpResponse:
     specialist = get_object_or_404(
         SpecialistProfile.objects.select_related("user", "main_role").prefetch_related(
             "technologies"
+        ).filter(
+            status__in=[
+                SpecialistProfile.AvailabilityStatus.LOOKING,
+                SpecialistProfile.AvailabilityStatus.OPEN,
+            ]
         ),
         pk=pk,
     )
@@ -305,7 +328,10 @@ def invite_specialist(request: HttpRequest, pk: int | None) -> HttpResponse:
             already_member = ProjectMembership.objects.filter(
                 project=invitation.project,
                 specialist=specialist,
-                status=ProjectMembership.Status.ACTIVE,
+                status__in=[
+                    ProjectMembership.Status.ACTIVE,
+                    ProjectMembership.Status.PAUSED,
+                ],
             ).exists()
 
             if already_member:

@@ -9,7 +9,7 @@ from django.utils.translation import gettext_lazy as _
 from simple_history.models import HistoricalRecords
 
 from apps.directories.models import Role, Technology
-from apps.common_validators import validate_avatar_image
+from apps.common_validators import validate_avatar_image, validate_iana_timezone
 
 
 class SpecialistProfile(models.Model):
@@ -119,6 +119,7 @@ class SpecialistProfile(models.Model):
     timezone = models.CharField(
         max_length=50,
         blank=True,
+        validators=[validate_iana_timezone],
         verbose_name=_("часовой пояс"),
         help_text=_("Например: Europe/Moscow."),
     )

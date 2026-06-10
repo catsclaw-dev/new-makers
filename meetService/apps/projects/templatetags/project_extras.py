@@ -55,7 +55,7 @@ def service_name() -> object:
     """
     Простой шаблонный тег с названием сервиса.
     """
-    return "MeetService"
+    return "New-Makers"
 
 
 @register.simple_tag(takes_context=True)

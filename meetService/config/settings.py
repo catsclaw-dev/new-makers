@@ -26,9 +26,11 @@ env = environ.Env(
     DJANGO_SILK_AUTHENTICATION=(bool, True),
     DJANGO_SILK_AUTHORISATION=(bool, True),
     DJANGO_SILK_PYTHON_PROFILER=(bool, False),
+    DJANGO_SERVE_MEDIA=(bool, False),
     EMAIL_PORT=(int, 587),
     EMAIL_USE_TLS=(bool, True),
     EMAIL_NOTIFICATIONS_ENABLED=(bool, True),
+    CACHE_URL=(str, ""),
     SENTRY_PROFILES_SAMPLE_RATE=(float, 0.0),
     SENTRY_SEND_DEFAULT_PII=(bool, False),
     SENTRY_TRACES_SAMPLE_RATE=(float, 0.0),
@@ -209,6 +211,7 @@ AUTHENTICATION_BACKENDS = [
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
+SERVE_MEDIA = env.bool("DJANGO_SERVE_MEDIA", default=DEBUG)
 
 
 STATIC_URL = "/static/"
@@ -243,6 +246,10 @@ REST_FRAMEWORK = {
     ],
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 20,
+    "DEFAULT_THROTTLE_RATES": {
+        "auth_token": "5/minute",
+        "sensitive_actions": "30/hour",
+    },
 }
 
 LOGIN_URL = "accounts:login"
@@ -265,7 +272,7 @@ ACCOUNT_SIGNUP_FIELDS = [
 ]
 ACCOUNT_UNIQUE_EMAIL = True
 SOCIALACCOUNT_AUTO_SIGNUP = True
-SOCIALACCOUNT_ADAPTER = "apps.accounts.adapters.MeetServiceSocialAccountAdapter"
+SOCIALACCOUNT_ADAPTER = "apps.accounts.adapters.NewMakersSocialAccountAdapter"
 SOCIALACCOUNT_LOGIN_ON_GET = True
 
 GOOGLE_OAUTH_CLIENT_ID = env("GOOGLE_OAUTH_CLIENT_ID", default="")
@@ -317,7 +324,7 @@ EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", default="")
 EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", default=True)
 DEFAULT_FROM_EMAIL = env(
     "DEFAULT_FROM_EMAIL",
-    default="MeetService <noreply@meetservice.local>",
+    default="New-Makers <noreply@new-makers.local>",
 )
 EMAIL_NOTIFICATIONS_ENABLED = env.bool("EMAIL_NOTIFICATIONS_ENABLED", default=True)
 SITE_URL = env("SITE_URL", default="http://127.0.0.1:8000").rstrip("/")
@@ -359,12 +366,21 @@ SECURE_HSTS_PRELOAD = env.bool(
     default=False,
 )
 
-CACHES = {
-    "default": {
-        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
-        "LOCATION": "meetservice-cache",
+CACHE_URL = env("CACHE_URL", default="")
+if CACHE_URL:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.redis.RedisCache",
+            "LOCATION": CACHE_URL,
+        }
     }
-}
+else:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+            "LOCATION": "new-makers-cache",
+        }
+    }
 
 CACHE_TIMEOUT = 60 * 5
 

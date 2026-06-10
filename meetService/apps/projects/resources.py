@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 from import_export import fields, resources
+from django.db.models import F
 
-from .models import Project
+from .models import Project, ProjectMembership, ProjectVacancy
 from django.utils.translation import gettext_lazy as _
 
 
@@ -84,7 +85,10 @@ class ProjectResource(resources.ModelResource):
         Args:
             obj: Объект модели
         """
-        return obj.vacancies.filter(status="open").count()
+        return obj.vacancies.filter(
+            status=ProjectVacancy.Status.OPEN,
+            current_count__lt=F("required_count"),
+        ).count()
 
     def dehydrate_members_count(self, obj: object) -> int:
         """
@@ -92,4 +96,9 @@ class ProjectResource(resources.ModelResource):
         Args:
             obj: Объект модели
         """
-        return obj.memberships.count()
+        return obj.memberships.filter(
+            status__in=[
+                ProjectMembership.Status.ACTIVE,
+                ProjectMembership.Status.PAUSED,
+            ]
+        ).count()

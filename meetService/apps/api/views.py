@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from django.core.exceptions import ValidationError as DjangoValidationError
-from django.db import IntegrityError
+from django.db import IntegrityError, transaction
 from django.db.models import Count, Exists, F, OuterRef, Q, QuerySet
 from django.utils.translation import gettext_lazy as _
 from rest_framework import status, viewsets
@@ -10,6 +10,7 @@ from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework.decorators import action
 from rest_framework.exceptions import (
     NotAuthenticated,
+    NotFound,
     PermissionDenied,
     ValidationError,
 )
@@ -21,6 +22,7 @@ from rest_framework.permissions import (
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.serializers import BaseSerializer as Serializer
 
 from apps.api.filters import (
@@ -39,6 +41,7 @@ from apps.api.permissions import (
     IsSpecialistOwnerOrAdmin,
     is_admin,
 )
+from apps.api.throttling import SensitiveActionThrottle
 from apps.api.serializers import (
     ApplicationSerializer,
     FavoriteProjectSerializer,
@@ -69,6 +72,8 @@ class CustomAuthToken(APIView):
 
     permission_classes = [AllowAny]
     serializer_class = AuthTokenSerializer
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "auth_token"
 
     def post(self, request: Request) -> Response:
         """
@@ -186,7 +191,12 @@ class RoleViewSet(viewsets.ModelViewSet):
         queryset = Role.objects.annotate(
             open_vacancies_count=Count(
                 "project_vacancies",
-                filter=Q(project_vacancies__status=ProjectVacancy.Status.OPEN),
+                filter=Q(
+                    project_vacancies__status=ProjectVacancy.Status.OPEN,
+                    project_vacancies__current_count__lt=F(
+                        "project_vacancies__required_count"
+                    ),
+                ),
                 distinct=True,
             ),
             main_specialists_count=Count("main_specialists", distinct=True),
@@ -252,6 +262,11 @@ class ProjectViewSet(viewsets.ModelViewSet):
     )
     ordering = ("-created_at",)
 
+    def get_throttles(self) -> list[object]:
+        if self.request.method == "POST":
+            return [SensitiveActionThrottle()]
+        return super().get_throttles()
+
     def get_permissions(self) -> list[object]:
         """
         Возвращает права доступа для текущего действия.
@@ -287,7 +302,12 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 ),
                 members_count=Count(
                     "memberships",
-                    filter=Q(memberships__status=ProjectMembership.Status.ACTIVE),
+                    filter=Q(
+                        memberships__status__in=[
+                            ProjectMembership.Status.ACTIVE,
+                            ProjectMembership.Status.PAUSED,
+                        ]
+                    ),
                     distinct=True,
                 ),
                 favorite_count=Count("favorited_by", distinct=True),
@@ -499,15 +519,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 }
             )
 
-        FavoriteProject.objects.filter(project=project).delete()
-
-        ProjectVacancy.objects.filter(project=project).exclude(
-            status=ProjectVacancy.Status.CLOSED
-        ).update(status=ProjectVacancy.Status.CLOSED)
-
-        project.status = Project.Status.ARCHIVED
-        project.updated_by = request.user
-        project.save(update_fields=["status", "updated_by", "updated_at"])
+        project.archive(archived_by=request.user)
 
         serializer = self.get_serializer(project)
         return Response(serializer.data)
@@ -529,17 +541,30 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 )
             )
 
-        favorite = FavoriteProject.objects.filter(
-            user=request.user,
-            project=project,
-        ).first()
+        with transaction.atomic():
+            Project.objects.select_for_update().get(pk=project.pk)
+            favorite = FavoriteProject.objects.filter(
+                user=request.user,
+                project=project,
+            ).first()
 
-        if favorite:
-            favorite.delete()
-            return Response({"is_favorite": False})
+            if favorite:
+                favorite.delete()
+                is_favorite = False
+            else:
+                try:
+                    with transaction.atomic():
+                        FavoriteProject.objects.create(
+                            user=request.user,
+                            project=project,
+                        )
+                except IntegrityError:
+                    # Параллельный запрос уже добавил проект в избранное.
+                    pass
+                is_favorite = True
 
-        FavoriteProject.objects.create(user=request.user, project=project)
-        return Response({"is_favorite": True}, status=status.HTTP_201_CREATED)
+        response_status = status.HTTP_201_CREATED if is_favorite else status.HTTP_200_OK
+        return Response({"is_favorite": is_favorite}, status=response_status)
 
 
 class ProjectVacancyViewSet(viewsets.ModelViewSet):
@@ -654,7 +679,10 @@ class SpecialistProfileViewSet(viewsets.ModelViewSet):
                 active_projects_count=Count(
                     "project_memberships",
                     filter=Q(
-                        project_memberships__status=ProjectMembership.Status.ACTIVE,
+                        project_memberships__status__in=[
+                            ProjectMembership.Status.ACTIVE,
+                            ProjectMembership.Status.PAUSED,
+                        ],
                     ),
                     distinct=True,
                 ),
@@ -705,13 +733,10 @@ class SpecialistProfileViewSet(viewsets.ModelViewSet):
         Args:
             request: HTTP-запрос текущего пользователя
         """
-        profile, created = SpecialistProfile.objects.get_or_create(
-            user=request.user,
-            defaults={
-                "created_by": request.user,
-                "updated_by": request.user,
-            },
-        )
+        profile = SpecialistProfile.objects.filter(user=request.user).first()
+
+        if profile is None:
+            raise NotFound(_("Профиль специалиста не найден."))
 
         if request.method == "GET":
             serializer = self.get_serializer(profile)
@@ -724,9 +749,6 @@ class SpecialistProfileViewSet(viewsets.ModelViewSet):
         )
         serializer.is_valid(raise_exception=True)
         serializer.save(updated_by=request.user)
-
-        if created:
-            serializer.instance.created_by = request.user
 
         return Response(serializer.data)
 
@@ -745,6 +767,11 @@ class ApplicationViewSet(viewsets.ModelViewSet):
     ordering_fields = ("applied_at", "reviewed_at", "status")
     ordering = ("-applied_at",)
     http_method_names = ["get", "post", "head", "options"]
+
+    def get_throttles(self) -> list[object]:
+        if self.request.method == "POST":
+            return [SensitiveActionThrottle()]
+        return super().get_throttles()
 
     def get_permissions(self) -> list[object]:
         """
@@ -829,6 +856,11 @@ class InvitationViewSet(viewsets.ModelViewSet):
     ordering_fields = ("invited_at", "responded_at", "status")
     ordering = ("-invited_at",)
     http_method_names = ["get", "post", "head", "options"]
+
+    def get_throttles(self) -> list[object]:
+        if self.request.method == "POST":
+            return [SensitiveActionThrottle()]
+        return super().get_throttles()
 
     def get_permissions(self) -> list[object]:
         """

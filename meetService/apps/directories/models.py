@@ -1,5 +1,4 @@
 from django.db import models
-from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from simple_history.models import HistoricalRecords
@@ -51,13 +50,6 @@ class Role(models.Model):
         Возвращает строковое представление объекта.
         """
         return self.name
-
-    def get_absolute_url(self) -> str:
-        """
-        Возвращает значение `absolute url`.
-        """
-        return reverse("role_detail", kwargs={"slug": self.slug})
-
 
 class Technology(models.Model):
     """Справочник технологий, языков программирования и инструментов."""
@@ -117,9 +109,3 @@ class Technology(models.Model):
         Возвращает строковое представление объекта.
         """
         return self.name
-
-    def get_absolute_url(self) -> str:
-        """
-        Возвращает значение `absolute url`.
-        """
-        return reverse("technology_detail", kwargs={"slug": self.slug})

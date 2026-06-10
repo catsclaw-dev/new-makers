@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db import models, transaction
@@ -8,16 +10,21 @@ from django.views.decorators.http import require_POST
 from django.shortcuts import get_object_or_404, render, redirect
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
-from django.http import Http404, HttpRequest, HttpResponse, HttpResponseRedirect
+from django.http import (
+    FileResponse,
+    Http404,
+    HttpRequest,
+    HttpResponse,
+    HttpResponseRedirect,
+)
 from django.conf import settings
 from django.core.cache import cache
-from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-
+from django.core.exceptions import ValidationError
 
 from apps.directories.models import Role, Technology
 from apps.interactions.models import FavoriteProject
-from apps.projects.models import Project, ProjectMembership, ProjectVacancy
+from apps.projects.models import Project, ProjectFile, ProjectMembership, ProjectVacancy
 from apps.specialists.models import SpecialistProfile
 from apps.projects.forms import (
     ProjectForm,
@@ -25,6 +32,30 @@ from apps.projects.forms import (
     ProjectVacancyUpdateForm,
     ProjectMembershipUpdateForm,
 )
+
+
+def project_file_serve(request: HttpRequest, path: str) -> HttpResponse:
+    """Отдаёт project-файл как attachment с учётом видимости проекта."""
+    project_file = get_object_or_404(
+        ProjectFile.objects.select_related("project", "project__owner"),
+        file=f"projects/files/{path}",
+    )
+    project = project_file.project
+    can_view = project.status in [Project.Status.PUBLISHED, Project.Status.CLOSED]
+
+    if request.user.is_authenticated:
+        can_view = can_view or project.can_be_edited_by(request.user)
+
+    if not can_view:
+        raise Http404(_("Файл проекта не найден."))
+
+    response = FileResponse(
+        project_file.file.open("rb"),
+        as_attachment=True,
+        filename=Path(project_file.file.name).name,
+    )
+    response["X-Content-Type-Options"] = "nosniff"
+    return response
 
 
 def home(request: HttpRequest) -> HttpResponse:
@@ -193,7 +224,10 @@ def home(request: HttpRequest) -> HttpResponse:
                 status=SpecialistProfile.AvailabilityStatus.HIDDEN,
             ).count(),
             "team_members_count": ProjectMembership.objects.filter(
-                status=ProjectMembership.Status.ACTIVE,
+                status__in=[
+                    ProjectMembership.Status.ACTIVE,
+                    ProjectMembership.Status.PAUSED,
+                ],
             ).count(),
             "roles_count": Role.objects.filter(is_active=True).count(),
             "technologies_count": Technology.objects.filter(is_active=True).count(),
@@ -528,7 +562,10 @@ def my_teams(request: HttpRequest) -> HttpResponse:
             .prefetch_related("project__technologies")
             .filter(
                 specialist=specialist_profile,
-                status=ProjectMembership.Status.ACTIVE,
+                status__in=[
+                    ProjectMembership.Status.ACTIVE,
+                    ProjectMembership.Status.PAUSED,
+                ],
             )
             .exclude(project__status=Project.Status.ARCHIVED)
             .order_by("-joined_at")
@@ -854,29 +891,19 @@ def project_membership_update(
         return redirect(project.get_absolute_url())
 
     if request.method == "POST":
-        old_vacancy = membership.vacancy
-
         form = ProjectMembershipUpdateForm(request.POST, instance=membership)
 
         if form.is_valid():
-            membership = form.save(commit=False)
-
-            membership.role = membership.vacancy.role
-
-            if membership.status == ProjectMembership.Status.LEFT:
-                membership.left_at = timezone.now()
+            try:
+                membership.move_to(
+                    vacancy=form.cleaned_data["vacancy"],
+                    status=form.cleaned_data["status"],
+                )
+            except ValidationError as error:
+                form.add_error(None, error)
             else:
-                membership.left_at = None
-
-            membership.save()
-
-            if old_vacancy is not None:
-                old_vacancy.sync_current_count()
-
-            membership.vacancy.sync_current_count()
-
-            messages.success(request, _("Участник команды обновлён."))
-            return redirect(project.get_absolute_url())
+                messages.success(request, _("Участник команды обновлён."))
+                return redirect(project.get_absolute_url())
     else:
         form = ProjectMembershipUpdateForm(instance=membership)
 
@@ -1029,15 +1056,7 @@ def project_archive(request: HttpRequest, slug: str) -> HttpResponse:
             )
             return redirect("projects:project_archive", slug=project.slug)
 
-        FavoriteProject.objects.filter(project=project).delete()
-
-        ProjectVacancy.objects.filter(project=project).exclude(
-            status=ProjectVacancy.Status.CLOSED
-        ).update(status=ProjectVacancy.Status.CLOSED)
-
-        project.status = Project.Status.ARCHIVED
-        project.updated_by = request.user
-        project.save(update_fields=["status", "updated_by", "updated_at"])
+        project.archive(archived_by=request.user)
 
         messages.success(
             request,

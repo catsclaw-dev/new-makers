@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+import importlib
 from types import ModuleType
 from unittest import mock
 
-from django.test import SimpleTestCase
+from django.test import SimpleTestCase, override_settings
+from django.urls import NoReverseMatch, clear_url_caches, reverse
 
 from config.telemetry import (
     SentryConfig,
@@ -12,6 +14,16 @@ from config.telemetry import (
     initialize_sentry,
     sentry_init_kwargs,
 )
+
+
+def reload_urlconf() -> None:
+    """
+    Reload project URLs after settings overrides change conditional routes.
+    """
+    import config.urls
+
+    importlib.reload(config.urls)
+    clear_url_caches()
 
 
 class SentryTelemetryTests(SimpleTestCase):
@@ -137,11 +149,11 @@ class SentryTelemetryTests(SimpleTestCase):
                 traces_sample_rate=0.5,
                 profiles_sample_rate=0.25,
                 send_default_pii=False,
-                release="meetservice@1.0.0",
+                release="new-makers@1.0.0",
             )
         )
 
-        self.assertEqual(kwargs["release"], "meetservice@1.0.0")
+        self.assertEqual(kwargs["release"], "new-makers@1.0.0")
 
     def test_initialize_sentry_returns_false_without_config(self) -> None:
         """
@@ -171,7 +183,7 @@ class SentryTelemetryTests(SimpleTestCase):
             traces_sample_rate=0.5,
             profiles_sample_rate=0.25,
             send_default_pii=False,
-            release="meetservice@1.0.0",
+            release="new-makers@1.0.0",
         )
 
         with mock.patch.dict(
@@ -194,3 +206,28 @@ class SentryTelemetryTests(SimpleTestCase):
             kwargs["integrations"],
             ["django-integration", "logging-integration"],
         )
+
+
+class SilkConfigurationTests(SimpleTestCase):
+    """Tests for Django Silk URL exposure."""
+
+    @override_settings(DEBUG=True, SILK_ENABLED=True, ROOT_URLCONF="config.urls")
+    def test_silk_url_is_available_when_enabled(self) -> None:
+        """
+        Silk index route is mounted when debug profiling is enabled.
+        """
+        reload_urlconf()
+
+        self.assertEqual(reverse("silk:summary"), "/silk/")
+
+    @override_settings(DEBUG=True, SILK_ENABLED=False, ROOT_URLCONF="config.urls")
+    def test_silk_url_is_hidden_when_disabled(self) -> None:
+        """
+        Silk index route is not mounted when profiling flag is disabled.
+        """
+        reload_urlconf()
+
+        with self.assertRaises(NoReverseMatch):
+            reverse("silk:summary")
+
+        reload_urlconf()

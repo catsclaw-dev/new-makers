@@ -1,11 +1,14 @@
 from __future__ import annotations
 
 from django.contrib.auth import get_user_model
-from django.db import IntegrityError, transaction
+from django.core.exceptions import ValidationError
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.urls import reverse
 
 from apps.directories.models import Role
+from apps.common_validators import validate_project_file
+from apps.interactions.models import Application, Invitation
 from apps.projects.models import Project, ProjectMembership, ProjectVacancy
 from apps.specialists.models import SpecialistProfile
 
@@ -150,10 +153,153 @@ class ProjectBusinessTests(TestCase):
             status=ProjectMembership.Status.ACTIVE,
         )
 
-        with self.assertRaises(IntegrityError), transaction.atomic():
+        with self.assertRaises(ValidationError):
             ProjectMembership.objects.create(
                 project=project,
                 specialist=self.specialist,
                 role=self.role,
                 status=ProjectMembership.Status.ACTIVE,
             )
+
+    def test_membership_rejects_vacancy_from_another_project(self) -> None:
+        """Проверяет согласованность проекта membership и вакансии."""
+        project = self.create_project(status=Project.Status.PUBLISHED)
+        other_project = self.create_project(
+            title="Другой проект",
+            status=Project.Status.PUBLISHED,
+        )
+        vacancy = ProjectVacancy.objects.create(
+            project=other_project,
+            role=self.role,
+            title="Backend",
+            description="Роль другого проекта.",
+        )
+
+        with self.assertRaises(ValidationError):
+            ProjectMembership.objects.create(
+                project=project,
+                specialist=self.specialist,
+                vacancy=vacancy,
+                role=self.role,
+            )
+
+    def test_membership_rejects_role_mismatch(self) -> None:
+        """Проверяет согласованность роли membership и вакансии."""
+        project = self.create_project(status=Project.Status.PUBLISHED)
+        other_role = Role.objects.create(name="QA", slug="qa")
+        vacancy = ProjectVacancy.objects.create(
+            project=project,
+            role=other_role,
+            title="QA",
+            description="Нужен тестировщик.",
+        )
+
+        with self.assertRaises(ValidationError):
+            ProjectMembership.objects.create(
+                project=project,
+                specialist=self.specialist,
+                vacancy=vacancy,
+                role=self.role,
+            )
+
+    def test_membership_normalizes_left_at(self) -> None:
+        """Проверяет согласованность даты выхода со статусом membership."""
+        project = self.create_project(status=Project.Status.PUBLISHED)
+        membership = ProjectMembership.objects.create(
+            project=project,
+            specialist=self.specialist,
+            role=self.role,
+            status=ProjectMembership.Status.LEFT,
+        )
+
+        self.assertIsNotNone(membership.left_at)
+
+        membership.status = ProjectMembership.Status.ACTIVE
+        membership.save()
+
+        self.assertIsNone(membership.left_at)
+
+    def test_failed_membership_move_keeps_original_vacancy(self) -> None:
+        """Проверяет атомарность перемещения в заполненную вакансию."""
+        project = self.create_project(status=Project.Status.PUBLISHED)
+        old_vacancy = ProjectVacancy.objects.create(
+            project=project,
+            role=self.role,
+            title="Backend A",
+            description="Исходная роль.",
+            required_count=2,
+        )
+        full_vacancy = ProjectVacancy.objects.create(
+            project=project,
+            role=self.role,
+            title="Backend B",
+            description="Заполненная роль.",
+            required_count=1,
+        )
+        membership = old_vacancy.add_specialist(
+            specialist=self.specialist,
+            added_by=self.owner,
+        )
+        second_user = User.objects.create_user(username="second", password="password")
+        second_specialist = SpecialistProfile.objects.create(user=second_user)
+        full_vacancy.add_specialist(
+            specialist=second_specialist,
+            added_by=self.owner,
+        )
+
+        with self.assertRaises(ValidationError):
+            membership.move_to(
+                vacancy=full_vacancy,
+                status=ProjectMembership.Status.ACTIVE,
+            )
+
+        membership.refresh_from_db()
+        old_vacancy.refresh_from_db()
+        full_vacancy.refresh_from_db()
+        self.assertEqual(membership.vacancy, old_vacancy)
+        self.assertEqual(old_vacancy.current_count, 1)
+        self.assertEqual(full_vacancy.current_count, 1)
+
+    def test_archive_closes_pending_interactions_with_history(self) -> None:
+        project = self.create_project(status=Project.Status.PUBLISHED)
+        vacancy = ProjectVacancy.objects.create(
+            project=project,
+            role=self.role,
+            title="Backend",
+            description="Открытая роль.",
+            required_count=2,
+        )
+        application = Application.objects.create(
+            project=project,
+            vacancy=vacancy,
+            specialist=self.specialist,
+        )
+        invitation = Invitation.objects.create(
+            project=project,
+            vacancy=vacancy,
+            specialist=self.specialist,
+            invited_by=self.owner,
+        )
+        application_history_count = application.history.count()
+        invitation_history_count = invitation.history.count()
+
+        project.archive(archived_by=self.owner)
+        application.refresh_from_db()
+        invitation.refresh_from_db()
+        vacancy.refresh_from_db()
+
+        self.assertEqual(application.status, Application.Status.REJECTED)
+        self.assertEqual(invitation.status, Invitation.Status.EXPIRED)
+        self.assertEqual(vacancy.status, ProjectVacancy.Status.CLOSED)
+        self.assertGreater(application.history.count(), application_history_count)
+        self.assertGreater(invitation.history.count(), invitation_history_count)
+
+    def test_project_file_rejects_fake_pdf(self) -> None:
+        uploaded = SimpleUploadedFile(
+            "document.pdf",
+            b"not a pdf",
+            content_type="application/pdf",
+        )
+
+        with self.assertRaises(ValidationError):
+            validate_project_file(uploaded)

@@ -203,13 +203,16 @@ class InvitationForm(forms.ModelForm):
         self.invited_by = invited_by
 
         if invited_by is not None:
+            owner_filter = {} if invited_by.is_staff or invited_by.is_superuser else {
+                "project__owner": invited_by,
+            }
             self.fields["vacancy"].queryset = (
                 ProjectVacancy.objects.select_related("project", "role")
                 .filter(
-                    project__owner=invited_by,
                     project__status=Project.Status.PUBLISHED,
                     status=ProjectVacancy.Status.OPEN,
                     current_count__lt=models.F("required_count"),
+                    **owner_filter,
                 )
                 .order_by("project__title", "role__name", "title")
             )
@@ -222,7 +225,11 @@ class InvitationForm(forms.ModelForm):
         """
         vacancy = self.cleaned_data["vacancy"]
 
-        if vacancy.project.owner_id != self.invited_by.id:
+        if (
+            not self.invited_by.is_staff
+            and not self.invited_by.is_superuser
+            and vacancy.project.owner_id != self.invited_by.id
+        ):
             raise ValidationError(_("Можно приглашать только в свои проекты."))
 
         if not vacancy.is_open():
