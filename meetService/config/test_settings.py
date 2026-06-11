@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import os
 
-os.environ.setdefault("DJANGO_DEBUG", "False")
-os.environ.setdefault("DJANGO_SILK_ENABLED", "False")
-os.environ.setdefault("SENTRY_DSN", "")
+os.environ["DJANGO_DEBUG"] = "False"
+os.environ["DJANGO_SILK_ENABLED"] = "False"
+os.environ["SENTRY_DSN"] = ""
 
 from .settings import *
 
