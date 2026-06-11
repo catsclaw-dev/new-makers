@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "91033850-2a68-4b6a-9c65-bec6bddc7bc7",
     "name": "New Makers API — clean collection",
-    "description": "Чистая Postman-коллекция под актуальный API new-makers.\n\nЧто исправлено:\n- у всех API URL стоит завершающий слэш;\n- убраны все тесты и post-response scripts;\n- убраны захардкоженные id=1 в телах основных запросов, вместо них используются переменные;\n- destructive-запросы вынесены отдельно;\n- опубликованные сценарии отделены от черновиков, потому что в API нет publish-action.\n\nКак пользоваться:\n1. Получи токен через Auth → Получить токен ...\n2. Вручную скопируй значение token из ответа в переменную owner_token / specialist_token / admin_token.\n3. При создании сущностей вручную копируй id из ответа в role_id, technology_id, project_id, vacancy_id и т.д.\n4. Для откликов, приглашений и избранного нужен опубликованный проект. Если проект создан через API, он будет draft/moderation; публикации через API сейчас нет.",
+    "description": "Подробная коллекция для тестирования основных сценариев использования API.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [

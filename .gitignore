@@ -13,8 +13,6 @@ staticfiles/
 
 env/
 .env
-.env.*
-!.env.example
 
 celerybeat-schedule
 celerybeat.pid
