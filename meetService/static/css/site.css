@@ -2356,7 +2356,6 @@ html.bw-mode .main-nav .nav-link:hover {
 
 html.bw-mode .btn,
 html.bw-mode .card-link,
-html.bw-mode .main-nav a,
 html.bw-mode .nav a,
 html.bw-mode .user-chip,
 html.bw-mode .user-pill,
@@ -2375,7 +2374,6 @@ html.bw-mode .header-profile-link {
 
 html.bw-mode .btn:hover,
 html.bw-mode .card-link:hover,
-html.bw-mode .main-nav a:hover,
 html.bw-mode .nav a:hover,
 html.bw-mode .pagination a:hover,
 html.bw-mode .accessibility-toggle:hover,
@@ -2433,8 +2431,43 @@ html.bw-mode .header-search input {
   color: #ffffff;
 }
 
-html.bw-mode .main-nav .nav-link.is-active::after {
+html.bw-mode .main-nav {
+  gap: 10px;
+}
+
+html.bw-mode .main-nav .nav-link {
+  padding: 9px 14px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: #ffffff;
+  transition:
+    background 0.18s ease,
+    color 0.18s ease,
+    border-color 0.18s ease,
+    transform 0.18s ease;
+}
+
+html.bw-mode .main-nav .nav-link:hover {
+  border-color: #ffffff;
+  background: #111111;
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+html.bw-mode .main-nav .nav-link.is-active {
+  border-color: #ffffff;
   background: #ffffff;
+  color: #000000;
+}
+
+html.bw-mode .main-nav .nav-link.is-active:hover {
+  background: #dddddd;
+  color: #000000;
+}
+
+html.bw-mode .main-nav .nav-link.is-active::after {
+  display: none;
 }
 
 html.bw-mode .header-notifications-menu a {
@@ -2450,6 +2483,70 @@ html.bw-mode .header-notification-badge {
   border-color: #000000;
   background: #ffffff;
   color: #000000;
+}
+
+html.bw-mode .catalog-empty-state,
+html.bw-mode .filter-card {
+  border-color: #ffffff;
+  background: #000000;
+  color: #ffffff;
+  box-shadow: none;
+}
+
+html.bw-mode .catalog-empty-state p:not(.eyebrow),
+html.bw-mode .filter-card-title,
+html.bw-mode .filter-option,
+html.bw-mode .filter-more summary,
+html.bw-mode .filter-reset-link {
+  color: #ffffff;
+}
+
+html.bw-mode .filter-search-icon {
+  color: #ffffff;
+}
+
+html.bw-mode .filter-search input,
+html.bw-mode .filter-field input,
+html.bw-mode .filter-field select {
+  border-color: #ffffff;
+  background: #000000;
+  color: #ffffff;
+}
+
+html.bw-mode .filter-option input[type="checkbox"] {
+  accent-color: #ffffff;
+}
+
+html.bw-mode .filter-more {
+  border-top-color: #ffffff;
+}
+
+html.bw-mode .filter-option:hover span,
+html.bw-mode .filter-more summary:hover,
+html.bw-mode .filter-reset-link:hover {
+  color: #dddddd;
+}
+
+html.bw-mode .filter-option:has(input[type="checkbox"]:checked) span {
+  color: #ffffff;
+  font-weight: 800;
+}
+
+html.bw-mode .filters-panel-compact {
+  scrollbar-color: #ffffff #000000;
+}
+
+html.bw-mode .filters-panel-compact::-webkit-scrollbar-track {
+  background: #000000;
+}
+
+html.bw-mode .filters-panel-compact::-webkit-scrollbar-thumb {
+  border-color: #000000;
+  background: #ffffff;
+}
+
+html.bw-mode .filters-panel-compact::-webkit-scrollbar-thumb:hover {
+  background: #dddddd;
 }
 
 /* ============================================================
