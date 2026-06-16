@@ -62,6 +62,94 @@ class UserBriefSerializer(serializers.ModelSerializer):
         return obj.get_full_name() or obj.username
 
 
+class RoleBriefSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Role
+        fields = (
+            "id",
+            "name",
+            "slug",
+        )
+        read_only_fields = fields
+
+
+class TechnologyBriefSerializer(serializers.ModelSerializer):
+    category_display = serializers.CharField(
+        source="get_category_display",
+        read_only=True,
+    )
+
+    class Meta:
+        model = Technology
+        fields = (
+            "id",
+            "name",
+            "slug",
+            "category",
+            "category_display",
+        )
+        read_only_fields = fields
+
+
+class ProjectVacancyBriefSerializer(serializers.ModelSerializer):
+    role_detail = RoleBriefSerializer(source="role", read_only=True)
+    remaining_slots = serializers.IntegerField(read_only=True)
+    is_open = serializers.BooleanField(read_only=True)
+
+    class Meta:
+        model = ProjectVacancy
+        fields = (
+            "id",
+            "role",
+            "role_detail",
+            "title",
+            "required_level",
+            "required_count",
+            "current_count",
+            "status",
+            "remaining_slots",
+            "is_open",
+        )
+        read_only_fields = fields
+
+
+class ProjectListSerializer(serializers.ModelSerializer):
+    owner = UserBriefSerializer(read_only=True)
+    technologies = TechnologyBriefSerializer(many=True, read_only=True)
+
+    open_vacancy_count = serializers.IntegerField(read_only=True)
+    members_count = serializers.IntegerField(read_only=True)
+    favorite_count = serializers.IntegerField(read_only=True)
+
+    is_favorite = serializers.BooleanField(
+        source="is_favorited",
+        read_only=True,
+    )
+    can_apply = serializers.BooleanField(read_only=True)
+
+    class Meta:
+        model = Project
+        fields = (
+            "id",
+            "owner",
+            "title",
+            "slug",
+            "short_description",
+            "cover_image",
+            "stage",
+            "participation_format",
+            "status",
+            "technologies",
+            "created_at",
+            "open_vacancy_count",
+            "members_count",
+            "favorite_count",
+            "is_favorite",
+            "can_apply",
+        )
+        read_only_fields = fields
+
+
 class RoleSerializer(serializers.ModelSerializer):
     open_vacancies_count = serializers.SerializerMethodField()
     main_specialists_count = serializers.SerializerMethodField()
@@ -176,7 +264,6 @@ class TechnologySerializer(serializers.ModelSerializer):
 
 class ProjectBriefSerializer(serializers.ModelSerializer):
     owner_name = serializers.SerializerMethodField()
-    open_vacancy_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Project
@@ -187,16 +274,10 @@ class ProjectBriefSerializer(serializers.ModelSerializer):
             "short_description",
             "status",
             "owner_name",
-            "open_vacancy_count",
         )
         read_only_fields = fields
 
     def get_owner_name(self, obj: object) -> str:
-        """
-        Возвращает значение `owner name`.
-        Args:
-            obj: Объект модели
-        """
         return obj.owner.get_full_name() or obj.owner.username
 
     def get_open_vacancy_count(self, obj: object) -> int:
@@ -219,7 +300,7 @@ class ProjectVacancySerializer(serializers.ModelSerializer):
         required=False,
     )
     project_title = serializers.CharField(source="project.title", read_only=True)
-    role_detail = RoleSerializer(source="role", read_only=True)
+    role_detail = RoleBriefSerializer(source="role", read_only=True)
     role = serializers.PrimaryKeyRelatedField(
         queryset=Role.objects.filter(is_active=True),
     )
@@ -356,7 +437,7 @@ class ProjectSerializer(serializers.ModelSerializer):
         read_only=True,
     )
     status_display = serializers.CharField(source="get_status_display", read_only=True)
-    technologies = TechnologySerializer(many=True, read_only=True)
+    technologies = TechnologyBriefSerializer(many=True, read_only=True)
     technology_ids = serializers.PrimaryKeyRelatedField(
         queryset=Technology.objects.filter(is_active=True),
         many=True,
@@ -479,38 +560,24 @@ class ProjectSerializer(serializers.ModelSerializer):
         return bool(request and obj.can_be_edited_by(request.user))
 
     def get_can_apply(self, obj: object) -> bool:
-        """
-        Возвращает значение `can apply`.
-        Args:
-            obj: Объект модели
-        """
         request = self.context.get("request")
 
         if not request or not request.user.is_authenticated:
             return False
 
-        if obj.owner_id == request.user.id or obj.status != Project.Status.PUBLISHED:
+        if obj.owner_id == request.user.id:
             return False
 
-        specialist = getattr(request.user, "specialist_profile", None)
-
-        if specialist is None:
+        if obj.status != Project.Status.PUBLISHED:
             return False
 
-        if ProjectMembership.objects.filter(
-            project=obj,
-            specialist=specialist,
-            status__in=[
-                ProjectMembership.Status.ACTIVE,
-                ProjectMembership.Status.PAUSED,
-            ],
-        ).exists():
+        if getattr(request.user, "specialist_profile", None) is None:
             return False
 
-        return obj.vacancies.filter(
-            status=ProjectVacancy.Status.OPEN,
-            current_count__lt=F("required_count"),
-        ).exists()
+        if getattr(obj, "user_is_member", False):
+            return False
+
+        return bool(getattr(obj, "has_open_vacancy", False))
 
     def validate_title(self, value: str) -> str:
         """
@@ -603,20 +670,20 @@ class ProjectSerializer(serializers.ModelSerializer):
 class SpecialistProfileSerializer(serializers.ModelSerializer):
     user = UserBriefSerializer(read_only=True)
     display_name = serializers.SerializerMethodField()
-    main_role_detail = RoleSerializer(source="main_role", read_only=True)
+    main_role_detail = RoleBriefSerializer(source="main_role", read_only=True)
     main_role = serializers.PrimaryKeyRelatedField(
         queryset=Role.objects.filter(is_active=True),
         allow_null=False,
         required=False,
     )
-    preferred_roles = RoleSerializer(many=True, read_only=True)
+    preferred_roles = RoleBriefSerializer(many=True, read_only=True)
     preferred_role_ids = serializers.PrimaryKeyRelatedField(
         queryset=Role.objects.filter(is_active=True),
         many=True,
         required=False,
         write_only=True,
     )
-    technologies = TechnologySerializer(many=True, read_only=True)
+    technologies = TechnologyBriefSerializer(many=True, read_only=True)
     technology_ids = serializers.PrimaryKeyRelatedField(
         queryset=Technology.objects.filter(is_active=True),
         many=True,

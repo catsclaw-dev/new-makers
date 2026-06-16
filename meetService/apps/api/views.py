@@ -2,7 +2,17 @@ from __future__ import annotations
 
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import IntegrityError, transaction
-from django.db.models import Count, Exists, F, OuterRef, Q, QuerySet
+from django.db.models import (
+    Count,
+    Exists,
+    F,
+    OuterRef,
+    Q,
+    QuerySet,
+    BooleanField,
+    ExpressionWrapper,
+    Value,
+)
 from django.utils.translation import gettext_lazy as _
 from rest_framework import status, viewsets
 from rest_framework.authtoken.models import Token
@@ -326,15 +336,54 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 )
             )
 
-        if is_admin(user):
-            return queryset
+            specialist = getattr(user, "specialist_profile", None)
 
-        if user.is_authenticated:
-            return queryset.filter(
-                Q(status__in=PUBLIC_PROJECT_STATUSES) | Q(owner=user)
-            ).distinct()
-
-        return queryset.filter(status__in=PUBLIC_PROJECT_STATUSES)
+            if specialist is not None:
+                queryset = queryset.annotate(
+                    user_is_member=Exists(
+                        ProjectMembership.objects.filter(
+                            project_id=OuterRef("pk"),
+                            specialist=specialist,
+                            status__in=[
+                                ProjectMembership.Status.ACTIVE,
+                                ProjectMembership.Status.PAUSED,
+                            ],
+                        )
+                    ),
+                    has_open_vacancy=Exists(
+                        ProjectVacancy.objects.filter(
+                            project_id=OuterRef("pk"),
+                            status=ProjectVacancy.Status.OPEN,
+                            current_count__lt=F("required_count"),
+                        )
+                    ),
+                )
+            else:
+                queryset = queryset.annotate(
+                    user_is_member=Value(
+                        False,
+                        output_field=BooleanField(),
+                    ),
+                    has_open_vacancy=Value(
+                        False,
+                        output_field=BooleanField(),
+                    ),
+                )
+        else:
+            queryset = queryset.annotate(
+                is_favorited=Value(
+                    False,
+                    output_field=BooleanField(),
+                ),
+                user_is_member=Value(
+                    False,
+                    output_field=BooleanField(),
+                ),
+                has_open_vacancy=Value(
+                    False,
+                    output_field=BooleanField(),
+                ),
+            )
 
     def perform_create(self, serializer: Serializer) -> None:
         """
