@@ -1,8 +1,8 @@
 {
   "info": {
     "_postman_id": "91033850-2a68-4b6a-9c65-bec6bddc7bc7",
-    "name": "New Makers API — clean collection",
-    "description": "Подробная коллекция для тестирования основных сценариев использования API.",
+    "name": "New Makers API",
+    "description": "Коллекция для ручной проверки основных сценариев New Makers API.\n\nПеременные подключения:\n• base_url — адрес приложения, по умолчанию http://127.0.0.1:8000;\n• api_prefix — префикс API, по умолчанию api.\n\nУчётные данные и токены:\n• owner_username, owner_password, owner_token — владелец проекта;\n• specialist_username, specialist_password, specialist_token — специалист;\n• admin_username, admin_password, admin_token — администратор;\n• outsider_username, outsider_password, outsider_token — посторонний авторизованный пользователь.\n\nИдентификаторы и названия объектов:\n• role_id, technology_id — справочные роль и технология;\n• project_id, project_title — создаваемый проект-черновик;\n• vacancy_id — вакансия создаваемого проекта;\n• published_project_id, published_project_title — опубликованный проект;\n• published_vacancy_id — открытая вакансия опубликованного проекта;\n• closed_project_id — закрытый проект;\n• archived_project_id — архивный проект;\n• specialist_id — профиль специалиста;\n• application_id, invitation_id, favorite_id — отклик, приглашение и запись избранного.\n\nПапки коллекции:\n• 00 Auth — получение токенов и проверка текущего пользователя;\n• 01 Public read — публичные GET-запросы;\n• 02 Admin reference data — управление ролями и технологиями;\n• 03 Owner flow — создание проекта, вакансии и отправка на модерацию;\n• 04 Vacancies direct endpoint — прямой CRUD вакансий;\n• 05 Specialist profile — создание и изменение профиля специалиста;\n• 06 Project visibility — проверка видимости проектов для разных пользователей;\n• 07 Published project actions — закрытие, повторное открытие и архивация;\n• 08 Applications — отклики;\n• 09 Invitations — приглашения;\n• 10 Favorites — избранное;\n• 11 Service OPTIONS — служебные OPTIONS-запросы;\n• 98 Logout — удаление API-токенов;\n• 99 Danger zone — удаляющие запросы.\n\nКак пользоваться:\n1. Создай или подготовь пользователей owner, specialist, admin и outsider.\n2. Для обычных пользователей подтверди email, иначе API-токен не будет выдан.\n3. Выполни запросы из 00 Auth и вручную запиши полученные token в переменные коллекции.\n4. Укажи существующие идентификаторы справочников и объектов либо создавай данные по папкам сверху вниз.\n5. После создания сущности вручную переноси её id в соответствующую переменную коллекции.\n6. Для запросов архивации укажи точное название проекта в published_project_title.\n7. Не запускай 98 Logout до завершения основной проверки.\n8. Запросы из 99 Danger zone запускай отдельно и только на тестовых данных.\n\nКоллекция не сохраняет токены и идентификаторы автоматически.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -62,6 +62,21 @@
       "type": "string"
     },
     {
+      "key": "outsider_username",
+      "value": "outsider",
+      "type": "string"
+    },
+    {
+      "key": "outsider_password",
+      "value": "password",
+      "type": "string"
+    },
+    {
+      "key": "outsider_token",
+      "value": "",
+      "type": "string"
+    },
+    {
       "key": "role_id",
       "value": "1",
       "type": "string"
@@ -92,12 +107,22 @@
       "type": "string"
     },
     {
+      "key": "published_project_title",
+      "value": "",
+      "type": "string"
+    },
+    {
       "key": "published_vacancy_id",
       "value": "1",
       "type": "string"
     },
     {
       "key": "closed_project_id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "archived_project_id",
       "value": "1",
       "type": "string"
     },
@@ -125,7 +150,7 @@
   "item": [
     {
       "name": "00 Auth",
-      "description": "Авторизация. Здесь нет тестов и автосохранения переменных — копируй token вручную.",
+      "description": "Получение API-токенов и проверка авторизации. Токены копируются из ответов в переменные коллекции вручную.",
       "item": [
         {
           "name": "Получить токен владельца",
@@ -239,6 +264,43 @@
           }
         },
         {
+          "name": "Получить токен постороннего пользователя",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/auth/token/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "auth",
+                "token"
+              ]
+            },
+            "description": "Получает токен постороннего авторизованного пользователя. Для обычного пользователя email должен быть подтверждён. Скопируй поле token в переменную outsider_token.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{outsider_username}}\",\n  \"password\": \"{{outsider_password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
           "name": "Текущий пользователь — владелец",
           "request": {
             "method": "GET",
@@ -323,9 +385,9 @@
           }
         },
         {
-          "name": "Удалить токен владельца / logout",
+          "name": "Текущий пользователь — посторонний",
           "request": {
-            "method": "POST",
+            "method": "GET",
             "header": [
               {
                 "key": "Accept",
@@ -333,28 +395,28 @@
               },
               {
                 "key": "Authorization",
-                "value": "Token {{owner_token}}"
+                "value": "Token {{outsider_token}}"
               }
             ],
             "url": {
-              "raw": "{{base_url}}/{{api_prefix}}/auth/logout/",
+              "raw": "{{base_url}}/{{api_prefix}}/auth/me/",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
                 "{{api_prefix}}",
                 "auth",
-                "logout"
+                "me"
               ]
             },
-            "description": "Удаляет текущий DRF-токен владельца. После этого owner_token станет недействительным."
+            "description": "Проверка токена постороннего пользователя."
           }
         }
       ]
     },
     {
       "name": "01 Public read",
-      "description": "Безопасные GET-запросы, которые можно выполнять без авторизации.",
+      "description": "GET-запросы, доступные без авторизации. Закрытые проекты скрыты из каталога проектов, но их вакансии можно просматривать.",
       "item": [
         {
           "name": "Роли — список",
@@ -495,6 +557,51 @@
               ],
               "query": [
                 {
+                  "key": "stage",
+                  "value": "mvp",
+                  "disabled": true
+                },
+                {
+                  "key": "participation_format",
+                  "value": "free",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "published",
+                  "disabled": true
+                },
+                {
+                  "key": "owner",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "technology",
+                  "value": "django",
+                  "disabled": true
+                },
+                {
+                  "key": "role",
+                  "value": "backend-developer",
+                  "disabled": true
+                },
+                {
+                  "key": "has_open_vacancies",
+                  "value": "true",
+                  "disabled": true
+                },
+                {
+                  "key": "created_after",
+                  "value": "2026-01-01",
+                  "disabled": true
+                },
+                {
+                  "key": "created_before",
+                  "value": "2026-12-31",
+                  "disabled": true
+                },
+                {
                   "key": "search",
                   "value": "django",
                   "disabled": true
@@ -506,7 +613,7 @@
                 }
               ]
             },
-            "description": "Для гостя возвращает опубликованные и закрытые проекты."
+            "description": "Для гостя возвращает только проекты со статусом published."
           }
         },
         {
@@ -530,7 +637,7 @@
                 "{{published_project_id}}"
               ]
             },
-            "description": "Детальная публичного/закрытого проекта."
+            "description": "Гость может получить детальную информацию только об опубликованном проекте."
           }
         },
         {
@@ -559,13 +666,43 @@
                   "disabled": true
                 },
                 {
+                  "key": "project_slug",
+                  "value": "project-slug",
+                  "disabled": true
+                },
+                {
+                  "key": "role",
+                  "value": "{{role_id}}",
+                  "disabled": true
+                },
+                {
+                  "key": "required_level",
+                  "value": "junior",
+                  "disabled": true
+                },
+                {
                   "key": "status",
                   "value": "open",
+                  "disabled": true
+                },
+                {
+                  "key": "is_open",
+                  "value": "true",
+                  "disabled": true
+                },
+                {
+                  "key": "search",
+                  "value": "backend",
+                  "disabled": true
+                },
+                {
+                  "key": "ordering",
+                  "value": "title",
                   "disabled": true
                 }
               ]
             },
-            "description": "Список ролей. Для гостя видны роли публичных/закрытых проектов."
+            "description": "Для гостя доступны вакансии опубликованных и закрытых проектов. Вакансии закрытого проекта можно просматривать, но отклик на них невозможен."
           }
         },
         {
@@ -589,7 +726,7 @@
                 "{{published_vacancy_id}}"
               ]
             },
-            "description": "Детальная открытой роли."
+            "description": "Публичная детальная вакансии опубликованного или закрытого проекта. Отклик возможен только на открытую вакансию опубликованного проекта."
           }
         },
         {
@@ -612,6 +749,51 @@
                 "specialists"
               ],
               "query": [
+                {
+                  "key": "role",
+                  "value": "{{role_id}}",
+                  "disabled": true
+                },
+                {
+                  "key": "technology",
+                  "value": "{{technology_id}}",
+                  "disabled": true
+                },
+                {
+                  "key": "level",
+                  "value": "junior",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "looking",
+                  "disabled": true
+                },
+                {
+                  "key": "participation_format",
+                  "value": "remote",
+                  "disabled": true
+                },
+                {
+                  "key": "city",
+                  "value": "Москва",
+                  "disabled": true
+                },
+                {
+                  "key": "is_available",
+                  "value": "true",
+                  "disabled": true
+                },
+                {
+                  "key": "min_experience",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "max_experience",
+                  "value": "5",
+                  "disabled": true
+                },
                 {
                   "key": "search",
                   "value": "frontend",
@@ -823,7 +1005,7 @@
     },
     {
       "name": "03 Owner flow — draft project",
-      "description": "Основной безопасный сценарий владельца до модерации. В текущем API нет publish-action, поэтому этот сценарий не может сам сделать проект published.",
+      "description": "Создание и настройка проекта владельцем до модерации. Публикация выполняется администратором через административную часть.",
       "item": [
         {
           "name": "Создать проект-черновик — owner",
@@ -1038,7 +1220,7 @@
     },
     {
       "name": "04 Vacancies direct endpoint",
-      "description": "Прямой CRUD для открытых ролей. Удаление вынесено в Danger zone.",
+      "description": "Прямой CRUD вакансий. Вакансии закрытых проектов доступны для чтения, но отклик разрешён только на открытую вакансию опубликованного проекта.",
       "item": [
         {
           "name": "Открытые роли — список",
@@ -1335,8 +1517,179 @@
       ]
     },
     {
-      "name": "06 Published project actions",
-      "description": "Действия, которые НЕ работают для draft/moderation. Заполни published_project_id/closed_project_id вручную после публикации проекта.",
+      "name": "06 Project visibility",
+      "description": "Проверка видимости проектов для владельца, специалиста, администратора и постороннего пользователя. Для запросов архивного проекта заполни archived_project_id.",
+      "item": [
+        {
+          "name": "Проекты — список владельца",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{owner_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/projects/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "projects"
+              ]
+            },
+            "description": "Владелец видит опубликованные проекты и все собственные проекты независимо от статуса."
+          }
+        },
+        {
+          "name": "Проекты — список специалиста",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{specialist_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/projects/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "projects"
+              ]
+            },
+            "description": "Специалист видит опубликованные проекты и архивные проекты, в которых у него есть история участия."
+          }
+        },
+        {
+          "name": "Проекты — список администратора",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/projects/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "projects"
+              ]
+            },
+            "description": "Администратор видит проекты всех статусов."
+          }
+        },
+        {
+          "name": "Архивный проект — владелец",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{owner_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/projects/{{archived_project_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "projects",
+                "{{archived_project_id}}"
+              ]
+            },
+            "description": "Владелец архивного проекта получает его детальную информацию."
+          }
+        },
+        {
+          "name": "Архивный проект — участник команды",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{specialist_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/projects/{{archived_project_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "projects",
+                "{{archived_project_id}}"
+              ]
+            },
+            "description": "Специалист получает архивный проект, если у него есть текущая или историческая запись участия в команде."
+          }
+        },
+        {
+          "name": "Архивный проект — посторонний пользователь",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{outsider_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/projects/{{archived_project_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "projects",
+                "{{archived_project_id}}"
+              ]
+            },
+            "description": "Посторонний пользователь не должен видеть архивный проект. Ожидаемый ответ — 404."
+          }
+        }
+      ]
+    },
+    {
+      "name": "07 Published project actions",
+      "description": "Действия над опубликованными и закрытыми проектами. Для запросов укажи идентификаторы и точные названия существующих проектов.",
       "item": [
         {
           "name": "Закрыть опубликованный проект — owner",
@@ -1426,10 +1779,10 @@
                 "archive"
               ]
             },
-            "description": "Работает только для published/closed. confirmation_title должен точно совпадать с названием проекта.",
+            "description": "Архивирует published/closed проект. published_project_title должен точно совпадать с названием проекта из published_project_id.",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"confirmation_title\": \"{{project_title}}\"\n}",
+              "raw": "{\n  \"confirmation_title\": \"{{published_project_title}}\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1441,7 +1794,7 @@
       ]
     },
     {
-      "name": "07 Applications",
+      "name": "08 Applications",
       "description": "Отклики. Создание работает только для опубликованного проекта и открытой роли.",
       "item": [
         {
@@ -1466,6 +1819,43 @@
               "path": [
                 "{{api_prefix}}",
                 "applications"
+              ],
+              "query": [
+                {
+                  "key": "project",
+                  "value": "{{published_project_id}}",
+                  "disabled": true
+                },
+                {
+                  "key": "project_slug",
+                  "value": "project-slug",
+                  "disabled": true
+                },
+                {
+                  "key": "vacancy",
+                  "value": "{{published_vacancy_id}}",
+                  "disabled": true
+                },
+                {
+                  "key": "vacancy_role",
+                  "value": "{{role_id}}",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "pending",
+                  "disabled": true
+                },
+                {
+                  "key": "search",
+                  "value": "django",
+                  "disabled": true
+                },
+                {
+                  "key": "ordering",
+                  "value": "-applied_at",
+                  "disabled": true
+                }
               ]
             },
             "description": "Специалист видит свои отклики; владелец видит отклики на свои проекты; админ видит всё."
@@ -1499,7 +1889,7 @@
                 "applications"
               ]
             },
-            "description": "Нужен published_vacancy_id. Проект должен быть published, роль open, пользователь не должен быть владельцем проекта.",
+            "description": "Создаёт один активный отклик специалиста на конкретную вакансию. Проект должен быть published, вакансия — открытой и незаполненной. На вакансию закрытого проекта отклик невозможен.",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"vacancy\": {{published_vacancy_id}},\n  \"message\": \"Здравствуйте! Хочу присоединиться к проекту, потому что мой стек подходит под открытую роль.\"\n}",
@@ -1600,7 +1990,7 @@
       ]
     },
     {
-      "name": "08 Invitations",
+      "name": "09 Invitations",
       "description": "Приглашения. Создание требует опубликованный проект и открытую роль.",
       "item": [
         {
@@ -1625,6 +2015,43 @@
               "path": [
                 "{{api_prefix}}",
                 "invitations"
+              ],
+              "query": [
+                {
+                  "key": "project",
+                  "value": "{{published_project_id}}",
+                  "disabled": true
+                },
+                {
+                  "key": "project_slug",
+                  "value": "project-slug",
+                  "disabled": true
+                },
+                {
+                  "key": "vacancy",
+                  "value": "{{published_vacancy_id}}",
+                  "disabled": true
+                },
+                {
+                  "key": "vacancy_role",
+                  "value": "{{role_id}}",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "pending",
+                  "disabled": true
+                },
+                {
+                  "key": "search",
+                  "value": "backend",
+                  "disabled": true
+                },
+                {
+                  "key": "ordering",
+                  "value": "-invited_at",
+                  "disabled": true
+                }
               ]
             },
             "description": "Владелец видит отправленные/связанные приглашения; специалист — входящие; админ — всё."
@@ -1759,8 +2186,8 @@
       ]
     },
     {
-      "name": "09 Favorites",
-      "description": "Избранное. Для добавления нужен published/closed проект. DELETE вынесен в Danger zone.",
+      "name": "10 Favorites",
+      "description": "Избранное текущего пользователя. Добавлять можно опубликованные и закрытые проекты.",
       "item": [
         {
           "name": "Избранное — список",
@@ -1889,7 +2316,7 @@
       ]
     },
     {
-      "name": "10 Service OPTIONS",
+      "name": "11 Service OPTIONS",
       "description": "Служебные OPTIONS-запросы.",
       "item": [
         {
@@ -1963,6 +2390,124 @@
               ]
             },
             "description": "Посмотреть метаданные DRF endpoint."
+          }
+        }
+      ]
+    },
+    {
+      "name": "98 Logout",
+      "description": "Удаление API-токенов. Выполняй эти запросы только после завершения основной проверки коллекции.",
+      "item": [
+        {
+          "name": "Удалить токен владельца",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{owner_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/auth/logout/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "auth",
+                "logout"
+              ]
+            },
+            "description": "Удаляет текущий DRF-токен владельца."
+          }
+        },
+        {
+          "name": "Удалить токен специалиста",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{specialist_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/auth/logout/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "auth",
+                "logout"
+              ]
+            },
+            "description": "Удаляет текущий DRF-токен специалиста."
+          }
+        },
+        {
+          "name": "Удалить токен администратора",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/auth/logout/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "auth",
+                "logout"
+              ]
+            },
+            "description": "Удаляет текущий DRF-токен администратора."
+          }
+        },
+        {
+          "name": "Удалить токен постороннего пользователя",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{outsider_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_prefix}}/auth/logout/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "auth",
+                "logout"
+              ]
+            },
+            "description": "Удаляет текущий DRF-токен постороннего пользователя."
           }
         }
       ]
@@ -2108,7 +2653,7 @@
                 "{{role_id}}"
               ]
             },
-            "description": "Удаляет справочную роль. Может сломать связанные тестовые данные."
+            "description": "Удаляет неиспользуемую справочную роль. Если роль связана с вакансиями или участниками проектов, удаление может быть запрещено защищёнными связями."
           }
         },
         {
@@ -2136,7 +2681,7 @@
                 "{{technology_id}}"
               ]
             },
-            "description": "Удаляет справочную технологию. Может сломать связанные тестовые данные."
+            "description": "Удаляет неиспользуемую технологию. Если технология связана с данными проекта или специалиста, проверь последствия перед удалением."
           }
         }
       ]

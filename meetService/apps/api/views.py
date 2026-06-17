@@ -20,6 +20,7 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import status, viewsets
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.serializers import AuthTokenSerializer
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import action
 from rest_framework.exceptions import (
     NotAuthenticated,
@@ -172,6 +173,7 @@ class CurrentUserAPIView(APIView):
 class LogoutAPIView(APIView):
     """Удаляет API-токен текущего пользователя."""
 
+    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def post(self, request: Request) -> Response:
@@ -180,7 +182,7 @@ class LogoutAPIView(APIView):
         Args:
             request: HTTP-запрос текущего пользователя
         """
-        Token.objects.filter(user=request.user).delete()
+        request.auth.delete()
 
         return Response(
             {
