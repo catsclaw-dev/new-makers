@@ -3,16 +3,19 @@ from __future__ import annotations
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import IntegrityError, transaction
 from django.db.models import (
+    BooleanField,
     Count,
     Exists,
     F,
+    IntegerField,
     OuterRef,
+    Prefetch,
     Q,
     QuerySet,
-    BooleanField,
-    ExpressionWrapper,
+    Subquery,
     Value,
 )
+from django.db.models.functions import Coalesce
 from django.utils.translation import gettext_lazy as _
 from rest_framework import status, viewsets
 from rest_framework.authtoken.models import Token
@@ -291,87 +294,127 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self) -> QuerySet:
         """
-        Возвращает queryset с нужными фильтрами и оптимизациями.
+        Возвращает проекты с правилами видимости и без N+1-запросов.
         """
+
+        open_vacancies = ProjectVacancy.objects.filter(
+            project_id=OuterRef("pk"),
+            status=ProjectVacancy.Status.OPEN,
+            current_count__lt=F("required_count"),
+        )
+
+        open_vacancy_count_subquery = (
+            open_vacancies.order_by()
+            .values("project_id")
+            .annotate(total=Count("pk"))
+            .values("total")[:1]
+        )
+
+        members_count_subquery = (
+            ProjectMembership.objects.filter(
+                project_id=OuterRef("pk"),
+                status__in=[
+                    ProjectMembership.Status.ACTIVE,
+                    ProjectMembership.Status.PAUSED,
+                ],
+            )
+            .order_by()
+            .values("project_id")
+            .annotate(total=Count("pk"))
+            .values("total")[:1]
+        )
+
+        favorite_count_subquery = (
+            FavoriteProject.objects.filter(
+                project_id=OuterRef("pk"),
+            )
+            .order_by()
+            .values("project_id")
+            .annotate(total=Count("pk"))
+            .values("total")[:1]
+        )
+
+        vacancies_queryset = ProjectVacancy.objects.select_related(
+            "project",
+            "role",
+        ).order_by(
+            "status",
+            "role__name",
+            "title",
+        )
+
         queryset = (
-            Project.objects.select_related("owner", "created_by", "updated_by")
+            Project.objects.select_related("owner")
             .prefetch_related(
                 "technologies",
-                "vacancies__role",
-                "memberships__specialist__user",
-                "memberships__role",
+                Prefetch(
+                    "vacancies",
+                    queryset=vacancies_queryset,
+                ),
             )
             .annotate(
-                open_vacancy_count=Count(
-                    "vacancies",
-                    filter=Q(
-                        vacancies__status=ProjectVacancy.Status.OPEN,
-                        vacancies__current_count__lt=F("vacancies__required_count"),
+                open_vacancy_count=Coalesce(
+                    Subquery(
+                        open_vacancy_count_subquery,
+                        output_field=IntegerField(),
                     ),
-                    distinct=True,
+                    Value(0),
                 ),
-                members_count=Count(
-                    "memberships",
-                    filter=Q(
-                        memberships__status__in=[
-                            ProjectMembership.Status.ACTIVE,
-                            ProjectMembership.Status.PAUSED,
-                        ]
+                members_count=Coalesce(
+                    Subquery(
+                        members_count_subquery,
+                        output_field=IntegerField(),
                     ),
-                    distinct=True,
+                    Value(0),
                 ),
-                favorite_count=Count("favorited_by", distinct=True),
+                favorite_count=Coalesce(
+                    Subquery(
+                        favorite_count_subquery,
+                        output_field=IntegerField(),
+                    ),
+                    Value(0),
+                ),
+                has_open_vacancy=Exists(open_vacancies),
             )
         )
 
         user = self.request.user
 
         if user.is_authenticated:
+            user_memberships = ProjectMembership.objects.filter(
+                project_id=OuterRef("pk"),
+                specialist__user_id=user.id,
+            )
+
             queryset = queryset.annotate(
                 is_favorited=Exists(
                     FavoriteProject.objects.filter(
-                        user=user,
+                        user_id=user.id,
                         project_id=OuterRef("pk"),
                     )
-                )
+                ),
+                user_has_specialist_profile=Exists(
+                    SpecialistProfile.objects.filter(
+                        user_id=user.id,
+                    )
+                ),
+                user_is_member=Exists(
+                    user_memberships.filter(
+                        status__in=[
+                            ProjectMembership.Status.ACTIVE,
+                            ProjectMembership.Status.PAUSED,
+                        ]
+                    )
+                ),
+                user_has_project_history=Exists(user_memberships),
             )
-
-            specialist = getattr(user, "specialist_profile", None)
-
-            if specialist is not None:
-                queryset = queryset.annotate(
-                    user_is_member=Exists(
-                        ProjectMembership.objects.filter(
-                            project_id=OuterRef("pk"),
-                            specialist=specialist,
-                            status__in=[
-                                ProjectMembership.Status.ACTIVE,
-                                ProjectMembership.Status.PAUSED,
-                            ],
-                        )
-                    ),
-                    has_open_vacancy=Exists(
-                        ProjectVacancy.objects.filter(
-                            project_id=OuterRef("pk"),
-                            status=ProjectVacancy.Status.OPEN,
-                            current_count__lt=F("required_count"),
-                        )
-                    ),
-                )
-            else:
-                queryset = queryset.annotate(
-                    user_is_member=Value(
-                        False,
-                        output_field=BooleanField(),
-                    ),
-                    has_open_vacancy=Value(
-                        False,
-                        output_field=BooleanField(),
-                    ),
-                )
         else:
             queryset = queryset.annotate(
                 is_favorited=Value(
+                    False,
+                    output_field=BooleanField(),
+                ),
+                user_has_specialist_profile=Value(
                     False,
                     output_field=BooleanField(),
                 ),
@@ -379,11 +422,28 @@ class ProjectViewSet(viewsets.ModelViewSet):
                     False,
                     output_field=BooleanField(),
                 ),
-                has_open_vacancy=Value(
+                user_has_project_history=Value(
                     False,
                     output_field=BooleanField(),
                 ),
             )
+
+        if is_admin(user):
+            return queryset
+
+        if not user.is_authenticated:
+            return queryset.filter(
+                status=Project.Status.PUBLISHED,
+            )
+
+        return queryset.filter(
+            Q(status=Project.Status.PUBLISHED)
+            | Q(owner_id=user.id)
+            | Q(
+                status=Project.Status.ARCHIVED,
+                user_has_project_history=True,
+            )
+        )
 
     def perform_create(self, serializer: Serializer) -> None:
         """

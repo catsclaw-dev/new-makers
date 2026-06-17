@@ -91,65 +91,6 @@ class TechnologyBriefSerializer(serializers.ModelSerializer):
         read_only_fields = fields
 
 
-class ProjectVacancyBriefSerializer(serializers.ModelSerializer):
-    role_detail = RoleBriefSerializer(source="role", read_only=True)
-    remaining_slots = serializers.IntegerField(read_only=True)
-    is_open = serializers.BooleanField(read_only=True)
-
-    class Meta:
-        model = ProjectVacancy
-        fields = (
-            "id",
-            "role",
-            "role_detail",
-            "title",
-            "required_level",
-            "required_count",
-            "current_count",
-            "status",
-            "remaining_slots",
-            "is_open",
-        )
-        read_only_fields = fields
-
-
-class ProjectListSerializer(serializers.ModelSerializer):
-    owner = UserBriefSerializer(read_only=True)
-    technologies = TechnologyBriefSerializer(many=True, read_only=True)
-
-    open_vacancy_count = serializers.IntegerField(read_only=True)
-    members_count = serializers.IntegerField(read_only=True)
-    favorite_count = serializers.IntegerField(read_only=True)
-
-    is_favorite = serializers.BooleanField(
-        source="is_favorited",
-        read_only=True,
-    )
-    can_apply = serializers.BooleanField(read_only=True)
-
-    class Meta:
-        model = Project
-        fields = (
-            "id",
-            "owner",
-            "title",
-            "slug",
-            "short_description",
-            "cover_image",
-            "stage",
-            "participation_format",
-            "status",
-            "technologies",
-            "created_at",
-            "open_vacancy_count",
-            "members_count",
-            "favorite_count",
-            "is_favorite",
-            "can_apply",
-        )
-        read_only_fields = fields
-
-
 class RoleSerializer(serializers.ModelSerializer):
     open_vacancies_count = serializers.SerializerMethodField()
     main_specialists_count = serializers.SerializerMethodField()
@@ -565,19 +506,13 @@ class ProjectSerializer(serializers.ModelSerializer):
         if not request or not request.user.is_authenticated:
             return False
 
-        if obj.owner_id == request.user.id:
-            return False
-
-        if obj.status != Project.Status.PUBLISHED:
-            return False
-
-        if getattr(request.user, "specialist_profile", None) is None:
-            return False
-
-        if getattr(obj, "user_is_member", False):
-            return False
-
-        return bool(getattr(obj, "has_open_vacancy", False))
+        return bool(
+            obj.owner_id != request.user.id
+            and obj.status == Project.Status.PUBLISHED
+            and getattr(obj, "user_has_specialist_profile", False)
+            and not getattr(obj, "user_is_member", False)
+            and getattr(obj, "has_open_vacancy", False)
+        )
 
     def validate_title(self, value: str) -> str:
         """
