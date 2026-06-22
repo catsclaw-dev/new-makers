@@ -15,7 +15,7 @@ from django.contrib import admin
 from django.db.models import Count, F, Q, QuerySet
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
-from import_export.admin import ImportExportModelAdmin
+from import_export.admin import ExportActionMixin, ImportExportModelAdmin
 from simple_history.admin import SimpleHistoryAdmin
 
 from .models import (
@@ -151,7 +151,7 @@ class ProjectFileInline(admin.TabularInline):
 
 
 @admin.register(Project)
-class ProjectAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
+class ProjectAdmin(ExportActionMixin, ImportExportModelAdmin, SimpleHistoryAdmin):
     """Админ-панель проектов."""
 
     actions = ("export_projects_to_pdf",)
